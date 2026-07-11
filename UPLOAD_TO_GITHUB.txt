@@ -1,0 +1,12 @@
+SOULCINEMA STUDIO — SPRINT 2 DEPLOYMENT
+
+1. Extract this ZIP.
+2. Open your GitHub repository SoulCinema.Studio.
+3. Choose Add file > Upload files.
+4. Upload everything INSIDE this folder, including app, components, public, package.json and package-lock.json.
+5. Commit message: "Sprint 2: cinematic experience layer"
+6. In Vercel, import or redeploy the SoulCinema.Studio repository.
+7. Framework preset: Next.js. Do not change build settings.
+8. Optional live stream variable:
+   NEXT_PUBLIC_YOUTUBE_LIVE_ID = your YouTube Live video ID
+9. Deploy and test desktop and mobile.

@@ -1,0 +1,4 @@
+import Image from 'next/image';import PageHero from '../../components/PageHero';
+const items=['/images/studio-exterior.png','/images/studio-lobby-wide.png','/images/film-1.png','/images/film-2.png','/images/film-3.png','/images/music-1.png','/images/music-3.png','/images/journal-1.png'];
+export const metadata={title:'Gallery'};
+export default function Gallery(){return <><PageHero eyebrow="Gallery" title="Fragments from the world we are building." text="Posters, visual studies, environments, and cinematic memories from SoulCinema."/><section className="section"><div className="shell masonry-grid">{items.map((src,i)=><figure key={src} className={i%3===0?'tall':''}><Image src={src} alt={`SoulCinema visual ${i+1}`} fill sizes="(max-width:700px) 100vw, 33vw"/><figcaption>Visual Study 0{i+1}</figcaption></figure>)}</div></section></>}

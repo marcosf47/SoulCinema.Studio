@@ -1,0 +1,1 @@
+export default function manifest(){return {name:'SoulCinema Studio',short_name:'SoulCinema',description:'Every heart hides a story.',start_url:'/',display:'standalone',background_color:'#030303',theme_color:'#030303'}}

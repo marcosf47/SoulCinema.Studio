@@ -1,0 +1,4 @@
+import PageHero from '../../components/PageHero';
+const posts=[['Production Note','Building a place where stories live'],['Creative Insight','Why light is emotion'],['Studio Update','The first SoulCinema original'],['Behind the Story','How silence became part of the interface']];
+export const metadata={title:'Journal'};
+export default function Journal(){return <><PageHero eyebrow="Studio Journal" title="Inside the work. Behind the story." text="Production notes, creative reflections, and the thinking behind SoulCinema."/><section className="section"><div className="shell journal-grid">{posts.map(([type,title],i)=><article className="journal-card" key={title}><span>{type}</span><small>0{i+1}</small><h2>{title}</h2><p>Notes from inside the studio, where every decision is made with intention.</p><a>Read story →</a></article>)}</div></section></>}

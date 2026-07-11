@@ -1,0 +1,15 @@
+SOULCINEMA PRIVATE BUILD — GITHUB / VERCEL
+
+1. Open the SoulCinema.Studio repository on GitHub.
+2. Use Add file > Upload files.
+3. Upload everything INSIDE this folder, not the outside folder itself.
+4. Commit message: SoulCinema private launch candidate v1
+5. In Vercel, import or redeploy the SoulCinema.Studio repository.
+6. Confirm Framework Preset: Next.js.
+7. Deploy.
+8. Review the temporary vercel.app address privately before connecting soulcinema.studio.
+
+Optional Live Room variable:
+NEXT_PUBLIC_YOUTUBE_LIVE_ID=<YouTube video ID>
+
+Do not upload API keys to GitHub.

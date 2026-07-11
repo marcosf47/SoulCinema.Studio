@@ -1,0 +1,4 @@
+import PageHero from '../../components/PageHero';
+export const metadata={title:'Private Review'};
+const clips=[['Candidate A','/video/candidate-a.mp4','Shorter, focused candidate for a compact hero or transition.'],['Candidate B','/video/candidate-b.mp4','Longer cinematic candidate for film and launch review.']];
+export default function Review(){return <><PageHero eyebrow="Private Review Room" title="Compare the two new video candidates." text="This room is for internal SoulCinema review before a final edit is selected."/><section className="section"><div className="shell review-grid">{clips.map(([name,src,note])=><article className="review-card" key={name}><video controls playsInline preload="metadata" src={src}/><span className="eyebrow">{name}</span><h2>{name}</h2><p>{note}</p></article>)}</div></section></>}

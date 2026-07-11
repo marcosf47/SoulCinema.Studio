@@ -1,0 +1,1 @@
+export default function SectionMarquee(){return <div className="marquee" aria-hidden="true"><div><span>FILMS</span><i>•</i><span>MUSIC</span><i>•</i><span>LIVE</span><i>•</i><span>JOURNAL</span><i>•</i><span>STORIES LIVE HERE</span><i>•</i><span>FILMS</span><i>•</i><span>MUSIC</span><i>•</i><span>LIVE</span><i>•</i></div></div>}

@@ -1,0 +1,2 @@
+import Image from 'next/image';import Link from 'next/link';
+export default function RoomCard({href,eyebrow,title,text,accent='gold',image}){return <Link href={href} className={`room-card ${accent}`}>{image&&<Image src={image} alt="" fill sizes="(max-width:900px) 100vw, 50vw"/>}<div className="room-shade"/><div className="room-copy"><span>{eyebrow}</span><h3>{title}</h3><p>{text}</p><b>Enter room →</b></div></Link>}

@@ -1,0 +1,1 @@
+export default function sitemap(){const base='https://soulcinema.studio';return ['','films','music','live','journal','gallery','about','contact'].map(path=>({url:`${base}/${path}`,lastModified:new Date(),changeFrequency:path?'weekly':'daily',priority:path?0.8:1}))}

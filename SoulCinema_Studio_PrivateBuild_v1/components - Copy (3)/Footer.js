@@ -1,0 +1,2 @@
+import Link from 'next/link';
+export default function Footer(){return <footer className="footer"><div><strong>SOULCINEMA</strong><p>Every heart hides a story.</p></div><div className="footer-links"><Link href="/films">Films</Link><Link href="/music">Music</Link><Link href="/live">Live</Link><Link href="/contact">Contact</Link></div><small>© {new Date().getFullYear()} SoulCinema Studio</small></footer>}
