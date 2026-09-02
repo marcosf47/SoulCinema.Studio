@@ -1,0 +1,4 @@
+SOULCINEMA RC170 PREVIEW DELIVERY
+Branch: rc170-preview
+Purpose: verify the isolated preview write path before installing the RC170 experience.
+Production and main remain untouched.
