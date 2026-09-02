@@ -10,11 +10,16 @@ export async function GET() {
   const filePath = path.join(process.cwd(), 'index (1).html');
   let html = await readFile(filePath, 'utf8');
 
-  // Surgical live-preview recovery only: preserve the RC170 HTML and
-  // redirect the two locked cinematic assets to this deployment's public media.
+  // RC170 live-preview delivery recovery only. The locked master HTML/state
+  // machine remains untouched; only protected media references are mapped to
+  // local public assets on this deployment.
   html = html
-    .replace(`${PROTECTED_BASE}/video/the-gate.mp4`, '/video/the-gate.mp4')
-    .replace(`${PROTECTED_BASE}/video/grand-lobby.mp4`, '/video/grand-lobby.mp4');
+    .replaceAll(`${PROTECTED_BASE}/video/the-gate.mp4`, '/video/the-gate.mp4')
+    .replaceAll(`${PROTECTED_BASE}/video/grand-lobby.mp4`, '/video/grand-lobby.mp4')
+    .replaceAll(`${PROTECTED_BASE}/video/featured-premiere.mp4`, '/video/theater-premiere-opening.mp4')
+    .replaceAll(`${PROTECTED_BASE}/featured-premiere.mp4`, '/video/theater-premiere-opening.mp4')
+    .replaceAll(`${PROTECTED_BASE}/video/mwen-poukont-mwen-film.mp4`, '/video/mwen-poukont-mwen-film.mp4')
+    .replaceAll(`../public/posters/mwen-poukont-mwen.png`, '/video/mwen-poukont-mwen.png');
 
   return new Response(html, {
     status: 200,
