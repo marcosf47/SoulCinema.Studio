@@ -5,7 +5,7 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const filePath = path.join(process.cwd(), 'index.html');
+  const filePath = path.join(process.cwd(), 'index (1).html');
   const html = await readFile(filePath, 'utf8');
   return new Response(html, {
     status: 200,
