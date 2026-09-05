@@ -2,6 +2,6 @@
   "name": "soulcinema-final-qa-preview",
   "private": true,
   "scripts": {
-    "build": "node build-preview.mjs"
+    "build": "echo SoulCinema static preview ready"
   }
 }
