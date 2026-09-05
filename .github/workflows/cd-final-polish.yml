@@ -1,0 +1,35 @@
+name: SoulCinema CD Final Polish
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/cd-final-polish.yml']
+permissions:
+  contents: write
+jobs:
+  polish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ep-final-preview-20260904
+      - name: Surgical final polish
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path('public/index.html')
+          s=p.read_text(encoding='utf-8')
+          old_story='<div class="story-note">STORY EXPERIENCE · RC11.11.1</div>'
+          if old_story not in s: raise SystemExit('Story target missing')
+          s=s.replace(old_story,'<div class="story-note"></div>',1)
+          old="function handoffToFeature(){const v=$('#theaterPlayer');if(!v||theaterHandoffBusy)return;theaterHandoffBusy=true;$('#theaterStatus').textContent='ENTERING THE STORY';v.classList.add('theater-portal-push');setTimeout(()=>v.classList.add('theater-handoff'),360);setTimeout(()=>{loadTheaterStage('film',true);v.classList.remove('theater-handoff','theater-portal-push');void v.offsetWidth;v.classList.add('theater-feature-enter');$('#theaterStatus').textContent='● NOW PLAYING · MWEN POUKONT MWEN';setTimeout(()=>v.classList.remove('theater-feature-enter'),2400);theaterHandoffBusy=false},980)}"
+          new="function handoffToFeature(){const v=$('#theaterPlayer');if(!v||theaterHandoffBusy)return;theaterHandoffBusy=true;$('#theaterStatus').textContent='ENTERING THE STORY';v.classList.remove('theater-handoff','theater-portal-push','theater-feature-enter');loadTheaterStage('film',true);void v.offsetWidth;v.classList.add('theater-feature-enter');$('#theaterStatus').textContent='● NOW PLAYING · MWEN POUKONT MWEN';setTimeout(()=>v.classList.remove('theater-feature-enter'),900);theaterHandoffBusy=false}"
+          if old not in s: raise SystemExit('Theater target missing')
+          s=s.replace(old,new,1)
+          p.write_text(s,encoding='utf-8')
+      - name: Commit preview polish
+        run: |
+          git config user.name 'SoulCinema C.D.'
+          git config user.email 'actions@users.noreply.github.com'
+          git add public/index.html
+          git commit -m 'Final QA polish: seamless premiere and clean Story footer'
+          git push origin HEAD:ep-final-preview-20260904
