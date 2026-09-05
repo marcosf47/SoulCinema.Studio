@@ -2063,7 +2063,7 @@ body.gate-lobby-fluid #lobby.active .media{
         <div class="story-reveal-bottom"><span>♡ &nbsp; SOULCINEMA.STUDIO<br><small>CINEMATIC DIGITAL STUDIO</small></span><b>SC</b><span>BUILT WITH SOUL<br><small>MADE FOR IMMORTAL STORIES</small></span></div>
       </div>
     </div>
-    <footer class="story-footer"><button id="storyReturn" class="ghost return">← GRAND LOBBY</button><div class="story-signature"><small>SOULCINEMA STORIES</small><strong>EVERY HEART HIDES A STORY</strong></div><div class="story-note">STORY EXPERIENCE · RC11.11.1</div></footer>
+    <footer class="story-footer"><button id="storyReturn" class="ghost return">← GRAND LOBBY</button><div class="story-signature"><small>SOULCINEMA STORIES</small><strong>EVERY HEART HIDES A STORY</strong></div><div class="story-note"></div></footer>
   </div></div>
 </section>
 
@@ -2373,7 +2373,7 @@ function playTheater(){
  v.muted=false;const play=v.play();if(play&&play.catch)play.catch(()=>{v.muted=true;v.play().catch(()=>{})});
  $('#theaterStatus').textContent='● PREMIERE OPENING'
 }
-function handoffToFeature(){const v=$('#theaterPlayer');if(!v||theaterHandoffBusy)return;theaterHandoffBusy=true;$('#theaterStatus').textContent='ENTERING THE STORY';v.classList.add('theater-portal-push');setTimeout(()=>v.classList.add('theater-handoff'),360);setTimeout(()=>{loadTheaterStage('film',true);v.classList.remove('theater-handoff','theater-portal-push');void v.offsetWidth;v.classList.add('theater-feature-enter');$('#theaterStatus').textContent='● NOW PLAYING · MWEN POUKONT MWEN';setTimeout(()=>v.classList.remove('theater-feature-enter'),2400);theaterHandoffBusy=false},980)}
+function handoffToFeature(){const v=$('#theaterPlayer');if(!v||theaterHandoffBusy)return;theaterHandoffBusy=true;$('#theaterStatus').textContent='ENTERING THE STORY';v.classList.remove('theater-handoff','theater-portal-push','theater-feature-enter');loadTheaterStage('film',true);void v.offsetWidth;v.classList.add('theater-feature-enter');$('#theaterStatus').textContent='● NOW PLAYING · MWEN POUKONT MWEN';setTimeout(()=>v.classList.remove('theater-feature-enter'),900);theaterHandoffBusy=false}
 function returnFromTheater(){const v=$('#theaterPlayer');if(v)v.pause();journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{SceneManager.goTo('lobby');scene(screeningTheater,lobby);setTimeout(showPortals,520)})}
 function backToTheaterHome(){
  const v=$('#theaterPlayer'),p=$('#theaterPoster');if(!v)return;
