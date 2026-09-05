@@ -18,56 +18,42 @@ jobs:
         with:
           ref: ep-final-preview-20260904
       - name: Apply exact MASTER surgical fix
-        shell: python
         run: |
+          python - <<'PY'
           from pathlib import Path
           import re
           p=Path('public/index.html')
           s=p.read_text(encoding='utf-8')
 
-          # Remove visible QA/version footer labels without touching room layout.
           s=re.sub(r'<div class="story-note">[^<]*</div>', '<div class="story-note"></div>', s, count=1)
           s=re.sub(r'<div class="production-note">[^<]*</div>', '<div class="production-note"></div>', s, count=1)
 
-          # Restore canonical MASTER Blob delivery for the two Featured Premiere stages.
           s=re.sub(r"const THEATER_OPENING_SRC='[^']*';", "const THEATER_OPENING_SRC='https://tfamln4qsost6j00.public.blob.vercel-storage.com/featured-premiere.mp4';", s, count=1)
           s=re.sub(r"const THEATER_FILM_SRC='[^']*';", "const THEATER_FILM_SRC='https://tfamln4qsost6j00.public.blob.vercel-storage.com/mwen-poukont-mwen-film.mp4';", s, count=1)
 
-          # Harden reset: stale collection src can never masquerade as the opening stage.
-          s=re.sub(
-            r"function primeTheaterOpening\(\)\{.*?\n\}",
-            """function primeTheaterOpening(){
- const v=$('#theaterPlayer');if(!v)return;
- theaterStage='opening';
- const openingLoaded=(v.currentSrc||v.src||'')===THEATER_OPENING_SRC;
- const openingReady=v.dataset.scStage==='opening' && openingLoaded && v.readyState>=2;
- if(openingReady){try{v.currentTime=0}catch(e){}return}
- v.pause();v.preload='auto';
- if(v.dataset.scStage!=='opening' || !openingLoaded){v.src=THEATER_OPENING_SRC;v.dataset.scStage='opening'}
- try{v.load()}catch(e){}
- try{v.currentTime=0}catch(e){}
-}""",
-            s,count=1,flags=re.S)
+          old="function handoffToFeature(){const v=$('#theaterPlayer');if(!v||theaterHandoffBusy)return;theaterHandoffBusy=true;$('#theaterStatus').textContent='ENTERING THE STORY';v.classList.add('theater-portal-push');setTimeout(()=>v.classList.add('theater-handoff'),360);setTimeout(()=>{loadTheaterStage('film',true);v.classList.remove('theater-handoff','theater-portal-push');void v.offsetWidth;v.classList.add('theater-feature-enter');$('#theaterStatus').textContent='● NOW PLAYING · MWEN POUKONT MWEN';setTimeout(()=>v.classList.remove('theater-feature-enter'),2400);theaterHandoffBusy=false},980)}"
+          new="function handoffToFeature(){const v=$('#theaterPlayer');if(!v||theaterHandoffBusy)return;theaterHandoffBusy=true;$('#theaterStatus').textContent='ENTERING THE STORY';v.classList.remove('theater-handoff','theater-portal-push','theater-feature-enter');loadTheaterStage('film',true);void v.offsetWidth;v.classList.add('theater-feature-enter');$('#theaterStatus').textContent='● NOW PLAYING · MWEN POUKONT MWEN';setTimeout(()=>v.classList.remove('theater-feature-enter'),900);theaterHandoffBusy=false}"
+          if old in s:
+              s=s.replace(old,new,1)
 
-          # Warm the feature film while the opening plays; handoff remains immediate.
           marker="let theaterStage='opening',theaterHandoffBusy=false;"
-          warm="""let theaterStage='opening',theaterHandoffBusy=false;
-let theaterFilmWarmer=null;
-function warmTheaterFilm(){
- if(theaterFilmWarmer)return;
- try{const w=document.createElement('video');w.preload='auto';w.muted=true;w.playsInline=true;w.src=THEATER_FILM_SRC;w.style.display='none';document.body.appendChild(w);w.load();theaterFilmWarmer=w}catch(e){}
-}"""
-          if marker in s and 'function warmTheaterFilm()' not in s:s=s.replace(marker,warm,1)
-
-          # Start film warmup from the actual user Play gesture.
+          if marker in s and 'function warmTheaterFilm()' not in s:
+              warm="""let theaterStage='opening',theaterHandoffBusy=false;
+          let theaterFilmWarmer=null;
+          function warmTheaterFilm(){
+           if(theaterFilmWarmer)return;
+           try{const w=document.createElement('video');w.preload='auto';w.muted=true;w.playsInline=true;w.src=THEATER_FILM_SRC;w.style.display='none';document.body.appendChild(w);w.load();theaterFilmWarmer=w}catch(e){}
+          }"""
+              s=s.replace(marker,warm,1)
           s=s.replace("$('#theaterStatus').textContent='● PREMIERE OPENING'", "$('#theaterStatus').textContent='● PREMIERE OPENING';warmTheaterFilm()", 1)
 
           p.write_text(s,encoding='utf-8')
+          PY
       - name: Commit MASTER AI fix
         run: |
           git config user.name "SoulCinema C.D."
           git config user.email "actions@users.noreply.github.com"
           git add public/index.html
-          git diff --cached --quiet && exit 0
+          if git diff --cached --quiet; then exit 0; fi
           git commit -m "MASTER AI FIX: seamless premiere and clean room footers"
           git push origin HEAD:ep-final-preview-20260904
