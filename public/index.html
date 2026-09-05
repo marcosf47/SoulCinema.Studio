@@ -2031,7 +2031,7 @@ body.gate-lobby-fluid #lobby.active .media{
         <button id="productionRevealClose" class="production-reveal-close" type="button">← RETURN TO PRODUCTION ROOM</button>
       </div>
     </div>
-    <footer class="production-footer"><button id="productionReturn" class="ghost return">← GRAND LOBBY</button><div class="production-signature"><small>SOULCINEMA PRODUCTION</small><strong>THE STORY BEHIND THE STORY</strong></div><div class="production-note">ATELIER EXPERIENCE · RC11.13.38</div></footer>
+    <footer class="production-footer"><button id="productionReturn" class="ghost return">← GRAND LOBBY</button><div class="production-signature"><small>SOULCINEMA PRODUCTION</small><strong>THE STORY BEHIND THE STORY</strong></div><div class="production-note"></div></footer>
   </div></div>
 </section>
 
@@ -2360,9 +2360,14 @@ function openTheater(){
   requestAnimationFrame(()=>setTimeout(primeTheaterOpening,0));
  })
 }
-const THEATER_OPENING_SRC='https://soulcinema-music-discovery-dr3t2fv45-soul-cinema-studio.vercel.app/public/video/featured-premiere.mp4';
-const THEATER_FILM_SRC='https://soulcinema-music-discovery-dr3t2fv45-soul-cinema-studio.vercel.app/public/video/mwen-poukont-mwen-film.mp4';
+const THEATER_OPENING_SRC='https://tfamln4qsost6j00.public.blob.vercel-storage.com/featured-premiere.mp4';
+const THEATER_FILM_SRC='https://tfamln4qsost6j00.public.blob.vercel-storage.com/mwen-poukont-mwen-film.mp4';
 let theaterStage='opening',theaterHandoffBusy=false;
+let theaterFilmWarmer=null;
+function warmTheaterFilm(){
+ if(theaterFilmWarmer)return;
+ try{const w=document.createElement('video');w.preload='auto';w.muted=true;w.playsInline=true;w.src=THEATER_FILM_SRC;w.style.display='none';document.body.appendChild(w);w.load();theaterFilmWarmer=w}catch(e){}
+}
 function loadTheaterStage(stage,autoplay=false){const v=$('#theaterPlayer');if(!v)return;theaterStage=stage;const src=stage==='film'?THEATER_FILM_SRC:THEATER_OPENING_SRC;v.dataset.scStage=stage;if(v.src!==src)v.src=src;v.preload='auto';v.load();if(autoplay){const p=v.play();if(p&&p.catch)p.catch(()=>{v.muted=true;v.play().catch(()=>{})})}}
 function playTheater(){
  const v=$('#theaterPlayer'),p=$('#theaterPoster');if(!v)return;
@@ -2371,7 +2376,7 @@ function playTheater(){
  v.addEventListener('playing',revealVideo);
  if(v.dataset.scStage!=='opening')primeTheaterOpening();else try{v.currentTime=0}catch(e){}
  v.muted=false;const play=v.play();if(play&&play.catch)play.catch(()=>{v.muted=true;v.play().catch(()=>{})});
- $('#theaterStatus').textContent='● PREMIERE OPENING'
+ $('#theaterStatus').textContent='● PREMIERE OPENING';warmTheaterFilm()
 }
 function handoffToFeature(){const v=$('#theaterPlayer');if(!v||theaterHandoffBusy)return;theaterHandoffBusy=true;$('#theaterStatus').textContent='ENTERING THE STORY';v.classList.remove('theater-handoff','theater-portal-push','theater-feature-enter');loadTheaterStage('film',true);void v.offsetWidth;v.classList.add('theater-feature-enter');$('#theaterStatus').textContent='● NOW PLAYING · MWEN POUKONT MWEN';setTimeout(()=>v.classList.remove('theater-feature-enter'),900);theaterHandoffBusy=false}
 function returnFromTheater(){const v=$('#theaterPlayer');if(v)v.pause();journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{SceneManager.goTo('lobby');scene(screeningTheater,lobby);setTimeout(showPortals,520)})}
