@@ -1,0 +1,30 @@
+name: Promote SoulCinema MASTER Live
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/promote-master-live.yml
+permissions:
+  contents: write
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Copy verified MASTER from preview branch
+        run: |
+          git fetch origin ep-final-preview-20260904
+          mkdir -p public
+          git show origin/ep-final-preview-20260904:public/index.html > public/index.html
+      - name: Commit production MASTER
+        run: |
+          git config user.name "SoulCinema C.D."
+          git config user.email "actions@users.noreply.github.com"
+          git add public/index.html
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "LIVE: promote SoulCinema MASTER final"
+          git push origin HEAD:main
