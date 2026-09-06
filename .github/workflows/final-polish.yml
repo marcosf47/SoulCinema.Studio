@@ -1,15 +1,12 @@
 name: SoulCinema MASTER FINAL LIVE
-
 on:
   push:
     branches:
       - ep-final-preview-20260904
     paths:
       - .github/workflows/final-polish.yml
-
 permissions:
   contents: write
-
 jobs:
   master-final:
     runs-on: ubuntu-latest
@@ -17,70 +14,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ep-final-preview-20260904
-      - name: Apply exact MASTER final patch
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import re
-          p=Path('public/index.html')
-          s=p.read_text(encoding='utf-8')
-
-          # MASTER media URLs — exact known production Blob sources.
-          media={
-            'the-gate.mp4':'https://tfamln4qsost6j00.public.blob.vercel-storage.com/the-gate.mp4',
-            'grand-lobby.mp4':'https://tfamln4qsost6j00.public.blob.vercel-storage.com/grand-lobby.mp4',
-            'featured-premiere.mp4':'https://tfamln4qsost6j00.public.blob.vercel-storage.com/featured-premiere.mp4',
-            'mwen-poukont-mwen-film.mp4':'https://tfamln4qsost6j00.public.blob.vercel-storage.com/mwen-poukont-mwen-film.mp4',
-            'mwen-poukont-mwen.mp3':'https://tfamln4qsost6j00.public.blob.vercel-storage.com/mwen-poukont-mwen.mp3',
-            'mwen-poukont-mwen.png':'https://tfamln4qsost6j00.public.blob.vercel-storage.com/mwen-poukont-mwen.png',
-            'room-307-episode-01-the-envelope.mp4':'https://tfamln4qsost6j00.public.blob.vercel-storage.com/room-307-episode-01-the-envelope.mp4',
-            'collection-family-01.mp4':'https://tfamln4qsost6j00.public.blob.vercel-storage.com/collection-family-01.mp4',
-            'collection-family-02.mp4':'https://tfamln4qsost6j00.public.blob.vercel-storage.com/collection-family-02.mp4',
-            'collection-nature-01.mp4':'https://tfamln4qsost6j00.public.blob.vercel-storage.com/collection-nature-01.mp4',
-          }
-          for name,url in media.items():
-              s=re.sub(r"https?://[^'\"\s<>]+/"+re.escape(name),url,s)
-
-          # Remove implementation labels only.
-          s=re.sub(r'<div class="story-note">[^<]*</div>', '<div class="story-note"></div>', s, count=1)
-          s=re.sub(r'<div class="production-note">[^<]*</div>', '<div class="production-note"></div>', s, count=1)
-
-          # Exact Theater reset engine from verified MASTER.
-          prime="""function primeTheaterOpening(){
- const v=$('#theaterPlayer');if(!v)return;
- theaterStage='opening';
- const openingLoaded=(v.currentSrc||v.src||'')===THEATER_OPENING_SRC;
- const openingReady=v.dataset.scStage==='opening' && openingLoaded && v.readyState>=2;
- if(openingReady){try{v.currentTime=0}catch(e){}return}
- v.pause();v.preload='auto';
- if(v.dataset.scStage!=='opening' || !openingLoaded){v.src=THEATER_OPENING_SRC;v.dataset.scStage='opening'}
- try{v.load()}catch(e){}
- try{v.currentTime=0}catch(e){}
-}
-function openTheater"""
-          s=re.sub(r'function primeTheaterOpening\(\)\{.*?\n\}\nfunction openTheater',prime,s,count=1,flags=re.S)
-
-          # Immediate Featured Premiere -> Film cut. No 980ms wait.
-          s=re.sub(r"function handoffToFeature\(\)\{.*?\}\nfunction returnFromTheater", "function handoffToFeature(){const v=$('#theaterPlayer');if(!v||theaterHandoffBusy)return;theaterHandoffBusy=true;$('#theaterStatus').textContent='ENTERING THE STORY';v.classList.remove('theater-handoff','theater-portal-push','theater-feature-enter');loadTheaterStage('film',true);void v.offsetWidth;v.classList.add('theater-feature-enter');$('#theaterStatus').textContent='● NOW PLAYING · MWEN POUKONT MWEN';setTimeout(()=>v.classList.remove('theater-feature-enter'),900);theaterHandoffBusy=false}\nfunction returnFromTheater", s, count=1, flags=re.S)
-
-          # Keep Kids known local mappings; only Animated Experience 02 is exact Blob.
-          s=re.sub(r'data-kids-src="[^"]*THE%20LITTLE%20TIGER%20WHO%20COULDN%27T%20ROAR\.mp4"', 'data-kids-src="video/THE%20LITTLE%20TIGER%20WHO%20COULDN%27T%20ROAR.mp4"', s)
-          s=re.sub(r'data-kids-src="[^"]*THE%20LITTLE%20CLOUD%20WHO%20WAS%20AFRAID%20TO%20RAIN\.mp4"', 'data-kids-src="video/THE%20LITTLE%20CLOUD%20WHO%20WAS%20AFRAID%20TO%20RAIN.mp4"', s)
-          s=re.sub(r'data-kids-src="[^"]*THE%20LITTLE%20FIREFLY%20WHO%20LOST%20HIS%20LIGHT\.mp4"', 'data-kids-src="video/THE%20LITTLE%20FIREFLY%20WHO%20LOST%20HIS%20LIGHT.mp4"', s)
-          s=re.sub(r'data-kids-src="[^"]*YOUNG%20LEARNERS\.mp4"', 'data-kids-src="video/YOUNG%20LEARNERS.mp4"', s)
-
-          # Featured film prewarm: same source, no early cut.
-          if 'sc-featured-film-prewarm' not in s:
-              block='''\n<script id="sc-featured-film-prewarm">\n(()=>{\n let filmWarmer=null;\n function warmFeaturedFilm(){\n  if(filmWarmer || typeof THEATER_FILM_SRC==='undefined' || !THEATER_FILM_SRC)return;\n  const v=document.createElement('video');v.preload='auto';v.muted=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('aria-hidden','true');\n  v.style.cssText='position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;opacity:0;pointer-events:none';\n  document.body.appendChild(v);v.src=THEATER_FILM_SRC;try{v.load()}catch(e){}filmWarmer=v;\n }\n const theaterPlay=document.getElementById('theaterPlay');if(theaterPlay)theaterPlay.addEventListener('click',warmFeaturedFilm,{once:true,capture:true});\n const theater=document.getElementById('screeningTheater');if(theater&&'MutationObserver' in window){const mo=new MutationObserver(()=>{if(theater.classList.contains('active')){warmFeaturedFilm();mo.disconnect()}});mo.observe(theater,{attributes:true,attributeFilter:['class']})}\n})();\n</script>\n'''
-              s=s.replace('</body>',block+'</body>',1)
-
-          p.write_text(s,encoding='utf-8')
-          PY
-      - name: Commit MASTER final
+      - name: Apply MASTER patch
+        run: node patches/ep-final-surgical-polish.js
+      - name: Commit MASTER patch
         run: |
           git config user.name "SoulCinema C.D."
           git config user.email "actions@users.noreply.github.com"
           git add public/index.html
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "MASTER FINAL LIVE: exact media and seamless theater cut"
+          git commit -m "MASTER FINAL LIVE: exact media and clean cut"
           git push origin HEAD:ep-final-preview-20260904
