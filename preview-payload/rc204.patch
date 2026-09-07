@@ -1,0 +1,478 @@
+--- public/index.html
++++ public/index.html
+@@ -2075,4 +2075,214 @@
+ </style>
+ 
++
++<style id="rc198-live-center-public-ui">
++/* RC198 — Live Center public-facing cleanup.
++   Operator controls remain in the engine/DOM but are not exposed to visitors. */
++#liveCenter #liveStandby,
++#liveCenter #liveCountdown,
++#liveCenter #liveEndBroadcast,
++#liveCenter #liveReplay,
++#liveCenter .live-route,
++#liveCenter .live-route-status,
++#liveCenter [data-live-control="standby"],
++#liveCenter [data-live-control="countdown"],
++#liveCenter [data-live-control="end"],
++#liveCenter [data-live-control="replay"]{
++  display:none!important;
++}
++
++#liveCenter #stateCountdown,#liveCenter #stateEnd,#liveCenter #liveRouteStatus{display:none!important;}
++
++/* Keep the public ON AIR indicator/control visually centered if it lives in the same row. */
++#liveCenter .live-controls,
++#liveCenter .live-actions{
++  justify-content:center!important;
++}
++</style>
++
++
++<style id="rc199-live-center-soulcinema-public">
++/* RC199 — Public Live Center speaks only SoulCinema. */
++body:not([data-live-mode="live"]) #liveCenter #stateLive{
++  display:none!important;
++}
++body[data-live-mode="live"] #liveCenter #stateLive{
++  display:inline-flex!important;
++}
++</style>
++
++
++<style id="rc200-live-center-cinematic-offair">
++/* RC200 — Cinematic public Live Center idle/off-air treatment. */
++#liveCenter #liveMain{
++  position:relative!important;
++  isolation:isolate;
++  background:
++    radial-gradient(circle at 50% 48%,rgba(217,183,96,.10),transparent 28%),
++    radial-gradient(circle at 50% 50%,rgba(255,238,180,.035),transparent 46%),
++    linear-gradient(180deg,#060504 0%,#020202 58%,#000 100%)!important;
++  box-shadow:
++    inset 0 0 120px rgba(0,0,0,.78),
++    inset 0 1px 0 rgba(255,240,190,.025);
++}
++#liveCenter #liveMain::before{
++  content:"";
++  position:absolute;
++  left:50%;top:50%;
++  width:min(320px,44vw);
++  aspect-ratio:1;
++  transform:translate(-50%,-50%);
++  border-radius:50%;
++  border:1px solid rgba(217,183,96,.10);
++  box-shadow:
++    0 0 70px rgba(217,183,96,.07),
++    inset 0 0 60px rgba(217,183,96,.035);
++  opacity:.85;
++  pointer-events:none;
++  animation:rc200LiveBreath 6s ease-in-out infinite;
++  z-index:0;
++}
++#liveCenter #liveMain::after{
++  content:"SC";
++  position:absolute;
++  left:50%;top:50%;
++  transform:translate(-50%,-55%);
++  width:88px;height:88px;
++  display:grid;place-items:center;
++  border-radius:50%;
++  border:1px solid rgba(217,183,96,.30);
++  color:rgba(236,205,119,.42);
++  font:400 24px Georgia,serif;
++  letter-spacing:.12em;
++  text-indent:.12em;
++  box-shadow:0 0 36px rgba(217,183,96,.08);
++  pointer-events:none;
++  z-index:0;
++}
++#liveCenter #liveCopy{
++  position:relative!important;
++  z-index:2!important;
++  max-width:680px!important;
++  margin:auto!important;
++  padding:48px 28px!important;
++  text-align:center!important;
++}
++#liveCenter #liveTitle{
++  font:400 clamp(30px,3.4vw,48px)/1.05 Georgia,serif!important;
++  color:#f8edcf!important;
++  letter-spacing:.025em!important;
++  text-shadow:0 12px 42px rgba(0,0,0,.85)!important;
++  margin:0 0 14px!important;
++}
++#liveCenter #liveSubtitle{
++  max-width:560px!important;
++  margin:0 auto!important;
++  color:rgba(255,248,229,.62)!important;
++  font-size:13px!important;
++  line-height:1.7!important;
++  letter-spacing:.025em!important;
++}
++#liveCenter #liveState{
++  box-shadow:0 0 28px rgba(217,183,96,.07)!important;
++}
++
++/* Public visitors never see operator controls in idle/off-air states. */
++body:not([data-live-mode="live"]) #liveCenter #liveControls{
++  display:none!important;
++}
++body[data-live-mode="live"] #liveCenter #liveControls{
++  display:flex!important;
++  justify-content:center!important;
++}
++body[data-live-mode="live"] #liveCenter #liveControls > *:not(#stateLive){
++  display:none!important;
++}
++
++@keyframes rc200LiveBreath{
++  0%,100%{transform:translate(-50%,-50%) scale(.98);opacity:.55}
++  50%{transform:translate(-50%,-50%) scale(1.035);opacity:.95}
++}
++</style>
++
++
++<style id="rc201-live-public-authority">
++/* RC201 — authoritative public Live Center state layer.
++   Internal controls/engine stay operational in DOM but are never exposed publicly. */
++
++#liveCenter #liveControls{
++  display:none!important;
++}
++
++/* public live player area */
++#liveCenter #liveMain{
++  position:relative!important;
++  isolation:isolate!important;
++}
++
++/* OFF AIR / ENDED cinematic background */
++body:not([data-live-mode="live"]) #liveCenter #liveMain{
++  background:
++    radial-gradient(circle at 50% 46%,rgba(217,183,96,.12),transparent 27%),
++    radial-gradient(circle at 50% 50%,rgba(255,238,180,.035),transparent 48%),
++    linear-gradient(180deg,#070604 0%,#020202 58%,#000 100%)!important;
++}
++
++/* remove public player surface when not live so stale/blank video cannot cover copy */
++body:not([data-live-mode="live"]) #liveCenter #livePlayer{
++  display:none!important;
++}
++
++/* show player only when truly live */
++body[data-live-mode="live"] #liveCenter #livePlayer{
++  display:block!important;
++  opacity:1!important;
++  visibility:visible!important;
++}
++
++/* Public status button: visual badge, not an operator button. */
++#liveCenter #publicLiveBadge{
++  display:none;
++  margin:18px auto 0;
++  width:max-content;
++  min-height:38px;
++  padding:11px 22px;
++  border:1px solid rgba(217,183,96,.55);
++  border-radius:999px;
++  color:#0b0903;
++  background:linear-gradient(180deg,#f0d57d,#d2ab4d);
++  font:700 10px Inter,Arial,sans-serif;
++  letter-spacing:.20em;
++  box-shadow:0 10px 28px rgba(217,183,96,.16);
++}
++body[data-live-mode="live"] #liveCenter #publicLiveBadge{
++  display:block;
++}
++
++/* No operator labels ever visible to public. */
++#liveCenter #stateStandby,
++#liveCenter #stateCountdown,
++#liveCenter #stateLive,
++#liveCenter #stateEnd,
++#liveCenter #stateReplay,
++#liveCenter #liveRouteStatus{
++  display:none!important;
++}
++</style>
++
++
++<style id="rc203-live-single-public-badge">
++/* RC203 — public LIVE state shows ONE SoulCinema badge only.
++   The real operator button stays hidden; engine behavior is untouched. */
++#liveCenter #stateLive{
++  display:none!important;
++}
++#liveCenter #publicLiveBadge{
++  display:none;
++}
++body[data-live-mode="live"] #liveCenter #publicLiveBadge{
++  display:block!important;
++}
++</style>
++
+ </head>
+ <body>
+@@ -2085,9 +2295,9 @@
+   <video id="lobbyVideo" class="media" muted loop playsinline preload="auto"><source src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/grand-lobby.mp4" type="video/mp4"></video>
+   <div class="veil"></div><div class="grain"></div><section id="liveCenter" class="scene" aria-label="SoulCinema Live Center"><div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 38%,#211a0b 0,#080808 42%,#000 78%)"></div><div class="grain"></div><div class="center"><div style="width:min(1100px,92vw);text-align:left"><div class="eyebrow">SC · SOULCINEMA LIVE</div><h2 style="font:400 clamp(38px,6vw,78px) Georgia,serif;margin:12px 0;color:#f2d783">LIVE CENTER</h2><div id="liveState" style="display:inline-block;border:1px solid rgba(217,183,96,.55);border-radius:999px;padding:10px 16px;color:#d9b760;letter-spacing:.22em;font-size:10px">OFF AIR · STANDBY</div><div style="margin-top:28px;border:1px solid rgba(217,183,96,.25);border-radius:24px;padding:30px;background:rgba(0,0,0,.55)"><div id="liveMain" style="width:100%;aspect-ratio:16/9;min-height:0;display:grid;place-items:center;text-align:center;overflow:hidden;border-radius:16px;position:relative">
+-  <div id="liveCopy"><div id="liveTitle" style="font:400 34px Georgia,serif">Broadcast signal ready.</div><p id="liveSubtitle" style="color:rgba(255,255,255,.62)">vMix → LiveLAN → SoulCinema web player</p><div id="countdown" style="font:400 52px Georgia,serif;color:#f2d783;display:none">00:10</div><div id="postLiveLine" aria-hidden="true"></div></div>
++  <div id="liveCopy"><div id="liveTitle" style="font:400 34px Georgia,serif">Live broadcast ended.</div><p id="liveSubtitle" style="color:rgba(255,255,255,.62)">SoulCinema Live Experience</p><div id="countdown" style="font:400 52px Georgia,serif;color:#f2d783;display:none">00:10</div><div id="postLiveLine" aria-hidden="true"></div></div>
+   <div id="livePlayerWrap" style="display:none;position:absolute;inset:6% 9%;background:#050505;border-radius:12px;overflow:hidden">
+     <video id="livePlayer" title="SoulCinema Live Feed" playsinline controls preload="auto" style="position:absolute;inset:0;width:100%;height:100%;border:0;background:#050505;object-fit:contain"></video>
+   </div>
+-</div><div id="liveControls" style="display:flex;gap:10px;flex-wrap:wrap"><button id="stateStandby">STANDBY</button><button id="stateCountdown">COUNTDOWN</button><button id="stateLive">ON AIR</button><button id="stateEnd" style="display:none">END BROADCAST</button><button id="stateReplay">REPLAY</button></div></div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px"><button id="returnLobby" class="ghost">← GRAND LOBBY</button><span id="liveRouteStatus" style="font-size:9px;letter-spacing:.18em;color:rgba(255,255,255,.45)">ROUTE: ONLINE · PLAYER: AWAITING FEED</span></div></div></div></section><div id="fade" class="fade-black"></div>
++</div><div id="publicLiveBadge" aria-hidden="true">● ON AIR · LIVE</div><div id="liveControls" style="display:flex;gap:10px;flex-wrap:wrap"><button id="stateStandby">STANDBY</button><button id="stateCountdown">COUNTDOWN</button><button id="stateLive">ON AIR</button><button id="stateEnd" style="display:none">END BROADCAST</button><button id="stateReplay">REPLAY</button></div></div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px"><button id="returnLobby" class="ghost">← GRAND LOBBY</button><span id="liveRouteStatus" style="font-size:9px;letter-spacing:.18em;color:rgba(255,255,255,.45)">ROUTE: ONLINE · PLAYER: AWAITING FEED</span></div></div></div></section><div id="fade" class="fade-black"></div>
+   <div class="hud">
+     <div class="topbar"><button id="back" class="icon-btn">← THE GATE</button><div class="brand">SC · SOULCINEMA</div><div class="status">MASTER LOCK 05 · RC-11.13.25</div></div>
+@@ -2544,5 +2754,54 @@
+  clearTimers();
+  const lobbyEl=$('#lobby'),liveEl=$('#liveCenter');
+- const enter=()=>{setLiveMode('standby');SceneManager.goTo('live');scene(lobbyEl,liveEl)};
++ const enter=()=>{
++   SceneManager.goTo('live');
++   scene(lobbyEl,liveEl);
++
++   /* RC202: do NOT force STANDBY on room entry.
++      Probe the actual SoulCinema live feed. If media really starts playing,
++      the room promotes itself to LIVE. If not, it stays cinematic OFF AIR. */
++   const video=$('#livePlayer');
++   let promoted=false;
++   const promote=()=>{
++     if(promoted)return;
++     promoted=true;
++     setLiveMode('live');
++   };
++   const stayOffAir=()=>{
++     if(promoted)return;
++     setLiveMode('standby');
++   };
++
++   if(!video){stayOffAir();return;}
++
++   video.addEventListener('playing',promote,{once:true});
++   video.addEventListener('canplay',()=>{
++     if(!video.paused && video.readyState>=2)promote();
++   },{once:true});
++
++   ensureLiveFeed();
++   liveFeedArmed=true;
++   video.muted=false;
++   const p=video.play();
++   if(p&&p.then){
++     p.then(()=>{
++       if(video.readyState>=2)promote();
++     }).catch(()=>{
++       video.muted=true;
++       const retry=video.play();
++       if(retry&&retry.then){
++         retry.then(()=>{
++           if(video.readyState>=2)promote();
++         }).catch(()=>stayOffAir());
++       }else stayOffAir();
++     });
++   }
++
++   /* If no real playable feed arrives, remain OFF AIR.
++      A later `playing` event can still promote automatically. */
++   setTimeout(()=>{
++     if(!promoted)stayOffAir();
++   },1800);
++ };
+  if(!lobbyEl||!liveEl)return;
+  if(typeof journeyTransition==='function')journeyTransition('LIVE CENTER','ENTERING ROOM','BROADCAST EXPERIENCE',enter);else enter();
+@@ -2586,4 +2845,27 @@
+  if(video.paused){const p=video.play();if(p&&p.catch)p.catch(()=>{})}
+ }
++/* RC202 — automatic public LIVE promotion from real media state. */
++(function(){
++ const video=$('#livePlayer');
++ if(!video)return;
++ video.addEventListener('playing',()=>{
++   const room=$('#liveCenter');
++   if(room&&room.classList.contains('active')&&document.body.dataset.liveMode!=='live'){
++     setLiveMode('live');
++   }
++ });
++ video.addEventListener('stalled',()=>{
++   /* Do not instantly drop LIVE on a transient stall. */
++ });
++ video.addEventListener('error',()=>{
++   const room=$('#liveCenter');
++   if(room&&room.classList.contains('active')){
++     setTimeout(()=>{
++       if(video.paused||video.readyState<2)setLiveMode('standby');
++     },1200);
++   }
++ });
++})();
++
+ function unmountLivePlayer(){
+  const wrap=$('#livePlayerWrap'),copy=$('#liveCopy');if(!wrap)return;wrap.style.display='none';copy.style.display='block';
+@@ -2591,5 +2873,5 @@
+ 
+ const liveModeCopy={
+- standby:{badge:'OFF AIR · STANDBY',title:'Broadcast signal ready.',subtitle:'vMix → LiveLAN → SoulCinema web player',route:'ROUTE: ONLINE · PLAYER: AWAITING FEED'},
++ standby:{badge:'OFF AIR · STANDBY',title:'Live broadcast ended.',subtitle:'SoulCinema Live Experience',route:'ROUTE: ONLINE · PLAYER: AWAITING FEED'},
+  countdown:{badge:'UP NEXT · COUNTDOWN',title:'Broadcast begins shortly.',subtitle:'The room will switch to ON AIR automatically.',route:'ROUTE: ONLINE · COUNTDOWN ACTIVE'},
+  live:{badge:'● ON AIR · LIVE',title:'LIVE PROGRAM',subtitle:'Private rehearsal feed connected.',route:'ROUTE: ONLINE · LIVELAN FEED ACTIVE'},
+@@ -2635,5 +2917,64 @@
+  bind('#returnLobby',()=>{if(liveCountdownTimer){clearInterval(liveCountdownTimer);liveCountdownTimer=null}const liveEl=$('#liveCenter'),lobbyEl=$('#lobby');journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{SceneManager.goTo('lobby');scene(liveEl,lobbyEl);setTimeout(showPortals,520)})});
+ }
++
+ bindLiveControls();
++
++/* RC199 — public-facing SoulCinema-only copy.
++   Internal broadcast routing remains untouched; visitors never see vendor/transport names. */
++(function(){
++  const badge=document.getElementById('liveState');
++  const title=document.getElementById('liveTitle');
++  const subtitle=document.getElementById('liveSubtitle');
++  const liveBtn=document.getElementById('stateLive');
++
++  const applyPublicLiveCopy=()=>{
++    const mode=document.body.dataset.liveMode||'standby';
++
++    if(mode==='live'){
++      if(badge)badge.textContent='● ON AIR · LIVE';
++      if(title && !title.textContent.trim())title.textContent='SOULCINEMA LIVE';
++      if(subtitle && !subtitle.textContent.trim())subtitle.textContent='A SoulCinema live experience.';
++      if(liveBtn)liveBtn.style.display='inline-flex';
++      return;
++    }
++
++    if(mode==='ended'){
++      if(badge)badge.textContent='OFF AIR';
++      if(title)title.textContent='LIVE BROADCAST ENDED';
++      if(subtitle)subtitle.textContent='Thank you for watching. Stay with SoulCinema for the next live experience.';
++      if(liveBtn)liveBtn.style.display='none';
++      return;
++    }
++
++    if(mode==='replay'){
++      if(badge)badge.textContent='SOULCINEMA · REPLAY';
++      if(title)title.textContent='SoulCinema Replay';
++      if(subtitle)subtitle.textContent='Watch the latest SoulCinema live experience.';
++      if(liveBtn)liveBtn.style.display='none';
++      return;
++    }
++
++    if(mode==='countdown'){
++      if(badge)badge.textContent='SOULCINEMA · STARTING SOON';
++      if(title)title.textContent='The live experience is about to begin.';
++      if(subtitle)subtitle.textContent='Stay with SoulCinema.';
++      if(liveBtn)liveBtn.style.display='none';
++      return;
++    }
++
++    /* standby / preparing / any other non-live public state */
++    if(badge)badge.textContent='SOULCINEMA · OFF AIR';
++    if(title)title.textContent='THE LIVE ROOM IS QUIET';
++    if(subtitle)subtitle.textContent='The next SoulCinema live experience will begin here.';
++    if(liveBtn)liveBtn.style.display='none';
++  };
++
++  new MutationObserver(applyPublicLiveCopy).observe(document.body,{
++    attributes:true,
++    attributeFilter:['data-live-mode']
++  });
++  applyPublicLiveCopy();
++})();
++
+ 
+ // RC11.13.26 — Live Center hard-route recovery.
+@@ -4377,4 +4718,92 @@
+ </script>
+ 
++
++<script id="rc201-live-public-renderer">
++(()=>{
++  const body=document.body;
++  const badge=document.getElementById('liveState');
++  const title=document.getElementById('liveTitle');
++  const subtitle=document.getElementById('liveSubtitle');
++  const publicBadge=document.getElementById('publicLiveBadge');
++  if(!body||!badge||!title||!subtitle)return;
++
++  const render=()=>{
++    const mode=body.dataset.liveMode||'standby';
++
++    if(publicBadge) publicBadge.setAttribute('aria-hidden', mode==='live'?'false':'true');
++
++    if(mode==='live'){
++      badge.textContent='● ON AIR · LIVE';
++      title.textContent='SOULCINEMA LIVE';
++      subtitle.textContent='You are watching a SoulCinema live experience.';
++      return;
++    }
++
++    if(mode==='ended'){
++      badge.textContent='SOULCINEMA · OFF AIR';
++      title.textContent='LIVE BROADCAST ENDED';
++      subtitle.textContent='Thank you for watching. Stay with SoulCinema for the next live experience.';
++      return;
++    }
++
++    if(mode==='countdown'){
++      badge.textContent='SOULCINEMA · STARTING SOON';
++      title.textContent='THE LIVE EXPERIENCE IS ABOUT TO BEGIN';
++      subtitle.textContent='Stay with SoulCinema.';
++      return;
++    }
++
++    if(mode==='replay'){
++      badge.textContent='SOULCINEMA · REPLAY';
++      title.textContent='SOULCINEMA REPLAY';
++      subtitle.textContent='Watch the latest SoulCinema live experience.';
++      return;
++    }
++
++    // standby / preparing / unknown
++    badge.textContent='SOULCINEMA · OFF AIR';
++    title.textContent='THE LIVE ROOM IS QUIET';
++    subtitle.textContent='The next SoulCinema live experience will begin here.';
++  };
++
++  new MutationObserver(render).observe(body,{
++    attributes:true,
++    attributeFilter:['data-live-mode']
++  });
++  window.addEventListener('load',render,{once:true});
++  render();
++})();
++</script>
++
++
++<style id="rc204-live-controls-final-lock">
++/* RC204 — final public lock.
++   Later legacy/mobile CSS was re-showing the operator control row with !important.
++   This rule is intentionally last + higher specificity. */
++html body #liveCenter #liveControls,
++html body[data-live-mode="live"] #liveCenter #liveControls,
++html body:not([data-live-mode="live"]) #liveCenter #liveControls{
++  display:none!important;
++  visibility:hidden!important;
++  opacity:0!important;
++  pointer-events:none!important;
++  height:0!important;
++  min-height:0!important;
++  margin:0!important;
++  padding:0!important;
++  overflow:hidden!important;
++}
++
++/* The separate public badge is the ONLY live indicator under the player. */
++html body #liveCenter #publicLiveBadge{
++  display:none!important;
++}
++html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
++  display:block!important;
++  visibility:visible!important;
++  opacity:1!important;
++}
++</style>
++
+ </body></html>
+ 
