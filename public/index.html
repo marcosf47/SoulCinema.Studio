@@ -714,7 +714,7 @@ button{font-size:10.5px}
 
 <style id="rc111339-room307-premiere-polish">
 /* RC11.13.39 — forward-only content recovery + Room 307 premiere polish. */
-.collection-card.room307-card{position:relative;overflow:hidden;isolation:isolate;border-color:rgba(217,183,96,.68);background:linear-gradient(90deg,rgba(0,0,0,.88),rgba(0,0,0,.58)),url('https://soulcinema-music-discovery-dr3t2fv45-soul-cinema-studio.vercel.app/public/posters/room-307-episode-01-the-envelope.png') center 28%/cover no-repeat;box-shadow:inset 0 0 0 1px rgba(255,231,158,.08),0 12px 34px rgba(0,0,0,.34)}
+.collection-card.room307-card{position:relative;overflow:hidden;isolation:isolate;border-color:rgba(217,183,96,.68);background:linear-gradient(90deg,rgba(0,0,0,.88),rgba(0,0,0,.58)),url('../public/posters/room-307-episode-01-the-envelope.png') center 28%/cover no-repeat;box-shadow:inset 0 0 0 1px rgba(255,231,158,.08),0 12px 34px rgba(0,0,0,.34)}
 .collection-card.room307-card small,.collection-card.room307-card strong{position:relative;z-index:2;text-shadow:0 3px 16px #000}
 .collection-card.room307-card:hover,.collection-card.room307-card:focus-visible{border-color:#f2d783;box-shadow:0 16px 42px rgba(0,0,0,.48),0 0 30px rgba(217,183,96,.14)}
 /* RC11.13.47A — Room 307 hover contrast parity. */
@@ -1080,8 +1080,8 @@ body.gate-lobby-fluid #lobby.active .media{
 #kidsAnimationFolder .kids-collection-slider{display:none!important}
 #kidsAnimationFolder .kids-folder-shell{max-height:none!important;overflow:hidden!important;scrollbar-gutter:auto!important}
 #kidsAnimationFolder .kids-folder-grid{
-  max-height:190px!important;
-  overflow-y:scroll!important;
+  max-height:none!important;
+  overflow-y:visible!important;
   overflow-x:hidden!important;
   padding-right:8px!important;
   scrollbar-width:thin;
@@ -1091,7 +1091,7 @@ body.gate-lobby-fluid #lobby.active .media{
 #kidsAnimationFolder .kids-folder-grid::-webkit-scrollbar-track{background:rgba(255,255,255,.05);border-radius:999px}
 #kidsAnimationFolder .kids-folder-grid::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#f0d47c,#9d742a);border-radius:999px;border:2px solid rgba(8,6,2,.78)}
 #kidsAnimationFolder .kids-folder-grid::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#ffe89a,#bc8c35)}
-@media(max-height:760px){#kidsAnimationFolder .kids-folder-grid{max-height:170px!important}}
+@media(max-height:760px){#kidsAnimationFolder .kids-folder-grid{max-height:none!important;overflow-y:visible!important}}
 </style>
 
 
@@ -1921,7 +1921,101 @@ body.gate-lobby-fluid #lobby.active .media{
 #featuredTheaterBtn:hover::before,
 #featuredTheaterBtn:focus-visible::before{opacity:1!important}
 </style>
-<!-- RC170 FIRST LIVE TEST: YOUNG LEARNERS TEMPORARILY REMOVED; THEATER OPENING USES HOSTED FALLBACK -->
+
+<style id="sc-final-footer-clean">
+.production-note,.story-note{display:none!important}
+</style>
+
+<style id="rc171-mobile-live-stability">
+/* RC171 — LIVE MOBILE STABILITY / READABILITY. Mobile only. Desktop remains frozen. */
+@media (max-width:700px){
+  html,body{max-width:100vw!important;overflow-x:hidden!important}
+  .scene,.scene .center{max-width:100vw!important}
+
+  /* Lobby: keep sound control clean during cinematic act, remove it from portal menu where it collides. */
+  #lobby:has(#portals.show) .audio{display:none!important}
+  #lobby #portals{overflow-x:hidden!important}
+  #lobby #portals .portal-shell{max-width:100%!important;overflow-x:hidden!important}
+  #lobby #portals .portal{min-width:0!important}
+  #lobby #portals .portal strong{font-size:15.5px!important;line-height:1.15!important}
+  #lobby #portals .portal span{font-size:8.5px!important;line-height:1.25!important}
+
+  /* Live Center: prevent title and stage from feeling oversized on narrow phones. */
+  #liveCenter h2{font-size:clamp(42px,12vw,56px)!important;line-height:.94!important;letter-spacing:.01em!important;white-space:normal!important}
+  #liveCenter .eyebrow{font-size:9px!important;letter-spacing:.25em!important}
+  #liveCenter #liveTitle{font-size:clamp(28px,8.5vw,36px)!important;line-height:1.08!important}
+  #liveCenter #liveSubtitle{font-size:14px!important;line-height:1.5!important}
+
+  /* Story Room: hard containment + readable mobile typography. */
+  #storyRoom .center{width:100%!important;max-width:100vw!important;overflow-x:hidden!important;padding:8px 10px max(16px,env(safe-area-inset-bottom))!important}
+  #storyRoom .story-shell{width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:14px!important;overflow-x:hidden!important;border-radius:18px!important}
+  #storyRoom .story-head,#storyRoom .story-stage,#storyRoom .story-editorial,#storyRoom .story-hero,#storyRoom .story-chapters,#storyRoom .story-footer{width:100%!important;max-width:100%!important;min-width:0!important}
+  #storyRoom .story-stage{display:grid!important;grid-template-columns:minmax(0,1fr)!important}
+  #storyRoom .story-stage>*{min-width:0!important;max-width:100%!important}
+  #storyRoom .story-head h2{font-size:clamp(36px,10.5vw,46px)!important;line-height:.96!important;overflow-wrap:anywhere!important}
+  #storyRoom .story-editorial{padding:22px 16px!important;min-height:0!important}
+  #storyRoom .story-editorial h3{font-size:clamp(28px,8vw,35px)!important;line-height:1.08!important;max-width:100%!important;white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal!important}
+  #storyRoom .story-editorial p{font-size:15px!important;line-height:1.6!important;max-width:100%!important;white-space:normal!important;overflow-wrap:anywhere!important}
+  #storyRoom .story-hero{min-height:300px!important;aspect-ratio:4/5!important}
+  #storyRoom .story-chapters{grid-template-columns:1fr!important;grid-template-rows:none!important}
+  #storyRoom .story-chapter{width:100%!important;min-width:0!important;grid-template-columns:38px minmax(0,1fr) auto!important}
+  #storyRoom .story-chapter strong{font-size:18px!important}
+  #storyRoom .story-chapter span{font-size:11px!important;line-height:1.4!important}
+  #storyRoom .story-footer{grid-template-columns:1fr!important}
+  #storyRoom .story-signature{display:none!important}
+  #storyRoom #storyReturn{width:100%!important;min-width:0!important}
+}
+@media (max-width:430px){
+  #lobby #portals .portal-shell{grid-template-columns:1fr!important}
+  #lobby #portals .portal,#lobby #portals .portal.featured,#lobby #portals .portal[data-room="Visual Bible"]{min-height:92px!important;padding:24px 14px 13px!important}
+  #lobby #portals .studio-utility-nav{grid-template-columns:1fr!important}
+  #liveCenter h2{font-size:44px!important}
+}
+</style>
+
+<style id="rc183-kids-autoplay-curtain-css">
+#kidsAutoCurtain{
+  position:absolute;inset:0;z-index:58;
+  display:grid;place-items:center;
+  opacity:0;visibility:hidden;pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 45%,rgba(217,183,96,.10),transparent 34%),
+    linear-gradient(180deg,#050402,#000);
+  transition:opacity .16s ease,visibility .16s ease;
+}
+#kidsAutoCurtain.is-on{opacity:1;visibility:visible}
+#kidsAutoCurtain .rc183-mark{
+  font:400 13px Georgia,serif;
+  letter-spacing:.28em;
+  color:#e7cb78;
+  text-shadow:0 0 26px rgba(217,183,96,.28);
+}
+</style>
+
+<style id="rc196-theater-kids-master-css">
+/* Geometry is intentionally untouched. */
+#kidsWarmupPlayer{
+  position:fixed!important;
+  left:-2px!important;top:-2px!important;
+  width:1px!important;height:1px!important;
+  opacity:0!important;visibility:hidden!important;
+  pointer-events:none!important;
+}
+#screeningTheater.kids-film-active #theaterPlayer{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+  transform:none!important;
+}
+#kidsAutoCurtain,#kidsAutoCurtain.is-on{
+  display:none!important;
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+</style>
+
 </head>
 <body>
 <section id="gate" class="scene active" aria-label="The Gate">
@@ -2031,7 +2125,7 @@ body.gate-lobby-fluid #lobby.active .media{
         <button id="productionRevealClose" class="production-reveal-close" type="button">← RETURN TO PRODUCTION ROOM</button>
       </div>
     </div>
-    <footer class="production-footer"><button id="productionReturn" class="ghost return">← GRAND LOBBY</button><div class="production-signature"><small>SOULCINEMA PRODUCTION</small><strong>THE STORY BEHIND THE STORY</strong></div><div class="production-note"></div></footer>
+    <footer class="production-footer"><button id="productionReturn" class="ghost return">← GRAND LOBBY</button><div class="production-signature"><small>SOULCINEMA PRODUCTION</small><strong>THE STORY BEHIND THE STORY</strong></div><div class="production-note">ATELIER EXPERIENCE · RC11.13.38</div></footer>
   </div></div>
 </section>
 
@@ -2063,7 +2157,7 @@ body.gate-lobby-fluid #lobby.active .media{
         <div class="story-reveal-bottom"><span>♡ &nbsp; SOULCINEMA.STUDIO<br><small>CINEMATIC DIGITAL STUDIO</small></span><b>SC</b><span>BUILT WITH SOUL<br><small>MADE FOR IMMORTAL STORIES</small></span></div>
       </div>
     </div>
-    <footer class="story-footer"><button id="storyReturn" class="ghost return">← GRAND LOBBY</button><div class="story-signature"><small>SOULCINEMA STORIES</small><strong>EVERY HEART HIDES A STORY</strong></div><div class="story-note"></div></footer>
+    <footer class="story-footer"><button id="storyReturn" class="ghost return">← GRAND LOBBY</button><div class="story-signature"><small>SOULCINEMA STORIES</small><strong>EVERY HEART HIDES A STORY</strong></div><div class="story-note">STORY EXPERIENCE · RC11.11.1</div></footer>
   </div></div>
 </section>
 
@@ -2180,16 +2274,19 @@ body.gate-lobby-fluid #lobby.active .media{
     <header class="theater-head"><div><div class="eyebrow">SC · PRIVATE SCREENING</div><h2>SCREENING THEATER</h2></div><div class="theater-meta">PREMIERE 01 · SOULCINEMA ORIGINAL<br>EVERY HEART HIDES A STORY</div></header>
     <div class="theater-screen-frame"><div class="theater-screen">
       <video id="theaterPlayer" playsinline preload="metadata" controls><source src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/featured-premiere.mp4" type="video/mp4"></video>
+      <video id="kidsWarmupPlayer" muted playsinline preload="auto" aria-hidden="true"></video>
       <div id="theaterPoster" class="theater-poster"><div class="theater-poster-copy"><small>NOW PREMIERING</small><h3>MWEN POUKONT MWEN</h3><p>The first SoulCinema music film. A private cinematic presentation built for the story, not the feed.</p><button id="theaterPlay" class="theater-play" aria-label="Play premiere">▶</button></div></div>
       <div id="theaterStatus" class="theater-status">PREMIERE READY</div>
+      <div id="kidsAutoCurtain" aria-hidden="true"></div>
       <div id="kidsAnimationFolder" aria-hidden="true">
         <div class="kids-folder-shell" role="dialog" aria-modal="true" aria-labelledby="kidsFolderTitle">
           <div class="kids-folder-head"><div><small>SOULCINEMA COLLECTION · KIDS</small><strong id="kidsFolderTitle">KIDS · ANIMATION</strong></div><div class="kids-folder-controls"><button id="kidsAutoPlay" class="ghost kids-autoplay" type="button" aria-pressed="false">AUTO PLAY · OFF</button><button id="kidsFolderClose" class="ghost kids-folder-close" type="button">✕ CLOSE</button></div></div>
           <div class="kids-folder-grid">
             <button class="kids-title-card" type="button" data-kids-src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/collection-family-02.mp4" data-kids-title="ANIMATED EXPERIENCE 02"><small>ORIGINAL COLLECTION</small><strong>Animated Experience 02</strong><span>PLAY FILM →</span></button>
-            <button class="kids-title-card" type="button" data-kids-src="https://soulcinema-music-discovery-dr3t2fv45-soul-cinema-studio.vercel.app/video/THE%20LITTLE%20TIGER%20WHO%20COULDN%27T%20ROAR.mp4" data-kids-title="THE LITTLE TIGER WHO COULDN’T ROAR"><small>SOULCINEMA KIDS · ANIMATION</small><strong>The Little Tiger Who Couldn’t Roar</strong><span>PLAY FILM →</span></button>
-            <button class="kids-title-card" type="button" data-kids-src="https://soulcinema-music-discovery-dr3t2fv45-soul-cinema-studio.vercel.app/video/THE%20LITTLE%20CLOUD%20WHO%20WAS%20AFRAID%20TO%20RAIN.mp4" data-kids-title="THE LITTLE CLOUD WHO WAS AFRAID TO RAIN"><small>SOULCINEMA KIDS · ANIMATION</small><strong>The Little Cloud Who Was Afraid to Rain</strong><span>PLAY FILM →</span></button>
-            <button class="kids-title-card" type="button" data-kids-src="https://soulcinema-music-discovery-dr3t2fv45-soul-cinema-studio.vercel.app/video/THE%20LITTLE%20FIREFLY%20WHO%20LOST%20HIS%20LIGHT.mp4" data-kids-title="THE LITTLE FIREFLY WHO LOST HIS LIGHT"><small>SOULCINEMA KIDS · ANIMATION</small><strong>The Little Firefly Who Lost His Light</strong><span>PLAY FILM →</span></button>
+            <button class="kids-title-card" type="button" data-kids-src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/THE%20LITTLE%20TIGER%20WHO%20COULDN%27T%20ROAR.mp4" data-kids-title="THE LITTLE TIGER WHO COULDN’T ROAR" data-kids-volume="0.60"><small>SOULCINEMA KIDS · ANIMATION</small><strong>The Little Tiger Who Couldn’t Roar</strong><span>PLAY FILM →</span></button>
+            <button class="kids-title-card" type="button" data-kids-src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/THE%20LITTLE%20CLOUD%20WHO%20WAS%20AFRAID%20TO%20RAIN.mp4" data-kids-title="THE LITTLE CLOUD WHO WAS AFRAID TO RAIN"><small>SOULCINEMA KIDS · ANIMATION</small><strong>The Little Cloud Who Was Afraid to Rain</strong><span>PLAY FILM →</span></button>
+            <button class="kids-title-card" type="button" data-kids-src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/THE%20LITTLE%20FIREFLY%20WHO%20LOST%20HIS%20LIGHT.mp4" data-kids-title="THE LITTLE FIREFLY WHO LOST HIS LIGHT"><small>SOULCINEMA KIDS · ANIMATION</small><strong>The Little Firefly Who Lost His Light</strong><span>PLAY FILM →</span></button>
+            <button class="kids-title-card" type="button" data-kids-src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/YOUNG%20LEARNERS.mp4" data-kids-title="YOUNG LEARNERS" style="grid-column:1/-1"><small>SOULCINEMA KIDS · ANIMATION</small><strong>Young Learners</strong><span>PLAY FILM →</span></button>
           </div>
         </div>
       </div>
@@ -2364,20 +2461,15 @@ function openTheater(){
 const THEATER_OPENING_SRC='https://tfamln4qsost6j00.public.blob.vercel-storage.com/featured-premiere.mp4';
 const THEATER_FILM_SRC='https://tfamln4qsost6j00.public.blob.vercel-storage.com/mwen-poukont-mwen-film.mp4';
 let theaterStage='opening',theaterHandoffBusy=false;
-let theaterFilmWarmer=null;
-function warmTheaterFilm(){
- if(theaterFilmWarmer)return;
- try{const w=document.createElement('video');w.preload='auto';w.muted=true;w.playsInline=true;w.src=THEATER_FILM_SRC;w.style.display='none';document.body.appendChild(w);w.load();theaterFilmWarmer=w}catch(e){}
-}
 function loadTheaterStage(stage,autoplay=false){const v=$('#theaterPlayer');if(!v)return;theaterStage=stage;const src=stage==='film'?THEATER_FILM_SRC:THEATER_OPENING_SRC;v.dataset.scStage=stage;if(v.src!==src)v.src=src;v.preload='auto';v.load();if(autoplay){const p=v.play();if(p&&p.catch)p.catch(()=>{v.muted=true;v.play().catch(()=>{})})}}
 function playTheater(){
  const v=$('#theaterPlayer'),p=$('#theaterPoster');if(!v)return;
  theaterHandoffBusy=false;v.classList.remove('theater-handoff','theater-portal-push','theater-feature-enter');
  const revealVideo=()=>{if(p)p.classList.add('hidden');v.removeEventListener('playing',revealVideo)};
  v.addEventListener('playing',revealVideo);
- if(v.dataset.scStage!=='opening')primeTheaterOpening();else try{v.currentTime=0}catch(e){}
+ primeTheaterOpening();
  v.muted=false;const play=v.play();if(play&&play.catch)play.catch(()=>{v.muted=true;v.play().catch(()=>{})});
- $('#theaterStatus').textContent='● PREMIERE OPENING';warmTheaterFilm()
+ $('#theaterStatus').textContent='● PREMIERE OPENING'
 }
 function handoffToFeature(){const v=$('#theaterPlayer');if(!v||theaterHandoffBusy)return;theaterHandoffBusy=true;$('#theaterStatus').textContent='ENTERING THE STORY';v.classList.remove('theater-handoff','theater-portal-push','theater-feature-enter');loadTheaterStage('film',true);void v.offsetWidth;v.classList.add('theater-feature-enter');$('#theaterStatus').textContent='● NOW PLAYING · MWEN POUKONT MWEN';setTimeout(()=>v.classList.remove('theater-feature-enter'),900);theaterHandoffBusy=false}
 function returnFromTheater(){const v=$('#theaterPlayer');if(v)v.pause();journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{SceneManager.goTo('lobby');scene(screeningTheater,lobby);setTimeout(showPortals,520)})}
@@ -2686,8 +2778,8 @@ function closeJournalReveal(){journalReveal.classList.remove('open');journalReve
 $$('[data-journal]').forEach(el=>el.onclick=()=>{const d=journalCopy[el.dataset.journal];journalRevealEyebrow.textContent=d[0];journalRevealTitle.textContent=d[1];journalRevealText.textContent=d[2];journalReveal.classList.add('open');journalReveal.setAttribute('aria-hidden','false')});
 $('#journalRevealClose').onclick=closeJournalReveal;journalReveal.onclick=e=>{if(e.target===journalReveal)closeJournalReveal()};
 $$('[data-missing="true"]').forEach(card=>card.onclick=()=>{$('#theaterStatus').textContent='MEDIA RECOVERY PENDING · '+card.querySelector('strong').textContent.toUpperCase()});
-$$('[data-content-src]').forEach(card=>{card.setAttribute('aria-pressed','false');card.onclick=()=>{const v=$('#theaterPlayer'),p=$('#theaterPoster'),title=card.dataset.contentTitle||'SOULCINEMA COLLECTION';if(!v)return;$$('.collection-card').forEach(c=>{c.classList.remove('is-current');c.setAttribute('aria-pressed','false')});card.classList.add('is-current');card.setAttribute('aria-pressed','true');theaterHandoffBusy=false;theaterStage='collection';v.pause();v.src=card.dataset.contentSrc;v.load();if(p)p.classList.add('hidden');$('#theaterCurrentTitle').textContent=title;$('#theaterStatus').textContent='● NOW PLAYING · '+title;v.muted=false;const play=v.play();if(play&&play.catch)play.catch(()=>{v.muted=true;v.play().catch(()=>{})})}});
-$('#theaterPlay').onclick=playTheater;$('#theaterReturn').onclick=returnFromTheater;$('#theaterBackHome').onclick=backToTheaterHome;$('#theaterSound').onclick=()=>{const v=$('#theaterPlayer');if(!v)return;v.muted=!v.muted;$('#theaterSound').textContent=v.muted?'SOUND OFF':'SOUND ON'};$('#theaterPlayer').addEventListener('ended',()=>{if(theaterStage==='opening'){handoffToFeature();return}$('#theaterStatus').textContent='PREMIERE COMPLETE';$('#theaterPoster').classList.remove('hidden')});
+$$('[data-content-src]').forEach(card=>{card.setAttribute('aria-pressed','false');card.onclick=()=>{const v=$('#theaterPlayer'),p=$('#theaterPoster'),title=card.dataset.contentTitle||'SOULCINEMA COLLECTION';if(!v)return;$$('.collection-card').forEach(c=>{c.classList.remove('is-current');c.setAttribute('aria-pressed','false')});card.classList.add('is-current');card.setAttribute('aria-pressed','true');theaterHandoffBusy=false;theaterStage='collection';screeningTheater.classList.remove('kids-film-active');v.pause();v.classList.remove('theater-handoff','theater-portal-push','theater-feature-enter');if(p)p.classList.add('hidden');v.removeAttribute('src');v.preload='auto';v.playsInline=true;v.setAttribute('playsinline','');v.src=card.dataset.contentSrc;v.load();$('#theaterCurrentTitle').textContent=title;$('#theaterStatus').textContent='LOADING · '+title;v.muted=false;v.volume=1;const start=()=>{v.removeEventListener('loadeddata',start);v.removeEventListener('canplay',start);const play=v.play();if(play&&play.then)play.then(()=>{$('#theaterStatus').textContent='● NOW PLAYING · '+title}).catch(()=>{v.muted=true;v.play().then(()=>{$('#theaterStatus').textContent='● NOW PLAYING · '+title}).catch(()=>{$('#theaterStatus').textContent='PRESS PLAY · '+title})})};v.addEventListener('loadeddata',start,{once:true});v.addEventListener('canplay',start,{once:true});if(v.readyState>=2)start()}});
+$('#theaterPlay').onclick=playTheater;$('#theaterReturn').onclick=returnFromTheater;$('#theaterBackHome').onclick=backToTheaterHome;$('#theaterSound').onclick=()=>{const v=$('#theaterPlayer');if(!v)return;v.muted=!v.muted;$('#theaterSound').textContent=v.muted?'SOUND OFF':'SOUND ON'};$('#theaterPlayer').addEventListener('ended',()=>{if(theaterStage==='opening'){handoffToFeature();return}if(theaterStage==='collection'){return}$('#theaterStatus').textContent='PREMIERE COMPLETE';$('#theaterPoster').classList.remove('hidden')});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&lobby.classList.contains('active'))$('#back').click();if(e.key.toLowerCase()==='s'&&lobby.classList.contains('active'))$('#audioBtn').click();if(e.key==='Enter'&&gate.classList.contains('active'))enter()});
 
 const musicPlayer=$('#musicPlayer');
@@ -2884,11 +2976,18 @@ html.rc103-portal-cursor,html.rc103-portal-cursor *{cursor:pointer!important}
     player.pause();
     player.removeAttribute('src');
     player.muted=false;
-    player.volume=1;
+    player.volume=(Number(btn.dataset.kidsVolume)||1);
+    player.preload='metadata';
+    player.playsInline=true;
+    player.setAttribute('playsinline','');
     player.src=src;
     if(poster)poster.classList.add('hidden');
     if(titleLine)titleLine.textContent=btn.dataset.kidsTitle||'KIDS · ANIMATION';
     if(status)status.textContent='LOADING · '+(btn.dataset.kidsTitle||'KIDS · ANIMATION');
+    /* RC180: seamless handoff — NEVER expose the empty/gray video surface.
+       Keep the Kids collection cover on top while the selected Blob primes.
+       Close the cover only after playback has actually started. */
+    player.controls=true;
 
     let settled=false;
     const cleanup=()=>{
@@ -2902,18 +3001,41 @@ html.rc103-portal-cursor,html.rc103-portal-cursor *{cursor:pointer!important}
       if(p&&p.then){
         p.then(()=>{
           settled=true; cleanup();
-          player.muted=false; player.volume=1;
-          closeFolder();
+          player.muted=false; player.volume=(Number(btn.dataset.kidsVolume)||1);
           if(status)status.textContent='● NOW PLAYING · '+(btn.dataset.kidsTitle||'KIDS · ANIMATION');
+
+          /* RC181 — TRUE FIRST-FRAME CUT.
+             play() resolving does NOT guarantee a decoded frame has been painted.
+             Keep the Kids cover visible until the browser confirms an actual video frame. */
+          const revealAfterRealFrame=()=>{
+            if(typeof player.requestVideoFrameCallback==='function'){
+              player.requestVideoFrameCallback(()=>{
+                requestAnimationFrame(()=>{
+                  const curtain=document.getElementById('kidsAutoCurtain');
+                  if(curtain){curtain.classList.remove('is-on');curtain.setAttribute('aria-hidden','true');}
+                  closeFolder();
+                });
+              });
+              return;
+            }
+            const finish=()=>requestAnimationFrame(()=>requestAnimationFrame(()=>{
+              const curtain=document.getElementById('kidsAutoCurtain');
+              if(curtain){curtain.classList.remove('is-on');curtain.setAttribute('aria-hidden','true');}
+              closeFolder();
+            }));
+            if(player.readyState>=2){ finish(); }
+            else player.addEventListener('loadeddata',finish,{once:true});
+          };
+          revealAfterRealFrame();
         }).catch(()=>{
           /* Never silently mute a film. Keep audio enabled and wait for another media-ready event. */
-          player.muted=false; player.volume=1;
+          player.muted=false; player.volume=(Number(btn.dataset.kidsVolume)||1);
           if(status)status.textContent='PRESS PLAY · '+(btn.dataset.kidsTitle||'KIDS · ANIMATION');
         });
       }
     };
     const onReady=()=>start();
-    const onMeta=()=>{ player.muted=false; player.volume=1; start(); };
+    const onMeta=()=>{ player.muted=false; player.volume=(Number(btn.dataset.kidsVolume)||1); start(); };
     const onError=()=>{
       if(settled)return;
       settled=true; cleanup();
@@ -2979,68 +3101,263 @@ html.rc103-portal-cursor,html.rc103-portal-cursor *{cursor:pointer!important}
 </script>
 
 
-<script id="rc133-kids-autoplay-js">
+<script id="rc196-kids-master-autoplay-js">
 (()=>{
+  'use strict';
+
+  const scene=document.getElementById('screeningTheater');
   const folder=document.getElementById('kidsAnimationFolder');
+  const kidsCard=document.getElementById('kidsAnimationCollectionCard');
+  const closeBtn=document.getElementById('kidsFolderClose');
   const player=document.getElementById('theaterPlayer');
+  const warm=document.getElementById('kidsWarmupPlayer');
+  const poster=document.getElementById('theaterPoster');
   const autoBtn=document.getElementById('kidsAutoPlay');
   const status=document.getElementById('theaterStatus');
-  if(!folder||!player||!autoBtn)return;
-  const cards=[...folder.querySelectorAll('[data-kids-src]')];
-  let autoOn=false;
-  let kidsPlaybackActive=false;
-  let currentIndex=-1;
+  const titleLine=document.getElementById('theaterCurrentTitle');
+  if(!scene||!folder||!kidsCard||!player||!warm||!autoBtn)return;
 
-  const paint=()=>{
+  const cards=[...folder.querySelectorAll('[data-kids-src]')];
+  if(!cards.length)return;
+
+  let autoOn=false;
+  let kidsActive=false;
+  let index=-1;
+  let advancing=false;
+  let warmIndex=-1;
+  let warmToken=0;
+
+  const volumeFor=(card)=>{
+    const v=Number(card?.dataset?.kidsVolume);
+    return Number.isFinite(v)?Math.max(0,Math.min(1,v)):1;
+  };
+
+  const paintAuto=()=>{
     autoBtn.classList.toggle('is-active',autoOn);
     autoBtn.setAttribute('aria-pressed',autoOn?'true':'false');
     autoBtn.textContent=autoOn?'AUTO PLAY · ON':'AUTO PLAY · OFF';
   };
-  autoBtn.addEventListener('click',(e)=>{
-    e.preventDefault();e.stopPropagation();
-    autoOn=!autoOn; paint();
-    if(status) status.textContent=autoOn?'KIDS AUTO PLAY · ON':'KIDS AUTO PLAY · OFF';
-  });
 
-  cards.forEach((card,i)=>{
-    card.addEventListener('click',()=>{currentIndex=i;kidsPlaybackActive=true;},true);
-  });
+  const closeFolder=()=>{
+    folder.classList.remove('is-open');
+    folder.setAttribute('aria-hidden','true');
+  };
 
-  /* Capture ENDED before the theater's general completion handler.
-     Only Kids Animation is intercepted; every other theater title keeps its existing behavior. */
-  player.addEventListener('ended',(e)=>{
-    if(!kidsPlaybackActive || !autoOn)return;
-    const nextIndex=currentIndex+1;
-    if(nextIndex>=cards.length){
-      autoOn=false; kidsPlaybackActive=false; paint();
-      return; // let the existing theater completion behavior run after the final film
+  const clearWarm=()=>{
+    warmToken++;
+    warmIndex=-1;
+    try{warm.pause()}catch(_){}
+    warm.removeAttribute('src');
+    try{warm.load()}catch(_){}
+  };
+
+  const warmNext=(idx)=>{
+    if(!autoOn||!kidsActive||idx<0||idx>=cards.length)return;
+    if(warmIndex===idx && warm.src)return;
+
+    const token=++warmToken;
+    warmIndex=idx;
+    const card=cards[idx];
+
+    try{warm.pause()}catch(_){}
+    warm.preload='auto';
+    warm.playsInline=true;
+    warm.setAttribute('playsinline','');
+    warm.muted=true;
+    warm.volume=0;
+    warm.src=card.dataset.kidsSrc;
+    try{warm.load()}catch(_){}
+
+    /* Force decoding of the first actual frame, then park at frame zero.
+       This warms network/cache + decoder without creating another visible player. */
+    const decode=()=>{
+      if(token!==warmToken||warmIndex!==idx||warm.readyState<2)return;
+      const p=warm.play();
+      const park=()=>{
+        if(token!==warmToken||warmIndex!==idx)return;
+        const stop=()=>{
+          try{warm.pause()}catch(_){}
+          try{warm.currentTime=0}catch(_){}
+        };
+        if(typeof warm.requestVideoFrameCallback==='function'){
+          warm.requestVideoFrameCallback(()=>stop());
+        }else{
+          requestAnimationFrame(()=>requestAnimationFrame(stop));
+        }
+      };
+      if(p&&p.then)p.then(park).catch(()=>{});
+      else park();
+    };
+
+    if(warm.readyState>=2)decode();
+    else {
+      warm.addEventListener('loadeddata',decode,{once:true});
+      warm.addEventListener('canplay',decode,{once:true});
     }
+  };
+
+  const setCardState=(card)=>{
+    document.querySelectorAll('.collection-card').forEach(c=>{
+      c.classList.remove('is-current');
+      c.setAttribute('aria-pressed','false');
+    });
+    kidsCard.classList.add('is-current');
+    kidsCard.setAttribute('aria-pressed','true');
+    cards.forEach(c=>c.classList.toggle('is-playing',c===card));
+  };
+
+  const playIndex=(i,fromAuto=false)=>{
+    if(i<0||i>=cards.length)return;
+    const card=cards[i];
+    index=i;
+    kidsActive=true;
+    advancing=false;
+    theaterHandoffBusy=false;
+    theaterStage='collection';
+
+    setCardState(card);
+    if(poster)poster.classList.add('hidden');
+    scene.classList.add('kids-film-active');
+
+    try{player.pause()}catch(_){}
+    player.classList.remove('theater-handoff','theater-portal-push','theater-feature-enter');
+    player.removeAttribute('src');
+    player.preload='auto';
+    player.playsInline=true;
+    player.setAttribute('playsinline','');
+    player.controls=true;
+    player.muted=false;
+    player.volume=volumeFor(card);
+    player.src=card.dataset.kidsSrc;
+    try{player.load()}catch(_){}
+
+    const title=card.dataset.kidsTitle||'KIDS · ANIMATION';
+    if(titleLine)titleLine.textContent=title;
+    if(status)status.textContent=(fromAuto?'AUTO PLAY · LOADING · ':'LOADING · ')+title;
+
+    let started=false;
+    const start=()=>{
+      if(started||player.readyState<2)return;
+      started=true;
+      player.removeEventListener('loadeddata',start);
+      player.removeEventListener('canplay',start);
+
+      player.muted=false;
+      player.volume=volumeFor(card);
+      const p=player.play();
+
+      const live=()=>{
+        closeFolder();
+        if(status)status.textContent='● NOW PLAYING · '+title;
+        if(autoOn)warmNext(index+1);
+      };
+
+      if(p&&p.then){
+        p.then(()=>{
+          if(typeof player.requestVideoFrameCallback==='function'){
+            player.requestVideoFrameCallback(()=>live());
+          }else{
+            requestAnimationFrame(()=>requestAnimationFrame(live));
+          }
+        }).catch(()=>{
+          if(status)status.textContent='PRESS PLAY · '+title;
+        });
+      }else live();
+    };
+
+    player.addEventListener('loadeddata',start);
+    player.addEventListener('canplay',start);
+    if(player.readyState>=2)start();
+  };
+
+  // Master ownership of Kids collection card.
+  kidsCard.onclick=(e)=>{
+    e.preventDefault();e.stopPropagation();
+    kidsActive=false;
+    index=-1;
+    advancing=false;
+    clearWarm();
+    try{player.pause()}catch(_){}
+    if(poster)poster.classList.add('hidden');
+    scene.classList.remove('kids-film-active');
+    folder.classList.add('is-open');
+    folder.setAttribute('aria-hidden','false');
+    if(titleLine)titleLine.textContent='KIDS · ANIMATION';
+    if(status)status.textContent='SELECT A FILM';
+  };
+
+  if(closeBtn)closeBtn.onclick=()=>{
+    closeFolder();
+    if(status)status.textContent='KIDS · ANIMATION COLLECTION';
+  };
+
+  // Master ownership of each Kids film click.
+  cards.forEach((card,i)=>{
+    card.onclick=(e)=>{
+      if(e){e.preventDefault();e.stopPropagation();}
+      playIndex(i,false);
+    };
+  });
+
+  autoBtn.onclick=(e)=>{
+    e.preventDefault();e.stopPropagation();
+    autoOn=!autoOn;
+    paintAuto();
+    if(autoOn){
+      if(status)status.textContent='KIDS AUTO PLAY · ON';
+      if(kidsActive&&index>=0)warmNext(index+1);
+    }else{
+      clearWarm();
+      if(status)status.textContent='KIDS AUTO PLAY · OFF';
+    }
+  };
+
+  /* Single visible player = same browser media permission for the whole sequence.
+     Warm-up video only prepares bytes/decoder; it is never shown. */
+  player.addEventListener('ended',(e)=>{
+    if(!kidsActive||!autoOn||advancing)return;
     e.stopImmediatePropagation();
-    currentIndex=nextIndex;
-    if(status)status.textContent='AUTO PLAY · NEXT · '+(cards[nextIndex].dataset.kidsTitle||'KIDS · ANIMATION');
-    setTimeout(()=>cards[nextIndex].click(),180);
+    const next=index+1;
+    if(next>=cards.length){
+      autoOn=false;
+      paintAuto();
+      clearWarm();
+      if(status)status.textContent='KIDS AUTO PLAY · COMPLETE';
+      return;
+    }
+    advancing=true;
+    playIndex(next,true);
   },true);
 
-  /* Leaving Kids Animation cancels only the active Kids sequence; toggle stays user-controlled. */
-  document.querySelectorAll('#screeningTheater .collection-card').forEach(card=>{
-    if(card.id==='kidsAnimationCollectionCard')return;
-    card.addEventListener('click',()=>{kidsPlaybackActive=false;currentIndex=-1;},true);
+  // Safety: if next wasn't warmed yet, start warming well before EOF.
+  player.addEventListener('timeupdate',()=>{
+    if(!kidsActive||!autoOn||index<0||!Number.isFinite(player.duration))return;
+    const next=index+1;
+    if(next>=cards.length)return;
+    if(warmIndex!==next)warmNext(next);
+  },true);
+
+  // Leaving Kids returns exactly to RC192 theater geometry/behavior.
+  const resetKids=()=>{
+    kidsActive=false;
+    index=-1;
+    advancing=false;
+    autoOn=false;
+    paintAuto();
+    clearWarm();
+    scene.classList.remove('kids-film-active');
+  };
+
+  document.querySelectorAll('.collection-card').forEach(card=>{
+    if(card===kidsCard)return;
+    card.addEventListener('click',resetKids,true);
   });
   ['theaterBackHome','theaterReturn','theaterPlay'].forEach(id=>{
-    const el=document.getElementById(id); if(el)el.addEventListener('click',()=>{kidsPlaybackActive=false;currentIndex=-1;},true);
+    const el=document.getElementById(id);
+    if(el)el.addEventListener('click',resetKids,true);
   });
-  paint();
-})();
 
-// RC134 — visible Kids collection slider sync.
-(function(){
-  const cards=[...document.querySelectorAll('#kidsAnimationFolder .kids-folder-card')];
-  const track=document.getElementById('kidsSliderTrack'), fill=document.getElementById('kidsSliderFill'), thumb=document.getElementById('kidsSliderThumb'), count=document.getElementById('kidsSliderCount');
-  if(!cards.length||!track||!fill||!thumb||!count)return;
-  function setPos(i,focus){ i=Math.max(0,Math.min(cards.length-1,i)); const pct=((i+1)/cards.length)*100; fill.style.width=pct+'%'; thumb.style.left=pct+'%'; count.textContent=(i+1)+' / '+cards.length; if(focus){cards[i].focus({preventScroll:true}); cards[i].scrollIntoView({behavior:'smooth',block:'nearest',inline:'nearest'});} }
-  cards.forEach((c,i)=>{ c.addEventListener('mouseenter',()=>setPos(i,false)); c.addEventListener('focus',()=>setPos(i,false)); c.addEventListener('click',()=>setPos(i,false)); });
-  track.addEventListener('click',e=>{const r=track.getBoundingClientRect(); const x=Math.max(0,Math.min(r.width,e.clientX-r.left)); const i=Math.min(cards.length-1,Math.floor((x/r.width)*cards.length)); setPos(i,true);});
-  setPos(0,false);
+  paintAuto();
 })();
 </script>
 
@@ -3417,9 +3734,597 @@ html.rc103-portal-cursor,html.rc103-portal-cursor *{cursor:pointer!important}
 </script>
 
 
+<style id="rc170-mobile-mastering">
+/* RC170 — MOBILE MASTERING ONLY. Desktop RC169 remains frozen. */
+@media (max-width:700px){
+  html,body{width:100%;height:100%;min-height:100dvh;overflow:hidden;overscroll-behavior:none}
+  .scene{min-height:100dvh}
+  .center{padding:12px}
+  button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;min-height:44px}
+
+  /* THE GATE */
+  #gate .center{padding:max(18px,env(safe-area-inset-top)) 16px max(18px,env(safe-area-inset-bottom))}
+  #gate .gate-card{width:min(100%,560px)}
+  #gate .seal{width:74px;height:74px;margin-bottom:20px;font-size:23px}
+  #gate h1{font-size:clamp(32px,10.8vw,44px);line-height:.98;letter-spacing:.075em;text-indent:.075em;white-space:nowrap}
+  #gate .eyebrow{font-size:8px;letter-spacing:.32em}
+  #gate .tagline{font-size:clamp(11px,3.5vw,14px);line-height:1.45;letter-spacing:.13em;padding:0 6px}
+  #gate .gate-actions{width:min(100%,330px);margin:26px auto 0;gap:9px}
+  #gate .gate-actions button{width:100%;min-height:46px;padding:12px 16px}
+
+  /* GRAND LOBBY */
+  #lobby .topbar{padding:max(14px,env(safe-area-inset-top)) 14px 12px;grid-template-columns:1fr auto}
+  #lobby .topbar .status{display:none}
+  #lobby .audio{left:14px;top:max(62px,calc(env(safe-area-inset-top) + 52px))}
+  #lobby .audio button{min-height:38px;padding:9px 11px;font-size:8px}
+  #lobby .chapter{left:16px;right:16px;bottom:138px;max-width:none}
+  #lobby .chapter h2{font-size:clamp(29px,9vw,40px);line-height:1}
+  #lobby .chapter p{max-width:390px;font-size:12px;line-height:1.45}
+  #lobby .skip{left:16px;right:16px;bottom:max(14px,env(safe-area-inset-bottom));width:auto;min-width:0}
+  #lobby .premiere-card{left:14px;right:14px;bottom:max(72px,calc(env(safe-area-inset-bottom) + 62px));width:auto;padding:18px;border-radius:18px}
+  #lobby .premiere-card h3{font-size:27px}
+  #lobby .premiere-card button{width:100%;min-width:0}
+  #lobby #portals{padding:0 8px max(10px,env(safe-area-inset-bottom));place-items:end center;overflow:hidden}
+  #lobby #portals .portal-shell{width:100%!important;max-height:72dvh;overflow:auto;overscroll-behavior:contain;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px;padding:8px;border-radius:17px;scrollbar-width:thin}
+  #lobby #portals .portal,#lobby #portals .portal.featured,#lobby #portals .portal[data-room="Visual Bible"]{grid-column:auto!important;grid-row:auto!important;min-height:82px!important;padding:28px 10px 11px!important}
+  #lobby #portals .portal span{font-size:7.5px!important;letter-spacing:.12em!important;margin-bottom:4px}
+  #lobby #portals .portal strong{font-size:13.5px!important;line-height:1.08!important}
+  #lobby #portals .portal strong::after{font-size:7.5px!important;line-height:1.25!important}
+  #lobby #portals .studio-utility-nav{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px}
+  #lobby #portals .studio-utility-btn{min-height:72px!important;padding:12px!important}
+  #lobby .heart-ring{width:min(76vw,320px)}
+  #lobby .heart-label{top:70%;width:90%;left:5%}
+}
+
+@media (max-width:390px){
+  #gate h1{font-size:31px;letter-spacing:.055em;text-indent:.055em}
+  #lobby #portals .portal,#lobby #portals .portal.featured,#lobby #portals .portal[data-room="Visual Bible"]{min-height:76px!important;padding:26px 8px 9px!important}
+  #lobby #portals .portal strong{font-size:12.5px!important}
+}
+
+@media (max-width:700px){
+  /* SCREENING THEATER */
+  #screeningTheater .center{align-items:flex-start;overflow:auto;padding:8px 0 max(12px,env(safe-area-inset-bottom))}
+  #screeningTheater .theater-shell{width:calc(100vw - 10px);height:auto;min-height:calc(100dvh - 10px);padding:13px;border-radius:16px;gap:12px;margin:auto}
+  #screeningTheater .theater-head{gap:10px;align-items:flex-start}
+  #screeningTheater .theater-head h2{font-size:clamp(30px,9.5vw,38px);line-height:.96}
+  #screeningTheater .theater-screen{min-height:0;aspect-ratio:16/10}
+  #screeningTheater .theater-screen-frame{padding:5px;border-radius:14px}
+  #screeningTheater #theaterPlayer{width:100%;height:100%;object-fit:contain;background:#000}
+  #screeningTheater .theater-poster-copy{padding:18px}
+  #screeningTheater .theater-poster-copy h3{font-size:clamp(27px,8vw,34px)}
+  #screeningTheater .theater-footer{grid-template-columns:1fr;gap:9px;padding-top:2px}
+  #screeningTheater .theater-nav-left,#screeningTheater .theater-actions,#screeningTheater .theater-footer .return{justify-self:stretch;width:100%}
+  #screeningTheater .theater-nav-left,#screeningTheater .theater-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+  #screeningTheater .theater-footer button{width:100%;min-width:0;padding:10px 8px;font-size:8px;letter-spacing:.11em}
+  #screeningTheater #theaterReturn{grid-column:1/-1}
+  #kidsAnimationFolder{padding:8px!important}
+  #kidsAnimationFolder .kids-folder-shell{width:100%!important;max-height:calc(100dvh - 16px)!important;padding:12px!important;border-radius:16px!important;overflow:auto!important}
+  #kidsAnimationFolder .kids-folder-head{gap:9px!important}
+  #kidsAnimationFolder .kids-folder-head strong{font-size:clamp(22px,7vw,29px)!important}
+  #kidsAnimationFolder .kids-folder-grid{grid-template-columns:1fr!important;gap:9px!important}
+  #kidsAnimationFolder .kids-card{min-height:92px!important}
+}
+
+@media (max-width:700px){
+  /* MUSIC ROOM — preserve RC161 engine */
+  #musicRoom .center{padding-bottom:max(18px,env(safe-area-inset-bottom))}
+  #musicRoom .music-shell{min-height:calc(100dvh - 18px)!important}
+  #musicRoom .music-tabbar{overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none}
+  #musicRoom .music-tabbar::-webkit-scrollbar{display:none}
+  #musicRoom .music-tabbar button{flex:1 0 auto;min-width:74px}
+  #musicRoom #musicDiscovery{min-height:330px}
+  #musicRoom #musicDiscovery #discoveryResults{max-height:48dvh!important;overflow-y:auto!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch}
+  #musicRoom .music-footer{padding-bottom:max(2px,env(safe-area-inset-bottom))}
+}
+
+@media (max-width:700px){
+  /* LIVE CENTER — visual/mobile only */
+  #liveCenter .center{align-items:flex-start;overflow:auto;padding:8px 8px max(14px,env(safe-area-inset-bottom))}
+  #liveCenter .center>div{width:100%!important;min-height:calc(100dvh - 16px);margin:auto!important;padding-top:max(4px,env(safe-area-inset-top))}
+  #liveCenter #liveMain{min-height:240px!important;border-radius:16px!important;overflow:hidden}
+  #liveCenter #livePlayerWrap{min-height:190px}
+  #liveCenter #livePlayer{width:100%;height:100%;object-fit:contain;background:#000}
+  #liveCenter #liveCopy{padding:16px 10px!important}
+  #liveCenter #liveControls{display:grid!important;grid-template-columns:1fr 1fr;gap:7px!important;width:100%}
+  #liveCenter #liveControls button{width:100%;min-width:0!important;min-height:44px;padding:10px 7px;font-size:8px;letter-spacing:.10em}
+  #liveCenter #returnLobby{grid-column:1/-1}
+}
+
+@media (max-width:700px){
+  /* PRODUCTION ROOM */
+  #productionRoom .center{align-items:flex-start;overflow:auto;padding:8px 0 max(14px,env(safe-area-inset-bottom))}
+  #productionRoom .production-shell{width:calc(100vw - 10px);height:auto;min-height:calc(100dvh - 10px);padding:13px;border-radius:16px;gap:12px;margin:auto;overflow:visible}
+  #productionRoom .production-head{align-items:flex-start}
+  #productionRoom .production-grid{grid-template-columns:1fr;gap:10px}
+  #productionRoom .production-feature{min-height:220px;border-radius:15px}
+  #productionRoom .production-stack{grid-template-columns:1fr 1fr!important;grid-template-rows:auto auto!important;gap:8px}
+  #productionRoom .production-card{min-height:108px;padding:14px!important}
+  #productionRoom .production-card span{display:block!important;font-size:8px;line-height:1.35}
+  #productionRoom .production-footer{grid-template-columns:1fr!important;gap:8px}
+  #productionRoom #productionReturn{width:100%;min-width:0!important;justify-self:stretch}
+  #productionRoom .production-note{display:none}
+  #productionRoom .production-reveal{align-items:flex-start;overflow:auto;padding:8px 0 max(12px,env(safe-area-inset-bottom))}
+  #productionRoom .production-reveal-card{width:calc(100vw - 12px)!important;max-height:none;min-height:calc(100dvh - 12px);padding:26px 16px 18px!important;border-radius:16px!important;margin:auto}
+  #productionRoom .production-reveal-card h3{font-size:clamp(32px,10vw,40px)!important}
+  #productionRoom .journey-grid{grid-template-columns:1fr!important}
+  #productionRoom .production-reveal-close{width:100%;min-height:46px}
+}
+
+@media (max-width:700px){
+  /* STORY ROOM */
+  #storyRoom .center{align-items:flex-start;overflow:auto;padding:8px 0 max(14px,env(safe-area-inset-bottom))}
+  #storyRoom .story-shell{width:calc(100vw - 10px);height:auto;min-height:calc(100dvh - 10px);padding:13px;border-radius:16px;gap:12px;margin:auto;overflow:visible}
+  #storyRoom .story-stage{grid-template-columns:1fr;gap:10px}
+  #storyRoom .story-editorial{min-height:160px}
+  #storyRoom .story-hero{min-height:240px}
+  #storyRoom .story-chapters{grid-template-columns:1fr 1fr!important;grid-template-rows:auto auto!important;gap:8px}
+  #storyRoom .story-chapter{min-height:100px;padding:13px}
+  #storyRoom .story-footer{grid-template-columns:1fr!important;gap:8px}
+  #storyRoom #storyReturn{width:100%;justify-self:stretch}
+  #storyRoom .story-reveal{align-items:flex-start;overflow:auto;padding:0}
+  #storyRoom .story-reveal-world{width:100%;min-height:100dvh;padding:14px!important;grid-template-columns:1fr!important;align-content:start}
+  #storyRoom .story-reveal-card{width:100%;padding:26px 18px!important;border-radius:16px}
+  #storyRoom .story-reveal-card h3{font-size:clamp(32px,10vw,42px)}
+  #storyRoom .story-reveal-bottom{width:100%}
+  #storyRoom .story-reveal-close{width:100%;min-height:46px}
+}
+
+@media (max-width:700px){
+  /* JOURNAL */
+  #journalRoom .center{align-items:flex-start;overflow:auto;padding:8px 0 max(14px,env(safe-area-inset-bottom))}
+  #journalRoom .journal-shell{width:calc(100vw - 10px);height:auto;min-height:calc(100dvh - 10px);padding:13px;border-radius:16px;gap:12px;margin:auto;overflow:visible}
+  #journalRoom .journal-grid{grid-template-columns:1fr;gap:10px}
+  #journalRoom .journal-feature{min-height:240px}
+  #journalRoom .journal-dispatches{grid-template-columns:1fr 1fr!important;grid-template-rows:auto auto!important;gap:8px}
+  #journalRoom .dispatch-card{min-height:112px;padding:13px}
+  #journalRoom .journal-footer{grid-template-columns:1fr!important;gap:8px}
+  #journalRoom #journalReturn{width:100%;justify-self:stretch}
+  #journalRoom .journal-reveal{align-items:flex-start;overflow:auto;padding:8px 0 max(12px,env(safe-area-inset-bottom))}
+  #journalRoom .journal-reveal-card{width:calc(100vw - 12px)!important;min-height:calc(100dvh - 12px);max-height:none;padding:28px 18px 18px!important;border-radius:16px!important;margin:auto}
+  #journalRoom .journal-reveal-card h3{font-size:clamp(31px,9.5vw,42px)}
+  #journalRoom .story-reveal-close{width:100%;min-height:46px}
+}
+
+@media (max-width:700px){
+  /* VISUAL BIBLE */
+  #visualBibleRoom .center{align-items:flex-start;overflow:auto;padding:8px 0 max(14px,env(safe-area-inset-bottom))}
+  #visualBibleRoom .bible-shell{width:calc(100vw - 10px);height:auto;min-height:calc(100dvh - 10px);padding:13px;border-radius:16px;gap:12px;margin:auto;overflow:visible}
+  #visualBibleRoom .bible-grid{grid-template-columns:1fr;gap:10px}
+  #visualBibleRoom .bible-core{min-height:280px}
+  #visualBibleRoom .bible-cards{min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  #visualBibleRoom .bible-card{min-height:150px!important;padding:13px}
+  #visualBibleRoom .bible-card strong{font-size:16px}
+  #visualBibleRoom .bible-footer{grid-template-columns:1fr!important;gap:8px}
+  #visualBibleRoom #bibleReturn{width:100%;justify-self:stretch}
+  #visualBibleRoom .bible-exhibition-panel{padding-bottom:max(24px,env(safe-area-inset-bottom))!important}
+  #visualBibleRoom .bible-exhibition-return{width:100%;min-height:46px}
+}
+
+@media (max-width:700px){
+  /* ABOUT US */
+  #aboutRoom .center{align-items:flex-start;overflow:auto;padding:8px 0 max(14px,env(safe-area-inset-bottom))}
+  #aboutRoom .about-shell{width:calc(100vw - 10px);height:auto;min-height:calc(100dvh - 10px);padding:13px;border-radius:16px;gap:12px;margin:auto;overflow:visible}
+  #aboutRoom .about-grid{grid-template-columns:1fr;gap:10px;overflow:visible}
+  #aboutRoom .about-manifesto{padding:18px}
+  #aboutRoom .about-manifesto h3{font-size:clamp(28px,9vw,38px)}
+  #aboutRoom .about-pillars{grid-template-columns:1fr 1fr;gap:8px}
+  #aboutRoom .about-pillars article{padding:14px;min-height:132px}
+  #aboutRoom .about-footer{grid-template-columns:1fr!important;gap:8px}
+  #aboutRoom #aboutReturn{width:100%;justify-self:stretch}
+}
+@media (max-width:390px){#aboutRoom .about-pillars{grid-template-columns:1fr}}
+
+@media (max-width:700px){
+  /* CONTACT */
+  #contactRoom .center{align-items:flex-start;overflow:auto;padding:8px 0 max(14px,env(safe-area-inset-bottom))}
+  #contactRoom .contact-shell{width:calc(100vw - 10px);height:auto;min-height:calc(100dvh - 10px);padding:13px;border-radius:16px;gap:12px;margin:auto;overflow:visible}
+  #contactRoom .contact-grid{grid-template-columns:1fr;gap:10px;overflow:visible}
+  #contactRoom .contact-intro{padding:18px}
+  #contactRoom .contact-intro h3{font-size:clamp(28px,9vw,38px)}
+  #contactRoom .contact-form{padding:14px;grid-template-columns:1fr!important;gap:10px}
+  #contactRoom .contact-form label,#contactRoom .contact-message,#contactRoom .contact-actions,#contactRoom .contact-status{grid-column:1!important}
+  #contactRoom .contact-form input,#contactRoom .contact-form textarea{font-size:16px;min-height:46px}
+  #contactRoom .contact-form textarea{min-height:130px}
+  #contactRoom .contact-types{grid-template-columns:1fr 1fr!important;gap:7px}
+  #contactRoom .contact-types button{min-width:0;width:100%;padding:10px 6px;font-size:8px;letter-spacing:.10em}
+  #contactRoom .contact-actions{display:grid;grid-template-columns:1fr;gap:7px}
+  #contactRoom .contact-actions button{width:100%}
+  #contactRoom .contact-footer{grid-template-columns:1fr!important;gap:8px}
+  #contactRoom #contactReturn{width:100%;justify-self:stretch}
+  #contactRoom .contact-reveal{align-items:flex-start;overflow:auto;padding:8px 0 max(12px,env(safe-area-inset-bottom))}
+  #contactRoom .contact-reveal-card{width:calc(100vw - 12px)!important;max-height:none;min-height:calc(100dvh - 12px);padding:24px 16px 18px!important;border-radius:16px!important;margin:auto}
+  #contactRoom #contactRevealText{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;line-height:1.55}
+  #contactRoom #contactCopy,#contactRoom #contactRevealClose{width:100%;min-height:46px}
+}
+
+
+<style id="rc171-mobile-readability-surgical-fix">
+/* RC171 — Mobile readability + Lobby sound-control collision fix only. */
+@media (max-width:700px){
+  #lobby .topbar{min-height:58px;align-items:center}
+  #lobby .topbar .brand{font-size:10px!important;letter-spacing:.20em!important;text-align:right}
+  #lobby .audio{left:auto!important;right:14px!important;top:max(64px,calc(env(safe-area-inset-top) + 56px))!important;z-index:40!important}
+  #lobby .audio button{min-width:96px!important;min-height:42px!important;padding:10px 13px!important;font-size:9px!important;letter-spacing:.13em!important;white-space:nowrap}
+  #lobby .chapter{bottom:146px!important}
+  #lobby .chapter small{font-size:9px!important;letter-spacing:.18em!important}
+  #lobby .chapter h2{font-size:clamp(34px,10.5vw,46px)!important;line-height:1.02!important}
+  #lobby .chapter p{font-size:14px!important;line-height:1.5!important;max-width:92%!important}
+  #lobby .premiere-card small{font-size:9px!important}
+  #lobby .premiere-card p{font-size:13px!important;line-height:1.45!important}
+  #lobby #portals .portal span{font-size:9px!important;letter-spacing:.13em!important}
+  #lobby #portals .portal strong{font-size:16px!important;line-height:1.12!important}
+  #lobby #portals .studio-utility-btn span{font-size:9px!important}
+  #lobby #portals .studio-utility-btn strong{font-size:14px!important}
+  #lobby .skip{font-size:9px!important;letter-spacing:.13em!important}
+  #screeningTheater .theater-head small,
+  #screeningTheater .theater-titleline small,
+  #screeningTheater .kids-title-card small{font-size:9px!important}
+  #screeningTheater .kids-title-card strong{font-size:17px!important;line-height:1.2!important}
+  #screeningTheater .kids-title-card span{font-size:9px!important}
+}
+</style></style>
+
+
+<style id="rc172-mobile-first-rethink">
+/* RC172 — MOBILE-FIRST RE-THINK. Desktop untouched. */
+@media (max-width:700px){
+  html,body{overflow:hidden!important;background:#000!important}
+  .scene{overflow:hidden!important}
+  .scene>.center{padding:10px 8px max(16px,env(safe-area-inset-bottom))!important;align-items:flex-start!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important}
+  .scene>.center>div{max-width:100%!important}
+
+  /* Global mobile type scale */
+  .eyebrow{font-size:11px!important;line-height:1.25!important;letter-spacing:.22em!important}
+  button{font-size:11px!important;letter-spacing:.14em!important;min-height:48px!important}
+  .theater-head h2,.music-head h2,.production-head h2,.story-head h2,.journal-head h2,.bible-head h2,.about-head h2,.contact-head h2{font-size:clamp(38px,11vw,52px)!important;line-height:.96!important;letter-spacing:.015em!important}
+
+  /* Lobby: one-column, thumb-friendly, no Sound collision */
+  #lobby .topbar{padding:14px 14px 10px!important;grid-template-columns:auto 1fr!important;gap:10px!important}
+  #lobby #back{font-size:10px!important;min-height:46px!important;padding:11px 14px!important}
+  #lobby .brand{font-size:13px!important;letter-spacing:.18em!important;text-align:right!important;white-space:nowrap!important}
+  #lobby .audio{left:14px!important;right:auto!important;top:72px!important;z-index:25!important}
+  #lobby .audio button{min-width:132px!important;min-height:48px!important;font-size:11px!important;letter-spacing:.14em!important}
+  #lobby:has(#portals.show) .audio{opacity:0!important;visibility:hidden!important;pointer-events:none!important;transform:translateY(-6px)!important}
+  #lobby .chapter{left:18px!important;right:18px!important;bottom:128px!important}
+  #lobby .chapter small{font-size:11px!important}
+  #lobby .chapter h2{font-size:clamp(40px,12vw,56px)!important;line-height:1!important}
+  #lobby .chapter p{font-size:16px!important;line-height:1.48!important;max-width:100%!important}
+  #lobby .skip{left:18px!important;right:18px!important;bottom:18px!important;min-height:52px!important;font-size:11px!important}
+  #lobby #portals{padding:10px 10px max(12px,env(safe-area-inset-bottom))!important;place-items:end center!important}
+  #lobby #portals .portal-shell{width:100%!important;max-height:78dvh!important;grid-template-columns:1fr!important;gap:10px!important;padding:10px!important;border-radius:20px!important}
+  #lobby #portals .portal,#lobby #portals .portal.featured,#lobby #portals .portal[data-room="Visual Bible"]{grid-column:1!important;min-height:116px!important;padding:34px 48px 18px 18px!important;border-radius:18px!important}
+  #lobby #portals .portal span{font-size:11px!important;letter-spacing:.16em!important;margin-bottom:6px!important}
+  #lobby #portals .portal strong{font-size:22px!important;line-height:1.05!important}
+  #lobby #portals .portal strong::after{font-size:12px!important;line-height:1.35!important;max-width:none!important;margin-top:7px!important}
+  #lobby #portals .studio-utility-nav{grid-template-columns:1fr!important;gap:10px!important}
+  #lobby #portals .studio-utility-btn{min-height:66px!important;font-size:11px!important}
+
+  /* Every room gets an obvious mobile back action */
+  #theaterReturn,#theaterBackHome,#musicReturn,#returnLobby,#productionReturn,#storyReturn,#journalReturn,#bibleReturn,#aboutReturn,#contactReturn{
+    display:block!important;width:100%!important;min-width:0!important;min-height:52px!important;justify-self:stretch!important;position:sticky!important;bottom:8px!important;z-index:90!important;margin-top:10px!important;background:linear-gradient(180deg,rgba(29,22,9,.96),rgba(4,4,4,.98))!important;border-color:rgba(236,199,98,.72)!important;color:#f4d679!important;box-shadow:0 12px 32px rgba(0,0,0,.5)!important
+  }
+
+  /* Live Center: large player and stacked controls */
+  #liveCenter .center>div{width:100%!important;padding:8px 4px 18px!important}
+  #liveCenter h2{font-size:clamp(48px,13vw,62px)!important;line-height:.92!important;margin:12px 0 14px!important}
+  #liveCenter #liveState{font-size:11px!important;padding:11px 15px!important}
+  #liveCenter .center>div>div:nth-of-type(2){margin-top:20px!important;padding:14px!important;border-radius:20px!important}
+  #liveCenter #liveMain{width:100%!important;min-height:0!important;aspect-ratio:16/10!important;border-radius:16px!important}
+  #liveCenter #livePlayerWrap{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;border-radius:14px!important}
+  #liveCenter #liveCopy{padding:24px 14px!important}
+  #liveCenter #liveTitle{font-size:clamp(34px,9.5vw,46px)!important;line-height:1.02!important}
+  #liveCenter #liveSubtitle{font-size:15px!important;line-height:1.45!important}
+  #liveCenter #liveControls{grid-template-columns:1fr!important;gap:10px!important;margin-top:12px!important}
+  #liveCenter #liveControls button{min-height:52px!important;font-size:11px!important;letter-spacing:.14em!important}
+  #liveCenter #liveRouteStatus{display:none!important}
+
+  /* Room shells: true phone width and vertical flow */
+  #screeningTheater .theater-shell,#musicRoom .music-shell,#productionRoom .production-shell,#storyRoom .story-shell,#journalRoom .journal-shell,#visualBibleRoom .bible-shell,#aboutRoom .about-shell,#contactRoom .contact-shell{
+    width:calc(100vw - 12px)!important;max-width:calc(100vw - 12px)!important;min-width:0!important;height:auto!important;min-height:calc(100dvh - 12px)!important;margin:0 auto!important;padding:16px!important;border-radius:20px!important;overflow:visible!important;gap:14px!important
+  }
+
+  /* Story Room: eliminate clipping; one clear column */
+  #storyRoom .story-head{align-items:flex-start!important}
+  #storyRoom .story-meta{display:none!important}
+  #storyRoom .story-stage{display:grid!important;grid-template-columns:1fr!important;gap:12px!important;width:100%!important;min-width:0!important}
+  #storyRoom .story-editorial,#storyRoom .story-hero{width:100%!important;min-width:0!important;max-width:100%!important;overflow:hidden!important}
+  #storyRoom .story-editorial{min-height:auto!important;padding:22px 18px!important}
+  #storyRoom .story-editorial h3{font-size:clamp(31px,9.5vw,42px)!important;line-height:1.02!important;overflow-wrap:anywhere!important}
+  #storyRoom .story-editorial p{font-size:16px!important;line-height:1.5!important;overflow-wrap:anywhere!important}
+  #storyRoom .story-hero{min-height:360px!important}
+  #storyRoom .story-chapters{grid-template-columns:1fr!important;gap:10px!important}
+  #storyRoom .story-chapter{min-height:118px!important;padding:18px!important}
+  #storyRoom .story-chapter strong{font-size:20px!important;line-height:1.12!important}
+  #storyRoom .story-chapter span{font-size:11px!important;line-height:1.35!important}
+
+  /* Production / Journal / Bible / About cards: larger type, single column */
+  #productionRoom .production-stack,#journalRoom .journal-dispatches,#visualBibleRoom .bible-cards,#aboutRoom .about-pillars{grid-template-columns:1fr!important;grid-template-rows:auto!important;gap:10px!important}
+  #productionRoom .production-card,#journalRoom .dispatch-card,#visualBibleRoom .bible-card,#aboutRoom .about-pillars article{min-height:126px!important;padding:18px!important}
+  #productionRoom .production-card strong,#journalRoom .dispatch-card strong,#visualBibleRoom .bible-card strong,#aboutRoom .about-pillars strong{font-size:20px!important;line-height:1.1!important}
+  #productionRoom .production-card span,#journalRoom .dispatch-card span,#visualBibleRoom .bible-card p,#aboutRoom .about-pillars p{font-size:13px!important;line-height:1.45!important}
+
+  /* Theater / Kids readability */
+  #screeningTheater .theater-screen{aspect-ratio:16/10!important;min-height:240px!important}
+  #screeningTheater .theater-footer{grid-template-columns:1fr!important;gap:10px!important}
+  #screeningTheater .theater-nav-left,#screeningTheater .theater-actions{grid-template-columns:1fr!important;gap:8px!important}
+  #kidsAnimationFolder .kids-folder-shell{padding:14px!important}
+  #kidsAnimationFolder .kids-title-card{min-height:112px!important;padding:16px!important}
+  #kidsAnimationFolder .kids-title-card strong{font-size:20px!important}
+  #kidsAnimationFolder .kids-title-card span{font-size:11px!important;line-height:1.35!important}
+}
+</style>
+
+<script id="sc-kids-seamless-buffer-polish">
+/* RC173 KIDS STABILITY: disabled bulk preloading of large Blob films.
+   Each title now loads only when selected, preventing mobile/browser memory and network stalls. */
+(()=>{})();
+</script>
+
+
 <script id="sc-featured-film-prewarm">
 (()=>{
- let filmWarmer=null;
- function warmFeaturedFilm(){if(filmWarmer||typeof THEATER_FILM_SRC==='undefined'||!THEATER_FILM_SRC)return;const v=document.createElement('video');v.preload='auto';v.muted=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('aria-hidden','true');v.style.cssText='position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;opacity:0;pointer-events:none';document.body.appendChild(v);v.src=THEATER_FILM_SRC;try{v.load()}catch(e){}filmWarmer=v}const theaterPlay=document.getElementById('theaterPlay');if(theaterPlay)theaterPlay.addEventListener('click',warmFeaturedFilm,{once:true,capture:true});const theater=document.getElementById('screeningTheater');if(theater&&'MutationObserver' in window){const mo=new MutationObserver(()=>{if(theater.classList.contains('active')){warmFeaturedFilm();mo.disconnect()}});mo.observe(theater,{attributes:true,attributeFilter:['class']})}})();
+  let filmWarmer=null;
+  function warmFeaturedFilm(){
+    if(filmWarmer || typeof THEATER_FILM_SRC==='undefined' || !THEATER_FILM_SRC) return;
+    const v=document.createElement('video');
+    v.preload='auto';
+    v.muted=true;
+    v.playsInline=true;
+    v.setAttribute('playsinline','');
+    v.setAttribute('aria-hidden','true');
+    v.style.cssText='position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;opacity:0;pointer-events:none';
+    document.body.appendChild(v);
+    v.src=THEATER_FILM_SRC;
+    try{v.load()}catch(e){}
+    filmWarmer=v;
+  }
+  const theaterPlay=document.getElementById('theaterPlay');
+  if(theaterPlay) theaterPlay.addEventListener('click',warmFeaturedFilm,{once:true,capture:true});
+  const theater=document.getElementById('screeningTheater');
+  if(theater && 'MutationObserver' in window){
+    const mo=new MutationObserver(()=>{
+      if(theater.classList.contains('active')){warmFeaturedFilm();mo.disconnect()}
+    });
+    mo.observe(theater,{attributes:true,attributeFilter:['class']});
+  }
+})();
 </script>
+
+
+<style id="rc174-mobile-luxury-release">
+/* RC174 — MOBILE LUXURY RELEASE. Desktop architecture untouched. */
+@media (max-width:700px){
+  :root{--sc-gold:#e7c766;--sc-gold-hi:#f6dc8a;--sc-ivory:#fff4da;--sc-ink:#060503;--sc-panel:rgba(12,9,4,.94)}
+  body{background:radial-gradient(circle at 50% 0%,#211708 0,#070604 42%,#000 100%)!important;color:var(--sc-ivory)!important}
+  .scene>.center{padding:12px 10px calc(92px + env(safe-area-inset-bottom))!important}
+  .eyebrow{color:var(--sc-gold-hi)!important;font-size:12px!important;letter-spacing:.20em!important}
+  button,.ghost{touch-action:manipulation}
+
+  /* Lobby hierarchy + luxury controls */
+  #lobby .topbar{padding:14px 14px 8px!important}
+  #lobby #back,#lobby .audio button,#lobby .skip{
+    background:linear-gradient(180deg,rgba(27,20,8,.96),rgba(6,5,3,.98))!important;
+    border:1px solid rgba(231,199,102,.68)!important;color:var(--sc-gold-hi)!important;
+    box-shadow:0 12px 28px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,239,190,.08)!important
+  }
+  #lobby .audio{top:76px!important;left:14px!important}
+  #lobby:has(#portals.show) .audio{display:none!important}
+  #lobby #portals{padding:10px 10px calc(16px + env(safe-area-inset-bottom))!important}
+  #lobby #portals .portal-shell{background:linear-gradient(180deg,rgba(17,12,5,.98),rgba(5,4,2,.99))!important;border:1px solid rgba(231,199,102,.42)!important;box-shadow:0 28px 70px rgba(0,0,0,.56)!important}
+  #lobby #portals .portal{min-height:128px!important;padding:22px 52px 20px 20px!important;background:linear-gradient(145deg,rgba(18,13,5,.96),rgba(3,3,2,.98))!important;border:1px solid rgba(231,199,102,.34)!important;box-shadow:inset 0 1px 0 rgba(255,239,190,.05)!important}
+  #lobby #portals .portal strong{font-size:25px!important;color:var(--sc-ivory)!important}
+  #lobby #portals .portal span{font-size:12px!important;color:var(--sc-gold-hi)!important}
+  #lobby #portals .portal strong::after{font-size:14px!important;color:rgba(255,244,218,.72)!important}
+
+  /* Global room shells */
+  #screeningTheater .theater-shell,#musicRoom .music-shell,#productionRoom .production-shell,#storyRoom .story-shell,#journalRoom .journal-shell,#visualBibleRoom .bible-shell,#aboutRoom .about-shell,#contactRoom .contact-shell{
+    width:calc(100vw - 16px)!important;max-width:calc(100vw - 16px)!important;padding:18px 16px 94px!important;border:1px solid rgba(231,199,102,.36)!important;
+    background:linear-gradient(180deg,rgba(15,11,5,.96),rgba(4,3,2,.98))!important;box-shadow:0 26px 70px rgba(0,0,0,.48)!important
+  }
+  .theater-head h2,.music-head h2,.production-head h2,.story-head h2,.journal-head h2,.bible-head h2,.about-head h2,.contact-head h2{font-size:clamp(40px,11.5vw,54px)!important;color:var(--sc-gold-hi)!important}
+
+  /* Music Room: true phone layout + always visible Back */
+  #musicRoom .music-main{display:grid!important;grid-template-columns:1fr!important;gap:14px!important;width:100%!important;min-width:0!important}
+  #musicRoom .music-art,#musicRoom .music-console{width:100%!important;min-width:0!important}
+  #musicRoom .music-cover{min-height:280px!important;border-radius:18px!important}
+  #musicRoom .now-playing h3{font-size:clamp(30px,9vw,42px)!important;line-height:1.02!important}
+  #musicRoom .now-playing p,#musicRoom .music-panel p,#musicRoom .music-panel li{font-size:16px!important;line-height:1.5!important}
+  #musicRoom .music-actions{display:grid!important;grid-template-columns:1fr!important;gap:9px!important}
+  #musicRoom .music-actions button{width:100%!important;min-height:54px!important}
+  #musicRoom .music-tabbar{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important}
+  #musicRoom .music-tab{min-height:50px!important;font-size:11px!important}
+  #musicRoom .discovery-search{grid-template-columns:1fr!important;gap:8px!important}
+  #musicRoom .discovery-search input,#musicRoom .discovery-search button{width:100%!important;min-height:52px!important;font-size:16px!important}
+  #musicRoom .music-footer{display:block!important;padding-bottom:0!important}
+  #musicRoom .music-signature,#musicRoom .music-footer-note{display:none!important}
+
+  /* Uniform fixed Back rail on every room */
+  #theaterReturn,#musicReturn,#returnLobby,#productionReturn,#storyReturn,#journalReturn,#bibleReturn,#aboutReturn,#contactReturn{
+    position:fixed!important;left:12px!important;right:12px!important;bottom:calc(12px + env(safe-area-inset-bottom))!important;width:auto!important;height:58px!important;min-height:58px!important;margin:0!important;z-index:999!important;
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    background:linear-gradient(180deg,rgba(31,22,8,.98),rgba(5,4,2,.99))!important;border:1px solid rgba(246,220,138,.74)!important;border-radius:999px!important;color:#f7dd8d!important;
+    font-size:12px!important;font-weight:700!important;letter-spacing:.18em!important;box-shadow:0 16px 38px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,245,210,.12)!important
+  }
+  #theaterBackHome{position:relative!important;bottom:auto!important;width:100%!important;min-height:52px!important}
+
+  /* Live Center: screen is the hero on mobile */
+  #liveCenter .center{padding:10px 8px calc(92px + env(safe-area-inset-bottom))!important;overflow-y:auto!important}
+  #liveCenter .center>div{width:100%!important;max-width:100%!important}
+  #liveCenter h2{font-size:clamp(46px,13vw,64px)!important;margin:8px 0 12px!important}
+  #liveCenter .center>div>div:nth-of-type(2){padding:12px!important;margin-top:14px!important}
+  #liveCenter #liveMain{aspect-ratio:4/3!important;min-height:58vw!important;max-height:62dvh!important;background:radial-gradient(circle at 50% 45%,rgba(83,58,16,.30),#030302 72%)!important}
+  #liveCenter #livePlayerWrap{inset:0!important;border-radius:14px!important}
+  #liveCenter #livePlayer{object-fit:contain!important}
+  #liveCenter #liveTitle{font-size:clamp(34px,10vw,46px)!important}
+  #liveCenter #liveSubtitle{font-size:16px!important;line-height:1.4!important}
+  #liveCenter #liveControls{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important}
+  #liveCenter #liveControls button{min-height:56px!important;font-size:12px!important}
+
+  /* Story + all content: no horizontal clipping */
+  #storyRoom .story-stage,#storyRoom .story-editorial,#storyRoom .story-hero,#storyRoom .story-chapters{width:100%!important;max-width:100%!important;min-width:0!important}
+  #storyRoom .story-editorial{padding:22px 16px!important;text-align:left!important}
+  #storyRoom .story-editorial h3{font-size:clamp(30px,8.5vw,40px)!important;word-break:normal!important;overflow-wrap:break-word!important}
+  #storyRoom .story-editorial p{font-size:17px!important;line-height:1.55!important}
+  #storyRoom .story-hero{min-height:320px!important;background-size:cover!important;background-position:center!important}
+
+  /* Kids collection = five equal visible titles */
+  #kidsAnimationFolder .kids-folder-shell{width:calc(100vw - 18px)!important;max-width:calc(100vw - 18px)!important;max-height:84dvh!important;overflow-y:auto!important;padding:14px!important}
+  #kidsAnimationFolder .kids-folder-head{display:grid!important;grid-template-columns:1fr!important;gap:10px!important}
+  #kidsAnimationFolder .kids-folder-controls{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important}
+  #kidsAnimationFolder .kids-folder-grid{display:grid!important;grid-template-columns:1fr!important;gap:10px!important}
+  #kidsAnimationFolder .kids-title-card{grid-column:1!important;width:100%!important;min-height:118px!important;padding:18px!important;text-align:left!important;background:linear-gradient(145deg,rgba(24,17,6,.98),rgba(5,4,2,.99))!important;border-color:rgba(231,199,102,.42)!important}
+  #kidsAnimationFolder .kids-title-card strong{font-size:21px!important;color:var(--sc-ivory)!important}
+  #kidsAnimationFolder .kids-title-card small,#kidsAnimationFolder .kids-title-card span{font-size:11px!important;color:var(--sc-gold-hi)!important}
+}
+</style>
+
+
+
+
+
+
+
+<style id="rc179-final-mobile-release">
+/* RC179 — FINAL MOBILE RELEASE PASS. Desktop architecture untouched. */
+:root{--sc-black:#020201;--sc-black-2:#080603;--sc-gold:#d9b760;--sc-gold-hi:#f2d783;--sc-gold-deep:#8d6823;--sc-ivory:#f6f0df}
+
+/* Kids: restore exact known-good presentation — 2 columns + real scrollbar + 5th film below. */
+#kidsAnimationFolder .kids-folder-shell{width:min(900px,94%)!important;max-height:94%!important;overflow:hidden!important}
+#kidsAnimationFolder .kids-folder-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;max-height:190px!important;overflow-y:auto!important;overflow-x:hidden!important;padding-right:8px!important;scrollbar-width:thin!important;scrollbar-color:var(--sc-gold) rgba(255,255,255,.05)!important}
+#kidsAnimationFolder .kids-title-card{display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;touch-action:manipulation!important;cursor:pointer!important}
+#kidsAnimationFolder .kids-title-card:last-child{grid-column:1/-1!important}
+#kidsAnimationFolder .kids-folder-grid::-webkit-scrollbar{width:9px!important}
+#kidsAnimationFolder .kids-folder-grid::-webkit-scrollbar-track{background:rgba(255,255,255,.05)!important;border-radius:999px!important}
+#kidsAnimationFolder .kids-folder-grid::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--sc-gold-hi),var(--sc-gold-deep))!important;border-radius:999px!important;border:2px solid rgba(8,6,2,.78)!important}
+
+@media(max-width:700px){
+  html,body{background:var(--sc-black)!important;color:var(--sc-ivory)!important}
+  body{overflow:hidden!important}
+  .scene>.center{padding:14px 10px calc(86px + env(safe-area-inset-bottom))!important;overflow-y:auto!important;overflow-x:hidden!important;align-items:start!important}
+  button{min-height:50px!important;font-size:11px!important;letter-spacing:.14em!important}
+  .eyebrow{font-size:11px!important;letter-spacing:.24em!important;color:rgba(246,240,223,.72)!important}
+
+  /* Luxury surface system */
+  .theater-shell,.music-shell,.production-shell,.story-shell,.journal-shell,.bible-shell,.about-shell,.contact-shell,
+  #liveCenter .center>div>div:nth-of-type(2){background:linear-gradient(160deg,rgba(18,13,5,.94),rgba(2,2,1,.98))!important;border-color:rgba(217,183,96,.28)!important;box-shadow:0 24px 70px rgba(0,0,0,.58),inset 0 1px 0 rgba(255,244,205,.055)!important}
+  .collection-card,.portal,.music-panel,.story-editorial,.story-chapter,.production-card,.journal-card,.bible-card{background:linear-gradient(155deg,rgba(22,16,6,.9),rgba(4,3,2,.97))!important;border-color:rgba(217,183,96,.25)!important;box-shadow:inset 0 1px 0 rgba(255,246,218,.035),0 12px 28px rgba(0,0,0,.24)!important}
+
+  /* Lobby: large readable mobile type, no audio overlap in portal mode */
+  #lobby .topbar{padding:14px 12px!important;grid-template-columns:auto 1fr auto!important;gap:10px!important}
+  #lobby .brand{font-size:13px!important;letter-spacing:.16em!important;text-align:right!important}
+  #lobby #back{min-height:44px!important;padding:9px 12px!important;font-size:10px!important}
+  #lobby .audio{left:12px!important;top:66px!important;z-index:30!important}
+  #lobby .audio button{min-width:126px!important;min-height:46px!important;font-size:10px!important}
+  #lobby.portal-mode .audio{display:none!important}
+  #lobby .chapter{left:18px!important;right:18px!important;bottom:92px!important;max-width:none!important}
+  #lobby .chapter h2{font-size:clamp(38px,11vw,54px)!important;line-height:1!important}
+  #lobby .chapter p{font-size:17px!important;line-height:1.55!important;color:rgba(246,240,223,.84)!important}
+  #lobby .skip{right:14px!important;bottom:18px!important;min-width:170px!important}
+  #lobby .portals{padding:98px 10px 18px!important;place-items:start center!important;overflow-y:auto!important}
+  #lobby .portal-shell{grid-template-columns:1fr!important;width:100%!important;padding:10px!important;gap:10px!important}
+  #lobby .portal,#lobby .portal.featured{min-height:112px!important;grid-row:auto!important;padding:18px!important}
+  #lobby .portal strong{font-size:23px!important;line-height:1.05!important}
+  #lobby .portal span{font-size:10px!important}
+
+  /* All rooms: consistent visible back navigation */
+  #theaterReturn,#musicReturn,#returnLobby,#productionReturn,#storyReturn,#journalReturn,#bibleReturn,#aboutReturn,#contactReturn{
+    position:fixed!important;left:12px!important;right:12px!important;bottom:calc(12px + env(safe-area-inset-bottom))!important;width:auto!important;min-height:58px!important;margin:0!important;z-index:9999!important;
+    display:flex!important;align-items:center!important;justify-content:center!important;color:#f7dc8a!important;background:linear-gradient(180deg,rgba(36,26,9,.98),rgba(4,3,2,.99))!important;border:1px solid rgba(242,215,131,.72)!important;border-radius:999px!important;box-shadow:0 18px 45px rgba(0,0,0,.62),inset 0 1px 0 rgba(255,246,212,.1)!important
+  }
+  #theaterBackHome{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;width:100%!important;min-height:52px!important}
+
+  /* Music Room: readable, scrollable, back always present */
+  #musicRoom .center{padding:12px 8px calc(94px + env(safe-area-inset-bottom))!important}
+  #musicRoom .music-shell{width:100%!important;max-width:100%!important;min-height:auto!important;padding:16px 12px!important;overflow:visible!important}
+  #musicRoom h2{font-size:clamp(44px,12vw,60px)!important;line-height:.95!important}
+  #musicRoom .music-grid,#musicRoom .music-stage,#musicRoom .music-panels{grid-template-columns:1fr!important;width:100%!important;min-width:0!important}
+  #musicRoom .music-panel,#musicRoom .music-copy,#musicRoom .music-lyrics,#musicRoom .music-credits{min-width:0!important;max-width:100%!important;overflow-wrap:anywhere!important}
+  #musicRoom p,#musicRoom .music-lyrics{font-size:16px!important;line-height:1.55!important}
+  #musicRoom .music-footer{padding-bottom:0!important;margin-bottom:0!important}
+
+  /* Live Center: player is the hero */
+  #liveCenter .center{padding:10px 8px calc(94px + env(safe-area-inset-bottom))!important}
+  #liveCenter .center>div{width:100%!important;max-width:100%!important}
+  #liveCenter h2{font-size:clamp(48px,13vw,66px)!important;margin:8px 0 12px!important}
+  #liveCenter .center>div>div:nth-of-type(2){padding:12px!important;margin-top:14px!important}
+  #liveCenter #liveMain{width:100%!important;height:auto!important;aspect-ratio:16/9!important;min-height:56vw!important;max-height:none!important;border-radius:16px!important;background:radial-gradient(circle at 50% 45%,rgba(83,58,16,.30),#030302 72%)!important}
+  #liveCenter #livePlayerWrap{inset:0!important;border-radius:14px!important}
+  #liveCenter #livePlayer{object-fit:contain!important}
+  #liveCenter #liveTitle{font-size:clamp(34px,10vw,46px)!important}
+  #liveCenter #liveSubtitle{font-size:16px!important;line-height:1.45!important}
+  #liveCenter #liveControls{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important}
+  #liveCenter #liveControls button{min-height:56px!important;font-size:12px!important}
+
+  /* Story Room and content rooms: eliminate clipping */
+  #storyRoom .story-stage,#storyRoom .story-editorial,#storyRoom .story-hero,#storyRoom .story-chapters{width:100%!important;max-width:100%!important;min-width:0!important}
+  #storyRoom .story-stage,#storyRoom .story-chapters{grid-template-columns:1fr!important}
+  #storyRoom .story-editorial{padding:22px 16px!important;text-align:left!important}
+  #storyRoom .story-editorial h3{font-size:clamp(32px,9vw,42px)!important;overflow-wrap:break-word!important}
+  #storyRoom .story-editorial p{font-size:17px!important;line-height:1.55!important}
+  #storyRoom .story-hero{min-height:330px!important;background-size:cover!important;background-position:center!important}
+  #productionRoom .production-grid,#journalRoom .journal-grid,#visualBible .bible-grid,#aboutRoom .about-grid,#contactRoom .contact-grid{grid-template-columns:1fr!important}
+
+  /* Kids known-good mobile: single column with real scrollbar, all 5 accessible. */
+  #kidsAnimationFolder{padding:8px!important}
+  #kidsAnimationFolder .kids-folder-shell{width:calc(100vw - 16px)!important;max-width:calc(100vw - 16px)!important;max-height:86dvh!important;padding:14px!important}
+  #kidsAnimationFolder .kids-folder-head{display:grid!important;grid-template-columns:1fr!important;gap:10px!important}
+  #kidsAnimationFolder .kids-folder-controls{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important}
+  #kidsAnimationFolder .kids-folder-grid{grid-template-columns:1fr!important;max-height:58dvh!important;gap:10px!important}
+  #kidsAnimationFolder .kids-title-card,#kidsAnimationFolder .kids-title-card:last-child{grid-column:1!important;min-height:108px!important;padding:16px!important;text-align:left!important;background:linear-gradient(155deg,rgba(28,20,7,.98),rgba(5,4,2,.99))!important;border-color:rgba(217,183,96,.38)!important}
+  #kidsAnimationFolder .kids-title-card strong{font-size:20px!important;line-height:1.12!important;color:var(--sc-ivory)!important}
+  #kidsAnimationFolder .kids-title-card small,#kidsAnimationFolder .kids-title-card span{font-size:10px!important;color:var(--sc-gold-hi)!important}
+}
+</style>
+<script id="rc179-final-runtime">
+(()=>{
+  const ready=(fn)=>document.readyState==='loading'?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
+  ready(()=>{
+    /* Reliable lobby portal state: do not depend on :has(). */
+    const lobby=document.getElementById('lobby'),portals=document.getElementById('portals');
+    if(lobby&&portals){
+      const sync=()=>lobby.classList.toggle('portal-mode',portals.classList.contains('show'));
+      sync(); new MutationObserver(sync).observe(portals,{attributes:true,attributeFilter:['class']});
+    }
+
+    /* RC182: DO NOT override Kids playback here.
+       RC132/RC181 owns the Kids click path so the collection cover stays up
+       until a real decoded frame is painted. This prevents the gray flash. */
+  });
+})();
+</script>
+
+<style id="rc181-kids-true-frame-cut">
+/* RC181: opaque cover during media priming; no gray/blank surface can leak through. */
+#kidsAnimationFolder.is-open{
+  background:
+    radial-gradient(circle at 50% 20%,rgba(217,183,96,.10),transparent 42%),
+    linear-gradient(180deg,rgba(5,4,2,1),rgba(0,0,0,1))!important;
+  backdrop-filter:none!important;
+}
+</style>
+
+<script id="rc182-kids-seamless-owner-guard">
+(()=>{
+  const ready=(fn)=>document.readyState==='loading'
+    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
+  ready(()=>{
+    const folder=document.getElementById('kidsAnimationFolder');
+    if(!folder)return;
+    /* RC132 already assigned the correct onclicks before this script.
+       We intentionally do not replace them here. */
+    folder.dataset.seamlessOwner='RC132-RC181';
+  });
+})();
+</script>
+
 </body></html>
+
+<style id="rc192-kids-stability-lock">
+#kidsAutoCurtain,
+#kidsAutoCurtain.is-on{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+</style>
