@@ -15,16 +15,35 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
-      - name: Rebuild verified RC196 MASTER
+      - name: Rebuild RC196 MASTER and apply RC197 readability
         run: |
           mkdir -p public
           cat preview-payload/part0.txt preview-payload/part1.txt preview-payload/part2.txt preview-payload/part3.txt preview-payload/part4.txt preview-payload/part5.txt preview-payload/part6.txt preview-payload/part7.txt preview-payload/part8.txt preview-payload/part9.txt | base64 -d | gzip -d > public/index.html
-          echo "99acfce41fe33b9b9dfccca1e951115962d9f2796c939a4a552c8e040ee54aed  public/index.html" | sha256sum -c -
-      - name: Commit production MASTER
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('public/index.html')
+          s=p.read_text(encoding='utf-8')
+          marker='id="rc197-music-discovery-readability"'
+          if marker not in s:
+              patch='''
+<style id="rc197-music-discovery-readability">
+#musicRoom #musicDiscovery .scv2-title{font:600 16px/1.18 Georgia,serif!important;color:#fff2cf!important;max-height:39px!important;letter-spacing:.01em!important}
+#musicRoom #musicDiscovery .scv2-artist{margin-top:5px!important;font-size:10px!important;line-height:1.1!important;letter-spacing:.04em!important;color:rgba(255,240,200,.72)!important}
+#musicRoom #musicDiscovery .scv2-listen{min-width:88px!important;width:88px!important;min-height:38px!important;padding:9px 10px!important;font-size:12px!important;line-height:1!important;letter-spacing:.12em!important;font-weight:700!important}
+#musicRoom #musicDiscovery .discovery-status{min-height:24px!important;line-height:24px!important;font-size:12px!important;letter-spacing:.10em!important;font-weight:600!important;color:#e9cb77!important}
+#musicRoom #musicDiscovery .scv2-result{min-height:78px!important;height:78px!important;max-height:78px!important;grid-template-columns:46px minmax(0,1fr) 94px!important;gap:12px!important;padding:8px 9px!important}
+#musicRoom #musicDiscovery .scv2-art{width:44px!important;height:44px!important}
+</style>
+'''
+              s=s.replace('</head>',patch+'\n</head>',1)
+              p.write_text(s,encoding='utf-8')
+          assert marker in p.read_text(encoding='utf-8')
+          PY
+      - name: Commit production RC197
         run: |
           git config user.name "SoulCinema C.D."
           git config user.email "actions@users.noreply.github.com"
           git add public/index.html
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "LIVE: promote RC196 SoulCinema MASTER"
+          git commit -m "LIVE: RC197 Music Discovery readability"
           git push origin HEAD:main
