@@ -24,11 +24,23 @@ jobs:
           RC197_CSS_B64: PHN0eWxlIGlkPSJyYzE5Ny1tdXNpYy1kaXNjb3ZlcnktcmVhZGFiaWxpdHkiPgojbXVzaWNSb29tICNtdXNpY0Rpc2NvdmVyeSAuc2N2Mi10aXRsZXtmb250OjYwMCAxNnB4LzEuMTggR2VvcmdpYSxzZXJpZiFpbXBvcnRhbnQ7Y29sb3I6I2ZmZjJjZiFpbXBvcnRhbnQ7bWF4LWhlaWdodDozOXB4IWltcG9ydGFudDtsZXR0ZXItc3BhY2luZzouMDFlbSFpbXBvcnRhbnR9CiNtdXNpY1Jvb20gI211c2ljRGlzY292ZXJ5IC5zY3YyLWFydGlzdHttYXJnaW4tdG9wOjVweCFpbXBvcnRhbnQ7Zm9udC1zaXplOjEwcHghaW1wb3J0YW50O2xpbmUtaGVpZ2h0OjEuMSFpbXBvcnRhbnQ7bGV0dGVyLXNwYWNpbmc6LjA0ZW0haW1wb3J0YW50O2NvbG9yOnJnYmEoMjU1LDI0MCwyMDAsLjcyKSFpbXBvcnRhbnR9CiNtdXNpY1Jvb20gI211c2ljRGlzY292ZXJ5IC5zY3YyLWxpc3RlbnttaW4td2lkdGg6ODhweCFpbXBvcnRhbnQ7d2lkdGg6ODhweCFpbXBvcnRhbnQ7bWluLWhlaWdodDozOHB4IWltcG9ydGFudDtwYWRkaW5nOjlweCAxMHB4IWltcG9ydGFudDtmb250LXNpemU6MTJweCFpbXBvcnRhbnQ7bGluZS1oZWlnaHQ6MSFpbXBvcnRhbnQ7bGV0dGVyLXNwYWNpbmc6LjEyZW0haW1wb3J0YW50O2ZvbnQtd2VpZ2h0OjcwMCFpbXBvcnRhbnR9CiNtdXNpY1Jvb20gI211c2ljRGlzY292ZXJ5IC5kaXNjb3Zlcnktc3RhdHVze21pbi1oZWlnaHQ6MjRweCFpbXBvcnRhbnQ7bGluZS1oZWlnaHQ6MjRweCFpbXBvcnRhbnQ7Zm9udC1zaXplOjEycHghaW1wb3J0YW50O2xldHRlci1zcGFjaW5nOi4xMGVtIWltcG9ydGFudDtmb250LXdlaWdodDo2MDAhaW1wb3J0YW50O2NvbG9yOiNlOWNiNzchaW1wb3J0YW50fQojbXVzaWNSb29tICNtdXNpY0Rpc2NvdmVyeSAuc2N2Mi1yZXN1bHR7bWluLWhlaWdodDo3OHB4IWltcG9ydGFudDtoZWlnaHQ6NzhweCFpbXBvcnRhbnQ7bWF4LWhlaWdodDo3OHB4IWltcG9ydGFudDtncmlkLXRlbXBsYXRlLWNvbHVtbnM6NDZweCBtaW5tYXgoMCwxZnIpIDk0cHghaW1wb3J0YW50O2dhcDoxMnB4IWltcG9ydGFudDtwYWRkaW5nOjhweCA5cHghaW1wb3J0YW50fQojbXVzaWNSb29tICNtdXNpY0Rpc2NvdmVyeSAuc2N2Mi1hcnR7d2lkdGg6NDRweCFpbXBvcnRhbnQ7aGVpZ2h0OjQ0cHghaW1wb3J0YW50fQo8L3N0eWxlPg==
         run: |
           python3 -c "from pathlib import Path; import os,base64; p=Path('public/index.html'); s=p.read_text(encoding='utf-8'); css=base64.b64decode(os.environ['RC197_CSS_B64']).decode(); marker='id=\"rc197-music-discovery-readability\"'; p.write_text(s if marker in s else s.replace('</head>',css+'\n</head>',1),encoding='utf-8'); assert marker in p.read_text(encoding='utf-8')"
-      - name: Commit production RC197
+      - name: Apply RC204 Live Center patch
+        run: |
+          patch public/index.html < preview-payload/rc204.patch
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          p=Path('public/index.html')
+          sha=hashlib.sha256(p.read_bytes()).hexdigest()
+          expected='d80972c60e809e82a9a515de0bd2a785910c3c3de3566083ebd25ad31b892cbe'
+          print('RC204 SHA256', sha)
+          assert sha==expected, (sha, expected)
+          PY
+      - name: Commit production RC204
         run: |
           git config user.name "SoulCinema C.D."
           git config user.email "actions@users.noreply.github.com"
           git add public/index.html
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "LIVE: RC197 Music Discovery readability"
+          git commit -m "LIVE: RC204 Live Center final single badge"
           git push origin HEAD:main
