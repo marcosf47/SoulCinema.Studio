@@ -15,16 +15,16 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
-      - name: Copy verified MASTER from preview branch
+      - name: Rebuild verified RC196 MASTER
         run: |
-          git fetch origin ep-final-preview-20260904
           mkdir -p public
-          git show origin/ep-final-preview-20260904:public/index.html > public/index.html
+          cat preview-payload/part0.txt preview-payload/part1.txt preview-payload/part2.txt preview-payload/part3.txt preview-payload/part4.txt preview-payload/part5.txt preview-payload/part6.txt preview-payload/part7.txt preview-payload/part8.txt preview-payload/part9.txt | base64 -d | gzip -d > public/index.html
+          echo "99acfce41fe33b9b9dfccca1e951115962d9f2796c939a4a552c8e040ee54aed  public/index.html" | sha256sum -c -
       - name: Commit production MASTER
         run: |
           git config user.name "SoulCinema C.D."
           git config user.email "actions@users.noreply.github.com"
           git add public/index.html
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "LIVE: promote SoulCinema MASTER final"
+          git commit -m "LIVE: promote RC196 SoulCinema MASTER"
           git push origin HEAD:main
