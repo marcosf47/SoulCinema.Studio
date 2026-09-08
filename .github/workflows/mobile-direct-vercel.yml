@@ -18,29 +18,37 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC261 exact The Gate back fix
+      - name: Apply RC261 exact gate fix
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-
-          old="""    const hardGate=()=>{
-      cleanLobbyState();
-      document.querySelectorAll('.scene.active').forEach(s=>s.classList.remove('active'));
-      if(gate)gate.classList.add('active');
-      if(document.body){
-        document.body.dataset.scene='gate';
-        document.body.dataset.experience='gate';
-        document.body.classList.remove('gate-lobby-fluid','gate-lobby-soft');
-      }
-      setTimeout(cleanLobbyState,80);
-    };"""
-
-          new="""    const hardGate=()=>{
+          marker='RC261 MASTER MOBILE THE GATE BACK FIX'
+          start_token="    const hardGate=()=>{\n"
+          end_token="    const activateLobby=()=>{\n"
+          if marker not in html:
+              starts=[]
+              pos=0
+              while True:
+                  i=html.find(start_token,pos)
+                  if i<0: break
+                  starts.append(i)
+                  pos=i+1
+              if len(starts)!=1:
+                  raise SystemExit(f'Expected exactly one hardGate block, found {len(starts)}; refusing to guess')
+              start=starts[0]
+              end=html.find(end_token,start)
+              if end<0:
+                  raise SystemExit('activateLobby boundary not found; refusing to guess')
+              old=html[start:end]
+              required=["cleanLobbyState();","gate.classList.add('active')","dataset.experience='gate'","setTimeout(cleanLobbyState,80)"]
+              for needle in required:
+                  if needle not in old:
+                      raise SystemExit(f'hardGate invariant missing: {needle}; refusing to guess')
+              new="""    const hardGate=()=>{
       /* RC261 MASTER MOBILE THE GATE BACK FIX */
       if(matchMedia('(max-width:700px)').matches){
-        /* stop every pending page timeout so the lobby sequence cannot reclaim the UI */
         const lastTimer=setTimeout(()=>{},0);
         for(let i=0;i<=lastTimer;i++)clearTimeout(i);
         clearTimeout(lastTimer);
@@ -57,19 +65,12 @@ jobs:
         document.body.dataset.experience='gate';
         document.body.classList.remove('gate-lobby-fluid','gate-lobby-soft');
       }
-      if(matchMedia('(max-width:700px)').matches){
-        cleanLobbyState();
-      }else{
-        setTimeout(cleanLobbyState,80);
-      }
-    };"""
-
-          if 'RC261 MASTER MOBILE THE GATE BACK FIX' not in html:
-              if html.count(old)!=1:
-                  raise SystemExit(f'Exact hardGate block mismatch ({html.count(old)}); refusing to guess')
-              html=html.replace(old,new,1)
-
-          p.write_text(html,encoding='utf-8')
+      if(matchMedia('(max-width:700px)').matches)cleanLobbyState();
+      else setTimeout(cleanLobbyState,80);
+    };
+"""
+              html=html[:start]+new+html[end:]
+              p.write_text(html,encoding='utf-8')
           PY
 
       - name: Verify RC261
