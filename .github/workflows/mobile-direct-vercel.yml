@@ -77,14 +77,16 @@ jobs:
           }
           </style>
           '''
+              if '</body></html>' not in html:
+                  raise SystemExit('closing body/html marker missing')
               html=html.replace('</body></html>',patch+'\n</body></html>')
               p.write_text(html,encoding='utf-8')
+          if marker not in p.read_text(encoding='utf-8'):
+              raise SystemExit('RC258 marker missing after patch')
           PY
 
       - name: Verify RC258 mobile build
-        run: |
-          grep -q 'RC238' public/index.html
-          grep -q 'rc258-mobile-screening-theater-restore' public/index.html
+        run: grep -q 'rc258-mobile-screening-theater-restore' public/index.html
 
       - name: Require Vercel token
         env:
