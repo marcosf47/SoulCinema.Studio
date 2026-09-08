@@ -5411,9 +5411,22 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
       else if(typeof sequence==='function')setTimeout(()=>sequence(true),80);
     };
     const hardSkip=()=>{
-      /* RC260 MASTER FIX */
-      if(typeof clearTimers==='function')clearTimers();
-      if(!lobby?.classList.contains('active')){document.querySelectorAll('.scene.active').forEach(s=>s.classList.remove('active'));lobby?.classList.add('active');}
+      /* RC262 MASTER MOBILE SKIP FORWARD FIX */
+      if(matchMedia('(max-width:700px)').matches){
+        const lastTimer=setTimeout(()=>{},0);
+        for(let i=0;i<=lastTimer;i++)clearTimeout(i);
+        clearTimeout(lastTimer);
+        document.querySelectorAll('#lobby video,#lobby audio').forEach(m=>{
+          try{m.pause();}catch(_e){}
+          try{m.currentTime=0;}catch(_e){}
+        });
+      }else if(typeof clearTimers==='function'){
+        clearTimers();
+      }
+      if(!lobby?.classList.contains('active')){
+        document.querySelectorAll('.scene.active').forEach(s=>s.classList.remove('active'));
+        lobby?.classList.add('active');
+      }
       q('#lobby .heart-focus')?.classList.remove('show');
       q('#lobby .premiere-card')?.classList.remove('show');
       if(fade)fade.classList.remove('on');
