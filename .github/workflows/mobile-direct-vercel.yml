@@ -18,48 +18,25 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC260 master fix
+      - name: Apply RC260 exact master fix
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          p = Path('public/index.html')
-          html = p.read_text(encoding='utf-8')
-          old = """    const hardSkip=()=>{
-      cleanLobbyState();
-      if(!lobby?.classList.contains('active'))activateLobby();
-      setTimeout(()=>{
-        if(typeof window.showPortals==='function')window.showPortals();
-        else if(typeof showPortals==='function')showPortals();
-        else portals?.classList.add('show');
-      },220);
-    };"""
-          new = """    const hardSkip=()=>{
-      /* RC260 MASTER FIX */
-      if(typeof clearTimers==='function')clearTimers();
-      if(!lobby?.classList.contains('active')){
-        document.querySelectorAll('.scene.active').forEach(s=>s.classList.remove('active'));
-        lobby?.classList.add('active');
-      }
-      q('#lobby .heart-focus')?.classList.remove('show');
-      q('#lobby .premiere-card')?.classList.remove('show');
-      if(fade)fade.classList.remove('on');
-      if(journey){journey.classList.remove('on');journey.setAttribute('aria-hidden','true');}
-      portals?.classList.add('show');
-      lobby?.classList.add('portal-mode');
-      if(skipBtn)skipBtn.style.display='none';
-      if(document.body){document.body.dataset.scene='lobby';document.body.dataset.experience='portal_mode';}
-    };"""
+          p=Path('public/index.html')
+          html=p.read_text(encoding='utf-8')
+          old="    const hardSkip=()=>{\n      cleanLobbyState();\n      if(!lobby?.classList.contains('active'))activateLobby();\n      setTimeout(()=>{\n        if(typeof window.showPortals==='function')window.showPortals();\n        else if(typeof showPortals==='function')showPortals();\n        else portals?.classList.add('show');\n      },220);\n    };"
+          new="    const hardSkip=()=>{\n      /* RC260 MASTER FIX */\n      if(typeof clearTimers==='function')clearTimers();\n      if(!lobby?.classList.contains('active')){document.querySelectorAll('.scene.active').forEach(s=>s.classList.remove('active'));lobby?.classList.add('active');}\n      q('#lobby .heart-focus')?.classList.remove('show');\n      q('#lobby .premiere-card')?.classList.remove('show');\n      if(fade)fade.classList.remove('on');\n      if(journey){journey.classList.remove('on');journey.setAttribute('aria-hidden','true');}\n      portals?.classList.add('show');\n      lobby?.classList.add('portal-mode');\n      if(skipBtn)skipBtn.style.display='none';\n      if(document.body){document.body.dataset.scene='lobby';document.body.dataset.experience='portal_mode';}\n    };"
           if 'RC260 MASTER FIX' not in html:
-              if html.count(old) != 1:
-                  raise SystemExit('Exact hardSkip block mismatch; aborting')
-              html = html.replace(old, new, 1)
-          start = html.find('<script id="rc259-mobile-skip-to-portals-fix">')
-          if start >= 0:
-              end = html.find('</script>', start)
-              if end < 0:
-                  raise SystemExit('Broken RC259 script; aborting')
-              html = html[:start] + html[end+9:]
-          p.write_text(html, encoding='utf-8')
+              if html.count(old)!=1:
+                  raise SystemExit('Exact hardSkip block mismatch; refusing to guess')
+              html=html.replace(old,new,1)
+          start=html.find('<script id="rc259-mobile-skip-to-portals-fix">')
+          if start>=0:
+              end=html.find('</script>',start)
+              if end<0:
+                  raise SystemExit('Broken RC259 script; refusing to guess')
+              html=html[:start]+html[end+9:]
+          p.write_text(html,encoding='utf-8')
           PY
 
       - name: Verify RC260
