@@ -5374,6 +5374,16 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
       }
     };
     const hardGate=()=>{
+      /* RC261 MASTER MOBILE THE GATE BACK FIX */
+      if(matchMedia('(max-width:700px)').matches){
+        const lastTimer=setTimeout(()=>{},0);
+        for(let i=0;i<=lastTimer;i++)clearTimeout(i);
+        clearTimeout(lastTimer);
+        document.querySelectorAll('#lobby video,#lobby audio').forEach(m=>{
+          try{m.pause();}catch(_e){}
+          try{m.currentTime=0;}catch(_e){}
+        });
+      }
       cleanLobbyState();
       document.querySelectorAll('.scene.active').forEach(s=>s.classList.remove('active'));
       if(gate)gate.classList.add('active');
@@ -5382,7 +5392,8 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
         document.body.dataset.experience='gate';
         document.body.classList.remove('gate-lobby-fluid','gate-lobby-soft');
       }
-      setTimeout(cleanLobbyState,80);
+      if(matchMedia('(max-width:700px)').matches)cleanLobbyState();
+      else setTimeout(cleanLobbyState,80);
     };
     const activateLobby=()=>{
       cleanLobbyState();
