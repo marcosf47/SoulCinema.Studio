@@ -5331,4 +5331,89 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 })();
 </script>
 
+<style id="rc244-mobile-visual-bible-button-fix">
+@media(max-width:700px){
+  #lobby.portal-mode #portals .portal[data-room="Visual Bible"]{
+    padding-right:76px!important;
+  }
+  #lobby.portal-mode #portals .portal[data-room="Visual Bible"] strong{
+    font-size:clamp(22px,5.8vw,28px)!important;
+    white-space:nowrap!important;
+  }
+  #lobby.portal-mode #portals .portal[data-room="Visual Bible"] p,
+  #lobby.portal-mode #portals .portal[data-room="Visual Bible"] strong::after{
+    font-size:12px!important;
+    line-height:1.2!important;
+  }
+  #lobby.portal-mode #portals .portal[data-room="Visual Bible"]::after{
+    right:20px!important;
+    width:38px!important;
+    height:38px!important;
+    font-size:18px!important;
+  }
+}
+</style>
+
+<script id="rc244-gate-return-reset">
+(()=>{
+  const ready=(fn)=>document.readyState==='loading'
+    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
+  ready(()=>{
+    const q=(s)=>document.querySelector(s);
+    const gate=q('#gate'), lobby=q('#lobby'), portals=q('#portals');
+    const back=q('#back'), enterBtn=q('#enter'), previewBtn=q('#preview'), skipBtn=q('#skip');
+    const fade=q('#fade'), journey=q('#journeyTransition');
+    const cleanLobbyState=()=>{
+      if(portals)portals.classList.remove('show');
+      if(lobby)lobby.classList.remove('portal-mode');
+      if(skipBtn)skipBtn.style.display='';
+      if(fade)fade.classList.remove('on');
+      if(journey){
+        journey.classList.remove('on');
+        journey.setAttribute('aria-hidden','true');
+      }
+    };
+    const hardGate=()=>{
+      cleanLobbyState();
+      document.querySelectorAll('.scene.active').forEach(s=>s.classList.remove('active'));
+      if(gate)gate.classList.add('active');
+      if(document.body){
+        document.body.dataset.scene='gate';
+        document.body.dataset.experience='gate';
+        document.body.classList.remove('gate-lobby-fluid','gate-lobby-soft');
+      }
+      setTimeout(cleanLobbyState,80);
+    };
+    const activateLobby=()=>{
+      cleanLobbyState();
+      document.querySelectorAll('.scene.active').forEach(s=>s.classList.remove('active'));
+      if(lobby)lobby.classList.add('active');
+      if(document.body){
+        document.body.dataset.scene='lobby';
+        document.body.dataset.experience='lobby_active';
+      }
+      q('#lobbyVideo')?.play?.().catch?.(()=>{});
+    };
+    const hardEnter=()=>{
+      activateLobby();
+      if(typeof window.sequence==='function')setTimeout(()=>window.sequence(true),80);
+      else if(typeof sequence==='function')setTimeout(()=>sequence(true),80);
+    };
+    const hardSkip=()=>{
+      cleanLobbyState();
+      if(!lobby?.classList.contains('active'))activateLobby();
+      setTimeout(()=>{
+        if(typeof window.showPortals==='function')window.showPortals();
+        else if(typeof showPortals==='function')showPortals();
+        else portals?.classList.add('show');
+      },220);
+    };
+    if(back)back.addEventListener('click',(e)=>{e.preventDefault();e.stopImmediatePropagation();hardGate();},true);
+    if(enterBtn)enterBtn.addEventListener('click',(e)=>{e.preventDefault();e.stopImmediatePropagation();hardEnter();},true);
+    if(previewBtn)previewBtn.addEventListener('click',(e)=>{e.preventDefault();e.stopImmediatePropagation();hardEnter();},true);
+    if(skipBtn)skipBtn.addEventListener('click',(e)=>{e.preventDefault();e.stopImmediatePropagation();hardSkip();},true);
+  });
+})();
+</script>
+
 </body></html>
