@@ -22,6 +22,7 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
           marker='RC263 MASTER MOBILE SKIP EVENT OWNER FIX'
@@ -31,73 +32,7 @@ jobs:
                   raise SystemExit(f'Expected exactly one #skip button, found {skip_count}; refusing to guess')
               if 'function showPortals()' not in html:
                   raise SystemExit('showPortals() not found; refusing to guess')
-              patch=r'''
-<script id="rc263-mobile-skip-event-owner">
-(()=>{
-  'use strict';
-  const boot=()=>{
-    if(!matchMedia('(max-width:700px)').matches)return;
-    const oldBtn=document.getElementById('skip');
-    if(!oldBtn||!oldBtn.parentNode)return;
-
-    /* RC263 MASTER MOBILE SKIP EVENT OWNER FIX */
-    const btn=oldBtn.cloneNode(true);
-    btn.removeAttribute('onclick');
-    oldBtn.parentNode.replaceChild(btn,oldBtn);
-
-    let fired=false;
-    const forward=(e)=>{
-      if(e){e.preventDefault();e.stopPropagation();if(e.stopImmediatePropagation)e.stopImmediatePropagation();}
-      if(fired)return;
-      fired=true;
-
-      if(typeof window.clearTimers==='function')window.clearTimers();
-      else if(typeof clearTimers==='function')clearTimers();
-
-      const lobby=document.getElementById('lobby');
-      const portals=document.getElementById('portals');
-      const heart=lobby&&lobby.querySelector('.heart-focus');
-      const premiere=document.getElementById('premiereCard');
-      const fade=document.getElementById('fade');
-      const journey=document.getElementById('journeyTransition');
-
-      if(lobby){
-        lobby.querySelectorAll('video,audio').forEach(m=>{try{m.pause()}catch(_e){}});
-      }
-      if(heart)heart.classList.remove('show');
-      if(premiere)premiere.classList.remove('show');
-      if(fade)fade.classList.remove('on');
-      if(journey){journey.classList.remove('on');journey.setAttribute('aria-hidden','true');}
-      if(portals)portals.classList.add('show');
-      if(lobby)lobby.classList.add('portal-mode');
-      btn.style.display='none';
-      if(document.body){document.body.dataset.scene='lobby';document.body.dataset.experience='portal_mode';}
-
-      requestAnimationFrame(()=>{
-        if(portals)portals.classList.add('show');
-        if(lobby)lobby.classList.add('portal-mode');
-      });
-      setTimeout(()=>{fired=false},400);
-    };
-
-    btn.addEventListener('pointerup',forward,true);
-    btn.addEventListener('click',forward,true);
-  };
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});
-  else boot();
-})();
-</script>
-<style id="rc263-mobile-skip-hitbox-lock">
-@media(max-width:700px){
-  #lobby #skip{z-index:120!important;pointer-events:auto!important;touch-action:manipulation!important}
-  #lobby.portal-mode #skip{display:none!important}
-  #lobby.portal-mode .chapter,
-  #lobby.portal-mode .heart-focus,
-  #lobby.portal-mode #premiereCard{display:none!important}
-  #lobby.portal-mode #portals{opacity:1!important;visibility:visible!important;transform:none!important;z-index:100!important;pointer-events:auto!important}
-}
-</style>
-'''
+              patch=base64.b64decode('CjxzY3JpcHQgaWQ9InJjMjYzLW1vYmlsZS1za2lwLWV2ZW50LW93bmVyIj4KKCgpPT57CiAgJ3VzZSBzdHJpY3QnOwogIGNvbnN0IGJvb3Q9KCk9PnsKICAgIGlmKCFtYXRjaE1lZGlhKCcobWF4LXdpZHRoOjcwMHB4KScpLm1hdGNoZXMpcmV0dXJuOwogICAgY29uc3Qgb2xkQnRuPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdza2lwJyk7CiAgICBpZighb2xkQnRufHwhb2xkQnRuLnBhcmVudE5vZGUpcmV0dXJuOwogICAgLyogUkMyNjMgTUFTVEVSIE1PQklMRSBTS0lQIEVWRU5UIE9XTkVSIEZJWCAqLwogICAgY29uc3QgYnRuPW9sZEJ0bi5jbG9uZU5vZGUodHJ1ZSk7CiAgICBidG4ucmVtb3ZlQXR0cmlidXRlKCdvbmNsaWNrJyk7CiAgICBvbGRCdG4ucGFyZW50Tm9kZS5yZXBsYWNlQ2hpbGQoYnRuLG9sZEJ0bik7CiAgICBsZXQgZmlyZWQ9ZmFsc2U7CiAgICBjb25zdCBmb3J3YXJkPShlKT0+ewogICAgICBpZihlKXtlLnByZXZlbnREZWZhdWx0KCk7ZS5zdG9wUHJvcGFnYXRpb24oKTtpZihlLnN0b3BJbW1lZGlhdGVQcm9wYWdhdGlvbillLnN0b3BJbW1lZGlhdGVQcm9wYWdhdGlvbigpO30KICAgICAgaWYoZmlyZWQpcmV0dXJuOwogICAgICBmaXJlZD10cnVlOwogICAgICBpZih0eXBlb2Ygd2luZG93LmNsZWFyVGltZXJzPT09J2Z1bmN0aW9uJyl3aW5kb3cuY2xlYXJUaW1lcnMoKTsKICAgICAgZWxzZSBpZih0eXBlb2YgY2xlYXJUaW1lcnM9PT0nZnVuY3Rpb24nKWNsZWFyVGltZXJzKCk7CiAgICAgIGNvbnN0IGxvYmJ5PWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdsb2JieScpOwogICAgICBjb25zdCBwb3J0YWxzPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdwb3J0YWxzJyk7CiAgICAgIGNvbnN0IGhlYXJ0PWxvYmJ5JiZsb2JieS5xdWVyeVNlbGVjdG9yKCcuaGVhcnQtZm9jdXMnKTsKICAgICAgY29uc3QgcHJlbWllcmU9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3ByZW1pZXJlQ2FyZCcpOwogICAgICBjb25zdCBmYWRlPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdmYWRlJyk7CiAgICAgIGNvbnN0IGpvdXJuZXk9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2pvdXJuZXlUcmFuc2l0aW9uJyk7CiAgICAgIGlmKGxvYmJ5KWxvYmJ5LnF1ZXJ5U2VsZWN0b3JBbGwoJ3ZpZGVvLGF1ZGlvJykuZm9yRWFjaChtPT57dHJ5e20ucGF1c2UoKX1jYXRjaChfZSl7fX0pOwogICAgICBpZihoZWFydCloZWFydC5jbGFzc0xpc3QucmVtb3ZlKCdzaG93Jyk7CiAgICAgIGlmKHByZW1pZXJlKXByZW1pZXJlLmNsYXNzTGlzdC5yZW1vdmUoJ3Nob3cnKTsKICAgICAgaWYoZmFkZSlmYWRlLmNsYXNzTGlzdC5yZW1vdmUoJ29uJyk7CiAgICAgIGlmKGpvdXJuZXkpe2pvdXJuZXkuY2xhc3NMaXN0LnJlbW92ZSgnb24nKTtqb3VybmV5LnNldEF0dHJpYnV0ZSgnYXJpYS1oaWRkZW4nLCd0cnVlJyk7fQogICAgICBpZihwb3J0YWxzKXBvcnRhbHMuY2xhc3NMaXN0LmFkZCgnc2hvdycpOwogICAgICBpZihsb2JieSlsb2JieS5jbGFzc0xpc3QuYWRkKCdwb3J0YWwtbW9kZScpOwogICAgICBidG4uc3R5bGUuZGlzcGxheT0nbm9uZSc7CiAgICAgIGlmKGRvY3VtZW50LmJvZHkpe2RvY3VtZW50LmJvZHkuZGF0YXNldC5zY2VuZT0nbG9iYnknO2RvY3VtZW50LmJvZHkuZGF0YXNldC5leHBlcmllbmNlPSdwb3J0YWxfbW9kZSc7fQogICAgICByZXF1ZXN0QW5pbWF0aW9uRnJhbWUoKCk9PnsKICAgICAgICBpZihwb3J0YWxzKXBvcnRhbHMuY2xhc3NMaXN0LmFkZCgnc2hvdycpOwogICAgICAgIGlmKGxvYmJ5KWxvYmJ5LmNsYXNzTGlzdC5hZGQoJ3BvcnRhbC1tb2RlJyk7CiAgICAgIH0pOwogICAgICBzZXRUaW1lb3V0KCgpPT57ZmlyZWQ9ZmFsc2V9LDQwMCk7CiAgICB9OwogICAgYnRuLmFkZEV2ZW50TGlzdGVuZXIoJ3BvaW50ZXJ1cCcsZm9yd2FyZCx0cnVlKTsKICAgIGJ0bi5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsZm9yd2FyZCx0cnVlKTsKICB9OwogIGlmKGRvY3VtZW50LnJlYWR5U3RhdGU9PT0nbG9hZGluZycpZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsYm9vdCx7b25jZTp0cnVlfSk7CiAgZWxzZSBib290KCk7Cn0pKCk7Cjwvc2NyaXB0Pgo8c3R5bGUgaWQ9InJjMjYzLW1vYmlsZS1za2lwLWhpdGJveC1sb2NrIj4KQG1lZGlhKG1heC13aWR0aDo3MDBweCl7CiAgI2xvYmJ5ICNza2lwe3otaW5kZXg6MTIwIWltcG9ydGFudDtwb2ludGVyLWV2ZW50czphdXRvIWltcG9ydGFudDt0b3VjaC1hY3Rpb246bWFuaXB1bGF0aW9uIWltcG9ydGFudH0KICAjbG9iYnkucG9ydGFsLW1vZGUgI3NraXB7ZGlzcGxheTpub25lIWltcG9ydGFudH0KICAjbG9iYnkucG9ydGFsLW1vZGUgLmNoYXB0ZXIsCiAgI2xvYmJ5LnBvcnRhbC1tb2RlIC5oZWFydC1mb2N1cywKICAjbG9iYnkucG9ydGFsLW1vZGUgI3ByZW1pZXJlQ2FyZHtkaXNwbGF5Om5vbmUhaW1wb3J0YW50fQogICNsb2JieS5wb3J0YWwtbW9kZSAjcG9ydGFsc3tvcGFjaXR5OjEhaW1wb3J0YW50O3Zpc2liaWxpdHk6dmlzaWJsZSFpbXBvcnRhbnQ7dHJhbnNmb3JtOm5vbmUhaW1wb3J0YW50O3otaW5kZXg6MTAwIWltcG9ydGFudDtwb2ludGVyLWV2ZW50czphdXRvIWltcG9ydGFudH0KfQo8L3N0eWxlPgo=').decode('utf-8')
               anchor='</body>'
               if html.count(anchor)!=1:
                   raise SystemExit('Expected one </body>; refusing to guess')
