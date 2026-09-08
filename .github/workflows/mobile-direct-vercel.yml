@@ -18,68 +18,81 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC259 mobile skip to portals fix
+      - name: Apply RC260 master mobile skip fix
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='rc259-mobile-skip-to-portals-fix'
-          if marker not in html:
-              patch=r'''
-          <script id="rc259-mobile-skip-to-portals-fix">
-          (()=>{
-            const mobile=()=>matchMedia('(max-width:700px)').matches;
-            const activatePortals=()=>{
-              const lobby=document.getElementById('lobby');
-              const portals=document.getElementById('portals');
-              const skip=document.getElementById('skip');
-              const heart=document.querySelector('#lobby .heart-focus');
-              const premiere=document.querySelector('#lobby .premiere-card');
-              if(!lobby||!portals)return;
-              document.querySelectorAll('.scene.active').forEach(s=>s.classList.remove('active'));
-              lobby.classList.add('active','portal-mode');
-              portals.classList.add('show');
-              if(skip)skip.style.display='none';
-              heart?.classList.remove('show');
-              premiere?.classList.remove('show');
-              if(document.body){
-                document.body.dataset.scene='lobby';
-                document.body.dataset.experience='portal_mode';
-              }
-            };
-            document.addEventListener('click',e=>{
-              if(!mobile())return;
-              const btn=e.target.closest&&e.target.closest('#skip');
-              if(!btn)return;
-              e.preventDefault();
-              e.stopImmediatePropagation();
-              activatePortals();
-            },true);
-          })();
-          </script>
-          '''
-              if '</body></html>' not in html:
-                  raise SystemExit('closing body/html marker missing')
-              html=html.replace('</body></html>',patch+'\n</body></html>')
-              p.write_text(html,encoding='utf-8')
-          if marker not in p.read_text(encoding='utf-8'):
-              raise SystemExit('RC259 marker missing after patch')
+
+          old="""    const hardSkip=()=>{
+      cleanLobbyState();
+      if(!lobby?.classList.contains('active'))activateLobby();
+      setTimeout(()=>{
+        if(typeof window.showPortals==='function')window.showPortals();
+        else if(typeof showPortals==='function')showPortals();
+        else portals?.classList.add('show');
+      },220);
+    };"""
+
+          new="""    const hardSkip=()=>{
+      /* RC260 MASTER FIX — mobile only. Stop the active lobby sequence first,
+         then enter portal mode directly. Desktop code is untouched. */
+      if(typeof clearTimers==='function')clearTimers();
+      if(!lobby?.classList.contains('active')){
+        document.querySelectorAll('.scene.active').forEach(s=>s.classList.remove('active'));
+        lobby?.classList.add('active');
+      }
+      q('#lobby .heart-focus')?.classList.remove('show');
+      q('#lobby .premiere-card')?.classList.remove('show');
+      if(fade)fade.classList.remove('on');
+      if(journey){
+        journey.classList.remove('on');
+        journey.setAttribute('aria-hidden','true');
+      }
+      portals?.classList.add('show');
+      lobby?.classList.add('portal-mode');
+      if(skipBtn)skipBtn.style.display='none';
+      if(document.body){
+        document.body.dataset.scene='lobby';
+        document.body.dataset.experience='portal_mode';
+      }
+    };"""
+
+          if old not in html:
+              if 'RC260 MASTER FIX' not in html:
+                  raise SystemExit('Exact RC244 hardSkip block not found; refusing to guess')
+          else:
+              if html.count(old) != 1:
+                  raise SystemExit(f'Expected exactly one RC244 hardSkip block, found {html.count(old)}')
+              html=html.replace(old,new,1)
+
+          # Remove the failed additive RC259 handler so only the repaired original handler owns Skip.
+          start=html.find('<script id="rc259-mobile-skip-to-portals-fix">')
+          if start != -1:
+              end=html.find('</script>',start)
+              if end == -1:
+                  raise SystemExit('RC259 script start found without closing script')
+              html=html[:start]+html[end+9:]
+
+          p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC259 mobile build
+      - name: Verify RC260 master fix
         run: |
+          grep -q 'RC260 MASTER FIX' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
-          grep -q 'rc259-mobile-skip-to-portals-fix' public/index.html
+          ! grep -q 'rc259-mobile-skip-to-portals-fix' public/index.html
+          grep -q "document.body.dataset.experience='portal_mode'" public/index.html
 
-      - name: Lock RC259 into source
+      - name: Lock RC260 into source
         run: |
           if git diff --quiet -- public/index.html; then
-            echo "RC259 already locked in source"
+            echo "RC260 already locked in source"
           else
             git config user.name "SoulCinema Mobile Deploy"
             git config user.email "actions@users.noreply.github.com"
             git add public/index.html
-            git commit -m "fix mobile skip to portals transition"
+            git commit -m "RC260 master fix mobile skip to portals"
             git push origin HEAD:main
           fi
