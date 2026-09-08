@@ -18,84 +18,68 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC258 mobile theater restore
+      - name: Apply RC259 mobile skip to portals fix
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='rc258-mobile-screening-theater-restore'
+          marker='rc259-mobile-skip-to-portals-fix'
           if marker not in html:
               patch=r'''
-          <style id="rc258-mobile-screening-theater-restore">
-          /* RC258 — MOBILE SCREENING THEATER CONTENT RESTORE.
-             Mobile only. Desktop remains locked. Existing DOM/media/routing preserved. */
-          @media(max-width:700px){
-            #screeningTheater .collection-strip{
-              display:grid!important;
-              grid-template-columns:1fr!important;
-              gap:10px!important;
-              width:100%!important;
-              padding:0!important;
-              margin:0!important;
-              visibility:visible!important;
-              opacity:1!important;
-            }
-            #screeningTheater .collection-card{
-              display:flex!important;
-              width:100%!important;
-              min-height:88px!important;
-              padding:14px 16px!important;
-              visibility:visible!important;
-              opacity:1!important;
-              pointer-events:auto!important;
-              touch-action:manipulation!important;
-            }
-            #screeningTheater .collection-card small{
-              font-size:9px!important;
-              line-height:1.2!important;
-            }
-            #screeningTheater .collection-card strong{
-              font-size:17px!important;
-              line-height:1.18!important;
-            }
-            #screeningTheater #theaterPlay{
-              display:grid!important;
-              place-items:center!important;
-              visibility:visible!important;
-              opacity:1!important;
-              pointer-events:auto!important;
-              position:relative!important;
-              z-index:30!important;
-              width:64px!important;
-              height:64px!important;
-              min-width:64px!important;
-              min-height:64px!important;
-              margin:18px auto 0!important;
-            }
-            #screeningTheater .theater-poster-copy{overflow:visible!important;}
-          }
-          </style>
+          <script id="rc259-mobile-skip-to-portals-fix">
+          (()=>{
+            const mobile=()=>matchMedia('(max-width:700px)').matches;
+            const activatePortals=()=>{
+              const lobby=document.getElementById('lobby');
+              const portals=document.getElementById('portals');
+              const skip=document.getElementById('skip');
+              const heart=document.querySelector('#lobby .heart-focus');
+              const premiere=document.querySelector('#lobby .premiere-card');
+              if(!lobby||!portals)return;
+              document.querySelectorAll('.scene.active').forEach(s=>s.classList.remove('active'));
+              lobby.classList.add('active','portal-mode');
+              portals.classList.add('show');
+              if(skip)skip.style.display='none';
+              heart?.classList.remove('show');
+              premiere?.classList.remove('show');
+              if(document.body){
+                document.body.dataset.scene='lobby';
+                document.body.dataset.experience='portal_mode';
+              }
+            };
+            document.addEventListener('click',e=>{
+              if(!mobile())return;
+              const btn=e.target.closest&&e.target.closest('#skip');
+              if(!btn)return;
+              e.preventDefault();
+              e.stopImmediatePropagation();
+              activatePortals();
+            },true);
+          })();
+          </script>
           '''
               if '</body></html>' not in html:
                   raise SystemExit('closing body/html marker missing')
               html=html.replace('</body></html>',patch+'\n</body></html>')
               p.write_text(html,encoding='utf-8')
           if marker not in p.read_text(encoding='utf-8'):
-              raise SystemExit('RC258 marker missing after patch')
+              raise SystemExit('RC259 marker missing after patch')
           PY
 
-      - name: Verify RC258 mobile build
-        run: grep -q 'rc258-mobile-screening-theater-restore' public/index.html
+      - name: Verify RC259 mobile build
+        run: |
+          grep -q 'rc258-mobile-screening-theater-restore' public/index.html
+          grep -q 'rc259-mobile-skip-to-portals-fix' public/index.html
 
-      - name: Lock RC258 into source
+      - name: Lock RC259 into source
         run: |
           if git diff --quiet -- public/index.html; then
-            echo "RC258 already locked in source"
+            echo "RC259 already locked in source"
           else
             git config user.name "SoulCinema Mobile Deploy"
             git config user.email "actions@users.noreply.github.com"
             git add public/index.html
-            git commit -m "fix mobile screening theater content visibility"
+            git commit -m "fix mobile skip to portals transition"
             git push origin HEAD:main
           fi
