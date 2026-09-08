@@ -5876,4 +5876,77 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 })();
 </script>
 
+<script id="rc252-mobile-direct-room-router">
+(()=>{
+  const ready=(fn)=>document.readyState==='loading'
+    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
+  ready(()=>{
+    const mobile=()=>matchMedia('(max-width:700px)').matches;
+    const map={
+      'Screening Theater':'screeningTheater',
+      'Music Room':'musicRoom',
+      'Live Center':'liveCenter',
+      'Production Room':'productionRoom',
+      'Story Room':'storyRoom',
+      'Journal':'journalRoom',
+      'Visual Bible':'visualBibleRoom',
+      'About Us':'aboutRoom',
+      'Contact':'contactRoom'
+    };
+    const go=(room)=>{
+      const id=map[room];
+      const target=id&&document.getElementById(id);
+      const lobby=document.getElementById('lobby');
+      if(!target)return;
+      document.querySelectorAll('.scene.active').forEach(el=>el.classList.remove('active'));
+      target.classList.add('active');
+      if(lobby)lobby.classList.remove('active','portal-mode');
+      const portals=document.getElementById('portals');
+      if(portals)portals.classList.remove('show');
+      document.body.dataset.scene=id.replace('Room','').replace('screeningTheater','theater').replace('liveCenter','live').replace('visualBible','visual-bible');
+      document.body.dataset.experience='room_active';
+
+      if(room==='Screening Theater'){
+        const poster=document.getElementById('theaterPoster');
+        const status=document.getElementById('theaterStatus');
+        const title=document.getElementById('theaterCurrentTitle');
+        if(poster)poster.classList.remove('hidden');
+        if(status)status.textContent='PREMIERE READY';
+        if(title)title.textContent='MWEN POUKONT MWEN';
+      }
+      if(room==='Live Center' && typeof setLiveMode==='function')setLiveMode(document.body.dataset.liveMode||'standby');
+    };
+    document.querySelectorAll('#portals .portal[data-room] .sc-mobile-portal-hit').forEach(hit=>{
+      if(hit.dataset.rc252Bound==='1')return;
+      hit.dataset.rc252Bound='1';
+      let sx=0,sy=0,moved=false;
+      hit.addEventListener('touchstart',e=>{
+        if(!mobile())return;
+        const t=e.touches[0];sx=t.clientX;sy=t.clientY;moved=false;
+      },{passive:true,capture:true});
+      hit.addEventListener('touchmove',e=>{
+        if(!mobile())return;
+        const t=e.touches[0];
+        if(Math.abs(t.clientY-sy)>3||Math.abs(t.clientX-sx)>5)moved=true;
+      },{passive:true,capture:true});
+      hit.addEventListener('touchend',e=>{
+        if(!mobile())return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        const panel=hit.closest('.portal[data-room]');
+        if(panel&&!moved)go(panel.dataset.room);
+        moved=false;
+      },{passive:false,capture:true});
+      hit.addEventListener('click',e=>{
+        if(!mobile())return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        const panel=hit.closest('.portal[data-room]');
+        if(panel)go(panel.dataset.room);
+      },true);
+    });
+  });
+})();
+</script>
+
 </body></html>
