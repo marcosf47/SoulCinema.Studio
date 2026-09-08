@@ -6012,4 +6012,67 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 })();
 </script>
 
+<script id="rc254-mobile-pointer-route-owner">
+(()=>{
+  const ready=(fn)=>document.readyState==='loading'
+    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
+  ready(()=>{
+    const mobile=()=>matchMedia('(max-width:700px)').matches;
+    const ids={
+      'Screening Theater':'screeningTheater',
+      'Music Room':'musicRoom',
+      'Live Center':'liveCenter',
+      'Production Room':'productionRoom',
+      'Story Room':'storyRoom',
+      'Journal':'journalRoom',
+      'Visual Bible':'visualBibleRoom',
+      'About Us':'aboutRoom',
+      'Contact':'contactRoom'
+    };
+    const go=(room)=>{
+      const target=document.getElementById(ids[room]||'');
+      const lobby=document.getElementById('lobby');
+      const portals=document.getElementById('portals');
+      if(!target)return;
+      document.querySelectorAll('.scene.active').forEach(el=>el.classList.remove('active'));
+      portals?.classList.remove('show');
+      lobby?.classList.remove('active','portal-mode');
+      target.classList.add('active');
+      document.body.dataset.scene=ids[room]||room;
+      document.body.dataset.experience='room_active';
+      if(room==='Screening Theater'){
+        document.getElementById('theaterPoster')?.classList.remove('hidden');
+        const status=document.getElementById('theaterStatus');
+        const title=document.getElementById('theaterCurrentTitle');
+        if(status)status.textContent='PREMIERE READY';
+        if(title)title.textContent='MWEN POUKONT MWEN';
+      }
+    };
+    document.querySelectorAll('#portals .portal[data-room] .sc-mobile-portal-hit').forEach(hit=>{
+      if(hit.dataset.rc254Bound==='1')return;
+      hit.dataset.rc254Bound='1';
+      let sx=0,sy=0,moved=false;
+      hit.addEventListener('pointerdown',e=>{
+        if(!mobile())return;
+        sx=e.clientX;sy=e.clientY;moved=false;
+      },{capture:true});
+      hit.addEventListener('pointermove',e=>{
+        if(!mobile())return;
+        if(Math.abs(e.clientY-sy)>3||Math.abs(e.clientX-sx)>5)moved=true;
+      },{capture:true});
+      hit.addEventListener('pointerup',e=>{
+        if(!mobile())return;
+        e.preventDefault();
+        e.stopPropagation();
+        if(!moved){
+          const panel=hit.closest('.portal[data-room]');
+          if(panel)go(panel.dataset.room);
+        }
+        moved=false;
+      },{capture:true});
+    });
+  });
+})();
+</script>
+
 </body></html>
