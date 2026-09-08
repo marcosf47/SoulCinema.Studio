@@ -6075,4 +6075,71 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 })();
 </script>
 
+<style id="rc255-mobile-wide-arrow-zone">
+@media(max-width:700px){
+  #lobby.portal-mode #portals .portal .sc-mobile-portal-hit{
+    right:16px!important;
+    width:74px!important;
+    height:74px!important;
+    min-width:74px!important;
+    min-height:74px!important;
+    border-radius:50%!important;
+  }
+}
+@media(max-width:390px){
+  #lobby.portal-mode #portals .portal .sc-mobile-portal-hit{
+    right:12px!important;
+    width:68px!important;
+    height:68px!important;
+    min-width:68px!important;
+    min-height:68px!important;
+  }
+}
+</style>
+
+<script id="rc255-mobile-wide-arrow-zone">
+(()=>{
+  const ready=(fn)=>document.readyState==='loading'
+    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
+  ready(()=>{
+    const mobile=()=>matchMedia('(max-width:700px)').matches;
+    const ids={
+      'Screening Theater':'screeningTheater',
+      'Music Room':'musicRoom',
+      'Live Center':'liveCenter',
+      'Production Room':'productionRoom',
+      'Story Room':'storyRoom',
+      'Journal':'journalRoom',
+      'Visual Bible':'visualBibleRoom',
+      'About Us':'aboutRoom',
+      'Contact':'contactRoom'
+    };
+    const go=(room)=>{
+      const target=document.getElementById(ids[room]||'');
+      const lobby=document.getElementById('lobby');
+      if(!target)return;
+      document.querySelectorAll('.scene.active').forEach(el=>el.classList.remove('active'));
+      document.getElementById('portals')?.classList.remove('show');
+      lobby?.classList.remove('active','portal-mode');
+      target.classList.add('active');
+      document.body.dataset.scene=ids[room]||room;
+      document.body.dataset.experience='room_active';
+    };
+    document.addEventListener('pointerup',e=>{
+      if(!mobile())return;
+      const portal=e.target.closest&&e.target.closest('#lobby.portal-mode #portals .portal[data-room]');
+      if(!portal)return;
+      const rect=portal.getBoundingClientRect();
+      const inWideRight=e.clientX>=rect.right-112;
+      const moved=Math.abs((e.movementY||0))>3||Math.abs((e.movementX||0))>5;
+      if(inWideRight&&!moved){
+        e.preventDefault();
+        e.stopPropagation();
+        go(portal.dataset.room);
+      }
+    },true);
+  });
+})();
+</script>
+
 </body></html>
