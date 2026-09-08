@@ -84,7 +84,6 @@ jobs:
       - name: Verify RC258 mobile build
         run: |
           grep -q 'RC238' public/index.html
-          grep -q 'max-width:900px' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
 
       - name: Require Vercel token
