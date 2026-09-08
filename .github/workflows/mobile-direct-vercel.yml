@@ -46,29 +46,7 @@ jobs:
               for needle in required:
                   if needle not in old:
                       raise SystemExit(f'hardGate invariant missing: {needle}; refusing to guess')
-              new="""    const hardGate=()=>{
-      /* RC261 MASTER MOBILE THE GATE BACK FIX */
-      if(matchMedia('(max-width:700px)').matches){
-        const lastTimer=setTimeout(()=>{},0);
-        for(let i=0;i<=lastTimer;i++)clearTimeout(i);
-        clearTimeout(lastTimer);
-        document.querySelectorAll('#lobby video,#lobby audio').forEach(m=>{
-          try{m.pause();}catch(_e){}
-          try{m.currentTime=0;}catch(_e){}
-        });
-      }
-      cleanLobbyState();
-      document.querySelectorAll('.scene.active').forEach(s=>s.classList.remove('active'));
-      if(gate)gate.classList.add('active');
-      if(document.body){
-        document.body.dataset.scene='gate';
-        document.body.dataset.experience='gate';
-        document.body.classList.remove('gate-lobby-fluid','gate-lobby-soft');
-      }
-      if(matchMedia('(max-width:700px)').matches)cleanLobbyState();
-      else setTimeout(cleanLobbyState,80);
-    };
-"""
+              new="    const hardGate=()=>{\n      /* RC261 MASTER MOBILE THE GATE BACK FIX */\n      if(matchMedia('(max-width:700px)').matches){\n        const lastTimer=setTimeout(()=>{},0);\n        for(let i=0;i<=lastTimer;i++)clearTimeout(i);\n        clearTimeout(lastTimer);\n        document.querySelectorAll('#lobby video,#lobby audio').forEach(m=>{\n          try{m.pause();}catch(_e){}\n          try{m.currentTime=0;}catch(_e){}\n        });\n      }\n      cleanLobbyState();\n      document.querySelectorAll('.scene.active').forEach(s=>s.classList.remove('active'));\n      if(gate)gate.classList.add('active');\n      if(document.body){\n        document.body.dataset.scene='gate';\n        document.body.dataset.experience='gate';\n        document.body.classList.remove('gate-lobby-fluid','gate-lobby-soft');\n      }\n      if(matchMedia('(max-width:700px)').matches)cleanLobbyState();\n      else setTimeout(cleanLobbyState,80);\n    };\n"
               html=html[:start]+new+html[end:]
               p.write_text(html,encoding='utf-8')
           PY
