@@ -6462,4 +6462,26 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 }
 </style>
 
+<!-- RC266 MASTER MOBILE PORTAL MEDIA FREEZE + NATIVE SCROLL OWNER -->
+<script id="rc266-mobile-portal-native-owner">
+(()=>{'use strict';
+const mobile=()=>matchMedia('(max-width:700px)').matches;
+const lobby=()=>document.getElementById('lobby');
+const portalHost=()=>document.getElementById('portals');
+const freezeLobbyMedia=()=>{if(!mobile())return;const l=lobby();if(!l||!l.classList.contains('portal-mode'))return;l.querySelectorAll('video,audio').forEach(m=>{try{m.pause()}catch(_e){}if(m.dataset.rc266FreezeGuard==='1')return;m.dataset.rc266FreezeGuard='1';m.addEventListener('play',()=>{const nowLobby=lobby();if(mobile()&&nowLobby?.classList.contains('portal-mode')){try{m.pause()}catch(_e){}}});});};
+const route=(room)=>{if(room==='Screening Theater'){if(typeof openTheater==='function')openTheater();return;}if(room==='Music Room'){if(typeof openMusic==='function')openMusic();return;}if(room==='Live Center'){if(typeof openLive==='function')openLive();return;}if(room==='Production Room'){if(typeof openProductionHard==='function')openProductionHard();else if(typeof openProduction==='function')openProduction();return;}if(room==='Story Room'){if(typeof openStory==='function')openStory();return;}if(room==='Journal'){if(typeof openJournal==='function')openJournal();return;}if(room==='Visual Bible'){if(typeof openBibleHard==='function')openBibleHard();else if(typeof openBible==='function')openBible();return;}if(room==='About Us'){if(typeof openAbout==='function')openAbout();return;}if(room==='Contact'){if(typeof openContact==='function')openContact();return;}};
+const insidePortals=(target)=>{const l=lobby(),p=portalHost();return !!(mobile()&&l?.classList.contains('portal-mode')&&p?.classList.contains('show')&&target?.closest?.('#portals'));};
+let sx=0,sy=0,moved=false,item=null,lastRoute=0;
+window.addEventListener('touchstart',e=>{if(!insidePortals(e.target))return;const t=e.touches&&e.touches[0];if(!t)return;sx=t.clientX;sy=t.clientY;moved=false;item=e.target.closest('#portals [data-room]');e.stopImmediatePropagation();freezeLobbyMedia();},{capture:true,passive:true});
+window.addEventListener('touchmove',e=>{if(!insidePortals(e.target))return;const t=e.touches&&e.touches[0];if(t&&(Math.abs(t.clientY-sy)>6||Math.abs(t.clientX-sx)>8))moved=true;e.stopImmediatePropagation();},{capture:true,passive:true});
+window.addEventListener('touchend',e=>{if(!insidePortals(e.target))return;const chosen=item||e.target.closest('#portals [data-room]');e.stopImmediatePropagation();if(!moved&&chosen){e.preventDefault();lastRoute=Date.now();route(chosen.dataset.room);}item=null;moved=false;},{capture:true,passive:false});
+window.addEventListener('click',e=>{if(!insidePortals(e.target))return;const chosen=e.target.closest('#portals [data-room]');if(!chosen)return;e.preventDefault();e.stopImmediatePropagation();if(Date.now()-lastRoute>500){lastRoute=Date.now();route(chosen.dataset.room);}},true);
+const ready=()=>{const l=lobby(),p=portalHost();if(!l||!p)return;const sync=()=>{if(l.classList.contains('portal-mode')&&p.classList.contains('show'))freezeLobbyMedia();};sync();new MutationObserver(sync).observe(l,{attributes:true,attributeFilter:['class']});new MutationObserver(sync).observe(p,{attributes:true,attributeFilter:['class']});};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready,{once:true});else ready();
+})();
+</script>
+<style id="rc266-mobile-portal-native-scroll-lock">
+@media(max-width:700px){#lobby.portal-mode #portals{touch-action:pan-y!important;overscroll-behavior-y:contain!important;-webkit-overflow-scrolling:touch!important;overflow-y:auto!important}#lobby.portal-mode #portals .portal-shell,#lobby.portal-mode #portals [data-room]{touch-action:pan-y!important}}
+</style>
+
 </body></html>
