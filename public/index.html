@@ -5652,4 +5652,116 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 })();
 </script>
 
+<style id="rc249-mobile-real-arrow-buttons">
+/* RC249 — portals scroll like panels; only the real arrow button opens rooms. */
+@media(max-width:700px){
+  #lobby.portal-mode #portals .portal{
+    pointer-events:auto!important;
+  }
+  #lobby.portal-mode #portals .portal::after{
+    content:none!important;
+  }
+  #lobby.portal-mode #portals .portal .sc-mobile-portal-hit{
+    position:absolute!important;
+    right:24px!important;
+    top:50%!important;
+    transform:translateY(-50%)!important;
+    width:42px!important;
+    height:42px!important;
+    min-width:42px!important;
+    min-height:42px!important;
+    padding:0!important;
+    border-radius:50%!important;
+    border:2px solid #e4ba50!important;
+    display:grid!important;
+    place-items:center!important;
+    pointer-events:auto!important;
+    touch-action:manipulation!important;
+    color:#ffe28a!important;
+    background:rgba(8,6,2,.90)!important;
+    font:700 19px/1 Arial,sans-serif!important;
+    letter-spacing:0!important;
+    box-shadow:none!important;
+    z-index:5!important;
+  }
+}
+@media(max-width:390px){
+  #lobby.portal-mode #portals .portal .sc-mobile-portal-hit{
+    right:20px!important;
+    width:40px!important;
+    height:40px!important;
+    min-width:40px!important;
+    min-height:40px!important;
+  }
+}
+</style>
+
+<script id="rc249-mobile-real-arrow-buttons">
+(()=>{
+  const ready=(fn)=>document.readyState==='loading'
+    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
+  ready(()=>{
+    const mobile=()=>matchMedia('(max-width:700px)').matches;
+    const route=(room)=>{
+      if(room==='Live Center')return window.openLive?.();
+      if(room==='Screening Theater')return window.openTheater?.();
+      if(room==='Music Room')return window.openMusic?.();
+      if(room==='Production Room')return window.openProduction?.();
+      if(room==='Story Room')return window.openStory?.();
+      if(room==='Journal')return window.openJournal?.();
+      if(room==='Visual Bible')return window.openBible?.();
+      if(room==='About Us')return window.openAbout?.();
+      if(room==='Contact')return window.openContact?.();
+    };
+    const portals=[...document.querySelectorAll('#portals .portal[data-room]')];
+    portals.forEach((portal)=>{
+      portal.onclick=null;
+      let hit=portal.querySelector('.sc-mobile-portal-hit');
+      if(!hit){
+        hit=document.createElement('button');
+        hit.type='button';
+        hit.className='sc-mobile-portal-hit';
+        hit.setAttribute('aria-label','Open '+portal.dataset.room);
+        hit.textContent='→';
+        portal.appendChild(hit);
+      }
+      let sx=0,sy=0,moved=false;
+      hit.addEventListener('touchstart',(e)=>{
+        const t=e.touches[0]; sx=t.clientX; sy=t.clientY; moved=false;
+      },{passive:true,capture:true});
+      hit.addEventListener('touchmove',(e)=>{
+        const t=e.touches[0];
+        if(Math.abs(t.clientY-sy)>3 || Math.abs(t.clientX-sx)>5)moved=true;
+      },{passive:true,capture:true});
+      hit.addEventListener('touchend',(e)=>{
+        if(!mobile())return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        if(!moved)route(portal.dataset.room);
+        moved=false;
+      },{passive:false,capture:true});
+      hit.addEventListener('click',(e)=>{
+        if(!mobile())return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        route(portal.dataset.room);
+      },true);
+      portal.addEventListener('touchend',(e)=>{
+        if(!mobile() || e.target.closest('.sc-mobile-portal-hit'))return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+      },{passive:false,capture:true});
+    });
+    document.addEventListener('click',(e)=>{
+      if(!mobile())return;
+      const portal=e.target.closest&&e.target.closest('#lobby.portal-mode #portals .portal');
+      if(portal && !e.target.closest('.sc-mobile-portal-hit')){
+        e.preventDefault();
+        e.stopImmediatePropagation();
+      }
+    },true);
+  });
+})();
+</script>
+
 </body></html>
