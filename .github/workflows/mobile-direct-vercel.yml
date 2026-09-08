@@ -18,39 +18,103 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC269 mobile media authority lock
+      - name: Apply RC270 mobile portal click authority and media hard stop
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='RC269 MASTER MOBILE MEDIA AUTHORITY LOCK'
+          marker='RC270 MASTER MOBILE PORTAL CLICK AUTHORITY + MEDIA HARD STOP'
           if marker not in html:
-              patch=base64.b64decode('CjwhLS0gUkMyNjkgTUFTVEVSIE1PQklMRSBNRURJQSBBVVRIT1JJVFkgTE9DSyAtLT4KPHNjcmlwdCBpZD0icmMyNjktbW9iaWxlLW1lZGlhLWF1dGhvcml0eS1sb2NrIj4KKCgpPT57CiAgJ3VzZSBzdHJpY3QnOwogIGNvbnN0IG1vYmlsZT0oKT0+bWF0Y2hNZWRpYSgnKG1heC13aWR0aDo3MDBweCknKS5tYXRjaGVzOwogIGNvbnN0IGxvY2tlZD0oKT0+bW9iaWxlKCkmJmRvY3VtZW50LmJvZHkmJmRvY3VtZW50LmJvZHkuZGF0YXNldC5tb2JpbGVQb3J0YWxMb2NrPT09JzEnOwogIGNvbnN0IHN0b3BBbGw9KCk9PnsKICAgIGlmKCFtb2JpbGUoKSlyZXR1cm47CiAgICBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCcjbG9iYnkgdmlkZW8sI2xvYmJ5IGF1ZGlvLCNhbWJpZW50JykuZm9yRWFjaChtPT57CiAgICAgIGlmKCEobSBpbnN0YW5jZW9mIEhUTUxNZWRpYUVsZW1lbnQpKXJldHVybjsKICAgICAgdHJ5e20ucGF1c2UoKX1jYXRjaChfZSl7fQogICAgfSk7CiAgfTsKICBjb25zdCBzZXRMb2NrPSgpPT57CiAgICBpZighbW9iaWxlKCkpcmV0dXJuOwogICAgZG9jdW1lbnQuYm9keS5kYXRhc2V0Lm1vYmlsZVBvcnRhbExvY2s9JzEnOwogICAgc3RvcEFsbCgpOwogIH07CiAgY29uc3QgdW5sb2NrQXRHYXRlPSgpPT57CiAgICBpZighbW9iaWxlKCkpcmV0dXJuOwogICAgY29uc3QgZz1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZ2F0ZScpOwogICAgaWYoZyYmZy5jbGFzc0xpc3QuY29udGFpbnMoJ2FjdGl2ZScpKSBkZWxldGUgZG9jdW1lbnQuYm9keS5kYXRhc2V0Lm1vYmlsZVBvcnRhbExvY2s7CiAgfTsKICBjb25zdCBoYXJkZW49KG0pPT57CiAgICBpZighKG0gaW5zdGFuY2VvZiBIVE1MTWVkaWFFbGVtZW50KXx8bS5kYXRhc2V0LnJjMjY5QXV0aG9yaXR5PT09JzEnKXJldHVybjsKICAgIG0uZGF0YXNldC5yYzI2OUF1dGhvcml0eT0nMSc7CiAgICBjb25zdCBuYXRpdmVQbGF5PW0ucGxheS5iaW5kKG0pOwogICAgbS5wbGF5PWZ1bmN0aW9uKCl7CiAgICAgIGlmKGxvY2tlZCgpJiYoKHRoaXMuY2xvc2VzdCYmdGhpcy5jbG9zZXN0KCcjbG9iYnknKSl8fHRoaXMuaWQ9PT0nYW1iaWVudCcpKXsKICAgICAgICB0cnl7dGhpcy5wYXVzZSgpfWNhdGNoKF9lKXt9CiAgICAgICAgcmV0dXJuIFByb21pc2UucmVzb2x2ZSgpOwogICAgICB9CiAgICAgIHJldHVybiBuYXRpdmVQbGF5KCk7CiAgICB9OwogICAgbS5hZGRFdmVudExpc3RlbmVyKCdwbGF5JywoKT0+ewogICAgICBpZihsb2NrZWQoKSYmKChtLmNsb3Nlc3QmJm0uY2xvc2VzdCgnI2xvYmJ5JykpfHxtLmlkPT09J2FtYmllbnQnKSl7CiAgICAgICAgdHJ5e20ucGF1c2UoKX1jYXRjaChfZSl7fQogICAgICB9CiAgICB9LHRydWUpOwogIH07CiAgY29uc3QgYXJtPSgpPT57CiAgICBpZighbW9iaWxlKCkpcmV0dXJuOwogICAgZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbCgnI2xvYmJ5IHZpZGVvLCNsb2JieSBhdWRpbywjYW1iaWVudCcpLmZvckVhY2goaGFyZGVuKTsKICAgIGNvbnN0IGc9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2dhdGUnKTsKICAgIGNvbnN0IHA9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3BvcnRhbHMnKTsKICAgIGNvbnN0IGw9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2xvYmJ5Jyk7CiAgICB1bmxvY2tBdEdhdGUoKTsKICAgIGlmKChsJiZsLmNsYXNzTGlzdC5jb250YWlucygncG9ydGFsLW1vZGUnKSl8fChwJiZwLmNsYXNzTGlzdC5jb250YWlucygnc2hvdycpKSlzZXRMb2NrKCk7CiAgICBpZihnKW5ldyBNdXRhdGlvbk9ic2VydmVyKHVubG9ja0F0R2F0ZSkub2JzZXJ2ZShnLHthdHRyaWJ1dGVzOnRydWUsYXR0cmlidXRlRmlsdGVyOlsnY2xhc3MnXX0pOwogICAgaWYobCluZXcgTXV0YXRpb25PYnNlcnZlcigoKT0+e2lmKGwuY2xhc3NMaXN0LmNvbnRhaW5zKCdwb3J0YWwtbW9kZScpKXNldExvY2soKX0pLm9ic2VydmUobCx7YXR0cmlidXRlczp0cnVlLGF0dHJpYnV0ZUZpbHRlcjpbJ2NsYXNzJ119KTsKICAgIGlmKHApbmV3IE11dGF0aW9uT2JzZXJ2ZXIoKCk9PntpZihwLmNsYXNzTGlzdC5jb250YWlucygnc2hvdycpKXNldExvY2soKX0pLm9ic2VydmUocCx7YXR0cmlidXRlczp0cnVlLGF0dHJpYnV0ZUZpbHRlcjpbJ2NsYXNzJ119KTsKICAgIG5ldyBNdXRhdGlvbk9ic2VydmVyKCgpPT5kb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCcjbG9iYnkgdmlkZW8sI2xvYmJ5IGF1ZGlvLCNhbWJpZW50JykuZm9yRWFjaChoYXJkZW4pKS5vYnNlcnZlKGRvY3VtZW50LmJvZHkse2NoaWxkTGlzdDp0cnVlLHN1YnRyZWU6dHJ1ZX0pOwogIH07CiAgd2luZG93LmFkZEV2ZW50TGlzdGVuZXIoJ3BvaW50ZXJkb3duJyxlPT57CiAgICBpZighbW9iaWxlKCkpcmV0dXJuOwogICAgaWYoZS50YXJnZXQmJmUudGFyZ2V0LmNsb3Nlc3QmJmUudGFyZ2V0LmNsb3Nlc3QoJyNza2lwJykpc2V0TG9jaygpOwogIH0sdHJ1ZSk7CiAgd2luZG93LmFkZEV2ZW50TGlzdGVuZXIoJ3RvdWNoc3RhcnQnLGU9PnsKICAgIGlmKCFtb2JpbGUoKSlyZXR1cm47CiAgICBpZihlLnRhcmdldCYmZS50YXJnZXQuY2xvc2VzdCYmZS50YXJnZXQuY2xvc2VzdCgnI3NraXAnKSlzZXRMb2NrKCk7CiAgfSx7Y2FwdHVyZTp0cnVlLHBhc3NpdmU6dHJ1ZX0pOwogIGRvY3VtZW50LmFkZEV2ZW50TGlzdGVuZXIoJ3BsYXknLGU9PnsKICAgIGNvbnN0IG09ZS50YXJnZXQ7CiAgICBpZihsb2NrZWQoKSYmbSBpbnN0YW5jZW9mIEhUTUxNZWRpYUVsZW1lbnQmJigoKG0uY2xvc2VzdCYmbS5jbG9zZXN0KCcjbG9iYnknKSl8fG0uaWQ9PT0nYW1iaWVudCcpKXsKICAgICAgdHJ5e20ucGF1c2UoKX1jYXRjaChfZSl7fQogICAgfQogIH0sdHJ1ZSk7CiAgaWYoZG9jdW1lbnQucmVhZHlTdGF0ZT09PSdsb2FkaW5nJylkb2N1bWVudC5hZGRFdmVudExpc3RlbmVyKCdET01Db250ZW50TG9hZGVkJyxhcm0se29uY2U6dHJ1ZX0pO2Vsc2UgYXJtKCk7Cn0pKCk7Cjwvc2NyaXB0Pgo=').decode('utf-8')
+              patch=r'''
+<!-- RC270 MASTER MOBILE PORTAL CLICK AUTHORITY + MEDIA HARD STOP -->
+<script id="rc270-mobile-portal-click-authority">
+(()=>{
+  'use strict';
+  const mobile=()=>matchMedia('(max-width:700px)').matches;
+  const lobby=()=>document.getElementById('lobby');
+  const portals=()=>document.getElementById('portals');
+  const portalActive=()=>!!(mobile()&&lobby()?.classList.contains('portal-mode')&&portals()?.classList.contains('show'));
+  const hardStop=()=>{
+    if(!mobile())return;
+    document.querySelectorAll('#lobby video,#lobby audio').forEach(m=>{try{m.pause()}catch(_e){}});
+    const lv=document.getElementById('lobbyVideo'); try{lv?.pause()}catch(_e){}
+    const amb=document.getElementById('ambient'); try{amb?.pause()}catch(_e){}
+  };
+  const lockAndStop=()=>{
+    if(!mobile())return;
+    document.body.dataset.mobilePortalLock='1';
+    hardStop();
+    [0,80,220,520,900,1500].forEach(ms=>setTimeout(hardStop,ms));
+  };
+  const route=(room)=>{
+    lockAndStop();
+    if(room==='Screening Theater'){ if(typeof openTheater==='function')openTheater(); return; }
+    if(room==='Music Room'){ if(typeof openMusic==='function')openMusic(); return; }
+    if(room==='Live Center'){ if(typeof openLive==='function')openLive(); return; }
+    if(room==='Production Room'){
+      if(typeof openProductionHard==='function')openProductionHard();
+      else if(typeof openProduction==='function')openProduction();
+      return;
+    }
+    if(room==='Story Room'){ if(typeof openStory==='function')openStory(); return; }
+    if(room==='Journal'){ if(typeof openJournal==='function')openJournal(); return; }
+    if(room==='Visual Bible'){
+      if(typeof openBibleHard==='function')openBibleHard();
+      else if(typeof openBible==='function')openBible();
+      return;
+    }
+    if(room==='About Us'){ if(typeof openAbout==='function')openAbout(); return; }
+    if(room==='Contact'){ if(typeof openContact==='function')openContact(); return; }
+  };
+
+  // Window-capture CLICK only. No touchstart/touchmove/pointerdown, so RC268 native scroll remains untouched.
+  window.addEventListener('click',e=>{
+    if(!portalActive())return;
+    const target=e.target?.closest?.('#portals [data-room]');
+    if(!target)return;
+    const room=target.dataset.room;
+    if(!room)return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    route(room);
+  },true);
+
+  // If any stale owner tries to restart Lobby media after Skip/room routing, kill it immediately.
+  document.addEventListener('play',e=>{
+    if(!mobile()||document.body.dataset.mobilePortalLock!=='1')return;
+    const m=e.target;
+    if(m && (m.id==='lobbyVideo'||m.id==='ambient'||m.closest?.('#lobby'))){
+      try{m.pause()}catch(_e){}
+    }
+  },true);
+})();
+</script>
+'''
               if html.count('</body>')!=1:
-                  raise SystemExit('Expected one </body>; refusing to guess')
+                  raise SystemExit('Expected exactly one </body>; refusing to guess')
               html=html.replace('</body>',patch+'\n</body>',1)
               p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC269 and preserve RC268 scroll
+      - name: Verify RC270 and preserve RC268 scroll
         run: |
-          grep -q 'RC269 MASTER MOBILE MEDIA AUTHORITY LOCK' public/index.html
-          grep -q 'rc269-mobile-media-authority-lock' public/index.html
+          grep -q 'RC270 MASTER MOBILE PORTAL CLICK AUTHORITY + MEDIA HARD STOP' public/index.html
+          grep -q 'rc270-mobile-portal-click-authority' public/index.html
+          grep -q 'Window-capture CLICK only' public/index.html
           grep -q 'RC268 MASTER MOBILE PORTAL RUNTIME CLEANUP' public/index.html
           grep -q 'rc268-mobile-native-portal-scroll' public/index.html
           grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
 
-      - name: Lock RC269 into source
+      - name: Lock RC270 into source
         run: |
           if git diff --quiet -- public/index.html; then
-            echo "RC269 already locked"
+            echo "RC270 already locked"
           else
             git config user.name "SoulCinema Mobile Deploy"
             git config user.email "actions@users.noreply.github.com"
             git add public/index.html
-            git commit -m "RC269 master mobile media authority lock"
+            git commit -m "RC270 master mobile portal click authority and media hard stop"
             git push origin HEAD:main
           fi
