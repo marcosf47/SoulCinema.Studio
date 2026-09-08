@@ -5826,4 +5826,54 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 })();
 </script>
 
+<script id="rc251-mobile-arrow-route-rebind">
+(()=>{
+  const ready=(fn)=>document.readyState==='loading'
+    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
+  ready(()=>{
+    const mobile=()=>matchMedia('(max-width:700px)').matches;
+    const route=(room)=>{
+      if(room==='Live Center'){ if(typeof openLive==='function')openLive(); return; }
+      if(room==='Screening Theater'){ if(typeof openTheater==='function')openTheater(); return; }
+      if(room==='Music Room'){ if(typeof openMusic==='function')openMusic(); return; }
+      if(room==='Production Room'){ if(typeof openProductionHard==='function')openProductionHard(); else if(typeof openProduction==='function')openProduction(); return; }
+      if(room==='Story Room'){ if(typeof openStory==='function')openStory(); return; }
+      if(room==='Journal'){ if(typeof openJournal==='function')openJournal(); return; }
+      if(room==='Visual Bible'){ if(typeof openBibleHard==='function')openBibleHard(); else if(typeof openBible==='function')openBible(); return; }
+      if(room==='About Us'){ if(typeof openAbout==='function')openAbout(); return; }
+      if(room==='Contact'){ if(typeof openContact==='function')openContact(); return; }
+    };
+    document.querySelectorAll('#portals .portal[data-room] .sc-mobile-portal-hit').forEach((hit)=>{
+      if(hit.dataset.rc251Bound==='1')return;
+      hit.dataset.rc251Bound='1';
+      let sx=0,sy=0,moved=false;
+      hit.addEventListener('touchstart',(e)=>{
+        if(!mobile())return;
+        const t=e.touches[0]; sx=t.clientX; sy=t.clientY; moved=false;
+      },{passive:true,capture:true});
+      hit.addEventListener('touchmove',(e)=>{
+        if(!mobile())return;
+        const t=e.touches[0];
+        if(Math.abs(t.clientY-sy)>3 || Math.abs(t.clientX-sx)>5)moved=true;
+      },{passive:true,capture:true});
+      hit.addEventListener('touchend',(e)=>{
+        if(!mobile())return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        const panel=hit.closest('.portal[data-room]');
+        if(panel && !moved)route(panel.dataset.room);
+        moved=false;
+      },{passive:false,capture:true});
+      hit.addEventListener('click',(e)=>{
+        if(!mobile())return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        const panel=hit.closest('.portal[data-room]');
+        if(panel)route(panel.dataset.room);
+      },true);
+    });
+  });
+})();
+</script>
+
 </body></html>
