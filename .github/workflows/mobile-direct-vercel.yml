@@ -18,14 +18,13 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC260 master mobile skip fix
+      - name: Apply RC260 master fix
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          p=Path('public/index.html')
-          html=p.read_text(encoding='utf-8')
-
-          old="""    const hardSkip=()=>{
+          p = Path('public/index.html')
+          html = p.read_text(encoding='utf-8')
+          old = """    const hardSkip=()=>{
       cleanLobbyState();
       if(!lobby?.classList.contains('active'))activateLobby();
       setTimeout(()=>{
@@ -34,10 +33,8 @@ jobs:
         else portals?.classList.add('show');
       },220);
     };"""
-
-          new="""    const hardSkip=()=>{
-      /* RC260 MASTER FIX — mobile only. Stop the active lobby sequence first,
-         then enter portal mode directly. Desktop code is untouched. */
+          new = """    const hardSkip=()=>{
+      /* RC260 MASTER FIX */
       if(typeof clearTimers==='function')clearTimers();
       if(!lobby?.classList.contains('active')){
         document.querySelectorAll('.scene.active').forEach(s=>s.classList.remove('active'));
@@ -46,53 +43,38 @@ jobs:
       q('#lobby .heart-focus')?.classList.remove('show');
       q('#lobby .premiere-card')?.classList.remove('show');
       if(fade)fade.classList.remove('on');
-      if(journey){
-        journey.classList.remove('on');
-        journey.setAttribute('aria-hidden','true');
-      }
+      if(journey){journey.classList.remove('on');journey.setAttribute('aria-hidden','true');}
       portals?.classList.add('show');
       lobby?.classList.add('portal-mode');
       if(skipBtn)skipBtn.style.display='none';
-      if(document.body){
-        document.body.dataset.scene='lobby';
-        document.body.dataset.experience='portal_mode';
-      }
+      if(document.body){document.body.dataset.scene='lobby';document.body.dataset.experience='portal_mode';}
     };"""
-
-          if old not in html:
-              if 'RC260 MASTER FIX' not in html:
-                  raise SystemExit('Exact RC244 hardSkip block not found; refusing to guess')
-          else:
+          if 'RC260 MASTER FIX' not in html:
               if html.count(old) != 1:
-                  raise SystemExit(f'Expected exactly one RC244 hardSkip block, found {html.count(old)}')
-              html=html.replace(old,new,1)
-
-          # Remove the failed additive RC259 handler so only the repaired original handler owns Skip.
-          start=html.find('<script id="rc259-mobile-skip-to-portals-fix">')
-          if start != -1:
-              end=html.find('</script>',start)
-              if end == -1:
-                  raise SystemExit('RC259 script start found without closing script')
-              html=html[:start]+html[end+9:]
-
-          p.write_text(html,encoding='utf-8')
+                  raise SystemExit('Exact hardSkip block mismatch; aborting')
+              html = html.replace(old, new, 1)
+          start = html.find('<script id="rc259-mobile-skip-to-portals-fix">')
+          if start >= 0:
+              end = html.find('</script>', start)
+              if end < 0:
+                  raise SystemExit('Broken RC259 script; aborting')
+              html = html[:start] + html[end+9:]
+          p.write_text(html, encoding='utf-8')
           PY
 
-      - name: Verify RC260 master fix
+      - name: Verify RC260
         run: |
           grep -q 'RC260 MASTER FIX' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
-          ! grep -q 'rc259-mobile-skip-to-portals-fix' public/index.html
-          grep -q "document.body.dataset.experience='portal_mode'" public/index.html
 
       - name: Lock RC260 into source
         run: |
           if git diff --quiet -- public/index.html; then
-            echo "RC260 already locked in source"
+            echo "RC260 already locked"
           else
             git config user.name "SoulCinema Mobile Deploy"
             git config user.email "actions@users.noreply.github.com"
             git add public/index.html
-            git commit -m "RC260 master fix mobile skip to portals"
+            git commit -m "RC260 master mobile skip fix"
             git push origin HEAD:main
           fi
