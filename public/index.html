@@ -6142,4 +6142,186 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 })();
 </script>
 
+<style id="rc256-mobile-full-card-tap-normal-arrows">
+@media(max-width:700px){
+  #lobby.portal-mode #portals .portal .sc-mobile-portal-hit{
+    right:24px!important;
+    width:42px!important;
+    height:42px!important;
+    min-width:42px!important;
+    min-height:42px!important;
+  }
+}
+@media(max-width:390px){
+  #lobby.portal-mode #portals .portal .sc-mobile-portal-hit{
+    right:20px!important;
+    width:40px!important;
+    height:40px!important;
+    min-width:40px!important;
+    min-height:40px!important;
+  }
+}
+</style>
+
+<script id="rc256-mobile-full-card-tap-router">
+(()=>{
+  const ready=(fn)=>document.readyState==='loading'
+    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
+  ready(()=>{
+    const mobile=()=>matchMedia('(max-width:700px)').matches;
+    if(!mobile())return;
+    const ids={
+      'Screening Theater':'screeningTheater',
+      'Music Room':'musicRoom',
+      'Live Center':'liveCenter',
+      'Production Room':'productionRoom',
+      'Story Room':'storyRoom',
+      'Journal':'journalRoom',
+      'Visual Bible':'visualBibleRoom',
+      'About Us':'aboutRoom',
+      'Contact':'contactRoom'
+    };
+    const go=(room)=>{
+      const target=document.getElementById(ids[room]||'');
+      const lobby=document.getElementById('lobby');
+      if(!target)return;
+      document.querySelectorAll('.scene.active').forEach(el=>el.classList.remove('active'));
+      document.getElementById('portals')?.classList.remove('show');
+      lobby?.classList.remove('active','portal-mode');
+      target.classList.add('active');
+      document.body.dataset.scene=ids[room]||room;
+      document.body.dataset.experience='room_active';
+    };
+    document.querySelectorAll('#portals .portal[data-room]').forEach(panel=>{
+      if(panel.dataset.rc256Bound==='1')return;
+      panel.dataset.rc256Bound='1';
+      panel.onclick=null;
+      let sx=0,sy=0,st=0,moved=false;
+      panel.addEventListener('touchstart',e=>{
+        if(!mobile())return;
+        const t=e.touches[0];
+        sx=t.clientX;sy=t.clientY;st=Date.now();moved=false;
+      },{passive:true,capture:true});
+      panel.addEventListener('touchmove',e=>{
+        if(!mobile())return;
+        const t=e.touches[0];
+        if(Math.abs(t.clientY-sy)>6||Math.abs(t.clientX-sx)>10)moved=true;
+      },{passive:true,capture:true});
+      panel.addEventListener('touchend',e=>{
+        if(!mobile())return;
+        const t=e.changedTouches&&e.changedTouches[0];
+        const dy=t?Math.abs(t.clientY-sy):0;
+        const dx=t?Math.abs(t.clientX-sx):0;
+        const tap=!moved && dy<=6 && dx<=10 && Date.now()-st<420;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        if(tap)go(panel.dataset.room);
+      },{passive:false,capture:true});
+      panel.addEventListener('click',e=>{
+        if(!mobile())return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+      },true);
+    });
+  });
+})();
+</script>
+
+<style id="rc257-mobile-card-tap-small-arrows">
+@media(max-width:700px){
+  #lobby.portal-mode #portals .portal{
+    cursor:pointer!important;
+    touch-action:pan-y!important;
+  }
+  #lobby.portal-mode #portals .portal .sc-mobile-portal-hit{
+    right:24px!important;
+    width:42px!important;
+    height:42px!important;
+    min-width:42px!important;
+    min-height:42px!important;
+    border-radius:50%!important;
+  }
+}
+@media(max-width:390px){
+  #lobby.portal-mode #portals .portal .sc-mobile-portal-hit{
+    right:20px!important;
+    width:40px!important;
+    height:40px!important;
+    min-width:40px!important;
+    min-height:40px!important;
+  }
+}
+</style>
+
+<script id="rc257-mobile-card-tap-small-arrows">
+(()=>{
+  const ready=(fn)=>document.readyState==='loading'
+    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
+  ready(()=>{
+    const mobile=()=>matchMedia('(max-width:700px)').matches;
+    const ids={
+      'Screening Theater':'screeningTheater',
+      'Music Room':'musicRoom',
+      'Live Center':'liveCenter',
+      'Production Room':'productionRoom',
+      'Story Room':'storyRoom',
+      'Journal':'journalRoom',
+      'Visual Bible':'visualBibleRoom',
+      'About Us':'aboutRoom',
+      'Contact':'contactRoom'
+    };
+    const go=(room)=>{
+      const target=document.getElementById(ids[room]||'');
+      const lobby=document.getElementById('lobby');
+      if(!target)return;
+      document.querySelectorAll('.scene.active').forEach(el=>el.classList.remove('active'));
+      document.getElementById('portals')?.classList.remove('show');
+      lobby?.classList.remove('active','portal-mode');
+      target.classList.add('active');
+      document.body.dataset.scene=ids[room]||room;
+      document.body.dataset.experience='room_active';
+      if(room==='Screening Theater'){
+        document.getElementById('theaterPoster')?.classList.remove('hidden');
+        const status=document.getElementById('theaterStatus');
+        const title=document.getElementById('theaterCurrentTitle');
+        if(status)status.textContent='PREMIERE READY';
+        if(title)title.textContent='MWEN POUKONT MWEN';
+      }
+      if(room==='Live Center' && typeof setLiveMode==='function'){
+        setLiveMode(document.body.dataset.liveMode||'standby');
+      }
+    };
+    document.querySelectorAll('#portals .portal[data-room]').forEach(panel=>{
+      if(panel.dataset.rc257Bound==='1')return;
+      panel.dataset.rc257Bound='1';
+      panel.onclick=null;
+      panel.style.touchAction='pan-y';
+      let sx=0,sy=0,st=0,moved=false,down=false;
+      panel.addEventListener('pointerdown',e=>{
+        if(!mobile()||e.pointerType==='mouse')return;
+        sx=e.clientX;sy=e.clientY;st=Date.now();moved=false;down=true;
+      },{capture:true});
+      panel.addEventListener('pointermove',e=>{
+        if(!mobile()||!down)return;
+        if(Math.abs(e.clientY-sy)>8||Math.abs(e.clientX-sx)>12)moved=true;
+      },{capture:true});
+      panel.addEventListener('pointerup',e=>{
+        if(!mobile()||!down)return;
+        const tap=!moved&&Math.abs(e.clientY-sy)<=8&&Math.abs(e.clientX-sx)<=12&&Date.now()-st<430;
+        down=false;
+        if(tap){
+          e.preventDefault();
+          e.stopPropagation();
+          go(panel.dataset.room);
+        }
+      },{capture:true});
+      panel.addEventListener('pointercancel',()=>{
+        down=false;
+        moved=true;
+      },{capture:true});
+    });
+  });
+})();
+</script>
+
 </body></html>
