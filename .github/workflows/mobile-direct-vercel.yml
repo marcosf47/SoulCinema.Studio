@@ -26,8 +26,9 @@ jobs:
           html=p.read_text(encoding='utf-8')
           marker='RC263 MASTER MOBILE SKIP EVENT OWNER FIX'
           if marker not in html:
-              if html.count('id="skip"') != 1:
-                  raise SystemExit(f'Expected exactly one #skip button, found {html.count("id=\"skip\"")}; refusing to guess')
+              skip_count=html.count('id="skip"')
+              if skip_count != 1:
+                  raise SystemExit(f'Expected exactly one #skip button, found {skip_count}; refusing to guess')
               if 'function showPortals()' not in html:
                   raise SystemExit('showPortals() not found; refusing to guess')
               patch=r'''
@@ -39,16 +40,14 @@ jobs:
     const oldBtn=document.getElementById('skip');
     if(!oldBtn||!oldBtn.parentNode)return;
 
-    /* RC263 MASTER MOBILE SKIP EVENT OWNER FIX
-       Replace the Skip node so all older click listeners/onclick handlers are removed.
-       This button now has one owner and one job: stop the lobby sequence and reveal portals. */
+    /* RC263 MASTER MOBILE SKIP EVENT OWNER FIX */
     const btn=oldBtn.cloneNode(true);
     btn.removeAttribute('onclick');
     oldBtn.parentNode.replaceChild(btn,oldBtn);
 
     let fired=false;
     const forward=(e)=>{
-      if(e){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation?.();}
+      if(e){e.preventDefault();e.stopPropagation();if(e.stopImmediatePropagation)e.stopImmediatePropagation();}
       if(fired)return;
       fired=true;
 
@@ -57,33 +56,32 @@ jobs:
 
       const lobby=document.getElementById('lobby');
       const portals=document.getElementById('portals');
-      const heart=lobby?.querySelector('.heart-focus');
+      const heart=lobby&&lobby.querySelector('.heart-focus');
       const premiere=document.getElementById('premiereCard');
       const fade=document.getElementById('fade');
       const journey=document.getElementById('journeyTransition');
 
-      lobby?.querySelectorAll('video,audio').forEach(m=>{
-        try{m.pause()}catch(_e){}
-      });
-      heart?.classList.remove('show');
-      premiere?.classList.remove('show');
-      fade?.classList.remove('on');
+      if(lobby){
+        lobby.querySelectorAll('video,audio').forEach(m=>{try{m.pause()}catch(_e){}});
+      }
+      if(heart)heart.classList.remove('show');
+      if(premiere)premiere.classList.remove('show');
+      if(fade)fade.classList.remove('on');
       if(journey){journey.classList.remove('on');journey.setAttribute('aria-hidden','true');}
-
-      portals?.classList.add('show');
-      lobby?.classList.add('portal-mode');
+      if(portals)portals.classList.add('show');
+      if(lobby)lobby.classList.add('portal-mode');
       btn.style.display='none';
       if(document.body){document.body.dataset.scene='lobby';document.body.dataset.experience='portal_mode';}
 
       requestAnimationFrame(()=>{
-        portals?.classList.add('show');
-        lobby?.classList.add('portal-mode');
+        if(portals)portals.classList.add('show');
+        if(lobby)lobby.classList.add('portal-mode');
       });
-      setTimeout(()=>{ fired=false; },400);
+      setTimeout(()=>{fired=false},400);
     };
 
-    btn.addEventListener('pointerup',forward,{capture:true});
-    btn.addEventListener('click',forward,{capture:true});
+    btn.addEventListener('pointerup',forward,true);
+    btn.addEventListener('click',forward,true);
   };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});
   else boot();
