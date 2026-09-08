@@ -5583,4 +5583,73 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 })();
 </script>
 
+<script id="rc248-mobile-portal-click-owner">
+(()=>{
+  const ready=(fn)=>document.readyState==='loading'
+    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
+  ready(()=>{
+    const mobile=()=>matchMedia('(max-width:700px)').matches;
+    const portalFrom=(target)=>target&&target.closest&&target.closest('#lobby.portal-mode #portals .portal');
+    const inArrow=(portal,x)=>{
+      const r=portal.getBoundingClientRect();
+      return x>=r.right-92 && x<=r.right-6;
+    };
+    const route=(room)=>{
+      if(room==='Live Center')return window.openLive?.();
+      if(room==='Screening Theater')return window.openTheater?.();
+      if(room==='Music Room')return window.openMusic?.();
+      if(room==='Production Room')return window.openProduction?.();
+      if(room==='Story Room')return window.openStory?.();
+      if(room==='Journal')return window.openJournal?.();
+      if(room==='Visual Bible')return window.openBible?.();
+      if(room==='About Us')return window.openAbout?.();
+      if(room==='Contact')return window.openContact?.();
+    };
+    const portals=[...document.querySelectorAll('#portals .portal[data-room]')];
+    const neutralize=()=>{ if(mobile())portals.forEach(p=>{p.onclick=null;}); };
+    neutralize();
+    window.addEventListener('resize',neutralize,{passive:true});
+
+    let sx=0,sy=0,st=0,moved=false,portal=null;
+    document.addEventListener('touchstart',e=>{
+      if(!mobile())return;
+      portal=portalFrom(e.target);
+      if(!portal)return;
+      const t=e.touches[0];
+      sx=t.clientX; sy=t.clientY; st=Date.now(); moved=false;
+      neutralize();
+    },{passive:true,capture:true});
+    document.addEventListener('touchmove',e=>{
+      if(!mobile()||!portal)return;
+      const t=e.touches[0];
+      if(Math.abs(t.clientY-sy)>2 || Math.abs(t.clientX-sx)>5)moved=true;
+    },{passive:true,capture:true});
+    document.addEventListener('touchend',e=>{
+      if(!mobile())return;
+      const p=portal||portalFrom(e.target);
+      if(!p)return;
+      const t=e.changedTouches&&e.changedTouches[0];
+      const x=t?t.clientX:sx;
+      const y=t?t.clientY:sy;
+      const fastTap=Date.now()-st<360;
+      const intentional=!moved && fastTap && inArrow(p,x) && Math.abs(y-sy)<=2;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      portal=null;
+      moved=false;
+      neutralize();
+      if(intentional)setTimeout(()=>route(p.dataset.room),0);
+    },{passive:false,capture:true});
+    document.addEventListener('click',e=>{
+      if(!mobile())return;
+      const p=portalFrom(e.target);
+      if(!p)return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      neutralize();
+    },true);
+  });
+})();
+</script>
+
 </body></html>
