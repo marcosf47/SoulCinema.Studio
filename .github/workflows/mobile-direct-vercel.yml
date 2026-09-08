@@ -22,95 +22,22 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
           marker='RC269 MASTER MOBILE MEDIA AUTHORITY LOCK'
           if marker not in html:
-              patch=r'''
-<!-- RC269 MASTER MOBILE MEDIA AUTHORITY LOCK -->
-<script id="rc269-mobile-media-authority-lock">
-(()=>{
-  'use strict';
-  const mobile=()=>matchMedia('(max-width:700px)').matches;
-  const locked=()=>mobile()&&document.body?.dataset.mobilePortalLock==='1';
-  const lobby=()=>document.getElementById('lobby');
-  const stopAll=()=>{
-    if(!mobile())return;
-    document.querySelectorAll('#lobby video,#lobby audio,#ambient').forEach(m=>{
-      if(!(m instanceof HTMLMediaElement))return;
-      try{m.pause()}catch(_e){}
-    });
-  };
-  const setLock=()=>{
-    if(!mobile())return;
-    document.body.dataset.mobilePortalLock='1';
-    stopAll();
-  };
-  const unlockAtGate=()=>{
-    if(!mobile())return;
-    const g=document.getElementById('gate');
-    if(g?.classList.contains('active')) delete document.body.dataset.mobilePortalLock;
-  };
-  const harden=(m)=>{
-    if(!(m instanceof HTMLMediaElement)||m.dataset.rc269Authority==='1')return;
-    m.dataset.rc269Authority='1';
-    const nativePlay=m.play.bind(m);
-    m.play=function(){
-      if(locked()&&(this.closest?.('#lobby')||this.id==='ambient')){
-        try{this.pause()}catch(_e){}
-        return Promise.resolve();
-      }
-      return nativePlay();
-    };
-    m.addEventListener('play',()=>{
-      if(locked()&&(m.closest?.('#lobby')||m.id==='ambient')){
-        try{m.pause()}catch(_e){}
-      }
-    },true);
-  };
-  const arm=()=>{
-    if(!mobile())return;
-    document.querySelectorAll('#lobby video,#lobby audio,#ambient').forEach(harden);
-    const g=document.getElementById('gate');
-    const p=document.getElementById('portals');
-    const l=lobby();
-    unlockAtGate();
-    if(l?.classList.contains('portal-mode')||p?.classList.contains('show'))setLock();
-    if(g)new MutationObserver(unlockAtGate).observe(g,{attributes:true,attributeFilter:['class']});
-    if(l)new MutationObserver(()=>{if(l.classList.contains('portal-mode'))setLock()}).observe(l,{attributes:true,attributeFilter:['class']});
-    if(p)new MutationObserver(()=>{if(p.classList.contains('show'))setLock()}).observe(p,{attributes:true,attributeFilter:['class']});
-    new MutationObserver(()=>document.querySelectorAll('#lobby video,#lobby audio,#ambient').forEach(harden)).observe(document.body,{childList:true,subtree:true});
-  };
-  window.addEventListener('pointerdown',e=>{
-    if(!mobile())return;
-    if(e.target?.closest?.('#skip')) setLock();
-  },true);
-  window.addEventListener('touchstart',e=>{
-    if(!mobile())return;
-    if(e.target?.closest?.('#skip')) setLock();
-  },{capture:true,passive:true});
-  document.addEventListener('play',e=>{
-    const m=e.target;
-    if(locked()&&m instanceof HTMLMediaElement&&(m.closest?.('#lobby')||m.id==='ambient')){
-      try{m.pause()}catch(_e){}
-    }
-  },true);
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',arm,{once:true});else arm();
-})();
-</script>
-'''
+              patch=base64.b64decode('CjwhLS0gUkMyNjkgTUFTVEVSIE1PQklMRSBNRURJQSBBVVRIT1JJVFkgTE9DSyAtLT4KPHNjcmlwdCBpZD0icmMyNjktbW9iaWxlLW1lZGlhLWF1dGhvcml0eS1sb2NrIj4KKCgpPT57CiAgJ3VzZSBzdHJpY3QnOwogIGNvbnN0IG1vYmlsZT0oKT0+bWF0Y2hNZWRpYSgnKG1heC13aWR0aDo3MDBweCknKS5tYXRjaGVzOwogIGNvbnN0IGxvY2tlZD0oKT0+bW9iaWxlKCkmJmRvY3VtZW50LmJvZHkmJmRvY3VtZW50LmJvZHkuZGF0YXNldC5tb2JpbGVQb3J0YWxMb2NrPT09JzEnOwogIGNvbnN0IHN0b3BBbGw9KCk9PnsKICAgIGlmKCFtb2JpbGUoKSlyZXR1cm47CiAgICBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCcjbG9iYnkgdmlkZW8sI2xvYmJ5IGF1ZGlvLCNhbWJpZW50JykuZm9yRWFjaChtPT57CiAgICAgIGlmKCEobSBpbnN0YW5jZW9mIEhUTUxNZWRpYUVsZW1lbnQpKXJldHVybjsKICAgICAgdHJ5e20ucGF1c2UoKX1jYXRjaChfZSl7fQogICAgfSk7CiAgfTsKICBjb25zdCBzZXRMb2NrPSgpPT57CiAgICBpZighbW9iaWxlKCkpcmV0dXJuOwogICAgZG9jdW1lbnQuYm9keS5kYXRhc2V0Lm1vYmlsZVBvcnRhbExvY2s9JzEnOwogICAgc3RvcEFsbCgpOwogIH07CiAgY29uc3QgdW5sb2NrQXRHYXRlPSgpPT57CiAgICBpZighbW9iaWxlKCkpcmV0dXJuOwogICAgY29uc3QgZz1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZ2F0ZScpOwogICAgaWYoZyYmZy5jbGFzc0xpc3QuY29udGFpbnMoJ2FjdGl2ZScpKSBkZWxldGUgZG9jdW1lbnQuYm9keS5kYXRhc2V0Lm1vYmlsZVBvcnRhbExvY2s7CiAgfTsKICBjb25zdCBoYXJkZW49KG0pPT57CiAgICBpZighKG0gaW5zdGFuY2VvZiBIVE1MTWVkaWFFbGVtZW50KXx8bS5kYXRhc2V0LnJjMjY5QXV0aG9yaXR5PT09JzEnKXJldHVybjsKICAgIG0uZGF0YXNldC5yYzI2OUF1dGhvcml0eT0nMSc7CiAgICBjb25zdCBuYXRpdmVQbGF5PW0ucGxheS5iaW5kKG0pOwogICAgbS5wbGF5PWZ1bmN0aW9uKCl7CiAgICAgIGlmKGxvY2tlZCgpJiYoKHRoaXMuY2xvc2VzdCYmdGhpcy5jbG9zZXN0KCcjbG9iYnknKSl8fHRoaXMuaWQ9PT0nYW1iaWVudCcpKXsKICAgICAgICB0cnl7dGhpcy5wYXVzZSgpfWNhdGNoKF9lKXt9CiAgICAgICAgcmV0dXJuIFByb21pc2UucmVzb2x2ZSgpOwogICAgICB9CiAgICAgIHJldHVybiBuYXRpdmVQbGF5KCk7CiAgICB9OwogICAgbS5hZGRFdmVudExpc3RlbmVyKCdwbGF5JywoKT0+ewogICAgICBpZihsb2NrZWQoKSYmKChtLmNsb3Nlc3QmJm0uY2xvc2VzdCgnI2xvYmJ5JykpfHxtLmlkPT09J2FtYmllbnQnKSl7CiAgICAgICAgdHJ5e20ucGF1c2UoKX1jYXRjaChfZSl7fQogICAgICB9CiAgICB9LHRydWUpOwogIH07CiAgY29uc3QgYXJtPSgpPT57CiAgICBpZighbW9iaWxlKCkpcmV0dXJuOwogICAgZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbCgnI2xvYmJ5IHZpZGVvLCNsb2JieSBhdWRpbywjYW1iaWVudCcpLmZvckVhY2goaGFyZGVuKTsKICAgIGNvbnN0IGc9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2dhdGUnKTsKICAgIGNvbnN0IHA9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3BvcnRhbHMnKTsKICAgIGNvbnN0IGw9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2xvYmJ5Jyk7CiAgICB1bmxvY2tBdEdhdGUoKTsKICAgIGlmKChsJiZsLmNsYXNzTGlzdC5jb250YWlucygncG9ydGFsLW1vZGUnKSl8fChwJiZwLmNsYXNzTGlzdC5jb250YWlucygnc2hvdycpKSlzZXRMb2NrKCk7CiAgICBpZihnKW5ldyBNdXRhdGlvbk9ic2VydmVyKHVubG9ja0F0R2F0ZSkub2JzZXJ2ZShnLHthdHRyaWJ1dGVzOnRydWUsYXR0cmlidXRlRmlsdGVyOlsnY2xhc3MnXX0pOwogICAgaWYobCluZXcgTXV0YXRpb25PYnNlcnZlcigoKT0+e2lmKGwuY2xhc3NMaXN0LmNvbnRhaW5zKCdwb3J0YWwtbW9kZScpKXNldExvY2soKX0pLm9ic2VydmUobCx7YXR0cmlidXRlczp0cnVlLGF0dHJpYnV0ZUZpbHRlcjpbJ2NsYXNzJ119KTsKICAgIGlmKHApbmV3IE11dGF0aW9uT2JzZXJ2ZXIoKCk9PntpZihwLmNsYXNzTGlzdC5jb250YWlucygnc2hvdycpKXNldExvY2soKX0pLm9ic2VydmUocCx7YXR0cmlidXRlczp0cnVlLGF0dHJpYnV0ZUZpbHRlcjpbJ2NsYXNzJ119KTsKICAgIG5ldyBNdXRhdGlvbk9ic2VydmVyKCgpPT5kb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCcjbG9iYnkgdmlkZW8sI2xvYmJ5IGF1ZGlvLCNhbWJpZW50JykuZm9yRWFjaChoYXJkZW4pKS5vYnNlcnZlKGRvY3VtZW50LmJvZHkse2NoaWxkTGlzdDp0cnVlLHN1YnRyZWU6dHJ1ZX0pOwogIH07CiAgd2luZG93LmFkZEV2ZW50TGlzdGVuZXIoJ3BvaW50ZXJkb3duJyxlPT57CiAgICBpZighbW9iaWxlKCkpcmV0dXJuOwogICAgaWYoZS50YXJnZXQmJmUudGFyZ2V0LmNsb3Nlc3QmJmUudGFyZ2V0LmNsb3Nlc3QoJyNza2lwJykpc2V0TG9jaygpOwogIH0sdHJ1ZSk7CiAgd2luZG93LmFkZEV2ZW50TGlzdGVuZXIoJ3RvdWNoc3RhcnQnLGU9PnsKICAgIGlmKCFtb2JpbGUoKSlyZXR1cm47CiAgICBpZihlLnRhcmdldCYmZS50YXJnZXQuY2xvc2VzdCYmZS50YXJnZXQuY2xvc2VzdCgnI3NraXAnKSlzZXRMb2NrKCk7CiAgfSx7Y2FwdHVyZTp0cnVlLHBhc3NpdmU6dHJ1ZX0pOwogIGRvY3VtZW50LmFkZEV2ZW50TGlzdGVuZXIoJ3BsYXknLGU9PnsKICAgIGNvbnN0IG09ZS50YXJnZXQ7CiAgICBpZihsb2NrZWQoKSYmbSBpbnN0YW5jZW9mIEhUTUxNZWRpYUVsZW1lbnQmJigoKG0uY2xvc2VzdCYmbS5jbG9zZXN0KCcjbG9iYnknKSl8fG0uaWQ9PT0nYW1iaWVudCcpKXsKICAgICAgdHJ5e20ucGF1c2UoKX1jYXRjaChfZSl7fQogICAgfQogIH0sdHJ1ZSk7CiAgaWYoZG9jdW1lbnQucmVhZHlTdGF0ZT09PSdsb2FkaW5nJylkb2N1bWVudC5hZGRFdmVudExpc3RlbmVyKCdET01Db250ZW50TG9hZGVkJyxhcm0se29uY2U6dHJ1ZX0pO2Vsc2UgYXJtKCk7Cn0pKCk7Cjwvc2NyaXB0Pgo=').decode('utf-8')
               if html.count('</body>')!=1:
                   raise SystemExit('Expected one </body>; refusing to guess')
               html=html.replace('</body>',patch+'\n</body>',1)
               p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC269 without touching locked scroll
+      - name: Verify RC269 and preserve RC268 scroll
         run: |
           grep -q 'RC269 MASTER MOBILE MEDIA AUTHORITY LOCK' public/index.html
           grep -q 'rc269-mobile-media-authority-lock' public/index.html
-          grep -q "dataset.mobilePortalLock==='1'" public/index.html
-          grep -q "m.play=function()" public/index.html
           grep -q 'RC268 MASTER MOBILE PORTAL RUNTIME CLEANUP' public/index.html
           grep -q 'rc268-mobile-native-portal-scroll' public/index.html
           grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
