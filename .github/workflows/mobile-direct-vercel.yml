@@ -25,40 +25,17 @@ jobs:
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
           marker='RC264 MASTER ENGINE MOBILE SKIP FIX'
-
           if marker not in html:
               old="function showPortals(){clearTimers();heart.classList.remove('show');premiere.classList.remove('show');$('#skip').style.display='none';chapter.innerHTML='<small>ACT V · THE CHOICE</small><h2>Choose your next chapter.</h2><p>Navigation appears only after the visitor has entered the world.</p>';portals.classList.add('show');setDot(3)}"
               if html.count(old)!=1:
                   raise SystemExit(f'Expected exactly one original showPortals(), found {html.count(old)}; refusing to guess')
-
-              new="""function showPortals(){
- // RC264 MASTER ENGINE MOBILE SKIP FIX
- clearTimers();
- heart.classList.remove('show');
- premiere.classList.remove('show');
- $('#skip').style.display='none';
- chapter.innerHTML='<small>ACT V · THE CHOICE</small><h2>Choose your next chapter.</h2><p>Navigation appears only after the visitor has entered the world.</p>';
- portals.classList.add('show');
- setDot(3);
- if(matchMedia('(max-width:700px)').matches){
-   try{lobbyVideo.pause()}catch(_e){}
-   lobby.classList.add('portal-mode');
-   const fadeEl=$('#fade'); if(fadeEl)fadeEl.classList.remove('on');
-   const journeyEl=$('#journeyTransition'); if(journeyEl){journeyEl.classList.remove('on');journeyEl.setAttribute('aria-hidden','true')}
-   if(document.body){document.body.dataset.scene='lobby';document.body.dataset.experience='portal_mode'}
- }
-}"""
+              new="function showPortals(){\n // RC264 MASTER ENGINE MOBILE SKIP FIX\n clearTimers();\n heart.classList.remove('show');\n premiere.classList.remove('show');\n $('#skip').style.display='none';\n chapter.innerHTML='<small>ACT V · THE CHOICE</small><h2>Choose your next chapter.</h2><p>Navigation appears only after the visitor has entered the world.</p>';\n portals.classList.add('show');\n setDot(3);\n if(matchMedia('(max-width:700px)').matches){\n   try{lobbyVideo.pause()}catch(_e){}\n   lobby.classList.add('portal-mode');\n   const fadeEl=$('#fade'); if(fadeEl)fadeEl.classList.remove('on');\n   const journeyEl=$('#journeyTransition'); if(journeyEl){journeyEl.classList.remove('on');journeyEl.setAttribute('aria-hidden','true')}\n   if(document.body){document.body.dataset.scene='lobby';document.body.dataset.experience='portal_mode'}\n }\n}"
               html=html.replace(old,new,1)
-
               listener="    if(skipBtn)skipBtn.addEventListener('click',(e)=>{e.preventDefault();e.stopImmediatePropagation();hardSkip();},true);\n"
               if html.count(listener)!=1:
                   raise SystemExit(f'Expected exactly one RC262 skip listener, found {html.count(listener)}; refusing to guess')
               html=html.replace(listener,'',1)
-
-              for start_id, close_tag in [
-                  ('<script id="rc263-mobile-skip-event-owner">','</script>'),
-                  ('<style id="rc263-mobile-skip-hitbox-lock">','</style>')
-              ]:
+              for start_id, close_tag in [('<script id="rc263-mobile-skip-event-owner">','</script>'),('<style id="rc263-mobile-skip-hitbox-lock">','</style>')]:
                   count=html.count(start_id)
                   if count not in (0,1):
                       raise SystemExit(f'Unexpected {start_id} count {count}; refusing to guess')
@@ -66,7 +43,6 @@ jobs:
                       s=html.index(start_id)
                       e=html.index(close_tag,s)+len(close_tag)
                       html=html[:s]+html[e:]
-
               p.write_text(html,encoding='utf-8')
           PY
 
@@ -75,9 +51,9 @@ jobs:
           grep -q 'RC264 MASTER ENGINE MOBILE SKIP FIX' public/index.html
           grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
-          ! grep -q 'rc263-mobile-skip-event-owner' public/index.html
-          ! grep -q 'rc263-mobile-skip-hitbox-lock' public/index.html
-          ! grep -q "if(skipBtn)skipBtn.addEventListener('click'.*hardSkip" public/index.html
+          if grep -q 'rc263-mobile-skip-event-owner' public/index.html; then exit 1; fi
+          if grep -q 'rc263-mobile-skip-hitbox-lock' public/index.html; then exit 1; fi
+          if grep -q "if(skipBtn)skipBtn.addEventListener('click'.*hardSkip" public/index.html; then exit 1; fi
 
       - name: Lock RC264 into source
         run: |
