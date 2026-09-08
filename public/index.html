@@ -6406,4 +6406,62 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 
 
 
+
+<script id="rc263-mobile-skip-event-owner">
+(()=>{
+  'use strict';
+  const boot=()=>{
+    if(!matchMedia('(max-width:700px)').matches)return;
+    const oldBtn=document.getElementById('skip');
+    if(!oldBtn||!oldBtn.parentNode)return;
+    /* RC263 MASTER MOBILE SKIP EVENT OWNER FIX */
+    const btn=oldBtn.cloneNode(true);
+    btn.removeAttribute('onclick');
+    oldBtn.parentNode.replaceChild(btn,oldBtn);
+    let fired=false;
+    const forward=(e)=>{
+      if(e){e.preventDefault();e.stopPropagation();if(e.stopImmediatePropagation)e.stopImmediatePropagation();}
+      if(fired)return;
+      fired=true;
+      if(typeof window.clearTimers==='function')window.clearTimers();
+      else if(typeof clearTimers==='function')clearTimers();
+      const lobby=document.getElementById('lobby');
+      const portals=document.getElementById('portals');
+      const heart=lobby&&lobby.querySelector('.heart-focus');
+      const premiere=document.getElementById('premiereCard');
+      const fade=document.getElementById('fade');
+      const journey=document.getElementById('journeyTransition');
+      if(lobby)lobby.querySelectorAll('video,audio').forEach(m=>{try{m.pause()}catch(_e){}});
+      if(heart)heart.classList.remove('show');
+      if(premiere)premiere.classList.remove('show');
+      if(fade)fade.classList.remove('on');
+      if(journey){journey.classList.remove('on');journey.setAttribute('aria-hidden','true');}
+      if(portals)portals.classList.add('show');
+      if(lobby)lobby.classList.add('portal-mode');
+      btn.style.display='none';
+      if(document.body){document.body.dataset.scene='lobby';document.body.dataset.experience='portal_mode';}
+      requestAnimationFrame(()=>{
+        if(portals)portals.classList.add('show');
+        if(lobby)lobby.classList.add('portal-mode');
+      });
+      setTimeout(()=>{fired=false},400);
+    };
+    btn.addEventListener('pointerup',forward,true);
+    btn.addEventListener('click',forward,true);
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});
+  else boot();
+})();
+</script>
+<style id="rc263-mobile-skip-hitbox-lock">
+@media(max-width:700px){
+  #lobby #skip{z-index:120!important;pointer-events:auto!important;touch-action:manipulation!important}
+  #lobby.portal-mode #skip{display:none!important}
+  #lobby.portal-mode .chapter,
+  #lobby.portal-mode .heart-focus,
+  #lobby.portal-mode #premiereCard{display:none!important}
+  #lobby.portal-mode #portals{opacity:1!important;visibility:visible!important;transform:none!important;z-index:100!important;pointer-events:auto!important}
+}
+</style>
+
 </body></html>
