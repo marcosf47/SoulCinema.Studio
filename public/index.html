@@ -5225,4 +5225,110 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 })();
 </script>
 
+<style id="rc243-mobile-portal-final-hitbox-fix">
+/* RC243 — reduce portal controls and make only the arrow side open rooms. */
+@media(max-width:700px){
+  #lobby.portal-mode #portals{
+    padding:84px 8px 16px!important;
+  }
+  #lobby.portal-mode #portals .portal-shell{
+    gap:9px!important;
+    padding:10px 8px 22px!important;
+  }
+  #lobby.portal-mode #portals .portal,
+  #lobby.portal-mode #portals .portal.featured{
+    min-height:104px!important;
+    padding:18px 68px 16px 112px!important;
+    cursor:default!important;
+  }
+  #lobby.portal-mode #portals .portal::before{
+    left:28px!important;
+    top:50%!important;
+    transform:translateY(-50%)!important;
+    width:42px!important;
+    height:42px!important;
+    border-width:2px!important;
+    font-size:17px!important;
+    box-shadow:0 0 12px rgba(226,181,66,.24),inset 0 0 12px rgba(255,218,103,.08)!important;
+  }
+  #lobby.portal-mode #portals .portal::after{
+    right:24px!important;
+    width:42px!important;
+    height:42px!important;
+    border-width:2px!important;
+    font-size:19px!important;
+  }
+  #lobby.portal-mode #portals .portal span{
+    font-size:9px!important;
+    letter-spacing:.17em!important;
+    margin-bottom:5px!important;
+  }
+  #lobby.portal-mode #portals .portal strong{
+    font-size:clamp(23px,6vw,29px)!important;
+    line-height:1.04!important;
+    margin-bottom:4px!important;
+  }
+  #lobby.portal-mode #portals .portal p,
+  #lobby.portal-mode #portals .portal strong::after{
+    font-size:13px!important;
+    line-height:1.24!important;
+  }
+}
+@media(max-width:390px){
+  #lobby.portal-mode #portals .portal,
+  #lobby.portal-mode #portals .portal.featured{
+    min-height:98px!important;
+    padding:16px 62px 14px 102px!important;
+  }
+  #lobby.portal-mode #portals .portal::before{
+    left:24px!important;
+    width:40px!important;
+    height:40px!important;
+  }
+  #lobby.portal-mode #portals .portal::after{
+    right:20px!important;
+    width:40px!important;
+    height:40px!important;
+  }
+  #lobby.portal-mode #portals .portal strong{font-size:23px!important}
+}
+</style>
+
+<script id="rc243-mobile-arrow-only-open">
+(()=>{
+  const ready=(fn)=>document.readyState==='loading'
+    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
+  ready(()=>{
+    let startX=0,startY=0,moved=false;
+    const portalFrom=(target)=>target&&target.closest&&target.closest('#lobby.portal-mode #portals .portal');
+    const inArrowZone=(portal,x)=>{
+      const r=portal.getBoundingClientRect();
+      return x >= r.right - 96;
+    };
+    document.addEventListener('touchstart',e=>{
+      const portal=portalFrom(e.target);
+      if(!portal)return;
+      const t=e.touches[0];
+      startX=t.clientX; startY=t.clientY; moved=false;
+    },{passive:true,capture:true});
+    document.addEventListener('touchmove',e=>{
+      const portal=portalFrom(e.target);
+      if(!portal)return;
+      const t=e.touches[0];
+      if(Math.abs(t.clientY-startY)>4 || Math.abs(t.clientX-startX)>8)moved=true;
+    },{passive:true,capture:true});
+    document.addEventListener('click',e=>{
+      const portal=portalFrom(e.target);
+      if(!portal)return;
+      const x=e.clientX || startX;
+      if(moved || !inArrowZone(portal,x)){
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        moved=false;
+      }
+    },true);
+  });
+})();
+</script>
+
 </body></html>
