@@ -18,51 +18,51 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC264 engine-level mobile skip fix
+      - name: Apply RC265 mobile skip coordinate + sequence lock
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='RC264 MASTER ENGINE MOBILE SKIP FIX'
+          marker='RC265 MASTER MOBILE SKIP COORDINATE + SEQUENCE LOCK'
           if marker not in html:
-              old="function showPortals(){clearTimers();heart.classList.remove('show');premiere.classList.remove('show');$('#skip').style.display='none';chapter.innerHTML='<small>ACT V · THE CHOICE</small><h2>Choose your next chapter.</h2><p>Navigation appears only after the visitor has entered the world.</p>';portals.classList.add('show');setDot(3)}"
+              old="function sequence(preserveLobbyPlayback=false){clearTimers();"
               if html.count(old)!=1:
-                  raise SystemExit(f'Expected exactly one original showPortals(), found {html.count(old)}; refusing to guess')
-              new="function showPortals(){\n // RC264 MASTER ENGINE MOBILE SKIP FIX\n clearTimers();\n heart.classList.remove('show');\n premiere.classList.remove('show');\n $('#skip').style.display='none';\n chapter.innerHTML='<small>ACT V · THE CHOICE</small><h2>Choose your next chapter.</h2><p>Navigation appears only after the visitor has entered the world.</p>';\n portals.classList.add('show');\n setDot(3);\n if(matchMedia('(max-width:700px)').matches){\n   try{lobbyVideo.pause()}catch(_e){}\n   lobby.classList.add('portal-mode');\n   const fadeEl=$('#fade'); if(fadeEl)fadeEl.classList.remove('on');\n   const journeyEl=$('#journeyTransition'); if(journeyEl){journeyEl.classList.remove('on');journeyEl.setAttribute('aria-hidden','true')}\n   if(document.body){document.body.dataset.scene='lobby';document.body.dataset.experience='portal_mode'}\n }\n}"
+                  raise SystemExit(f'Expected exactly one sequence() prefix, found {html.count(old)}; refusing to guess')
+              new="function sequence(preserveLobbyPlayback=false){if(matchMedia('(max-width:700px)').matches&&lobby.classList.contains('portal-mode'))return;clearTimers();"
               html=html.replace(old,new,1)
-              listener="    if(skipBtn)skipBtn.addEventListener('click',(e)=>{e.preventDefault();e.stopImmediatePropagation();hardSkip();},true);\n"
-              if html.count(listener)!=1:
-                  raise SystemExit(f'Expected exactly one RC262 skip listener, found {html.count(listener)}; refusing to guess')
-              html=html.replace(listener,'',1)
-              for start_id, close_tag in [('<script id="rc263-mobile-skip-event-owner">','</script>'),('<style id="rc263-mobile-skip-hitbox-lock">','</style>')]:
-                  count=html.count(start_id)
-                  if count not in (0,1):
-                      raise SystemExit(f'Unexpected {start_id} count {count}; refusing to guess')
-                  if count==1:
-                      s=html.index(start_id)
-                      e=html.index(close_tag,s)+len(close_tag)
-                      html=html[:s]+html[e:]
+
+              rc264=" // RC264 MASTER ENGINE MOBILE SKIP FIX"
+              if html.count(rc264)!=1:
+                  raise SystemExit(f'Expected exactly one RC264 showPortals marker, found {html.count(rc264)}; refusing to guess')
+              html=html.replace(rc264,rc264+"\n // RC265 MASTER MOBILE SKIP COORDINATE + SEQUENCE LOCK",1)
+
+              patch=base64.b64decode('CjxzY3JpcHQgaWQ9InJjMjY1LW1vYmlsZS1za2lwLWNvb3JkaW5hdGUtb3duZXIiPgooKCk9PnsKICAndXNlIHN0cmljdCc7CiAgY29uc3QgaXNNb2JpbGU9KCk9Pm1hdGNoTWVkaWEoJyhtYXgtd2lkdGg6NzAwcHgpJykubWF0Y2hlczsKICBjb25zdCBwb2ludD0oZSk9PnsKICAgIGlmKGUudG91Y2hlcyYmZS50b3VjaGVzWzBdKXJldHVybiBlLnRvdWNoZXNbMF07CiAgICBpZihlLmNoYW5nZWRUb3VjaGVzJiZlLmNoYW5nZWRUb3VjaGVzWzBdKXJldHVybiBlLmNoYW5nZWRUb3VjaGVzWzBdOwogICAgcmV0dXJuIGU7CiAgfTsKICBjb25zdCBpbnNpZGU9KGVsLHgseSk9PnsKICAgIGNvbnN0IHI9ZWwuZ2V0Qm91bmRpbmdDbGllbnRSZWN0KCk7CiAgICByZXR1cm4geD49ci5sZWZ0JiZ4PD1yLnJpZ2h0JiZ5Pj1yLnRvcCYmeTw9ci5ib3R0b207CiAgfTsKICBjb25zdCBmb3JjZVBvcnRhbHM9KGUpPT57CiAgICBpZighaXNNb2JpbGUoKSlyZXR1cm47CiAgICBjb25zdCBsb2JieT1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbG9iYnknKTsKICAgIGNvbnN0IHNraXA9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3NraXAnKTsKICAgIGlmKCFsb2JieXx8IXNraXB8fCFsb2JieS5jbGFzc0xpc3QuY29udGFpbnMoJ2FjdGl2ZScparrLCE9yPGYgbG9iYnkuY2xhc3NMaXN0LmNvbnRhaW5zKCdwb3J0YWwtbW9kZScpeXJldHVybjsKICAgIGNvbnN0IHA9cG9pbnQoZSk7CiAgICBpZighcHx8IWluc2lkZShza2lwLHAuY2xpZW50WCxwLmNsaWVudFkpKXJldHVybjsKICAgIGUucHJldmVudERlZmF1bHQoKTsKICAgIGUuc3RvcEltbWVkaWF0ZVByb3BhZ2F0aW9uKCk7CiAgICBsb2JieS5jbGFzc0xpc3QuYWRkKCdwb3J0YWwtbW9kZScpOwogICAgaWYodHlwZW9mIHNob3dQb3J0YWxzPT09J2Z1bmN0aW9uJylzaG93UG9ydGFscygpOwogIH07CiAgZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcigncG9pbnRlcmRvd24nLGZvcmNlUG9ydGFscyx0cnVlKTsKICBkb2N1bWVudC5hZGRFdmVudExpc3RlbmVyKCd0b3VjaHN0YXJ0Jyxmb3JjZVBvcnRhbHMse2NhcHR1cmU6dHJ1ZSxwYXNzaXZlOmZhbHNlfSk7Cn0pKCk7Cjwvc2NyaXB0Pgo8c3R5bGUgaWQ9InJjMjY1LW1vYmlsZS1za2lwLWNvb3JkaW5hdGUtbG9jayI+CkBtZWRpYShtYXgtd2lkdGg6NzAwcHgpewogICNsb2JieSAjc2tpcHt6LWluZGV4OjEwMDAhaW1wb3J0YW50O3BvaW50ZXItZXZlbnRzOmF1dG8haW1wb3J0YW50O3RvdWNoLWFjdGlvbjptYW5pcHVsYXRpb24haW1wb3J0YW50fQp9Cjwvc3R5bGU+Cg==').decode('utf-8')
+              anchor='</body>'
+              if html.count(anchor)!=1:
+                  raise SystemExit('Expected one </body>; refusing to guess')
+              html=html.replace(anchor,patch+'\n'+anchor,1)
               p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC264
+      - name: Verify RC265
         run: |
-          grep -q 'RC264 MASTER ENGINE MOBILE SKIP FIX' public/index.html
+          grep -q 'RC265 MASTER MOBILE SKIP COORDINATE + SEQUENCE LOCK' public/index.html
+          grep -q 'rc265-mobile-skip-coordinate-owner' public/index.html
+          grep -q 'rc265-mobile-skip-coordinate-lock' public/index.html
+          grep -q "lobby.classList.contains('portal-mode'))return;clearTimers()" public/index.html
           grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
-          if grep -q 'rc263-mobile-skip-event-owner' public/index.html; then exit 1; fi
-          if grep -q 'rc263-mobile-skip-hitbox-lock' public/index.html; then exit 1; fi
-          if grep -q "if(skipBtn)skipBtn.addEventListener('click'.*hardSkip" public/index.html; then exit 1; fi
 
-      - name: Lock RC264 into source
+      - name: Lock RC265 into source
         run: |
           if git diff --quiet -- public/index.html; then
-            echo "RC264 already locked"
+            echo "RC265 already locked"
           else
             git config user.name "SoulCinema Mobile Deploy"
             git config user.email "actions@users.noreply.github.com"
             git add public/index.html
-            git commit -m "RC264 master engine-level mobile skip fix"
+            git commit -m "RC265 master mobile skip coordinate and sequence lock"
             git push origin HEAD:main
           fi
