@@ -6375,4 +6375,37 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 }
 </style>
 
+
+<script id="rc259-mobile-skip-to-portals-fix">
+(()=>{
+  const mobile=()=>matchMedia('(max-width:700px)').matches;
+  const activatePortals=()=>{
+    const lobby=document.getElementById('lobby');
+    const portals=document.getElementById('portals');
+    const skip=document.getElementById('skip');
+    const heart=document.querySelector('#lobby .heart-focus');
+    const premiere=document.querySelector('#lobby .premiere-card');
+    if(!lobby||!portals)return;
+    document.querySelectorAll('.scene.active').forEach(s=>s.classList.remove('active'));
+    lobby.classList.add('active','portal-mode');
+    portals.classList.add('show');
+    if(skip)skip.style.display='none';
+    heart?.classList.remove('show');
+    premiere?.classList.remove('show');
+    if(document.body){
+      document.body.dataset.scene='lobby';
+      document.body.dataset.experience='portal_mode';
+    }
+  };
+  document.addEventListener('click',e=>{
+    if(!mobile())return;
+    const btn=e.target.closest&&e.target.closest('#skip');
+    if(!btn)return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    activatePortals();
+  },true);
+})();
+</script>
+
 </body></html>
