@@ -18,40 +18,36 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC270 mobile portal click authority and media hard stop
+      - name: Roll back RC270 only
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='RC270 MASTER MOBILE PORTAL CLICK AUTHORITY + MEDIA HARD STOP'
-          if marker not in html:
-              patch=base64.b64decode('CjwhLS0gUkMyNzAgTUFTVEVSIE1PQklMRSBQT1JUQUwgQ0xJQ0sgQVVUSE9SSVRZICsgTUVESUEgSEFSRCBTVE9QIC0tPgo8c2NyaXB0IGlkPSJyYzI3MC1tb2JpbGUtcG9ydGFsLWNsaWNrLWF1dGhvcml0eSI+CigoKT0+ewogICd1c2Ugc3RyaWN0JzsKICBjb25zdCBtb2JpbGU9KCk9Pm1hdGNoTWVkaWEoJyhtYXgtd2lkdGg6NzAwcHgpJykubWF0Y2hlczsKICBjb25zdCBsb2JieT0oKT0+ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2xvYmJ5Jyk7CiAgY29uc3QgcG9ydGFscz0oKT0+ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3BvcnRhbHMnKTsKICBjb25zdCBwb3J0YWxBY3RpdmU9KCk9PiEhKG1vYmlsZSgpJiZsb2JieSgpPy5jbGFzc0xpc3QuY29udGFpbnMoJ3BvcnRhbC1tb2RlJykmJnBvcnRhbHMoKT8uY2xhc3NMaXN0LmNvbnRhaW5zKCdzaG93JykpOwogIGNvbnN0IGhhcmRTdG9wPSgpPT57CiAgICBpZighbW9iaWxlKCkpcmV0dXJuOwogICAgZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbCgnI2xvYmJ5IHZpZGVvLCNsb2JieSBhdWRpbycpLmZvckVhY2gobT0+e3RyeXttLnBhdXNlKCl9Y2F0Y2goX2Upe319KTsKICAgIGNvbnN0IGx2PWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdsb2JieVZpZGVvJyk7IHRyeXtsdj8ucGF1c2UoKX1jYXRjaChfZSl7fQogICAgY29uc3QgYW1iPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhbWJpZW50Jyk7IHRyeXthbWI/LnBhdXNlKCl9Y2F0Y2goX2Upe30KICB9OwogIGNvbnN0IGxvY2tBbmRTdG9wPSgpPT57CiAgICBpZighbW9iaWxlKCkpcmV0dXJuOwogICAgZG9jdW1lbnQuYm9keS5kYXRhc2V0Lm1vYmlsZVBvcnRhbExvY2s9JzEnOwogICAgaGFyZFN0b3AoKTsKICAgIFswLDgwLDIyMCw1MjAsOTAwLDE1MDBdLmZvckVhY2gobXM9PnNldFRpbWVvdXQoaGFyZFN0b3AsbXMpKTsKICB9OwogIGNvbnN0IHJvdXRlPShyb29tKT0+ewogICAgbG9ja0FuZFN0b3AoKTsKICAgIGlmKHJvb209PT0nU2NyZWVuaW5nIFRoZWF0ZXInKXsgaWYodHlwZW9mIG9wZW5UaGVhdGVyPT09J2Z1bmN0aW9uJylvcGVuVGhlYXRlcigpOyByZXR1cm47IH0KICAgIGlmKHJvb209PT0nTXVzaWMgUm9vbScpeyBpZih0eXBlb2Ygb3Blbk11c2ljPT09J2Z1bmN0aW9uJylvcGVuTXVzaWMoKTsgcmV0dXJuOyB9CiAgICBpZihyb29tPT09J0xpdmUgQ2VudGVyJyl7IGlmKHR5cGVvZiBvcGVuTGl2ZT09PSdmdW5jdGlvbicpb3BlbkxpdmUoKTsgcmV0dXJuOyB9CiAgICBpZihyb29tPT09J1Byb2R1Y3Rpb24gUm9vbScpewogICAgICBpZih0eXBlb2Ygb3BlblByb2R1Y3Rpb25IYXJkPT09J2Z1bmN0aW9uJylvcGVuUHJvZHVjdGlvbkhhcmQoKTsKICAgICAgZWxzZSBpZih0eXBlb2Ygb3BlblByb2R1Y3Rpb249PT0nZnVuY3Rpb24nKW9wZW5Qcm9kdWN0aW9uKCk7CiAgICAgIHJldHVybjsKICAgIH0KICAgIGlmKHJvb209PT0nU3RvcnkgUm9vbScpeyBpZih0eXBlb2Ygb3BlblN0b3J5PT09J2Z1bmN0aW9uJylvcGVuU3RvcnkoKTsgcmV0dXJuOyB9CiAgICBpZihyb29tPT09J0pvdXJuYWwnKXsgaWYodHlwZW9mIG9wZW5Kb3VybmFsPT09J2Z1bmN0aW9uJylvcGVuSm91cm5hbCgpOyByZXR1cm47IH0KICAgIGlmKHJvb209PT0nVmlzdWFsIEJpYmxlJyl7CiAgICAgIGlmKHR5cGVvZiBvcGVuQmlibGVIYXJkPT09J2Z1bmN0aW9uJylvcGVuQmlibGVIYXJkKCk7CiAgICAgIGVsc2UgaWYodHlwZW9mIG9wZW5CaWJsZT09PSdmdW5jdGlvbicpb3BlbkJpYmxlKCk7CiAgICAgIHJldHVybjsKICAgIH0KICAgIGlmKHJvb209PT0nQWJvdXQgVXMnKXsgaWYodHlwZW9mIG9wZW5BYm91dD09PSdmdW5jdGlvbicpb3BlbkFib3V0KCk7IHJldHVybjsgfQogICAgaWYocm9vbT09PSdDb250YWN0Jyl7IGlmKHR5cGVvZiBvcGVuQ29udGFjdD09PSdmdW5jdGlvbicpb3BlbkNvbnRhY3QoKTsgcmV0dXJuOyB9CiAgfTsKCiAgLy8gV2luZG93LWNhcHR1cmUgQ0xJQ0sgb25seS4gTm8gdG91Y2hzdGFydC90b3VjaG1vdmUvcG9pbnRlcmRvd24sIHNvIFJDMjY4IG5hdGl2ZSBzY3JvbGwgcmVtYWlucyB1bnRvdWNoZWQuCiAgd2luZG93LmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJyxlPT57CiAgICBpZighcG9ydGFsQWN0aXZlKCkpcmV0dXJuOwogICAgY29uc3QgdGFyZ2V0PWUudGFyZ2V0Py5jbG9zZXN0Py4oJyNwb3J0YWxzIFtkYXRhLXJvb21dJyk7CiAgICBpZighdGFyZ2V0KXJldHVybjsKICAgIGNvbnN0IHJvb209dGFyZ2V0LmRhdGFzZXQucm9vbTsKICAgIGlmKCFyb29tKXJldHVybjsKICAgIGUucHJldmVudERlZmF1bHQoKTsKICAgIGUuc3RvcEltbWVkaWF0ZVByb3BhZ2F0aW9uKCk7CiAgICByb3V0ZShyb29tKTsKICB9LHRydWUpOwoKICAvLyBJZiBhbnkgc3RhbGUgb3duZXIgdHJpZXMgdG8gcmVzdGFydCBMb2JieSBtZWRpYSBhZnRlciBTa2lwL3Jvb20gcm91dGluZywga2lsbCBpdCBpbW1lZGlhdGVseS4KICBkb2N1bWVudC5hZGRFdmVudExpc3RlbmVyKCdwbGF5JyxlPT57CiAgICBpZighbW9iaWxlKCl8fGRvY3VtZW50LmJvZHkuZGF0YXNldC5tb2JpbGVQb3J0YWxMb2NrIT09JzEnKXJldHVybjsKICAgIGNvbnN0IG09ZS50YXJnZXQ7CiAgICBpZihtICYmIChtLmlkPT09J2xvYmJ5VmlkZW8nfHxtLmlkPT09J2FtYmllbnQnfHxtLmNsb3Nlc3Q/LignI2xvYmJ5JykpKXsKICAgICAgdHJ5e20ucGF1c2UoKX1jYXRjaChfZSl7fQogICAgfQogIH0sdHJ1ZSk7Cn0pKCk7Cjwvc2NyaXB0Pgo=').decode('utf-8')
-              if html.count('</body>')!=1:
-                  raise SystemExit('Expected exactly one </body>; refusing to guess')
-              html=html.replace('</body>',patch+'\n</body>',1)
-              p.write_text(html,encoding='utf-8')
+          sid='<script id="rc270-mobile-portal-click-authority">'
+          if sid in html:
+              s=html.index('<!-- RC270 MASTER MOBILE PORTAL CLICK AUTHORITY + MEDIA HARD STOP -->')
+              e=html.index('</script>', html.index(sid, s))+len('</script>')
+              html=html[:s]+html[e:]
+          p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC270 and preserve RC268 scroll
+      - name: Verify rollback and preserve locked fixes
         run: |
-          grep -q 'RC270 MASTER MOBILE PORTAL CLICK AUTHORITY + MEDIA HARD STOP' public/index.html
-          grep -q 'rc270-mobile-portal-click-authority' public/index.html
-          grep -q 'Window-capture CLICK only' public/index.html
+          ! grep -q 'RC270 MASTER MOBILE PORTAL CLICK AUTHORITY + MEDIA HARD STOP' public/index.html
+          grep -q 'RC269 MASTER MOBILE MEDIA AUTHORITY LOCK' public/index.html
           grep -q 'RC268 MASTER MOBILE PORTAL RUNTIME CLEANUP' public/index.html
-          grep -q 'rc268-mobile-native-portal-scroll' public/index.html
           grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
 
-      - name: Lock RC270 into source
+      - name: Lock rollback into source
         run: |
           if git diff --quiet -- public/index.html; then
-            echo "RC270 already locked"
+            echo "RC270 already absent"
           else
             git config user.name "SoulCinema Mobile Deploy"
             git config user.email "actions@users.noreply.github.com"
             git add public/index.html
-            git commit -m "RC270 master mobile portal click authority and media hard stop"
+            git commit -m "Rollback RC270 restore RC268 scroll baseline"
             git push origin HEAD:main
           fi
