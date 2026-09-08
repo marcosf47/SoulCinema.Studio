@@ -18,86 +18,112 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC268 master mobile portal runtime cleanup
+      - name: Apply RC269 mobile media authority lock
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='RC268 MASTER MOBILE PORTAL RUNTIME CLEANUP'
+          marker='RC269 MASTER MOBILE MEDIA AUTHORITY LOCK'
           if marker not in html:
-              def remove_script_by_id(doc,sid):
-                  start=f'<script id="{sid}">'
-                  c=doc.count(start)
-                  if c not in (0,1):
-                      raise SystemExit(f'Unexpected {sid} count {c}; refusing to guess')
-                  if c==1:
-                      s=doc.index(start)
-                      e=doc.index('</script>',s)+len('</script>')
-                      doc=doc[:s]+doc[e:]
-                  return doc
-              for sid in ['rc242-mobile-scroll-tap-guard','rc243-mobile-arrow-only-open','rc249-mobile-real-arrow-buttons','rc266-mobile-portal-native-owner','rc267-mobile-portal-runtime-lock']:
-                  html=remove_script_by_id(html,sid)
-              fp='let sx=0,sy=0,moved=false,activePortal=null;'
-              c=html.count(fp)
-              if c not in (0,1):
-                  raise SystemExit(f'Unexpected activePortal legacy owner count {c}; refusing to guess')
-              if c==1:
-                  pos=html.index(fp)
-                  s=html.rfind('<script',0,pos)
-                  e=html.index('</script>',pos)+len('</script>')
-                  if s<0:
-                      raise SystemExit('Could not resolve activePortal script start; refusing to guess')
-                  html=html[:s]+html[e:]
-              for enc in ['ZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcigncG9pbnRlcmRvd24nLChlKT0+ewogaWYoIXByb2R1Y3Rpb25Qb3J0YWxWaXN1YWxIaXQoZSkpcmV0dXJuOwogZS5wcmV2ZW50RGVmYXVsdCgpOwogZS5zdG9wSW1tZWRpYXRlUHJvcGFnYXRpb24oKTsKIG9wZW5Qcm9kdWN0aW9uSGFyZCgpOwp9LHtjYXB0dXJlOnRydWV9KTs=','ZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcigncG9pbnRlcmRvd24nLChlKT0+ewogaWYoIXZpc3VhbEJpYmxlUG9ydGFsVmlzdWFsSGl0KGUpKXJldHVybjsKIGUucHJldmVudERlZmF1bHQoKTtlLnN0b3BJbW1lZGlhdGVQcm9wYWdhdGlvbigpOwogdmlzdWFsQmlibGVQb3J0YWxCdG4uY2xhc3NMaXN0LmFkZCgncmMtcHJlc3NlZCcpOwogc2V0VGltZW91dCgoKT0+dmlzdWFsQmlibGVQb3J0YWxCdG4uY2xhc3NMaXN0LnJlbW92ZSgncmMtcHJlc3NlZCcpLDI2MCk7CiBvcGVuQmlibGVIYXJkKCk7Cn0se2NhcHR1cmU6dHJ1ZX0pOw==']:
-                  block=base64.b64decode(enc).decode('utf-8')
-                  c=html.count(block)
-                  if c not in (0,1):
-                      raise SystemExit(f'Unexpected coordinate block count {c}; refusing to guess')
-                  if c==1:
-                      html=html.replace(block,'',1)
-              old="function sequence(preserveLobbyPlayback=false){if(matchMedia('(max-width:700px)').matches&&lobby.classList.contains('portal-mode'))return;clearTimers();"
-              new="function sequence(preserveLobbyPlayback=false){if(matchMedia('(max-width:700px)').matches&&(lobby.classList.contains('portal-mode')||portals.classList.contains('show')||document.body?.dataset.mobilePortalLock==='1'))return;clearTimers();"
-              if html.count(old)!=1:
-                  raise SystemExit(f'Expected exactly one RC267 sequence guard, found {html.count(old)}; refusing to guess')
-              html=html.replace(old,new,1)
-              anchor="   try{lobbyVideo.pause()}catch(_e){}\n   lobby.classList.add('portal-mode');"
-              replacement="   try{lobbyVideo.pause()}catch(_e){}\n   try{ambient.pause()}catch(_e){}\n   lobby.querySelectorAll('video,audio').forEach(m=>{try{m.pause()}catch(_e){}});\n   if(document.body)document.body.dataset.mobilePortalLock='1';\n   lobby.classList.add('portal-mode');"
-              if html.count(anchor)!=1:
-                  raise SystemExit(f'Expected exactly one mobile showPortals pause anchor, found {html.count(anchor)}; refusing to guess')
-              html=html.replace(anchor,replacement,1)
-              patch=base64.b64decode('CjwhLS0gUkMyNjggTUFTVEVSIE1PQklMRSBQT1JUQUwgUlVOVElNRSBDTEVBTlVQIC0tPgo8c2NyaXB0IGlkPSJyYzI2OC1tb2JpbGUtcG9ydGFsLXJ1bnRpbWUtY2xlYW4tb3duZXIiPgooKCk9PnsKICAndXNlIHN0cmljdCc7CiAgY29uc3QgbW9iaWxlPSgpPT5tYXRjaE1lZGlhKCcobWF4LXdpZHRoOjcwMHB4KScpLm1hdGNoZXM7CiAgY29uc3QgbG9iYnk9KCk9PmRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdsb2JieScpOwogIGNvbnN0IHBvcnRhbHM9KCk9PmRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdwb3J0YWxzJyk7CiAgY29uc3QgZ2F0ZT0oKT0+ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2dhdGUnKTsKICBjb25zdCBzdG9wTG9iYnlNZWRpYT0oKT0+ewogICAgaWYoIW1vYmlsZSgpKXJldHVybjsKICAgIGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoJyNsb2JieSB2aWRlbywjbG9iYnkgYXVkaW8nKS5mb3JFYWNoKG09Pnt0cnl7bS5wYXVzZSgpfWNhdGNoKF9lKXt9fSk7CiAgICBjb25zdCBsdj1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbG9iYnlWaWRlbycpOyB0cnl7bHY/LnBhdXNlKCl9Y2F0Y2goX2Upe30KICAgIGNvbnN0IGFtYj1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYW1iaWVudCcpOyB0cnl7YW1iPy5wYXVzZSgpfWNhdGNoKF9lKXt9CiAgfTsKICBjb25zdCBwb3J0YWxPbj0oKT0+ISEobW9iaWxlKCkmJmxvYmJ5KCk/LmNsYXNzTGlzdC5jb250YWlucygncG9ydGFsLW1vZGUnKSYmcG9ydGFscygpPy5jbGFzc0xpc3QuY29udGFpbnMoJ3Nob3cnKSk7CiAgY29uc3Qgc3luYz0oKT0+ewogICAgaWYoIW1vYmlsZSgpKXJldHVybjsKICAgIGlmKHBvcnRhbE9uKCkpewogICAgICBkb2N1bWVudC5ib2R5LmRhdGFzZXQubW9iaWxlUG9ydGFsTG9jaz0nMSc7CiAgICAgIHN0b3BMb2JieU1lZGlhKCk7CiAgICB9ZWxzZSBpZihnYXRlKCk/LmNsYXNzTGlzdC5jb250YWlucygnYWN0aXZlJykpewogICAgICBkZWxldGUgZG9jdW1lbnQuYm9keS5kYXRhc2V0Lm1vYmlsZVBvcnRhbExvY2s7CiAgICB9CiAgfTsKICBjb25zdCByZWFkeT0oKT0+ewogICAgY29uc3QgbD1sb2JieSgpLHA9cG9ydGFscygpLGc9Z2F0ZSgpOwogICAgaWYoIWx8fCFwfHwhZylyZXR1cm47CiAgICBzeW5jKCk7CiAgICBuZXcgTXV0YXRpb25PYnNlcnZlcihzeW5jKS5vYnNlcnZlKGwse2F0dHJpYnV0ZXM6dHJ1ZSxhdHRyaWJ1dGVGaWx0ZXI6WydjbGFzcyddfSk7CiAgICBuZXcgTXV0YXRpb25PYnNlcnZlcihzeW5jKS5vYnNlcnZlKHAse2F0dHJpYnV0ZXM6dHJ1ZSxhdHRyaWJ1dGVGaWx0ZXI6WydjbGFzcyddfSk7CiAgICBuZXcgTXV0YXRpb25PYnNlcnZlcihzeW5jKS5vYnNlcnZlKGcse2F0dHJpYnV0ZXM6dHJ1ZSxhdHRyaWJ1dGVGaWx0ZXI6WydjbGFzcyddfSk7CiAgICBwLmFkZEV2ZW50TGlzdGVuZXIoJ3BvaW50ZXJkb3duJyxlPT57CiAgICAgIGlmKCFwb3J0YWxPbigpKXJldHVybjsKICAgICAgaWYoZS50YXJnZXQ/LmNsb3Nlc3Q/LignW2RhdGEtcm9vbV0sLnN0dWRpby11dGlsaXR5LWJ0bicpKXsKICAgICAgICBkb2N1bWVudC5ib2R5LmRhdGFzZXQubW9iaWxlUG9ydGFsTG9jaz0nMSc7CiAgICAgICAgc3RvcExvYmJ5TWVkaWEoKTsKICAgICAgfQogICAgfSx7cGFzc2l2ZTp0cnVlfSk7CiAgICBwLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJyxlPT57CiAgICAgIGlmKCFwb3J0YWxPbigpKXJldHVybjsKICAgICAgaWYoZS50YXJnZXQ/LmNsb3Nlc3Q/LignW2RhdGEtcm9vbV0sLnN0dWRpby11dGlsaXR5LWJ0bicpKXsKICAgICAgICBkb2N1bWVudC5ib2R5LmRhdGFzZXQubW9iaWxlUG9ydGFsTG9jaz0nMSc7CiAgICAgICAgc3RvcExvYmJ5TWVkaWEoKTsKICAgICAgfQogICAgfSx0cnVlKTsKICB9OwogIGlmKGRvY3VtZW50LnJlYWR5U3RhdGU9PT0nbG9hZGluZycpZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcscmVhZHkse29uY2U6dHJ1ZX0pO2Vsc2UgcmVhZHkoKTsKfSkoKTsKPC9zY3JpcHQ+CjxzdHlsZSBpZD0icmMyNjgtbW9iaWxlLW5hdGl2ZS1wb3J0YWwtc2Nyb2xsIj4KQG1lZGlhKG1heC13aWR0aDo3MDBweCl7CiAgI2xvYmJ5LnBvcnRhbC1tb2RlICNwb3J0YWxzewogICAgb3ZlcmZsb3cteTphdXRvIWltcG9ydGFudDsKICAgIG92ZXJmbG93LXg6aGlkZGVuIWltcG9ydGFudDsKICAgIHRvdWNoLWFjdGlvbjpwYW4teSFpbXBvcnRhbnQ7CiAgICBvdmVyc2Nyb2xsLWJlaGF2aW9yLXk6Y29udGFpbiFpbXBvcnRhbnQ7CiAgICAtd2Via2l0LW92ZXJmbG93LXNjcm9sbGluZzp0b3VjaCFpbXBvcnRhbnQ7CiAgICBzY3JvbGwtc25hcC10eXBlOm5vbmUhaW1wb3J0YW50OwogIH0KICAjbG9iYnkucG9ydGFsLW1vZGUgI3BvcnRhbHMgLnBvcnRhbC1zaGVsbCwKICAjbG9iYnkucG9ydGFsLW1vZGUgI3BvcnRhbHMgLnBvcnRhbCwKICAjbG9iYnkucG9ydGFsLW1vZGUgI3BvcnRhbHMgLnN0dWRpby11dGlsaXR5LW5hdiwKICAjbG9iYnkucG9ydGFsLW1vZGUgI3BvcnRhbHMgLnN0dWRpby11dGlsaXR5LWJ0bnsKICAgIHRvdWNoLWFjdGlvbjpwYW4teSFpbXBvcnRhbnQ7CiAgICBzY3JvbGwtc25hcC1hbGlnbjpub25lIWltcG9ydGFudDsKICB9CiAgI2xvYmJ5LnBvcnRhbC1tb2RlICNwb3J0YWxzIC5wb3J0YWwtc2hlbGx7CiAgICBiYWNrZHJvcC1maWx0ZXI6bm9uZSFpbXBvcnRhbnQ7CiAgICAtd2Via2l0LWJhY2tkcm9wLWZpbHRlcjpub25lIWltcG9ydGFudDsKICB9Cn0KPC9zdHlsZT4K').decode('utf-8')
+              patch=r'''
+<!-- RC269 MASTER MOBILE MEDIA AUTHORITY LOCK -->
+<script id="rc269-mobile-media-authority-lock">
+(()=>{
+  'use strict';
+  const mobile=()=>matchMedia('(max-width:700px)').matches;
+  const locked=()=>mobile()&&document.body?.dataset.mobilePortalLock==='1';
+  const lobby=()=>document.getElementById('lobby');
+  const stopAll=()=>{
+    if(!mobile())return;
+    document.querySelectorAll('#lobby video,#lobby audio,#ambient').forEach(m=>{
+      if(!(m instanceof HTMLMediaElement))return;
+      try{m.pause()}catch(_e){}
+    });
+  };
+  const setLock=()=>{
+    if(!mobile())return;
+    document.body.dataset.mobilePortalLock='1';
+    stopAll();
+  };
+  const unlockAtGate=()=>{
+    if(!mobile())return;
+    const g=document.getElementById('gate');
+    if(g?.classList.contains('active')) delete document.body.dataset.mobilePortalLock;
+  };
+  const harden=(m)=>{
+    if(!(m instanceof HTMLMediaElement)||m.dataset.rc269Authority==='1')return;
+    m.dataset.rc269Authority='1';
+    const nativePlay=m.play.bind(m);
+    m.play=function(){
+      if(locked()&&(this.closest?.('#lobby')||this.id==='ambient')){
+        try{this.pause()}catch(_e){}
+        return Promise.resolve();
+      }
+      return nativePlay();
+    };
+    m.addEventListener('play',()=>{
+      if(locked()&&(m.closest?.('#lobby')||m.id==='ambient')){
+        try{m.pause()}catch(_e){}
+      }
+    },true);
+  };
+  const arm=()=>{
+    if(!mobile())return;
+    document.querySelectorAll('#lobby video,#lobby audio,#ambient').forEach(harden);
+    const g=document.getElementById('gate');
+    const p=document.getElementById('portals');
+    const l=lobby();
+    unlockAtGate();
+    if(l?.classList.contains('portal-mode')||p?.classList.contains('show'))setLock();
+    if(g)new MutationObserver(unlockAtGate).observe(g,{attributes:true,attributeFilter:['class']});
+    if(l)new MutationObserver(()=>{if(l.classList.contains('portal-mode'))setLock()}).observe(l,{attributes:true,attributeFilter:['class']});
+    if(p)new MutationObserver(()=>{if(p.classList.contains('show'))setLock()}).observe(p,{attributes:true,attributeFilter:['class']});
+    new MutationObserver(()=>document.querySelectorAll('#lobby video,#lobby audio,#ambient').forEach(harden)).observe(document.body,{childList:true,subtree:true});
+  };
+  window.addEventListener('pointerdown',e=>{
+    if(!mobile())return;
+    if(e.target?.closest?.('#skip')) setLock();
+  },true);
+  window.addEventListener('touchstart',e=>{
+    if(!mobile())return;
+    if(e.target?.closest?.('#skip')) setLock();
+  },{capture:true,passive:true});
+  document.addEventListener('play',e=>{
+    const m=e.target;
+    if(locked()&&m instanceof HTMLMediaElement&&(m.closest?.('#lobby')||m.id==='ambient')){
+      try{m.pause()}catch(_e){}
+    }
+  },true);
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',arm,{once:true});else arm();
+})();
+</script>
+'''
               if html.count('</body>')!=1:
                   raise SystemExit('Expected one </body>; refusing to guess')
               html=html.replace('</body>',patch+'\n</body>',1)
               p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC268
+      - name: Verify RC269 without touching locked scroll
         run: |
+          grep -q 'RC269 MASTER MOBILE MEDIA AUTHORITY LOCK' public/index.html
+          grep -q 'rc269-mobile-media-authority-lock' public/index.html
+          grep -q "dataset.mobilePortalLock==='1'" public/index.html
+          grep -q "m.play=function()" public/index.html
           grep -q 'RC268 MASTER MOBILE PORTAL RUNTIME CLEANUP' public/index.html
-          grep -q 'rc268-mobile-portal-runtime-clean-owner' public/index.html
           grep -q 'rc268-mobile-native-portal-scroll' public/index.html
-          grep -q "document.body?.dataset.mobilePortalLock==='1'" public/index.html
-          grep -q "document.body.dataset.mobilePortalLock='1'" public/index.html
-          if grep -q '<script id="rc242-mobile-scroll-tap-guard">' public/index.html; then exit 1; fi
-          if grep -q '<script id="rc243-mobile-arrow-only-open">' public/index.html; then exit 1; fi
-          if grep -q '<script id="rc249-mobile-real-arrow-buttons">' public/index.html; then exit 1; fi
-          if grep -q '<script id="rc266-mobile-portal-native-owner">' public/index.html; then exit 1; fi
-          if grep -q '<script id="rc267-mobile-portal-runtime-lock">' public/index.html; then exit 1; fi
-          if grep -q 'let sx=0,sy=0,moved=false,activePortal=null;' public/index.html; then exit 1; fi
           grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
 
-      - name: Lock RC268 into source
+      - name: Lock RC269 into source
         run: |
           if git diff --quiet -- public/index.html; then
-            echo "RC268 already locked"
+            echo "RC269 already locked"
           else
             git config user.name "SoulCinema Mobile Deploy"
             git config user.email "actions@users.noreply.github.com"
             git add public/index.html
-            git commit -m "RC268 master mobile portal runtime cleanup"
+            git commit -m "RC269 master mobile media authority lock"
             git push origin HEAD:main
           fi
