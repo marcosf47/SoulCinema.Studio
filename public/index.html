@@ -6484,4 +6484,94 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 @media(max-width:700px){#lobby.portal-mode #portals{touch-action:pan-y!important;overscroll-behavior-y:contain!important;-webkit-overflow-scrolling:touch!important;overflow-y:auto!important}#lobby.portal-mode #portals .portal-shell,#lobby.portal-mode #portals [data-room]{touch-action:pan-y!important}}
 </style>
 
+<!-- RC267 MASTER MOBILE PORTAL QUIET RUNTIME + SMOOTH SCROLL -->
+<script id="rc267-mobile-portal-runtime-lock">
+(()=>{
+  'use strict';
+  const mobile=()=>matchMedia('(max-width:700px)').matches;
+  const lobby=()=>document.getElementById('lobby');
+  const portals=()=>document.getElementById('portals');
+  let suppressUntil=0;
+
+  const stopLobbyMedia=()=>{
+    if(!mobile())return;
+    document.querySelectorAll('#lobby video,#lobby audio').forEach(m=>{
+      try{m.pause()}catch(_e){}
+    });
+  };
+
+  const portalActive=()=>{
+    const l=lobby(),p=portals();
+    return !!(mobile()&&l&&p&&l.classList.contains('portal-mode')&&p.classList.contains('show'));
+  };
+
+  const armSuppress=(ms=2200)=>{
+    suppressUntil=Date.now()+ms;
+    stopLobbyMedia();
+  };
+
+  // Hard runtime guard: once portals are up or a room transition starts,
+  // lobby media is never allowed to restart underneath.
+  document.addEventListener('play',e=>{
+    const m=e.target;
+    if(!mobile()||!(m instanceof HTMLMediaElement)||!m.closest('#lobby'))return;
+    if(portalActive()||Date.now()<suppressUntil||!lobby()?.classList.contains('active')){
+      try{m.pause()}catch(_e){}
+    }
+  },true);
+
+  const watch=()=>{
+    const l=lobby(),p=portals();
+    if(!l||!p)return;
+    const sync=()=>{ if(portalActive())(stopLobbyMedia(); };
+    sync();
+    new MutationObserver(sync).observe(l,{attributes:true,attributeFilter:['class']});
+    new MutationObserver(sync).observe(p,{attributes:true,attributeFilter:['class']});
+  };
+
+  // Intercept portal intent before older room handlers can relaunch lobby media.
+  window.addEventListener('pointerdown',e=>{
+    if(!mobile()||!portalActive())return;
+    if(e.target?.closest?.('#portals [data-room],#portals .studio-utility-btn')) armSuppress();
+  },true);
+
+  window.addEventListener('touchstart',e=>{
+    if(!mobile()||!portalActive())return;
+    if(e.target?.closest?.('#portals [data-room],#portals .studio-utility-btn')) armSuppress();
+  },{capture:true,passive:true});
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',watch,{once:true});
+  else watch();
+})();
+</script>
+<style id="rc267-mobile-portal-smooth-scroll">
+@media(max-width:700px){
+  #lobby.portal-mode #portals{
+    overflow-y:scroll!important;
+    overflow-x:hidden!important;
+    touch-action:pan-y!important;
+    overscroll-behavior-y:contain!important;
+    -webkit-overflow-scrolling:touch!important;
+    scroll-behavior:auto!important;
+    scroll-snap-type:none!important;
+    contain:layout paint!important;
+  }
+  #lobby.portal-mode #portals .portal-shell,
+  #lobby.portal-mode #portals .portal,
+  #lobby.portal-mode #portals .studio-utility-nav,
+  #lobby.portal-mode #portals .studio-utility-btn{
+    touch-action:pan-y!important;
+    scroll-snap-align:none!important;
+    animation:none!important;
+    transition:none!important;
+    backdrop-filter:none!important;
+    -webkit-backdrop-filter:none!important;
+  }
+  #lobby.portal-mode .media,
+  #lobby.portal-mode video,
+  #lobby.portal-mode audio{
+    animation-play-state:paused!important;
+  }
+}
+</style>
 </body></html>
