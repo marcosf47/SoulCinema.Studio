@@ -18,15 +18,15 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC261 exact gate fix
+      - name: Apply RC262 exact mobile skip forward fix
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='RC261 MASTER MOBILE THE GATE BACK FIX'
-          start_token="    const hardGate=()=>{\n"
-          end_token="    const activateLobby=()=>{\n"
+          marker='RC262 MASTER MOBILE SKIP FORWARD FIX'
+          start_token="    const hardSkip=()=>{\n"
+          end_token="    if(back)back.addEventListener"
           if marker not in html:
               starts=[]
               pos=0
@@ -36,35 +36,36 @@ jobs:
                   starts.append(i)
                   pos=i+1
               if len(starts)!=1:
-                  raise SystemExit(f'Expected exactly one hardGate block, found {len(starts)}; refusing to guess')
+                  raise SystemExit(f'Expected exactly one hardSkip block, found {len(starts)}; refusing to guess')
               start=starts[0]
               end=html.find(end_token,start)
               if end<0:
-                  raise SystemExit('activateLobby boundary not found; refusing to guess')
+                  raise SystemExit('hardSkip listener boundary not found; refusing to guess')
               old=html[start:end]
-              required=["cleanLobbyState();","gate.classList.add('active')","dataset.experience='gate'","setTimeout(cleanLobbyState,80)"]
+              required=["RC260 MASTER FIX","portals?.classList.add('show')","lobby?.classList.add('portal-mode')","dataset.experience='portal_mode'"]
               for needle in required:
                   if needle not in old:
-                      raise SystemExit(f'hardGate invariant missing: {needle}; refusing to guess')
-              new="    const hardGate=()=>{\n      /* RC261 MASTER MOBILE THE GATE BACK FIX */\n      if(matchMedia('(max-width:700px)').matches){\n        const lastTimer=setTimeout(()=>{},0);\n        for(let i=0;i<=lastTimer;i++)clearTimeout(i);\n        clearTimeout(lastTimer);\n        document.querySelectorAll('#lobby video,#lobby audio').forEach(m=>{\n          try{m.pause();}catch(_e){}\n          try{m.currentTime=0;}catch(_e){}\n        });\n      }\n      cleanLobbyState();\n      document.querySelectorAll('.scene.active').forEach(s=>s.classList.remove('active'));\n      if(gate)gate.classList.add('active');\n      if(document.body){\n        document.body.dataset.scene='gate';\n        document.body.dataset.experience='gate';\n        document.body.classList.remove('gate-lobby-fluid','gate-lobby-soft');\n      }\n      if(matchMedia('(max-width:700px)').matches)cleanLobbyState();\n      else setTimeout(cleanLobbyState,80);\n    };\n"
+                      raise SystemExit(f'hardSkip invariant missing: {needle}; refusing to guess')
+              new="    const hardSkip=()=>{\n      /* RC262 MASTER MOBILE SKIP FORWARD FIX */\n      if(matchMedia('(max-width:700px)').matches){\n        const lastTimer=setTimeout(()=>{},0);\n        for(let i=0;i<=lastTimer;i++)clearTimeout(i);\n        clearTimeout(lastTimer);\n        document.querySelectorAll('#lobby video,#lobby audio').forEach(m=>{\n          try{m.pause();}catch(_e){}\n          try{m.currentTime=0;}catch(_e){}\n        });\n      }else if(typeof clearTimers==='function'){\n        clearTimers();\n      }\n      if(!lobby?.classList.contains('active')){\n        document.querySelectorAll('.scene.active').forEach(s=>s.classList.remove('active'));\n        lobby?.classList.add('active');\n      }\n      q('#lobby .heart-focus')?.classList.remove('show');\n      q('#lobby .premiere-card')?.classList.remove('show');\n      if(fade)fade.classList.remove('on');\n      if(journey){journey.classList.remove('on');journey.setAttribute('aria-hidden','true');}\n      portals?.classList.add('show');\n      lobby?.classList.add('portal-mode');\n      if(skipBtn)skipBtn.style.display='none';\n      if(document.body){document.body.dataset.scene='lobby';document.body.dataset.experience='portal_mode';}\n    };\n"
               html=html[:start]+new+html[end:]
               p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC261
+      - name: Verify RC262
         run: |
+          grep -q 'RC262 MASTER MOBILE SKIP FORWARD FIX' public/index.html
           grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
-          grep -q 'RC260 MASTER FIX' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
+          ! grep -q 'RC260 MASTER FIX' public/index.html
 
-      - name: Lock RC261 into source
+      - name: Lock RC262 into source
         run: |
           if git diff --quiet -- public/index.html; then
-            echo "RC261 already locked"
+            echo "RC262 already locked"
           else
             git config user.name "SoulCinema Mobile Deploy"
             git config user.email "actions@users.noreply.github.com"
             git add public/index.html
-            git commit -m "RC261 master mobile The Gate back fix"
+            git commit -m "RC262 master mobile skip forward fix"
             git push origin HEAD:main
           fi
