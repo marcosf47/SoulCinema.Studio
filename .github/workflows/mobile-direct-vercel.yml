@@ -88,41 +88,6 @@ jobs:
       - name: Verify RC258 mobile build
         run: grep -q 'rc258-mobile-screening-theater-restore' public/index.html
 
-      - name: Require Vercel token
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        run: |
-          test -n "$VERCEL_TOKEN" || { echo 'VERCEL_TOKEN secret is missing'; exit 78; }
-
-      - name: Deploy patched public index directly to production
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_TEAM_ID: team_Kza5QHnOwkC1YjzhY69oL531
-          VERCEL_PROJECT_ID: prj_dLhMDvUUslk57GbGWuBshzNGaHk4
-        run: |
-          python3 - <<'PY'
-          import json, os, urllib.request
-          html=open('public/index.html',encoding='utf-8').read()
-          payload={
-            'name':'soulcinema-music-discovery',
-            'project':os.environ['VERCEL_PROJECT_ID'],
-            'target':'production',
-            'files':[{'file':'index.html','data':html}],
-            'projectSettings':{'framework':None}
-          }
-          req=urllib.request.Request(
-            'https://api.vercel.com/v13/deployments?teamId='+os.environ['VERCEL_TEAM_ID'],
-            data=json.dumps(payload).encode(),
-            method='POST',
-            headers={'Authorization':'Bearer '+os.environ['VERCEL_TOKEN'],'Content-Type':'application/json'}
-          )
-          with urllib.request.urlopen(req, timeout=120) as r:
-            body=json.load(r)
-          print('DEPLOYMENT_ID='+str(body.get('id')))
-          print('DEPLOYMENT_URL='+str(body.get('url')))
-          print('READY_STATE='+str(body.get('readyState')))
-          PY
-
       - name: Lock RC258 into source
         run: |
           if git diff --quiet -- public/index.html; then
