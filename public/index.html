@@ -2628,7 +2628,7 @@ function journeyTransition(title,kicker='SOULCINEMA',sub='EVERY HEART HIDES A ST
  setTimeout(()=>{journeyBusy=false},1720);
 }
 function setDot(n){dots.forEach((d,i)=>d.classList.toggle('on',i<=n))}
-function sequence(preserveLobbyPlayback=false){if(matchMedia('(max-width:700px)').matches&&lobby.classList.contains('portal-mode'))return;clearTimers(); $('#skip').style.display=''; portals.classList.remove('show'); premiere.classList.remove('show'); heart.classList.remove('show'); chapter.innerHTML='<small>ACT I · ARRIVAL</small><h2>The Grand Lobby</h2><p>A living cinematic space. Not a homepage.</p>'; setDot(0); if(!preserveLobbyPlayback){lobbyVideo.currentTime=0;lobbyVideo.play().catch(()=>{});}
+function sequence(preserveLobbyPlayback=false){if(matchMedia('(max-width:700px)').matches&&(lobby.classList.contains('portal-mode')||portals.classList.contains('show')||document.body?.dataset.mobilePortalLock==='1'))return;clearTimers(); $('#skip').style.display=''; portals.classList.remove('show'); premiere.classList.remove('show'); heart.classList.remove('show'); chapter.innerHTML='<small>ACT I · ARRIVAL</small><h2>The Grand Lobby</h2><p>A living cinematic space. Not a homepage.</p>'; setDot(0); if(!preserveLobbyPlayback){lobbyVideo.currentTime=0;lobbyVideo.play().catch(()=>{});}
  timers.push(setTimeout(()=>{chapter.innerHTML='<small>ACT II · WONDER</small><h2>Architecture becomes emotion.</h2><p>Light, scale, silence and movement guide the visitor before any interface appears.</p>';setDot(1)},5200));
  timers.push(setTimeout(()=>{heart.classList.add('show');chapter.innerHTML='<small>ACT III · THE HEART</small><h2>Every Heart Hides a Story.</h2><p>The Living Heart is the emotional compass of the Studio.</p>';setDot(2)},10500));
  timers.push(setTimeout(()=>{heart.classList.remove('show');premiere.classList.add('show');chapter.innerHTML='<small>ACT IV · FIRST STORY</small><h2>The premiere reveals itself.</h2><p>One story. One invitation. No content grid.</p>';setDot(3)},16000));
@@ -2645,6 +2645,9 @@ function showPortals(){
  setDot(3);
  if(matchMedia('(max-width:700px)').matches){
    try{lobbyVideo.pause()}catch(_e){}
+   try{ambient.pause()}catch(_e){}
+   lobby.querySelectorAll('video,audio').forEach(m=>{try{m.pause()}catch(_e){}});
+   if(document.body)document.body.dataset.mobilePortalLock='1';
    lobby.classList.add('portal-mode');
    const fadeEl=$('#fade'); if(fadeEl)fadeEl.classList.remove('on');
    const journeyEl=$('#journeyTransition'); if(journeyEl){journeyEl.classList.remove('on');journeyEl.setAttribute('aria-hidden','true')}
@@ -3097,12 +3100,7 @@ function productionPortalVisualHit(e){
  const x=e.clientX,y=e.clientY;
  return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom;
 }
-document.addEventListener('pointerdown',(e)=>{
- if(!productionPortalVisualHit(e))return;
- e.preventDefault();
- e.stopImmediatePropagation();
- openProductionHard();
-},{capture:true});
+
 // RC11.13.20 — Visual Bible coordinate-capture safety net.
 function visualBiblePortalVisualHit(e){
  if(!visualBiblePortalBtn||!lobby.classList.contains('active')||!portals.classList.contains('show'))return false;
@@ -3110,13 +3108,7 @@ function visualBiblePortalVisualHit(e){
  const x=e.clientX,y=e.clientY;
  return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom;
 }
-document.addEventListener('pointerdown',(e)=>{
- if(!visualBiblePortalVisualHit(e))return;
- e.preventDefault();e.stopImmediatePropagation();
- visualBiblePortalBtn.classList.add('rc-pressed');
- setTimeout(()=>visualBiblePortalBtn.classList.remove('rc-pressed'),260);
- openBibleHard();
-},{capture:true});
+
 // RC11.13.18 — Visual Bible uses the same gold hover language, with coordinate recovery.
 document.addEventListener('pointermove',(e)=>{
  if(!visualBiblePortalBtn||!lobby.classList.contains('active')||!portals.classList.contains('show')){if(visualBiblePortalBtn)visualBiblePortalBtn.classList.remove('rc-hover');return}
@@ -5201,46 +5193,7 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 }
 </style>
 
-<script id="rc242-mobile-scroll-tap-guard">
-(()=>{
-  const ready=(fn)=>document.readyState==='loading'
-    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
-  ready(()=>{
-    let sx=0,sy=0,st=0,moved=false,tracking=false;
-    const isPortal=(target)=>target&&target.closest&&target.closest('#lobby.portal-mode #portals .portal');
-    document.addEventListener('touchstart',e=>{
-      const portal=isPortal(e.target);
-      if(!portal)return;
-      const t=e.touches[0];
-      sx=t.clientX; sy=t.clientY; st=Date.now(); moved=false; tracking=true;
-    },{passive:true,capture:true});
-    document.addEventListener('touchmove',e=>{
-      if(!tracking)return;
-      const t=e.touches[0];
-      if(Math.abs(t.clientY-sy)>7 || Math.abs(t.clientX-sx)>10)moved=true;
-    },{passive:true,capture:true});
-    document.addEventListener('touchend',e=>{
-      const portal=isPortal(e.target);
-      if(!portal)return;
-      const elapsed=Date.now()-st;
-      if(moved || elapsed>450){
-        portal.dataset.scBlockClick='1';
-        setTimeout(()=>delete portal.dataset.scBlockClick,360);
-      }
-      tracking=false;
-    },{passive:true,capture:true});
-    document.addEventListener('click',e=>{
-      const portal=isPortal(e.target);
-      if(!portal)return;
-      if(portal.dataset.scBlockClick==='1'){
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        delete portal.dataset.scBlockClick;
-      }
-    },true);
-  });
-})();
-</script>
+
 
 <style id="rc243-mobile-portal-final-hitbox-fix">
 /* RC243 — reduce portal controls and make only the arrow side open rooms. */
@@ -5311,42 +5264,7 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 }
 </style>
 
-<script id="rc243-mobile-arrow-only-open">
-(()=>{
-  const ready=(fn)=>document.readyState==='loading'
-    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
-  ready(()=>{
-    let startX=0,startY=0,moved=false;
-    const portalFrom=(target)=>target&&target.closest&&target.closest('#lobby.portal-mode #portals .portal');
-    const inArrowZone=(portal,x)=>{
-      const r=portal.getBoundingClientRect();
-      return x >= r.right - 96;
-    };
-    document.addEventListener('touchstart',e=>{
-      const portal=portalFrom(e.target);
-      if(!portal)return;
-      const t=e.touches[0];
-      startX=t.clientX; startY=t.clientY; moved=false;
-    },{passive:true,capture:true});
-    document.addEventListener('touchmove',e=>{
-      const portal=portalFrom(e.target);
-      if(!portal)return;
-      const t=e.touches[0];
-      if(Math.abs(t.clientY-startY)>4 || Math.abs(t.clientX-startX)>8)moved=true;
-    },{passive:true,capture:true});
-    document.addEventListener('click',e=>{
-      const portal=portalFrom(e.target);
-      if(!portal)return;
-      const x=e.clientX || startX;
-      if(moved || !inArrowZone(portal,x)){
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        moved=false;
-      }
-    },true);
-  });
-})();
-</script>
+
 
 <style id="rc244-mobile-visual-bible-button-fix">
 @media(max-width:700px){
@@ -5569,63 +5487,7 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 }
 </style>
 
-<script id="rc247-mobile-portal-arrow-hitbox-owner">
-(()=>{
-  const ready=(fn)=>document.readyState==='loading'
-    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
-  ready(()=>{
-    const isMobile=()=>matchMedia('(max-width:700px)').matches;
-    const portalFrom=(target)=>target&&target.closest&&target.closest('#lobby.portal-mode #portals .portal');
-    const arrowZone=(portal,x)=>{
-      const r=portal.getBoundingClientRect();
-      return x >= r.right - 92 && x <= r.right - 4;
-    };
-    let sx=0,sy=0,moved=false,activePortal=null;
-    document.addEventListener('touchstart',e=>{
-      if(!isMobile())return;
-      const portal=portalFrom(e.target);
-      if(!portal)return;
-      const t=e.touches[0];
-      sx=t.clientX; sy=t.clientY; moved=false; activePortal=portal;
-    },{passive:true,capture:true});
-    document.addEventListener('touchmove',e=>{
-      if(!isMobile()||!activePortal)return;
-      const t=e.touches[0];
-      if(Math.abs(t.clientY-sy)>3 || Math.abs(t.clientX-sx)>6)moved=true;
-    },{passive:true,capture:true});
-    document.addEventListener('touchend',e=>{
-      if(!isMobile())return;
-      const portal=activePortal||portalFrom(e.target);
-      if(!portal)return;
-      const t=e.changedTouches&&e.changedTouches[0];
-      const x=t?t.clientX:sx;
-      const shouldOpen=!moved&&arrowZone(portal,x);
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      activePortal=null;
-      moved=false;
-      if(shouldOpen){
-        const handler=portal.onclick;
-        setTimeout(()=>{
-          if(typeof handler==='function'){
-            handler.call(portal,new MouseEvent('click',{bubbles:false,cancelable:true,clientX:x}));
-          }
-        },0);
-      }
-    },{passive:false,capture:true});
-    document.addEventListener('click',e=>{
-      if(!isMobile())return;
-      const portal=portalFrom(e.target);
-      if(!portal)return;
-      const x=e.clientX||0;
-      if(!arrowZone(portal,x)){
-        e.preventDefault();
-        e.stopImmediatePropagation();
-      }
-    },true);
-  });
-})();
-</script>
+
 
 <script id="rc248-mobile-portal-click-owner">
 (()=>{
@@ -5740,73 +5602,7 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 }
 </style>
 
-<script id="rc249-mobile-real-arrow-buttons">
-(()=>{
-  const ready=(fn)=>document.readyState==='loading'
-    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
-  ready(()=>{
-    const mobile=()=>matchMedia('(max-width:700px)').matches;
-    const route=(room)=>{
-      if(room==='Live Center')return window.openLive?.();
-      if(room==='Screening Theater')return window.openTheater?.();
-      if(room==='Music Room')return window.openMusic?.();
-      if(room==='Production Room')return window.openProduction?.();
-      if(room==='Story Room')return window.openStory?.();
-      if(room==='Journal')return window.openJournal?.();
-      if(room==='Visual Bible')return window.openBible?.();
-      if(room==='About Us')return window.openAbout?.();
-      if(room==='Contact')return window.openContact?.();
-    };
-    const portals=[...document.querySelectorAll('#portals .portal[data-room]')];
-    portals.forEach((portal)=>{
-      portal.onclick=null;
-      let hit=portal.querySelector('.sc-mobile-portal-hit');
-      if(!hit){
-        hit=document.createElement('button');
-        hit.type='button';
-        hit.className='sc-mobile-portal-hit';
-        hit.setAttribute('aria-label','Open '+portal.dataset.room);
-        hit.textContent='→';
-        portal.appendChild(hit);
-      }
-      let sx=0,sy=0,moved=false;
-      hit.addEventListener('touchstart',(e)=>{
-        const t=e.touches[0]; sx=t.clientX; sy=t.clientY; moved=false;
-      },{passive:true,capture:true});
-      hit.addEventListener('touchmove',(e)=>{
-        const t=e.touches[0];
-        if(Math.abs(t.clientY-sy)>3 || Math.abs(t.clientX-sx)>5)moved=true;
-      },{passive:true,capture:true});
-      hit.addEventListener('touchend',(e)=>{
-        if(!mobile())return;
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        if(!moved)route(portal.dataset.room);
-        moved=false;
-      },{passive:false,capture:true});
-      hit.addEventListener('click',(e)=>{
-        if(!mobile())return;
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        route(portal.dataset.room);
-      },true);
-      portal.addEventListener('touchend',(e)=>{
-        if(!mobile() || e.target.closest('.sc-mobile-portal-hit'))return;
-        e.preventDefault();
-        e.stopImmediatePropagation();
-      },{passive:false,capture:true});
-    });
-    document.addEventListener('click',(e)=>{
-      if(!mobile())return;
-      const portal=e.target.closest&&e.target.closest('#lobby.portal-mode #portals .portal');
-      if(portal && !e.target.closest('.sc-mobile-portal-hit')){
-        e.preventDefault();
-        e.stopImmediatePropagation();
-      }
-    },true);
-  });
-})();
-</script>
+
 
 <script id="rc250-mobile-portal-div-rebuild">
 (()=>{
@@ -6463,87 +6259,13 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 </style>
 
 <!-- RC266 MASTER MOBILE PORTAL MEDIA FREEZE + NATIVE SCROLL OWNER -->
-<script id="rc266-mobile-portal-native-owner">
-(()=>{'use strict';
-const mobile=()=>matchMedia('(max-width:700px)').matches;
-const lobby=()=>document.getElementById('lobby');
-const portalHost=()=>document.getElementById('portals');
-const freezeLobbyMedia=()=>{if(!mobile())return;const l=lobby();if(!l||!l.classList.contains('portal-mode'))return;l.querySelectorAll('video,audio').forEach(m=>{try{m.pause()}catch(_e){}if(m.dataset.rc266FreezeGuard==='1')return;m.dataset.rc266FreezeGuard='1';m.addEventListener('play',()=>{const nowLobby=lobby();if(mobile()&&nowLobby?.classList.contains('portal-mode')){try{m.pause()}catch(_e){}}});});};
-const route=(room)=>{if(room==='Screening Theater'){if(typeof openTheater==='function')openTheater();return;}if(room==='Music Room'){if(typeof openMusic==='function')openMusic();return;}if(room==='Live Center'){if(typeof openLive==='function')openLive();return;}if(room==='Production Room'){if(typeof openProductionHard==='function')openProductionHard();else if(typeof openProduction==='function')openProduction();return;}if(room==='Story Room'){if(typeof openStory==='function')openStory();return;}if(room==='Journal'){if(typeof openJournal==='function')openJournal();return;}if(room==='Visual Bible'){if(typeof openBibleHard==='function')openBibleHard();else if(typeof openBible==='function')openBible();return;}if(room==='About Us'){if(typeof openAbout==='function')openAbout();return;}if(room==='Contact'){if(typeof openContact==='function')openContact();return;}};
-const insidePortals=(target)=>{const l=lobby(),p=portalHost();return !!(mobile()&&l?.classList.contains('portal-mode')&&p?.classList.contains('show')&&target?.closest?.('#portals'));};
-let sx=0,sy=0,moved=false,item=null,lastRoute=0;
-window.addEventListener('touchstart',e=>{if(!insidePortals(e.target))return;const t=e.touches&&e.touches[0];if(!t)return;sx=t.clientX;sy=t.clientY;moved=false;item=e.target.closest('#portals [data-room]');e.stopImmediatePropagation();freezeLobbyMedia();},{capture:true,passive:true});
-window.addEventListener('touchmove',e=>{if(!insidePortals(e.target))return;const t=e.touches&&e.touches[0];if(t&&(Math.abs(t.clientY-sy)>6||Math.abs(t.clientX-sx)>8))moved=true;e.stopImmediatePropagation();},{capture:true,passive:true});
-window.addEventListener('touchend',e=>{if(!insidePortals(e.target))return;const chosen=item||e.target.closest('#portals [data-room]');e.stopImmediatePropagation();if(!moved&&chosen){e.preventDefault();lastRoute=Date.now();route(chosen.dataset.room);}item=null;moved=false;},{capture:true,passive:false});
-window.addEventListener('click',e=>{if(!insidePortals(e.target))return;const chosen=e.target.closest('#portals [data-room]');if(!chosen)return;e.preventDefault();e.stopImmediatePropagation();if(Date.now()-lastRoute>500){lastRoute=Date.now();route(chosen.dataset.room);}},true);
-const ready=()=>{const l=lobby(),p=portalHost();if(!l||!p)return;const sync=()=>{if(l.classList.contains('portal-mode')&&p.classList.contains('show'))freezeLobbyMedia();};sync();new MutationObserver(sync).observe(l,{attributes:true,attributeFilter:['class']});new MutationObserver(sync).observe(p,{attributes:true,attributeFilter:['class']});};
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready,{once:true});else ready();
-})();
-</script>
+
 <style id="rc266-mobile-portal-native-scroll-lock">
 @media(max-width:700px){#lobby.portal-mode #portals{touch-action:pan-y!important;overscroll-behavior-y:contain!important;-webkit-overflow-scrolling:touch!important;overflow-y:auto!important}#lobby.portal-mode #portals .portal-shell,#lobby.portal-mode #portals [data-room]{touch-action:pan-y!important}}
 </style>
 
 <!-- RC267 MASTER MOBILE PORTAL QUIET RUNTIME + SMOOTH SCROLL -->
-<script id="rc267-mobile-portal-runtime-lock">
-(()=>{
-  'use strict';
-  const mobile=()=>matchMedia('(max-width:700px)').matches;
-  const lobby=()=>document.getElementById('lobby');
-  const portals=()=>document.getElementById('portals');
-  let suppressUntil=0;
 
-  const stopLobbyMedia=()=>{
-    if(!mobile())return;
-    document.querySelectorAll('#lobby video,#lobby audio').forEach(m=>{
-      try{m.pause()}catch(_e){}
-    });
-  };
-
-  const portalActive=()=>{
-    const l=lobby(),p=portals();
-    return !!(mobile()&&l&&p&&l.classList.contains('portal-mode')&&p.classList.contains('show'));
-  };
-
-  const armSuppress=(ms=2200)=>{
-    suppressUntil=Date.now()+ms;
-    stopLobbyMedia();
-  };
-
-  // Hard runtime guard: once portals are up or a room transition starts,
-  // lobby media is never allowed to restart underneath.
-  document.addEventListener('play',e=>{
-    const m=e.target;
-    if(!mobile()||!(m instanceof HTMLMediaElement)||!m.closest('#lobby'))return;
-    if(portalActive()||Date.now()<suppressUntil||!lobby()?.classList.contains('active')){
-      try{m.pause()}catch(_e){}
-    }
-  },true);
-
-  const watch=()=>{
-    const l=lobby(),p=portals();
-    if(!l||!p)return;
-    const sync=()=>{ if(portalActive())(stopLobbyMedia(); };
-    sync();
-    new MutationObserver(sync).observe(l,{attributes:true,attributeFilter:['class']});
-    new MutationObserver(sync).observe(p,{attributes:true,attributeFilter:['class']});
-  };
-
-  // Intercept portal intent before older room handlers can relaunch lobby media.
-  window.addEventListener('pointerdown',e=>{
-    if(!mobile()||!portalActive())return;
-    if(e.target?.closest?.('#portals [data-room],#portals .studio-utility-btn')) armSuppress();
-  },true);
-
-  window.addEventListener('touchstart',e=>{
-    if(!mobile()||!portalActive())return;
-    if(e.target?.closest?.('#portals [data-room],#portals .studio-utility-btn')) armSuppress();
-  },{capture:true,passive:true});
-
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',watch,{once:true});
-  else watch();
-})();
-</script>
 <style id="rc267-mobile-portal-smooth-scroll">
 @media(max-width:700px){
   #lobby.portal-mode #portals{
@@ -6574,4 +6296,78 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   }
 }
 </style>
+
+<!-- RC268 MASTER MOBILE PORTAL RUNTIME CLEANUP -->
+<script id="rc268-mobile-portal-runtime-clean-owner">
+(()=>{
+  'use strict';
+  const mobile=()=>matchMedia('(max-width:700px)').matches;
+  const lobby=()=>document.getElementById('lobby');
+  const portals=()=>document.getElementById('portals');
+  const gate=()=>document.getElementById('gate');
+  const stopLobbyMedia=()=>{
+    if(!mobile())return;
+    document.querySelectorAll('#lobby video,#lobby audio').forEach(m=>{try{m.pause()}catch(_e){}});
+    const lv=document.getElementById('lobbyVideo'); try{lv?.pause()}catch(_e){}
+    const amb=document.getElementById('ambient'); try{amb?.pause()}catch(_e){}
+  };
+  const portalOn=()=>!!(mobile()&&lobby()?.classList.contains('portal-mode')&&portals()?.classList.contains('show'));
+  const sync=()=>{
+    if(!mobile())return;
+    if(portalOn()){
+      document.body.dataset.mobilePortalLock='1';
+      stopLobbyMedia();
+    }else if(gate()?.classList.contains('active')){
+      delete document.body.dataset.mobilePortalLock;
+    }
+  };
+  const ready=()=>{
+    const l=lobby(),p=portals(),g=gate();
+    if(!l||!p||!g)return;
+    sync();
+    new MutationObserver(sync).observe(l,{attributes:true,attributeFilter:['class']});
+    new MutationObserver(sync).observe(p,{attributes:true,attributeFilter:['class']});
+    new MutationObserver(sync).observe(g,{attributes:true,attributeFilter:['class']});
+    p.addEventListener('pointerdown',e=>{
+      if(!portalOn())return;
+      if(e.target?.closest?.('[data-room],.studio-utility-btn')){
+        document.body.dataset.mobilePortalLock='1';
+        stopLobbyMedia();
+      }
+    },{passive:true});
+    p.addEventListener('click',e=>{
+      if(!portalOn())return;
+      if(e.target?.closest?.('[data-room],.studio-utility-btn')){
+        document.body.dataset.mobilePortalLock='1';
+        stopLobbyMedia();
+      }
+    },true);
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready,{once:true});else ready();
+})();
+</script>
+<style id="rc268-mobile-native-portal-scroll">
+@media(max-width:700px){
+  #lobby.portal-mode #portals{
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    touch-action:pan-y!important;
+    overscroll-behavior-y:contain!important;
+    -webkit-overflow-scrolling:touch!important;
+    scroll-snap-type:none!important;
+  }
+  #lobby.portal-mode #portals .portal-shell,
+  #lobby.portal-mode #portals .portal,
+  #lobby.portal-mode #portals .studio-utility-nav,
+  #lobby.portal-mode #portals .studio-utility-btn{
+    touch-action:pan-y!important;
+    scroll-snap-align:none!important;
+  }
+  #lobby.portal-mode #portals .portal-shell{
+    backdrop-filter:none!important;
+    -webkit-backdrop-filter:none!important;
+  }
+}
+</style>
+
 </body></html>
