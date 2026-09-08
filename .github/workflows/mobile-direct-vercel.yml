@@ -18,40 +18,74 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC260 exact master fix
+      - name: Apply RC261 exact The Gate back fix
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          old="    const hardSkip=()=>{\n      cleanLobbyState();\n      if(!lobby?.classList.contains('active'))activateLobby();\n      setTimeout(()=>{\n        if(typeof window.showPortals==='function')window.showPortals();\n        else if(typeof showPortals==='function')showPortals();\n        else portals?.classList.add('show');\n      },220);\n    };"
-          new="    const hardSkip=()=>{\n      /* RC260 MASTER FIX */\n      if(typeof clearTimers==='function')clearTimers();\n      if(!lobby?.classList.contains('active')){document.querySelectorAll('.scene.active').forEach(s=>s.classList.remove('active'));lobby?.classList.add('active');}\n      q('#lobby .heart-focus')?.classList.remove('show');\n      q('#lobby .premiere-card')?.classList.remove('show');\n      if(fade)fade.classList.remove('on');\n      if(journey){journey.classList.remove('on');journey.setAttribute('aria-hidden','true');}\n      portals?.classList.add('show');\n      lobby?.classList.add('portal-mode');\n      if(skipBtn)skipBtn.style.display='none';\n      if(document.body){document.body.dataset.scene='lobby';document.body.dataset.experience='portal_mode';}\n    };"
-          if 'RC260 MASTER FIX' not in html:
+
+          old="""    const hardGate=()=>{
+      cleanLobbyState();
+      document.querySelectorAll('.scene.active').forEach(s=>s.classList.remove('active'));
+      if(gate)gate.classList.add('active');
+      if(document.body){
+        document.body.dataset.scene='gate';
+        document.body.dataset.experience='gate';
+        document.body.classList.remove('gate-lobby-fluid','gate-lobby-soft');
+      }
+      setTimeout(cleanLobbyState,80);
+    };"""
+
+          new="""    const hardGate=()=>{
+      /* RC261 MASTER MOBILE THE GATE BACK FIX */
+      if(matchMedia('(max-width:700px)').matches){
+        /* stop every pending page timeout so the lobby sequence cannot reclaim the UI */
+        const lastTimer=setTimeout(()=>{},0);
+        for(let i=0;i<=lastTimer;i++)clearTimeout(i);
+        clearTimeout(lastTimer);
+        document.querySelectorAll('#lobby video,#lobby audio').forEach(m=>{
+          try{m.pause();}catch(_e){}
+          try{m.currentTime=0;}catch(_e){}
+        });
+      }
+      cleanLobbyState();
+      document.querySelectorAll('.scene.active').forEach(s=>s.classList.remove('active'));
+      if(gate)gate.classList.add('active');
+      if(document.body){
+        document.body.dataset.scene='gate';
+        document.body.dataset.experience='gate';
+        document.body.classList.remove('gate-lobby-fluid','gate-lobby-soft');
+      }
+      if(matchMedia('(max-width:700px)').matches){
+        cleanLobbyState();
+      }else{
+        setTimeout(cleanLobbyState,80);
+      }
+    };"""
+
+          if 'RC261 MASTER MOBILE THE GATE BACK FIX' not in html:
               if html.count(old)!=1:
-                  raise SystemExit('Exact hardSkip block mismatch; refusing to guess')
+                  raise SystemExit(f'Exact hardGate block mismatch ({html.count(old)}); refusing to guess')
               html=html.replace(old,new,1)
-          start=html.find('<script id="rc259-mobile-skip-to-portals-fix">')
-          if start>=0:
-              end=html.find('</script>',start)
-              if end<0:
-                  raise SystemExit('Broken RC259 script; refusing to guess')
-              html=html[:start]+html[end+9:]
+
           p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC260
+      - name: Verify RC261
         run: |
+          grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
           grep -q 'RC260 MASTER FIX' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
 
-      - name: Lock RC260 into source
+      - name: Lock RC261 into source
         run: |
           if git diff --quiet -- public/index.html; then
-            echo "RC260 already locked"
+            echo "RC261 already locked"
           else
             git config user.name "SoulCinema Mobile Deploy"
             git config user.email "actions@users.noreply.github.com"
             git add public/index.html
-            git commit -m "RC260 master mobile skip fix"
+            git commit -m "RC261 master mobile The Gate back fix"
             git push origin HEAD:main
           fi
