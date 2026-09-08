@@ -6445,4 +6445,30 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 
 
 
+
+<!-- RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP -->
+<script id="rc271-desktop-live-exit-media-stop">
+(()=>{
+  'use strict';
+  const desktop=()=>matchMedia('(min-width:701px)').matches;
+  const live=()=>document.getElementById('liveCenter');
+  const player=()=>document.getElementById('livePlayer');
+  const stopLive=()=>{
+    if(!desktop())return;
+    const v=player();
+    if(v){try{v.pause()}catch(_e){}}
+  };
+  const room=live();
+  if(!room)return;
+  new MutationObserver(()=>{
+    if(!room.classList.contains('active'))stopLive();
+  }).observe(room,{attributes:true,attributeFilter:['class']});
+  const returnBtn=document.getElementById('returnLobby');
+  if(returnBtn)returnBtn.addEventListener('click',stopLive,true);
+  document.addEventListener('visibilitychange',()=>{
+    if(!room.classList.contains('active'))stopLive();
+  });
+})();
+</script>
+
 </body></html>
