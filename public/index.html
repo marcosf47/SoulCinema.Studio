@@ -2628,13 +2628,14 @@ function journeyTransition(title,kicker='SOULCINEMA',sub='EVERY HEART HIDES A ST
  setTimeout(()=>{journeyBusy=false},1720);
 }
 function setDot(n){dots.forEach((d,i)=>d.classList.toggle('on',i<=n))}
-function sequence(preserveLobbyPlayback=false){clearTimers(); $('#skip').style.display=''; portals.classList.remove('show'); premiere.classList.remove('show'); heart.classList.remove('show'); chapter.innerHTML='<small>ACT I · ARRIVAL</small><h2>The Grand Lobby</h2><p>A living cinematic space. Not a homepage.</p>'; setDot(0); if(!preserveLobbyPlayback){lobbyVideo.currentTime=0;lobbyVideo.play().catch(()=>{});}
+function sequence(preserveLobbyPlayback=false){if(matchMedia('(max-width:700px)').matches&&lobby.classList.contains('portal-mode'))return;clearTimers(); $('#skip').style.display=''; portals.classList.remove('show'); premiere.classList.remove('show'); heart.classList.remove('show'); chapter.innerHTML='<small>ACT I · ARRIVAL</small><h2>The Grand Lobby</h2><p>A living cinematic space. Not a homepage.</p>'; setDot(0); if(!preserveLobbyPlayback){lobbyVideo.currentTime=0;lobbyVideo.play().catch(()=>{});}
  timers.push(setTimeout(()=>{chapter.innerHTML='<small>ACT II · WONDER</small><h2>Architecture becomes emotion.</h2><p>Light, scale, silence and movement guide the visitor before any interface appears.</p>';setDot(1)},5200));
  timers.push(setTimeout(()=>{heart.classList.add('show');chapter.innerHTML='<small>ACT III · THE HEART</small><h2>Every Heart Hides a Story.</h2><p>The Living Heart is the emotional compass of the Studio.</p>';setDot(2)},10500));
  timers.push(setTimeout(()=>{heart.classList.remove('show');premiere.classList.add('show');chapter.innerHTML='<small>ACT IV · FIRST STORY</small><h2>The premiere reveals itself.</h2><p>One story. One invitation. No content grid.</p>';setDot(3)},16000));
  timers.push(setTimeout(showPortals,22500)); }
 function showPortals(){
  // RC264 MASTER ENGINE MOBILE SKIP FIX
+ // RC265 MASTER MOBILE SKIP COORDINATE + SEQUENCE LOCK
  clearTimers();
  heart.classList.remove('show');
  premiere.classList.remove('show');
@@ -6424,5 +6425,41 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 
 
 
+
+
+<script id="rc265-mobile-skip-coordinate-owner">
+(()=>{
+  'use strict';
+  const isMobile=()=>matchMedia('(max-width:700px)').matches;
+  const point=(e)=>{
+    if(e.touches&&e.touches[0])return e.touches[0];
+    if(e.changedTouches&&e.changedTouches[0])return e.changedTouches[0];
+    return e;
+  };
+  const inside=(el,x,y)=>{
+    const r=el.getBoundingClientRect();
+    return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom;
+  };
+  const forcePortals=(e)=>{
+    if(!isMobile())return;
+    const lobby=document.getElementById('lobby');
+    const skip=document.getElementById('skip');
+    if(!lobby||!skip||!lobby.classList.contains('active')||lobby.classList.contains('portal-mode'))return;
+    const p=point(e);
+    if(!p||!inside(skip,p.clientX,p.clientY))return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    lobby.classList.add('portal-mode');
+    if(typeof showPortals==='function')showPortals();
+  };
+  document.addEventListener('pointerdown',forcePortals,true);
+  document.addEventListener('touchstart',forcePortals,{capture:true,passive:false});
+})();
+</script>
+<style id="rc265-mobile-skip-coordinate-lock">
+@media(max-width:700px){
+  #lobby #skip{z-index:1000!important;pointer-events:auto!important;touch-action:manipulation!important}
+}
+</style>
 
 </body></html>
