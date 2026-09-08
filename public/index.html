@@ -5525,4 +5525,62 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 }
 </style>
 
+<script id="rc247-mobile-portal-arrow-hitbox-owner">
+(()=>{
+  const ready=(fn)=>document.readyState==='loading'
+    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
+  ready(()=>{
+    const isMobile=()=>matchMedia('(max-width:700px)').matches;
+    const portalFrom=(target)=>target&&target.closest&&target.closest('#lobby.portal-mode #portals .portal');
+    const arrowZone=(portal,x)=>{
+      const r=portal.getBoundingClientRect();
+      return x >= r.right - 92 && x <= r.right - 4;
+    };
+    let sx=0,sy=0,moved=false,activePortal=null;
+    document.addEventListener('touchstart',e=>{
+      if(!isMobile())return;
+      const portal=portalFrom(e.target);
+      if(!portal)return;
+      const t=e.touches[0];
+      sx=t.clientX; sy=t.clientY; moved=false; activePortal=portal;
+    },{passive:true,capture:true});
+    document.addEventListener('touchmove',e=>{
+      if(!isMobile()||!activePortal)return;
+      const t=e.touches[0];
+      if(Math.abs(t.clientY-sy)>3 || Math.abs(t.clientX-sx)>6)moved=true;
+    },{passive:true,capture:true});
+    document.addEventListener('touchend',e=>{
+      if(!isMobile())return;
+      const portal=activePortal||portalFrom(e.target);
+      if(!portal)return;
+      const t=e.changedTouches&&e.changedTouches[0];
+      const x=t?t.clientX:sx;
+      const shouldOpen=!moved&&arrowZone(portal,x);
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      activePortal=null;
+      moved=false;
+      if(shouldOpen){
+        const handler=portal.onclick;
+        setTimeout(()=>{
+          if(typeof handler==='function'){
+            handler.call(portal,new MouseEvent('click',{bubbles:false,cancelable:true,clientX:x}));
+          }
+        },0);
+      }
+    },{passive:false,capture:true});
+    document.addEventListener('click',e=>{
+      if(!isMobile())return;
+      const portal=portalFrom(e.target);
+      if(!portal)return;
+      const x=e.clientX||0;
+      if(!arrowZone(portal,x)){
+        e.preventDefault();
+        e.stopImmediatePropagation();
+      }
+    },true);
+  });
+})();
+</script>
+
 </body></html>
