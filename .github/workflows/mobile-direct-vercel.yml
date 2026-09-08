@@ -22,75 +22,12 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
           marker='RC270 MASTER MOBILE PORTAL CLICK AUTHORITY + MEDIA HARD STOP'
           if marker not in html:
-              patch=r'''
-<!-- RC270 MASTER MOBILE PORTAL CLICK AUTHORITY + MEDIA HARD STOP -->
-<script id="rc270-mobile-portal-click-authority">
-(()=>{
-  'use strict';
-  const mobile=()=>matchMedia('(max-width:700px)').matches;
-  const lobby=()=>document.getElementById('lobby');
-  const portals=()=>document.getElementById('portals');
-  const portalActive=()=>!!(mobile()&&lobby()?.classList.contains('portal-mode')&&portals()?.classList.contains('show'));
-  const hardStop=()=>{
-    if(!mobile())return;
-    document.querySelectorAll('#lobby video,#lobby audio').forEach(m=>{try{m.pause()}catch(_e){}});
-    const lv=document.getElementById('lobbyVideo'); try{lv?.pause()}catch(_e){}
-    const amb=document.getElementById('ambient'); try{amb?.pause()}catch(_e){}
-  };
-  const lockAndStop=()=>{
-    if(!mobile())return;
-    document.body.dataset.mobilePortalLock='1';
-    hardStop();
-    [0,80,220,520,900,1500].forEach(ms=>setTimeout(hardStop,ms));
-  };
-  const route=(room)=>{
-    lockAndStop();
-    if(room==='Screening Theater'){ if(typeof openTheater==='function')openTheater(); return; }
-    if(room==='Music Room'){ if(typeof openMusic==='function')openMusic(); return; }
-    if(room==='Live Center'){ if(typeof openLive==='function')openLive(); return; }
-    if(room==='Production Room'){
-      if(typeof openProductionHard==='function')openProductionHard();
-      else if(typeof openProduction==='function')openProduction();
-      return;
-    }
-    if(room==='Story Room'){ if(typeof openStory==='function')openStory(); return; }
-    if(room==='Journal'){ if(typeof openJournal==='function')openJournal(); return; }
-    if(room==='Visual Bible'){
-      if(typeof openBibleHard==='function')openBibleHard();
-      else if(typeof openBible==='function')openBible();
-      return;
-    }
-    if(room==='About Us'){ if(typeof openAbout==='function')openAbout(); return; }
-    if(room==='Contact'){ if(typeof openContact==='function')openContact(); return; }
-  };
-
-  // Window-capture CLICK only. No touchstart/touchmove/pointerdown, so RC268 native scroll remains untouched.
-  window.addEventListener('click',e=>{
-    if(!portalActive())return;
-    const target=e.target?.closest?.('#portals [data-room]');
-    if(!target)return;
-    const room=target.dataset.room;
-    if(!room)return;
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    route(room);
-  },true);
-
-  // If any stale owner tries to restart Lobby media after Skip/room routing, kill it immediately.
-  document.addEventListener('play',e=>{
-    if(!mobile()||document.body.dataset.mobilePortalLock!=='1')return;
-    const m=e.target;
-    if(m && (m.id==='lobbyVideo'||m.id==='ambient'||m.closest?.('#lobby'))){
-      try{m.pause()}catch(_e){}
-    }
-  },true);
-})();
-</script>
-'''
+              patch=base64.b64decode('CjwhLS0gUkMyNzAgTUFTVEVSIE1PQklMRSBQT1JUQUwgQ0xJQ0sgQVVUSE9SSVRZICsgTUVESUEgSEFSRCBTVE9QIC0tPgo8c2NyaXB0IGlkPSJyYzI3MC1tb2JpbGUtcG9ydGFsLWNsaWNrLWF1dGhvcml0eSI+CigoKT0+ewogICd1c2Ugc3RyaWN0JzsKICBjb25zdCBtb2JpbGU9KCk9Pm1hdGNoTWVkaWEoJyhtYXgtd2lkdGg6NzAwcHgpJykubWF0Y2hlczsKICBjb25zdCBsb2JieT0oKT0+ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2xvYmJ5Jyk7CiAgY29uc3QgcG9ydGFscz0oKT0+ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3BvcnRhbHMnKTsKICBjb25zdCBwb3J0YWxBY3RpdmU9KCk9PiEhKG1vYmlsZSgpJiZsb2JieSgpPy5jbGFzc0xpc3QuY29udGFpbnMoJ3BvcnRhbC1tb2RlJykmJnBvcnRhbHMoKT8uY2xhc3NMaXN0LmNvbnRhaW5zKCdzaG93JykpOwogIGNvbnN0IGhhcmRTdG9wPSgpPT57CiAgICBpZighbW9iaWxlKCkpcmV0dXJuOwogICAgZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbCgnI2xvYmJ5IHZpZGVvLCNsb2JieSBhdWRpbycpLmZvckVhY2gobT0+e3RyeXttLnBhdXNlKCl9Y2F0Y2goX2Upe319KTsKICAgIGNvbnN0IGx2PWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdsb2JieVZpZGVvJyk7IHRyeXtsdj8ucGF1c2UoKX1jYXRjaChfZSl7fQogICAgY29uc3QgYW1iPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhbWJpZW50Jyk7IHRyeXthbWI/LnBhdXNlKCl9Y2F0Y2goX2Upe30KICB9OwogIGNvbnN0IGxvY2tBbmRTdG9wPSgpPT57CiAgICBpZighbW9iaWxlKCkpcmV0dXJuOwogICAgZG9jdW1lbnQuYm9keS5kYXRhc2V0Lm1vYmlsZVBvcnRhbExvY2s9JzEnOwogICAgaGFyZFN0b3AoKTsKICAgIFswLDgwLDIyMCw1MjAsOTAwLDE1MDBdLmZvckVhY2gobXM9PnNldFRpbWVvdXQoaGFyZFN0b3AsbXMpKTsKICB9OwogIGNvbnN0IHJvdXRlPShyb29tKT0+ewogICAgbG9ja0FuZFN0b3AoKTsKICAgIGlmKHJvb209PT0nU2NyZWVuaW5nIFRoZWF0ZXInKXsgaWYodHlwZW9mIG9wZW5UaGVhdGVyPT09J2Z1bmN0aW9uJylvcGVuVGhlYXRlcigpOyByZXR1cm47IH0KICAgIGlmKHJvb209PT0nTXVzaWMgUm9vbScpeyBpZih0eXBlb2Ygb3Blbk11c2ljPT09J2Z1bmN0aW9uJylvcGVuTXVzaWMoKTsgcmV0dXJuOyB9CiAgICBpZihyb29tPT09J0xpdmUgQ2VudGVyJyl7IGlmKHR5cGVvZiBvcGVuTGl2ZT09PSdmdW5jdGlvbicpb3BlbkxpdmUoKTsgcmV0dXJuOyB9CiAgICBpZihyb29tPT09J1Byb2R1Y3Rpb24gUm9vbScpewogICAgICBpZih0eXBlb2Ygb3BlblByb2R1Y3Rpb25IYXJkPT09J2Z1bmN0aW9uJylvcGVuUHJvZHVjdGlvbkhhcmQoKTsKICAgICAgZWxzZSBpZih0eXBlb2Ygb3BlblByb2R1Y3Rpb249PT0nZnVuY3Rpb24nKW9wZW5Qcm9kdWN0aW9uKCk7CiAgICAgIHJldHVybjsKICAgIH0KICAgIGlmKHJvb209PT0nU3RvcnkgUm9vbScpeyBpZih0eXBlb2Ygb3BlblN0b3J5PT09J2Z1bmN0aW9uJylvcGVuU3RvcnkoKTsgcmV0dXJuOyB9CiAgICBpZihyb29tPT09J0pvdXJuYWwnKXsgaWYodHlwZW9mIG9wZW5Kb3VybmFsPT09J2Z1bmN0aW9uJylvcGVuSm91cm5hbCgpOyByZXR1cm47IH0KICAgIGlmKHJvb209PT0nVmlzdWFsIEJpYmxlJyl7CiAgICAgIGlmKHR5cGVvZiBvcGVuQmlibGVIYXJkPT09J2Z1bmN0aW9uJylvcGVuQmlibGVIYXJkKCk7CiAgICAgIGVsc2UgaWYodHlwZW9mIG9wZW5CaWJsZT09PSdmdW5jdGlvbicpb3BlbkJpYmxlKCk7CiAgICAgIHJldHVybjsKICAgIH0KICAgIGlmKHJvb209PT0nQWJvdXQgVXMnKXsgaWYodHlwZW9mIG9wZW5BYm91dD09PSdmdW5jdGlvbicpb3BlbkFib3V0KCk7IHJldHVybjsgfQogICAgaWYocm9vbT09PSdDb250YWN0Jyl7IGlmKHR5cGVvZiBvcGVuQ29udGFjdD09PSdmdW5jdGlvbicpb3BlbkNvbnRhY3QoKTsgcmV0dXJuOyB9CiAgfTsKCiAgLy8gV2luZG93LWNhcHR1cmUgQ0xJQ0sgb25seS4gTm8gdG91Y2hzdGFydC90b3VjaG1vdmUvcG9pbnRlcmRvd24sIHNvIFJDMjY4IG5hdGl2ZSBzY3JvbGwgcmVtYWlucyB1bnRvdWNoZWQuCiAgd2luZG93LmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJyxlPT57CiAgICBpZighcG9ydGFsQWN0aXZlKCkpcmV0dXJuOwogICAgY29uc3QgdGFyZ2V0PWUudGFyZ2V0Py5jbG9zZXN0Py4oJyNwb3J0YWxzIFtkYXRhLXJvb21dJyk7CiAgICBpZighdGFyZ2V0KXJldHVybjsKICAgIGNvbnN0IHJvb209dGFyZ2V0LmRhdGFzZXQucm9vbTsKICAgIGlmKCFyb29tKXJldHVybjsKICAgIGUucHJldmVudERlZmF1bHQoKTsKICAgIGUuc3RvcEltbWVkaWF0ZVByb3BhZ2F0aW9uKCk7CiAgICByb3V0ZShyb29tKTsKICB9LHRydWUpOwoKICAvLyBJZiBhbnkgc3RhbGUgb3duZXIgdHJpZXMgdG8gcmVzdGFydCBMb2JieSBtZWRpYSBhZnRlciBTa2lwL3Jvb20gcm91dGluZywga2lsbCBpdCBpbW1lZGlhdGVseS4KICBkb2N1bWVudC5hZGRFdmVudExpc3RlbmVyKCdwbGF5JyxlPT57CiAgICBpZighbW9iaWxlKCl8fGRvY3VtZW50LmJvZHkuZGF0YXNldC5tb2JpbGVQb3J0YWxMb2NrIT09JzEnKXJldHVybjsKICAgIGNvbnN0IG09ZS50YXJnZXQ7CiAgICBpZihtICYmIChtLmlkPT09J2xvYmJ5VmlkZW8nfHxtLmlkPT09J2FtYmllbnQnfHxtLmNsb3Nlc3Q/LignI2xvYmJ5JykpKXsKICAgICAgdHJ5e20ucGF1c2UoKX1jYXRjaChfZSl7fQogICAgfQogIH0sdHJ1ZSk7Cn0pKCk7Cjwvc2NyaXB0Pgo=').decode('utf-8')
               if html.count('</body>')!=1:
                   raise SystemExit('Expected exactly one </body>; refusing to guess')
               html=html.replace('</body>',patch+'\n</body>',1)
