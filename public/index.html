@@ -5949,4 +5949,67 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 })();
 </script>
 
+<script id="rc253-mobile-clean-arrow-router">
+(()=>{
+  const ready=(fn)=>document.readyState==='loading'
+    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
+  ready(()=>{
+    const mobile=()=>matchMedia('(max-width:700px)').matches;
+    if(!mobile())return;
+    const directGo=(room)=>{
+      const ids={
+        'Screening Theater':'screeningTheater',
+        'Music Room':'musicRoom',
+        'Live Center':'liveCenter',
+        'Production Room':'productionRoom',
+        'Story Room':'storyRoom',
+        'Journal':'journalRoom',
+        'Visual Bible':'visualBibleRoom',
+        'About Us':'aboutRoom',
+        'Contact':'contactRoom'
+      };
+      const lobby=document.getElementById('lobby');
+      const target=document.getElementById(ids[room]||'');
+      if(!target)return;
+      document.querySelectorAll('.scene.active').forEach(el=>el.classList.remove('active'));
+      document.getElementById('portals')?.classList.remove('show');
+      lobby?.classList.remove('active','portal-mode');
+      target.classList.add('active');
+      document.body.dataset.scene=ids[room]||room;
+      document.body.dataset.experience='room_active';
+    };
+    document.querySelectorAll('#portals .portal[data-room]').forEach(panel=>{
+      panel.onclick=null;
+      const old=panel.querySelector('.sc-mobile-portal-hit');
+      const hit=document.createElement('button');
+      hit.type='button';
+      hit.className='sc-mobile-portal-hit';
+      hit.textContent='→';
+      hit.setAttribute('aria-label','Open '+panel.dataset.room);
+      if(old)old.replaceWith(hit); else panel.appendChild(hit);
+      let sx=0,sy=0,moved=false;
+      hit.addEventListener('touchstart',e=>{
+        const t=e.touches[0];
+        sx=t.clientX;sy=t.clientY;moved=false;
+      },{passive:true});
+      hit.addEventListener('touchmove',e=>{
+        const t=e.touches[0];
+        if(Math.abs(t.clientY-sy)>3||Math.abs(t.clientX-sx)>5)moved=true;
+      },{passive:true});
+      hit.addEventListener('touchend',e=>{
+        e.preventDefault();
+        e.stopPropagation();
+        if(!moved)directGo(panel.dataset.room);
+        moved=false;
+      },{passive:false});
+      hit.addEventListener('click',e=>{
+        e.preventDefault();
+        e.stopPropagation();
+        directGo(panel.dataset.room);
+      });
+    });
+  });
+})();
+</script>
+
 </body></html>
