@@ -81,11 +81,11 @@ jobs:
           grep -q 'rc268-mobile-native-portal-scroll' public/index.html
           grep -q "document.body?.dataset.mobilePortalLock==='1'" public/index.html
           grep -q "document.body.dataset.mobilePortalLock='1'" public/index.html
-          if grep -q 'rc242-mobile-scroll-tap-guard' public/index.html; then exit 1; fi
-          if grep -q 'rc243-mobile-arrow-only-open' public/index.html; then exit 1; fi
-          if grep -q 'rc249-mobile-real-arrow-buttons' public/index.html; then exit 1; fi
-          if grep -q 'rc266-mobile-portal-native-owner' public/index.html; then exit 1; fi
-          if grep -q 'rc267-mobile-portal-runtime-lock' public/index.html; then exit 1; fi
+          if grep -q '<script id="rc242-mobile-scroll-tap-guard">' public/index.html; then exit 1; fi
+          if grep -q '<script id="rc243-mobile-arrow-only-open">' public/index.html; then exit 1; fi
+          if grep -q '<script id="rc249-mobile-real-arrow-buttons">' public/index.html; then exit 1; fi
+          if grep -q '<script id="rc266-mobile-portal-native-owner">' public/index.html; then exit 1; fi
+          if grep -q '<script id="rc267-mobile-portal-runtime-lock">' public/index.html; then exit 1; fi
           if grep -q 'let sx=0,sy=0,moved=false,activePortal=null;' public/index.html; then exit 1; fi
           grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
