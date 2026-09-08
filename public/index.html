@@ -6443,68 +6443,6 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 </script>
 
 
-<!-- RC270 MASTER MOBILE PORTAL CLICK AUTHORITY + MEDIA HARD STOP -->
-<script id="rc270-mobile-portal-click-authority">
-(()=>{
-  'use strict';
-  const mobile=()=>matchMedia('(max-width:700px)').matches;
-  const lobby=()=>document.getElementById('lobby');
-  const portals=()=>document.getElementById('portals');
-  const portalActive=()=>!!(mobile()&&lobby()?.classList.contains('portal-mode')&&portals()?.classList.contains('show'));
-  const hardStop=()=>{
-    if(!mobile())return;
-    document.querySelectorAll('#lobby video,#lobby audio').forEach(m=>{try{m.pause()}catch(_e){}});
-    const lv=document.getElementById('lobbyVideo'); try{lv?.pause()}catch(_e){}
-    const amb=document.getElementById('ambient'); try{amb?.pause()}catch(_e){}
-  };
-  const lockAndStop=()=>{
-    if(!mobile())return;
-    document.body.dataset.mobilePortalLock='1';
-    hardStop();
-    [0,80,220,520,900,1500].forEach(ms=>setTimeout(hardStop,ms));
-  };
-  const route=(room)=>{
-    lockAndStop();
-    if(room==='Screening Theater'){ if(typeof openTheater==='function')openTheater(); return; }
-    if(room==='Music Room'){ if(typeof openMusic==='function')openMusic(); return; }
-    if(room==='Live Center'){ if(typeof openLive==='function')openLive(); return; }
-    if(room==='Production Room'){
-      if(typeof openProductionHard==='function')openProductionHard();
-      else if(typeof openProduction==='function')openProduction();
-      return;
-    }
-    if(room==='Story Room'){ if(typeof openStory==='function')openStory(); return; }
-    if(room==='Journal'){ if(typeof openJournal==='function')openJournal(); return; }
-    if(room==='Visual Bible'){
-      if(typeof openBibleHard==='function')openBibleHard();
-      else if(typeof openBible==='function')openBible();
-      return;
-    }
-    if(room==='About Us'){ if(typeof openAbout==='function')openAbout(); return; }
-    if(room==='Contact'){ if(typeof openContact==='function')openContact(); return; }
-  };
 
-  // Window-capture CLICK only. No touchstart/touchmove/pointerdown, so RC268 native scroll remains untouched.
-  window.addEventListener('click',e=>{
-    if(!portalActive())return;
-    const target=e.target?.closest?.('#portals [data-room]');
-    if(!target)return;
-    const room=target.dataset.room;
-    if(!room)return;
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    route(room);
-  },true);
-
-  // If any stale owner tries to restart Lobby media after Skip/room routing, kill it immediately.
-  document.addEventListener('play',e=>{
-    if(!mobile()||document.body.dataset.mobilePortalLock!=='1')return;
-    const m=e.target;
-    if(m && (m.id==='lobbyVideo'||m.id==='ambient'||m.closest?.('#lobby'))){
-      try{m.pause()}catch(_e){}
-    }
-  },true);
-})();
-</script>
 
 </body></html>
