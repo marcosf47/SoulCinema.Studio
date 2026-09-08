@@ -5764,4 +5764,66 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 })();
 </script>
 
+<script id="rc250-mobile-portal-div-rebuild">
+(()=>{
+  const ready=(fn)=>document.readyState==='loading'
+    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
+  ready(()=>{
+    if(!matchMedia('(max-width:700px)').matches)return;
+    const route=(room)=>{
+      if(room==='Live Center')return window.openLive?.();
+      if(room==='Screening Theater')return window.openTheater?.();
+      if(room==='Music Room')return window.openMusic?.();
+      if(room==='Production Room')return window.openProduction?.();
+      if(room==='Story Room')return window.openStory?.();
+      if(room==='Journal')return window.openJournal?.();
+      if(room==='Visual Bible')return window.openBible?.();
+      if(room==='About Us')return window.openAbout?.();
+      if(room==='Contact')return window.openContact?.();
+    };
+    document.querySelectorAll('#portals button.portal[data-room]').forEach((old)=>{
+      const panel=document.createElement('div');
+      for(const attr of old.attributes){
+        if(attr.name==='type'||attr.name==='onclick')continue;
+        panel.setAttribute(attr.name,attr.value);
+      }
+      panel.setAttribute('role','group');
+      panel.className=old.className;
+      panel.innerHTML=old.innerHTML;
+      const hit=document.createElement('button');
+      hit.type='button';
+      hit.className='sc-mobile-portal-hit';
+      hit.setAttribute('aria-label','Open '+old.dataset.room);
+      hit.textContent='→';
+      panel.appendChild(hit);
+      let sx=0,sy=0,moved=false;
+      hit.addEventListener('touchstart',(e)=>{
+        const t=e.touches[0]; sx=t.clientX; sy=t.clientY; moved=false;
+      },{passive:true});
+      hit.addEventListener('touchmove',(e)=>{
+        const t=e.touches[0];
+        if(Math.abs(t.clientY-sy)>3 || Math.abs(t.clientX-sx)>5)moved=true;
+      },{passive:true});
+      hit.addEventListener('touchend',(e)=>{
+        e.preventDefault();
+        e.stopPropagation();
+        if(!moved)route(panel.dataset.room);
+      },{passive:false});
+      hit.addEventListener('click',(e)=>{
+        e.preventDefault();
+        e.stopPropagation();
+        route(panel.dataset.room);
+      });
+      panel.addEventListener('click',(e)=>{
+        if(!e.target.closest('.sc-mobile-portal-hit')){
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      });
+      old.replaceWith(panel);
+    });
+  });
+})();
+</script>
+
 </body></html>
