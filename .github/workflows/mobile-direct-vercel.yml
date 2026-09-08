@@ -1,4 +1,4 @@
-name: SoulCinema Mobile Direct Vercel
+name: SoulCinema Direct Vercel
 
 on:
   push:
@@ -11,43 +11,46 @@ permissions:
   contents: write
 
 jobs:
-  deploy-mobile:
+  deploy-fix:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           ref: main
 
-      - name: Roll back RC270 only
+      - name: Apply desktop Live Center exit media stop
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          sid='<script id="rc270-mobile-portal-click-authority">'
-          if sid in html:
-              s=html.index('<!-- RC270 MASTER MOBILE PORTAL CLICK AUTHORITY + MEDIA HARD STOP -->')
-              e=html.index('</script>', html.index(sid, s))+len('</script>')
-              html=html[:s]+html[e:]
-          p.write_text(html,encoding='utf-8')
+          marker='RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP'
+          if marker not in html:
+              patch='''\n<!-- RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP -->\n<script id="rc271-desktop-live-exit-media-stop">\n(()=>{\n  'use strict';\n  const desktop=()=>matchMedia('(min-width:701px)').matches;\n  const live=()=>document.getElementById('liveCenter');\n  const player=()=>document.getElementById('livePlayer');\n  const stopLive=()=>{\n    if(!desktop())return;\n    const v=player();\n    if(v){try{v.pause()}catch(_e){}}\n  };\n  const room=live();\n  if(!room)return;\n  new MutationObserver(()=>{\n    if(!room.classList.contains('active'))stopLive();\n  }).observe(room,{attributes:true,attributeFilter:['class']});\n  const returnBtn=document.getElementById('returnLobby');\n  if(returnBtn)returnBtn.addEventListener('click',stopLive,true);\n  document.addEventListener('visibilitychange',()=>{\n    if(!room.classList.contains('active'))stopLive();\n  });\n})();\n</script>\n'''
+              if html.count('</body>')!=1:
+                  raise SystemExit('Expected exactly one </body>; refusing to guess')
+              html=html.replace('</body>',patch+'\n</body>',1)
+              p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify rollback and preserve locked fixes
+      - name: Verify desktop-only fix and preserve mobile baseline
         run: |
-          ! grep -q 'RC270 MASTER MOBILE PORTAL CLICK AUTHORITY + MEDIA HARD STOP' public/index.html
+          grep -q 'RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP' public/index.html
+          grep -q 'rc271-desktop-live-exit-media-stop' public/index.html
+          grep -q "min-width:701px" public/index.html
           grep -q 'RC269 MASTER MOBILE MEDIA AUTHORITY LOCK' public/index.html
           grep -q 'RC268 MASTER MOBILE PORTAL RUNTIME CLEANUP' public/index.html
           grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
 
-      - name: Lock rollback into source
+      - name: Lock desktop Live exit fix into source
         run: |
           if git diff --quiet -- public/index.html; then
-            echo "RC270 already absent"
+            echo "RC271 already locked"
           else
-            git config user.name "SoulCinema Mobile Deploy"
+            git config user.name "SoulCinema Direct Deploy"
             git config user.email "actions@users.noreply.github.com"
             git add public/index.html
-            git commit -m "Rollback RC270 restore RC268 scroll baseline"
+            git commit -m "RC271 desktop Live Center exit media stop"
             git push origin HEAD:main
           fi
