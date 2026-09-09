@@ -6471,4 +6471,51 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 })();
 </script>
 
+
+<!-- RC272 DESKTOP LIVE TRUTH STATE + STALE CLIP GUARD -->
+<script id="rc272-desktop-live-truth-state">
+(()=>{
+  'use strict';
+  const desktop=()=>matchMedia('(min-width:701px)').matches;
+  const room=()=>document.getElementById('liveCenter');
+  const video=()=>document.getElementById('livePlayer');
+  const forceStandby=()=>{
+    if(!desktop())return;
+    const v=video();
+    if(v){
+      try{v.pause()}catch(_e){}
+      try{v.currentTime=0}catch(_e){}
+    }
+    try{if(typeof setLiveMode==='function')setLiveMode('standby')}catch(_e){}
+  };
+  const r=room();
+  if(!r)return;
+
+  /* A cached/ended fragment is not proof of a current live broadcast.
+     Desktop room entry starts truthful: OFF AIR until the existing Live controls/engine
+     explicitly establish a current broadcast. */
+  const observer=new MutationObserver(()=>{
+    if(!desktop())return;
+    if(!r.classList.contains('active'))return;
+    const v=video();
+    if(!v)return;
+    const finiteClip=Number.isFinite(v.duration) && v.duration>0;
+    const endedOrTiny=!!v.ended || (finiteClip && v.duration<=30);
+    if(endedOrTiny)forceStandby();
+  });
+  observer.observe(r,{attributes:true,attributeFilter:['class']});
+
+  const v=video();
+  if(v){
+    v.addEventListener('ended',()=>{
+      if(desktop()&&r.classList.contains('active'))forceStandby();
+    },true);
+    v.addEventListener('durationchange',()=>{
+      if(!desktop()||!r.classList.contains('active'))return;
+      if(Number.isFinite(v.duration)&&v.duration>0&&v.duration<=30)forceStandby();
+    },true);
+  }
+})();
+</script>
+
 </body></html>
