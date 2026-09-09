@@ -18,39 +18,39 @@ jobs:
         with:
           ref: main
 
-      - name: Apply desktop Live Center exit media stop
+      - name: Apply RC272 desktop Live truth-state fix
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP'
+          marker='RC272 DESKTOP LIVE TRUTH STATE + STALE CLIP GUARD'
           if marker not in html:
-              patch='''\n<!-- RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP -->\n<script id="rc271-desktop-live-exit-media-stop">\n(()=>{\n  'use strict';\n  const desktop=()=>matchMedia('(min-width:701px)').matches;\n  const live=()=>document.getElementById('liveCenter');\n  const player=()=>document.getElementById('livePlayer');\n  const stopLive=()=>{\n    if(!desktop())return;\n    const v=player();\n    if(v){try{v.pause()}catch(_e){}}\n  };\n  const room=live();\n  if(!room)return;\n  new MutationObserver(()=>{\n    if(!room.classList.contains('active'))stopLive();\n  }).observe(room,{attributes:true,attributeFilter:['class']});\n  const returnBtn=document.getElementById('returnLobby');\n  if(returnBtn)returnBtn.addEventListener('click',stopLive,true);\n  document.addEventListener('visibilitychange',()=>{\n    if(!room.classList.contains('active'))stopLive();\n  });\n})();\n</script>\n'''
+              patch='''\n<!-- RC272 DESKTOP LIVE TRUTH STATE + STALE CLIP GUARD -->\n<script id="rc272-desktop-live-truth-state">\n(()=>{\n  'use strict';\n  const desktop=()=>matchMedia('(min-width:701px)').matches;\n  const room=()=>document.getElementById('liveCenter');\n  const video=()=>document.getElementById('livePlayer');\n  const forceStandby=()=>{\n    if(!desktop())return;\n    const v=video();\n    if(v){\n      try{v.pause()}catch(_e){}\n      try{v.currentTime=0}catch(_e){}\n    }\n    try{if(typeof setLiveMode==='function')setLiveMode('standby')}catch(_e){}\n  };\n  const r=room();\n  if(!r)return;\n\n  /* A cached/ended fragment is not proof of a current live broadcast.\n     Desktop room entry starts truthful: OFF AIR until the existing Live controls/engine\n     explicitly establish a current broadcast. */\n  const observer=new MutationObserver(()=>{\n    if(!desktop())return;\n    if(!r.classList.contains('active'))return;\n    const v=video();\n    if(!v)return;\n    const finiteClip=Number.isFinite(v.duration) && v.duration>0;\n    const endedOrTiny=!!v.ended || (finiteClip && v.duration<=30);\n    if(endedOrTiny)forceStandby();\n  });\n  observer.observe(r,{attributes:true,attributeFilter:['class']});\n\n  const v=video();\n  if(v){\n    v.addEventListener('ended',()=>{\n      if(desktop()&&r.classList.contains('active'))forceStandby();\n    },true);\n    v.addEventListener('durationchange',()=>{\n      if(!desktop()||!r.classList.contains('active'))return;\n      if(Number.isFinite(v.duration)&&v.duration>0&&v.duration<=30)forceStandby();\n    },true);\n  }\n})();\n</script>\n'''
               if html.count('</body>')!=1:
                   raise SystemExit('Expected exactly one </body>; refusing to guess')
               html=html.replace('</body>',patch+'\n</body>',1)
               p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify desktop-only fix and preserve mobile baseline
+      - name: Verify RC272 and preserve RC271/mobile locks
         run: |
+          grep -q 'RC272 DESKTOP LIVE TRUTH STATE + STALE CLIP GUARD' public/index.html
+          grep -q 'rc272-desktop-live-truth-state' public/index.html
           grep -q 'RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP' public/index.html
-          grep -q 'rc271-desktop-live-exit-media-stop' public/index.html
-          grep -q "min-width:701px" public/index.html
           grep -q 'RC269 MASTER MOBILE MEDIA AUTHORITY LOCK' public/index.html
           grep -q 'RC268 MASTER MOBILE PORTAL RUNTIME CLEANUP' public/index.html
           grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
 
-      - name: Lock desktop Live exit fix into source
+      - name: Lock RC272 into source
         run: |
           if git diff --quiet -- public/index.html; then
-            echo "RC271 already locked"
+            echo "RC272 already locked"
           else
             git config user.name "SoulCinema Direct Deploy"
             git config user.email "actions@users.noreply.github.com"
             git add public/index.html
-            git commit -m "RC271 desktop Live Center exit media stop"
+            git commit -m "RC272 desktop Live truth state and stale clip guard"
             git push origin HEAD:main
           fi
