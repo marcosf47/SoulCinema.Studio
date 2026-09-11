@@ -18,32 +18,32 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC273 SoulCinema Live Center VPS feed
+      - name: Apply RC274 authoritative Live Center VPS activation
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='RC273 SOULCINEMA VPS LIVE CENTER FEED'
+          marker='RC274 LIVE CENTER VPS AUTHORITATIVE ACTIVATION'
           if marker not in html:
               patch='''
-<!-- RC273 SOULCINEMA VPS LIVE CENTER FEED -->
-<style id="rc273-live-vps-feed-css">
-#liveCenter #rc273LiveFrame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#050505;display:block}
-body[data-live-mode="live"] #liveCenter #livePlayerWrap{display:block!important;inset:0!important;border-radius:16px!important;background:#050505!important}
+<!-- RC274 LIVE CENTER VPS AUTHORITATIVE ACTIVATION -->
+<style id="rc274-live-vps-authority-css">
+body[data-live-mode="live"] #liveCenter #livePlayerWrap{display:block!important;position:absolute!important;inset:0!important;z-index:20!important;border-radius:16px!important;overflow:hidden!important;background:#050505!important}
+body[data-live-mode="live"] #liveCenter #rc273LiveFrame{display:block!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;z-index:21!important;border:0!important;background:#050505!important}
 body[data-live-mode="live"] #liveCenter #liveCopy{display:none!important}
-body[data-live-mode="live"] #liveCenter #liveMain::before,
-body[data-live-mode="live"] #liveCenter #liveMain::after{display:none!important}
+body[data-live-mode="live"] #liveCenter #publicLiveBadge{display:block!important}
 </style>
-<script id="rc273-live-vps-feed">
+<script id="rc274-live-vps-authority">
 (()=>{
   'use strict';
   const FEED='https://live.soulcinema.studio/soulcinemad/?controls=true&muted=false&autoplay=true&playsInline=true';
   const room=document.getElementById('liveCenter');
   const wrap=document.getElementById('livePlayerWrap');
-  const oldVideo=document.getElementById('livePlayer');
+  const state=document.getElementById('liveState');
+  const badge=document.getElementById('publicLiveBadge');
   if(!room||!wrap)return;
-  if(oldVideo){try{oldVideo.pause()}catch(_e){} oldVideo.style.display='none';}
+
   let frame=document.getElementById('rc273LiveFrame');
   if(!frame){
     frame=document.createElement('iframe');
@@ -54,15 +54,36 @@ body[data-live-mode="live"] #liveCenter #liveMain::after{display:none!important}
     frame.setAttribute('scrolling','no');
     frame.src=FEED;
     wrap.appendChild(frame);
+  }else if(!frame.src){
+    frame.src=FEED;
   }
-  const activate=()=>{
+
+  const forceLive=()=>{
     if(!room.classList.contains('active'))return;
-    try{if(typeof setLiveMode==='function')setLiveMode('live')}catch(_e){}
-    wrap.style.display='block';
+    document.body.setAttribute('data-live-mode','live');
+    wrap.style.setProperty('display','block','important');
+    if(state)state.textContent='SOULCINEMA · ON AIR';
+    if(badge){badge.style.setProperty('display','block','important');badge.setAttribute('aria-hidden','false');}
   };
-  const observer=new MutationObserver(()=>{if(room.classList.contains('active'))activate()});
-  observer.observe(room,{attributes:true,attributeFilter:['class']});
-  if(room.classList.contains('active'))activate();
+
+  const forceStandbyOnExit=()=>{
+    if(room.classList.contains('active'))return;
+    if(document.body.getAttribute('data-live-mode')==='live'){
+      document.body.setAttribute('data-live-mode','standby');
+      if(state)state.textContent='SOULCINEMA · OFF AIR';
+      if(badge){badge.style.removeProperty('display');badge.setAttribute('aria-hidden','true');}
+    }
+  };
+
+  const sync=()=>{
+    if(room.classList.contains('active')){
+      requestAnimationFrame(()=>{forceLive();setTimeout(forceLive,120);setTimeout(forceLive,650);});
+    }else{
+      forceStandbyOnExit();
+    }
+  };
+  new MutationObserver(sync).observe(room,{attributes:true,attributeFilter:['class']});
+  sync();
 })();
 </script>
 '''
@@ -72,8 +93,9 @@ body[data-live-mode="live"] #liveCenter #liveMain::after{display:none!important}
               p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC273 and preserve locked layers
+      - name: Verify RC274 and preserve locked layers
         run: |
+          grep -q 'RC274 LIVE CENTER VPS AUTHORITATIVE ACTIVATION' public/index.html
           grep -q 'RC273 SOULCINEMA VPS LIVE CENTER FEED' public/index.html
           grep -q 'https://live.soulcinema.studio/soulcinemad/' public/index.html
           grep -q 'RC272 DESKTOP LIVE TRUTH STATE + STALE CLIP GUARD' public/index.html
@@ -83,14 +105,14 @@ body[data-live-mode="live"] #liveCenter #liveMain::after{display:none!important}
           grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
 
-      - name: Lock RC273 into source
+      - name: Lock RC274 into source
         run: |
           if git diff --quiet -- public/index.html; then
-            echo "RC273 already locked"
+            echo "RC274 already locked"
           else
             git config user.name "SoulCinema Direct Deploy"
             git config user.email "actions@users.noreply.github.com"
             git add public/index.html
-            git commit -m "RC273 integrate VPS live feed into Live Center"
+            git commit -m "RC274 authoritative Live Center VPS activation"
             git push origin HEAD:main
           fi
