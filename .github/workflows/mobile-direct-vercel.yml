@@ -18,27 +18,46 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC275 Live Center VPS embed recovery
+      - name: Apply RC276 Live autoplay broadcast-only behavior
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='RC275 SOULCINEMA LIVE CENTER VPS EMBED RECOVERY'
+          marker='RC276 LIVE AUTOPLAY BROADCAST ONLY PLAYER'
           if marker not in html:
-              data='CjwhLS0gUkMyNzUgU09VTENJTkVNQSBMSVZFIENFTlRFUiBWUFMgRU1CRUQgUkVDT1ZFUlkgLS0+CjxzdHlsZSBpZD0icmMyNzUtbGl2ZS12cHMtY3NzIj4KYm9keVtkYXRhLWxpdmUtbW9kZT0ibGl2ZSJdICNsaXZlQ2VudGVyICNsaXZlUGxheWVyV3JhcHtkaXNwbGF5OmJsb2NrIWltcG9ydGFudDtwb3NpdGlvbjphYnNvbHV0ZSFpbXBvcnRhbnQ7aW5zZXQ6MCFpbXBvcnRhbnQ7ei1pbmRleDoyMCFpbXBvcnRhbnQ7Ym9yZGVyLXJhZGl1czoxNnB4IWltcG9ydGFudDtvdmVyZmxvdzpoaWRkZW4haW1wb3J0YW50O2JhY2tncm91bmQ6IzA1MDUwNSFpbXBvcnRhbnR9CmJvZHlbZGF0YS1saXZlLW1vZGU9ImxpdmUiXSAjbGl2ZUNlbnRlciAjcmMyNzVMaXZlRnJhbWV7ZGlzcGxheTpibG9jayFpbXBvcnRhbnQ7cG9zaXRpb246YWJzb2x1dGUhaW1wb3J0YW50O2luc2V0OjAhaW1wb3J0YW50O3dpZHRoOjEwMCUhaW1wb3J0YW50O2hlaWdodDoxMDAlIWltcG9ydGFudDt6LWluZGV4OjIxIWltcG9ydGFudDtib3JkZXI6MCFpbXBvcnRhbnQ7YmFja2dyb3VuZDojMDUwNTA1IWltcG9ydGFudH0KYm9keVtkYXRhLWxpdmUtbW9kZT0ibGl2ZSJdICNsaXZlQ2VudGVyICNsaXZlQ29weXtkaXNwbGF5Om5vbmUhaW1wb3J0YW50fQpib2R5W2RhdGEtbGl2ZS1tb2RlPSJsaXZlIl0gI2xpdmVDZW50ZXIgI3B1YmxpY0xpdmVCYWRnZXtkaXNwbGF5OmJsb2NrIWltcG9ydGFudH0KPC9zdHlsZT4KPHNjcmlwdCBpZD0icmMyNzUtbGl2ZS12cHMtcmVjb3ZlcnkiPgooKCk9PnsKICAndXNlIHN0cmljdCc7CiAgY29uc3QgRkVFRD0naHR0cHM6Ly9saXZlLnNvdWxjaW5lbWEuc3R1ZGlvL3NvdWxjaW5lbWFkLz9jb250cm9scz10cnVlJm11dGVkPWZhbHNlJmF1dG9wbGF5PXRydWUmcGxheXNJbmxpbmU9dHJ1ZSc7CiAgY29uc3Qgcm9vbT1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbGl2ZUNlbnRlcicpOwogIGNvbnN0IHdyYXA9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2xpdmVQbGF5ZXJXcmFwJyk7CiAgY29uc3Qgc3RhdGU9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2xpdmVTdGF0ZScpOwogIGNvbnN0IGJhZGdlPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdwdWJsaWNMaXZlQmFkZ2UnKTsKICBjb25zdCBvbGRWaWRlbz1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbGl2ZVBsYXllcicpOwogIGlmKCFyb29tfHwhd3JhcClyZXR1cm47CgogIGlmKG9sZFZpZGVvKXsKICAgIHRyeXtvbGRWaWRlby5wYXVzZSgpfWNhdGNoKF9lKXt9CiAgICBvbGRWaWRlby5zdHlsZS5kaXNwbGF5PSdub25lJzsKICB9CgogIGxldCBmcmFtZT1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncmMyNzVMaXZlRnJhbWUnKTsKICBpZighZnJhbWUpewogICAgZnJhbWU9ZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnaWZyYW1lJyk7CiAgICBmcmFtZS5pZD0ncmMyNzVMaXZlRnJhbWUnOwogICAgZnJhbWUudGl0bGU9J1NvdWxDaW5lbWEgTGl2ZSBCcm9hZGNhc3QnOwogICAgZnJhbWUuYWxsb3c9J2F1dG9wbGF5OyBmdWxsc2NyZWVuOyBwaWN0dXJlLWluLXBpY3R1cmUnOwogICAgZnJhbWUuc2V0QXR0cmlidXRlKCdhbGxvd2Z1bGxzY3JlZW4nLCcnKTsKICAgIGZyYW1lLnNldEF0dHJpYnV0ZSgnc2Nyb2xsaW5nJywnbm8nKTsKICAgIGZyYW1lLnNyYz1GRUVEOwogICAgd3JhcC5hcHBlbmRDaGlsZChmcmFtZSk7CiAgfQoKICBjb25zdCBmb3JjZUxpdmU9KCk9PnsKICAgIGlmKCFyb29tLmNsYXNzTGlzdC5jb250YWlucygnYWN0aXZlJykpcmV0dXJuOwogICAgZG9jdW1lbnQuYm9keS5kYXRhc2V0LmxpdmVNb2RlPSdsaXZlJzsKICAgIHdyYXAuc3R5bGUuc2V0UHJvcGVydHkoJ2Rpc3BsYXknLCdibG9jaycsJ2ltcG9ydGFudCcpOwogICAgaWYoc3RhdGUpc3RhdGUudGV4dENvbnRlbnQ9J1NPVUxDSU5FTUEgwrcgT04gQUlSJzsKICAgIGlmKGJhZGdlKXtiYWRnZS5zdHlsZS5zZXRQcm9wZXJ0eSgnZGlzcGxheScsJ2Jsb2NrJywnaW1wb3J0YW50Jyk7YmFkZ2Uuc2V0QXR0cmlidXRlKCdhcmlhLWhpZGRlbicsJ2ZhbHNlJyk7fQogIH07CgogIGNvbnN0IGZvcmNlT2ZmPSgpPT57CiAgICBpZihyb29tLmNsYXNzTGlzdC5jb250YWlucygnYWN0aXZlJykpcmV0dXJuOwogICAgd3JhcC5zdHlsZS5yZW1vdmVQcm9wZXJ0eSgnZGlzcGxheScpOwogICAgaWYoZG9jdW1lbnQuYm9keS5kYXRhc2V0LmxpdmVNb2RlPT09J2xpdmUnKWRvY3VtZW50LmJvZHkuZGF0YXNldC5saXZlTW9kZT0nc3RhbmRieSc7CiAgICBpZihzdGF0ZSlzdGF0ZS50ZXh0Q29udGVudD0nU09VTENJTkVNQSDCtyBPRkYgQUlSJzsKICAgIGlmKGJhZGdlKXtiYWRnZS5zdHlsZS5yZW1vdmVQcm9wZXJ0eSgnZGlzcGxheScpO2JhZGdlLnNldEF0dHJpYnV0ZSgnYXJpYS1oaWRkZW4nLCd0cnVlJyk7fQogIH07CgogIGNvbnN0IHN5bmM9KCk9PnsKICAgIGlmKHJvb20uY2xhc3NMaXN0LmNvbnRhaW5zKCdhY3RpdmUnKSl7CiAgICAgIGZvcmNlTGl2ZSgpOwogICAgICBzZXRUaW1lb3V0KGZvcmNlTGl2ZSwxNTApOwogICAgICBzZXRUaW1lb3V0KGZvcmNlTGl2ZSw3MDApOwogICAgfWVsc2V7CiAgICAgIGZvcmNlT2ZmKCk7CiAgICB9CiAgfTsKCiAgbmV3IE11dGF0aW9uT2JzZXJ2ZXIoc3luYykub2JzZXJ2ZShyb29tLHthdHRyaWJ1dGVzOnRydWUsYXR0cmlidXRlRmlsdGVyOlsnY2xhc3MnXX0pOwogIGZyYW1lLmFkZEV2ZW50TGlzdGVuZXIoJ2xvYWQnLCgpPT57aWYocm9vbS5jbGFzc0xpc3QuY29udGFpbnMoJ2FjdGl2ZScpKWZvcmNlTGl2ZSgpfSk7CiAgc3luYygpOwp9KSgpOwo8L3NjcmlwdD4K'
-              patch=base64.b64decode(data).decode('utf-8')
+              patch='''
+<!-- RC276 LIVE AUTOPLAY BROADCAST ONLY PLAYER -->
+<style id="rc276-live-autoplay-css">
+#liveCenter #rc275LiveFrame{pointer-events:none!important;}
+</style>
+<script id="rc276-live-autoplay">
+(()=>{
+  'use strict';
+  const room=document.getElementById('liveCenter');
+  const frame=document.getElementById('rc275LiveFrame');
+  if(!room||!frame)return;
+  const LIVE='https://live.soulcinema.studio/soulcinemad/?controls=false&muted=true&autoplay=true&playsInline=true';
+  const start=()=>{
+    if(!room.classList.contains('active'))return;
+    if(frame.getAttribute('src')!==LIVE) frame.setAttribute('src',LIVE);
+  };
+  new MutationObserver(start).observe(room,{attributes:true,attributeFilter:['class']});
+  start();
+})();
+</script>
+'''
               if html.count('</body>')!=1:
                   raise SystemExit('Expected exactly one </body>; refusing to guess')
               html=html.replace('</body>',patch+'\n</body>',1)
               p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC275 and preserve locked layers
+      - name: Verify RC276 and preserve locked layers
         run: |
+          grep -q 'RC276 LIVE AUTOPLAY BROADCAST ONLY PLAYER' public/index.html
           grep -q 'RC275 SOULCINEMA LIVE CENTER VPS EMBED RECOVERY' public/index.html
-          grep -q 'https://live.soulcinema.studio/soulcinemad/' public/index.html
+          grep -q 'controls=false&muted=true&autoplay=true' public/index.html
           grep -q 'RC272 DESKTOP LIVE TRUTH STATE + STALE CLIP GUARD' public/index.html
           grep -q 'RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP' public/index.html
           grep -q 'RC269 MASTER MOBILE MEDIA AUTHORITY LOCK' public/index.html
@@ -46,14 +65,14 @@ jobs:
           grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
 
-      - name: Lock RC275 into source
+      - name: Lock RC276 into source
         run: |
           if git diff --quiet -- public/index.html; then
-            echo "RC275 already locked"
+            echo "RC276 already locked"
           else
             git config user.name "SoulCinema Direct Deploy"
             git config user.email "actions@users.noreply.github.com"
             git add public/index.html
-            git commit -m "RC275 embed VPS live feed into Live Center"
+            git commit -m "RC276 live autoplay broadcast-only player behavior"
             git push origin HEAD:main
           fi
