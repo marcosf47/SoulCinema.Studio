@@ -47,7 +47,9 @@ jobs:
           grep -q 'RC268 MASTER MOBILE PORTAL RUNTIME CLEANUP' public/index.html
           grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
-          if grep -q 'width:min(1100px,92vw);text-align:left'>< /dev/null; then exit 1; fi
+          if grep -q 'width:min(1100px,92vw);text-align:left' public/index.html; then
+            echo 'Old Live Center desktop shell width still present'; exit 1
+          fi
 
       - name: Lock RC278 into source
         run: |
