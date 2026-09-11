@@ -6586,4 +6586,25 @@ body[data-live-mode="live"] #liveCenter #publicLiveBadge{display:block!important
 })();
 </script>
 
+
+<!-- RC276 LIVE AUTOPLAY BROADCAST ONLY PLAYER -->
+<style id="rc276-live-autoplay-css">
+#liveCenter #rc275LiveFrame{pointer-events:none!important;}
+</style>
+<script id="rc276-live-autoplay">
+(()=>{
+  'use strict';
+  const room=document.getElementById('liveCenter');
+  const frame=document.getElementById('rc275LiveFrame');
+  if(!room||!frame)return;
+  const LIVE='https://live.soulcinema.studio/soulcinemad/?controls=false&muted=true&autoplay=true&playsInline=true';
+  const start=()=>{
+    if(!room.classList.contains('active'))return;
+    if(frame.getAttribute('src')!==LIVE) frame.setAttribute('src',LIVE);
+  };
+  new MutationObserver(start).observe(room,{attributes:true,attributeFilter:['class']});
+  start();
+})();
+</script>
+
 </body></html>
