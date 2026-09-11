@@ -2934,7 +2934,8 @@ function bindLiveControls(){
  bind('#stateLive',()=>{armLiveFeed();setLiveMode('live')});
  bind('#stateEnd',()=>setLiveMode('ended'));
  bind('#stateReplay',()=>setLiveMode('replay'));
- bind('#returnLobby',()=>{if(liveCountdownTimer){clearInterval(liveCountdownTimer);liveCountdownTimer=null}const liveEl=$('#liveCenter'),lobbyEl=$('#lobby');journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{SceneManager.goTo('lobby');scene(liveEl,lobbyEl);setTimeout(showPortals,520)})});
+ // RC277 DESKTOP LIVE CENTER RETURN — SINGLE CINEMATIC HANDOFF
+bind('#returnLobby',()=>{if(liveCountdownTimer){clearInterval(liveCountdownTimer);liveCountdownTimer=null}const liveEl=$('#liveCenter'),lobbyEl=$('#lobby');journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{SceneManager.goTo('lobby');document.body.dataset.liveMode='standby';liveEl.classList.remove('active');lobbyEl.classList.add('active');showPortals();updateRuntimeMonitor()})});
 }
 
 bindLiveControls();
