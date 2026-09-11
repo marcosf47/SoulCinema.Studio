@@ -18,24 +18,26 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC277 clean Live Center return handoff
+      - name: Apply RC278 Live Center cinema wall scale
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='// RC277 DESKTOP LIVE CENTER RETURN — SINGLE CINEMATIC HANDOFF'
+          marker='<!-- RC278 LIVE CENTER CINEMA WALL SCALE -->'
           if marker not in html:
-              old="bind('#returnLobby',()=>{if(liveCountdownTimer){clearInterval(liveCountdownTimer);liveCountdownTimer=null}const liveEl=$('#liveCenter'),lobbyEl=$('#lobby');journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{SceneManager.goTo('lobby');scene(liveEl,lobbyEl);setTimeout(showPortals,520)})});"
-              new=marker+"\n"+"bind('#returnLobby',()=>{if(liveCountdownTimer){clearInterval(liveCountdownTimer);liveCountdownTimer=null}const liveEl=$('#liveCenter'),lobbyEl=$('#lobby');journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{SceneManager.goTo('lobby');document.body.dataset.liveMode='standby';liveEl.classList.remove('active');lobbyEl.classList.add('active');showPortals();updateRuntimeMonitor()})});"
+              old='<div class="center"><div style="width:min(1100px,92vw);text-align:left"><div class="eyebrow">SC · SOULCINEMA LIVE</div>'
+              new=marker+'\n<div class="center"><div style="width:min(1380px,92vw);text-align:left"><div class="eyebrow">SC · SOULCINEMA LIVE</div>'
               if html.count(old)!=1:
-                  raise SystemExit(f'Expected exactly one Live return binding, found {html.count(old)}; refusing to guess')
+                  raise SystemExit(f'Expected exactly one Live Center shell width target, found {html.count(old)}; refusing to guess')
               html=html.replace(old,new,1)
               p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC277 and preserve locked layers
+      - name: Verify RC278 and preserve locked layers
         run: |
+          grep -q 'RC278 LIVE CENTER CINEMA WALL SCALE' public/index.html
+          grep -q 'width:min(1380px,92vw)' public/index.html
           grep -q 'RC277 DESKTOP LIVE CENTER RETURN — SINGLE CINEMATIC HANDOFF' public/index.html
           grep -q 'RC276 LIVE AUTOPLAY BROADCAST ONLY PLAYER' public/index.html
           grep -q 'RC275 SOULCINEMA LIVE CENTER VPS EMBED RECOVERY' public/index.html
@@ -45,18 +47,16 @@ jobs:
           grep -q 'RC268 MASTER MOBILE PORTAL RUNTIME CLEANUP' public/index.html
           grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
-          if grep -q "scene(liveEl,lobbyEl)" public/index.html; then
-            echo 'Nested Live return scene transition still present'; exit 1
-          fi
+          if grep -q 'width:min(1100px,92vw);text-align:left'>< /dev/null; then exit 1; fi
 
-      - name: Lock RC277 into source
+      - name: Lock RC278 into source
         run: |
           if git diff --quiet -- public/index.html; then
-            echo "RC277 already locked"
+            echo "RC278 already locked"
           else
             git config user.name "SoulCinema Direct Deploy"
             git config user.email "actions@users.noreply.github.com"
             git add public/index.html
-            git commit -m "RC277 clean Live Center to Grand Lobby handoff"
+            git commit -m "RC278 enlarge Live Center cinema wall"
             git push origin HEAD:main
           fi
