@@ -18,26 +18,27 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC278 Live Center cinema wall scale
+      - name: Apply RC279 inner Live screen alignment
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='<!-- RC278 LIVE CENTER CINEMA WALL SCALE -->'
+          marker='<!-- RC279 LIVE INNER SCREEN ALIGNMENT -->'
           if marker not in html:
-              old='<div class="center"><div style="width:min(1100px,92vw);text-align:left"><div class="eyebrow">SC · SOULCINEMA LIVE</div>'
-              new=marker+'\n<div class="center"><div style="width:min(1380px,92vw);text-align:left"><div class="eyebrow">SC · SOULCINEMA LIVE</div>'
+              old='<div id="livePlayerWrap" style="display:none;position:absolute;inset:6% 9%;background:#050505;border-radius:12px;overflow:hidden">'
+              new=marker+'\n  <div id="livePlayerWrap" style="display:none;position:absolute;inset:1.5% 1.5%;background:#050505;border-radius:12px;overflow:hidden">'
               if html.count(old)!=1:
-                  raise SystemExit(f'Expected exactly one Live Center shell width target, found {html.count(old)}; refusing to guess')
+                  raise SystemExit(f'Expected exactly one Live inner screen inset target, found {html.count(old)}; refusing to guess')
               html=html.replace(old,new,1)
               p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC278 and preserve locked layers
+      - name: Verify RC279 and preserve locked layers
         run: |
+          grep -q 'RC279 LIVE INNER SCREEN ALIGNMENT' public/index.html
+          grep -q 'inset:1.5% 1.5%' public/index.html
           grep -q 'RC278 LIVE CENTER CINEMA WALL SCALE' public/index.html
-          grep -q 'width:min(1380px,92vw)' public/index.html
           grep -q 'RC277 DESKTOP LIVE CENTER RETURN — SINGLE CINEMATIC HANDOFF' public/index.html
           grep -q 'RC276 LIVE AUTOPLAY BROADCAST ONLY PLAYER' public/index.html
           grep -q 'RC275 SOULCINEMA LIVE CENTER VPS EMBED RECOVERY' public/index.html
@@ -47,18 +48,18 @@ jobs:
           grep -q 'RC268 MASTER MOBILE PORTAL RUNTIME CLEANUP' public/index.html
           grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
-          if grep -q 'width:min(1100px,92vw);text-align:left' public/index.html; then
-            echo 'Old Live Center desktop shell width still present'; exit 1
+          if grep -q 'inset:6% 9%' public/index.html; then
+            echo 'Old Live inner inset still present'; exit 1
           fi
 
-      - name: Lock RC278 into source
+      - name: Lock RC279 into source
         run: |
           if git diff --quiet -- public/index.html; then
-            echo "RC278 already locked"
+            echo "RC279 already locked"
           else
             git config user.name "SoulCinema Direct Deploy"
             git config user.email "actions@users.noreply.github.com"
             git add public/index.html
-            git commit -m "RC278 enlarge Live Center cinema wall"
+            git commit -m "RC279 align inner live screen with cinema wall"
             git push origin HEAD:main
           fi
