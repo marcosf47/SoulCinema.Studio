@@ -22,31 +22,13 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
           marker='RC276 LIVE AUTOPLAY BROADCAST ONLY PLAYER'
           if marker not in html:
-              patch='''
-<!-- RC276 LIVE AUTOPLAY BROADCAST ONLY PLAYER -->
-<style id="rc276-live-autoplay-css">
-#liveCenter #rc275LiveFrame{pointer-events:none!important;}
-</style>
-<script id="rc276-live-autoplay">
-(()=>{
-  'use strict';
-  const room=document.getElementById('liveCenter');
-  const frame=document.getElementById('rc275LiveFrame');
-  if(!room||!frame)return;
-  const LIVE='https://live.soulcinema.studio/soulcinemad/?controls=false&muted=true&autoplay=true&playsInline=true';
-  const start=()=>{
-    if(!room.classList.contains('active'))return;
-    if(frame.getAttribute('src')!==LIVE) frame.setAttribute('src',LIVE);
-  };
-  new MutationObserver(start).observe(room,{attributes:true,attributeFilter:['class']});
-  start();
-})();
-</script>
-'''
+              data='CjwhLS0gUkMyNzYgTElWRSBBVVRPUExBWSBCUk9BRENBU1QgT05MWSBQTEFZRVIgLS0+CjxzdHlsZSBpZD0icmMyNzYtbGl2ZS1hdXRvcGxheS1jc3MiPgojbGl2ZUNlbnRlciAjcmMyNzVMaXZlRnJhbWV7cG9pbnRlci1ldmVudHM6bm9uZSFpbXBvcnRhbnQ7fQo8L3N0eWxlPgo8c2NyaXB0IGlkPSJyYzI3Ni1saXZlLWF1dG9wbGF5Ij4KKCgpPT57CiAgJ3VzZSBzdHJpY3QnOwogIGNvbnN0IHJvb209ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2xpdmVDZW50ZXInKTsKICBjb25zdCBmcmFtZT1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncmMyNzVMaXZlRnJhbWUnKTsKICBpZighcm9vbXx8IWZyYW1lKXJldHVybjsKICBjb25zdCBMSVZFPSdodHRwczovL2xpdmUuc291bGNpbmVtYS5zdHVkaW8vc291bGNpbmVtYWQvP2NvbnRyb2xzPWZhbHNlJm11dGVkPXRydWUmYXV0b3BsYXk9dHJ1ZSZwbGF5c0lubGluZT10cnVlJzsKICBjb25zdCBzdGFydD0oKT0+ewogICAgaWYoIXJvb20uY2xhc3NMaXN0LmNvbnRhaW5zKCdhY3RpdmUnKSlyZXR1cm47CiAgICBpZihmcmFtZS5nZXRBdHRyaWJ1dGUoJ3NyYycpIT09TElWRSkgZnJhbWUuc2V0QXR0cmlidXRlKCdzcmMnLExJVkUpOwogIH07CiAgbmV3IE11dGF0aW9uT2JzZXJ2ZXIoc3RhcnQpLm9ic2VydmUocm9vbSx7YXR0cmlidXRlczp0cnVlLGF0dHJpYnV0ZUZpbHRlcjpbJ2NsYXNzJ119KTsKICBzdGFydCgpOwp9KSgpOwo8L3NjcmlwdD4K'
+              patch=base64.b64decode(data).decode('utf-8')
               if html.count('</body>')!=1:
                   raise SystemExit('Expected exactly one </body>; refusing to guess')
               html=html.replace('</body>',patch+'\n</body>',1)
