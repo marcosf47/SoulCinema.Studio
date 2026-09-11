@@ -18,13 +18,45 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC277 desktop Live Center to Lobby clean handoff
+      - name: Apply RC277 clean Live Center return handoff
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='RC277 DESKTOP LIVE CENTER -> LOBBY CLEAN HANDOFF'
+          marker='// RC277 DESKTOP LIVE CENTER RETURN — SINGLE CINEMATIC HANDOFF'
           if marker not in html:
-              data='CjwhLS0gUkMyNzcgREVTS1RPUCBMSVZFIENFTlRFUiAtPiBMT0JCWSBDTEVBTiBIQU5ET0ZGIC0tPgo8c3R5bGUgaWQ9InJjMjc3LWxpdmUtbG9iYnktaGFuZG9mZi1jc3MiPgpAbWVkaWEgKG1pbi13aWR0aDo3MDFweCl7CiAgI2xpdmVDZW50ZXIucmMyNzctZXhpdGluZ3tvcGFjaXR5OjEhaW1wb3J0YW50O3RyYW5zZm9ybTpub25lIWltcG9ydGFudDt9Cn0KPC9zdHlsZT4KPHNjcmlwdCBpZD0icmMyNzctbGl2ZS1sb2JieS1oYW5kb2ZmIj4KKCgpPT57CiAgJ3VzZSBzdHJpY3QnOwogIGNvbnN0IGRlc2t0b3A9KCk9Pm1hdGNoTWVkaWEoJyhtaW4td2lkdGg6NzAxcHgpJykubWF0Y2hlczsKICBjb25zdCBidG49ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3JldHVybkxvYmJ5Jyk7CiAgY29uc3QgbGl2ZT1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbGl2ZUNlbnRlcicpOwogIGNvbnN0IGxvYmJ5PWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdsb2JieScpOwogIGNvbnN0IHZlaWw9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2pvdXJuZXlUcmFuc2l0aW9uJyk7CiAgY29uc3QgdGl0bGU9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2pvdXJuZXlUaXRsZScpOwogIGNvbnN0IGtpY2tlcj1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnam91cm5leUtpY2tlcicpOwogIGNvbnN0IHN1Yj1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnam91cm5leVN1YicpOwogIGlmKCFidG58fCFsaXZlfHwhbG9iYnl8fCF2ZWlsKXJldHVybjsKCiAgbGV0IGJ1c3k9ZmFsc2U7CiAgY29uc3QgY2xlYW5FeGl0PShlKT0+ewogICAgaWYoIWRlc2t0b3AoKXx8IWxpdmUuY2xhc3NMaXN0LmNvbnRhaW5zKCdhY3RpdmUnKXx8YnVzeSlyZXR1cm47CiAgICBlLnByZXZlbnREZWZhdWx0KCk7CiAgICBlLnN0b3BQcm9wYWdhdGlvbigpOwogICAgZS5zdG9wSW1tZWRpYXRlUHJvcGFnYXRpb24oKTsKICAgIGJ1c3k9dHJ1ZTsKCiAgICB0cnl7CiAgICAgIGNvbnN0IG9sZD1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbGl2ZVBsYXllcicpOwogICAgICBpZihvbGQpb2xkLnBhdXNlKCk7CiAgICB9Y2F0Y2goX2Upe30KICAgIGRvY3VtZW50LmJvZHkuZGF0YXNldC5saXZlTW9kZT0nc3RhbmRieSc7CgogICAgaWYodGl0bGUpdGl0bGUudGV4dENvbnRlbnQ9J1RIRSd+...'}
+              old="bind('#returnLobby',()=>{if(liveCountdownTimer){clearInterval(liveCountdownTimer);liveCountdownTimer=null}const liveEl=$('#liveCenter'),lobbyEl=$('#lobby');journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{SceneManager.goTo('lobby');scene(liveEl,lobbyEl);setTimeout(showPortals,520)})});"
+              new=marker+"\n"+"bind('#returnLobby',()=>{if(liveCountdownTimer){clearInterval(liveCountdownTimer);liveCountdownTimer=null}const liveEl=$('#liveCenter'),lobbyEl=$('#lobby');journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{SceneManager.goTo('lobby');document.body.dataset.liveMode='standby';liveEl.classList.remove('active');lobbyEl.classList.add('active');showPortals();updateRuntimeMonitor()})});"
+              if html.count(old)!=1:
+                  raise SystemExit(f'Expected exactly one Live return binding, found {html.count(old)}; refusing to guess')
+              html=html.replace(old,new,1)
+              p.write_text(html,encoding='utf-8')
+          PY
+
+      - name: Verify RC277 and preserve locked layers
+        run: |
+          grep -q 'RC277 DESKTOP LIVE CENTER RETURN — SINGLE CINEMATIC HANDOFF' public/index.html
+          grep -q 'RC276 LIVE AUTOPLAY BROADCAST ONLY PLAYER' public/index.html
+          grep -q 'RC275 SOULCINEMA LIVE CENTER VPS EMBED RECOVERY' public/index.html
+          grep -q 'RC272 DESKTOP LIVE TRUTH STATE + STALE CLIP GUARD' public/index.html
+          grep -q 'RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP' public/index.html
+          grep -q 'RC269 MASTER MOBILE MEDIA AUTHORITY LOCK' public/index.html
+          grep -q 'RC268 MASTER MOBILE PORTAL RUNTIME CLEANUP' public/index.html
+          grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
+          grep -q 'rc258-mobile-screening-theater-restore' public/index.html
+          if grep -q "scene(liveEl,lobbyEl)" public/index.html; then
+            echo 'Nested Live return scene transition still present'; exit 1
+          fi
+
+      - name: Lock RC277 into source
+        run: |
+          if git diff --quiet -- public/index.html; then
+            echo "RC277 already locked"
+          else
+            git config user.name "SoulCinema Direct Deploy"
+            git config user.email "actions@users.noreply.github.com"
+            git add public/index.html
+            git commit -m "RC277 clean Live Center to Grand Lobby handoff"
+            git push origin HEAD:main
+          fi
