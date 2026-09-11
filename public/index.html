@@ -6518,4 +6518,72 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 })();
 </script>
 
+
+<!-- RC275 SOULCINEMA LIVE CENTER VPS EMBED RECOVERY -->
+<style id="rc275-live-vps-css">
+body[data-live-mode="live"] #liveCenter #livePlayerWrap{display:block!important;position:absolute!important;inset:0!important;z-index:20!important;border-radius:16px!important;overflow:hidden!important;background:#050505!important}
+body[data-live-mode="live"] #liveCenter #rc275LiveFrame{display:block!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;z-index:21!important;border:0!important;background:#050505!important}
+body[data-live-mode="live"] #liveCenter #liveCopy{display:none!important}
+body[data-live-mode="live"] #liveCenter #publicLiveBadge{display:block!important}
+</style>
+<script id="rc275-live-vps-recovery">
+(()=>{
+  'use strict';
+  const FEED='https://live.soulcinema.studio/soulcinemad/?controls=true&muted=false&autoplay=true&playsInline=true';
+  const room=document.getElementById('liveCenter');
+  const wrap=document.getElementById('livePlayerWrap');
+  const state=document.getElementById('liveState');
+  const badge=document.getElementById('publicLiveBadge');
+  const oldVideo=document.getElementById('livePlayer');
+  if(!room||!wrap)return;
+
+  if(oldVideo){
+    try{oldVideo.pause()}catch(_e){}
+    oldVideo.style.display='none';
+  }
+
+  let frame=document.getElementById('rc275LiveFrame');
+  if(!frame){
+    frame=document.createElement('iframe');
+    frame.id='rc275LiveFrame';
+    frame.title='SoulCinema Live Broadcast';
+    frame.allow='autoplay; fullscreen; picture-in-picture';
+    frame.setAttribute('allowfullscreen','');
+    frame.setAttribute('scrolling','no');
+    frame.src=FEED;
+    wrap.appendChild(frame);
+  }
+
+  const forceLive=()=>{
+    if(!room.classList.contains('active'))return;
+    document.body.dataset.liveMode='live';
+    wrap.style.setProperty('display','block','important');
+    if(state)state.textContent='SOULCINEMA · ON AIR';
+    if(badge){badge.style.setProperty('display','block','important');badge.setAttribute('aria-hidden','false');}
+  };
+
+  const forceOff=()=>{
+    if(room.classList.contains('active'))return;
+    wrap.style.removeProperty('display');
+    if(document.body.dataset.liveMode==='live')document.body.dataset.liveMode='standby';
+    if(state)state.textContent='SOULCINEMA · OFF AIR';
+    if(badge){badge.style.removeProperty('display');badge.setAttribute('aria-hidden','true');}
+  };
+
+  const sync=()=>{
+    if(room.classList.contains('active')){
+      forceLive();
+      setTimeout(forceLive,150);
+      setTimeout(forceLive,700);
+    }else{
+      forceOff();
+    }
+  };
+
+  new MutationObserver(sync).observe(room,{attributes:true,attributeFilter:['class']});
+  frame.addEventListener('load',()=>{if(room.classList.contains('active'))forceLive()});
+  sync();
+})();
+</script>
+
 </body></html>
