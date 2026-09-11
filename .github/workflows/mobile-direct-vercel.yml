@@ -18,43 +18,13 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC276 Live autoplay broadcast-only behavior
+      - name: Apply RC277 desktop Live Center to Lobby clean handoff
         run: |
           python3 - <<'PY'
           from pathlib import Path
           import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='RC276 LIVE AUTOPLAY BROADCAST ONLY PLAYER'
+          marker='RC277 DESKTOP LIVE CENTER -> LOBBY CLEAN HANDOFF'
           if marker not in html:
-              data='CjwhLS0gUkMyNzYgTElWRSBBVVRPUExBWSBCUk9BRENBU1QgT05MWSBQTEFZRVIgLS0+CjxzdHlsZSBpZD0icmMyNzYtbGl2ZS1hdXRvcGxheS1jc3MiPgojbGl2ZUNlbnRlciAjcmMyNzVMaXZlRnJhbWV7cG9pbnRlci1ldmVudHM6bm9uZSFpbXBvcnRhbnQ7fQo8L3N0eWxlPgo8c2NyaXB0IGlkPSJyYzI3Ni1saXZlLWF1dG9wbGF5Ij4KKCgpPT57CiAgJ3VzZSBzdHJpY3QnOwogIGNvbnN0IHJvb209ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2xpdmVDZW50ZXInKTsKICBjb25zdCBmcmFtZT1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncmMyNzVMaXZlRnJhbWUnKTsKICBpZighcm9vbXx8IWZyYW1lKXJldHVybjsKICBjb25zdCBMSVZFPSdodHRwczovL2xpdmUuc291bGNpbmVtYS5zdHVkaW8vc291bGNpbmVtYWQvP2NvbnRyb2xzPWZhbHNlJm11dGVkPXRydWUmYXV0b3BsYXk9dHJ1ZSZwbGF5c0lubGluZT10cnVlJzsKICBjb25zdCBzdGFydD0oKT0+ewogICAgaWYoIXJvb20uY2xhc3NMaXN0LmNvbnRhaW5zKCdhY3RpdmUnKSlyZXR1cm47CiAgICBpZihmcmFtZS5nZXRBdHRyaWJ1dGUoJ3NyYycpIT09TElWRSkgZnJhbWUuc2V0QXR0cmlidXRlKCdzcmMnLExJVkUpOwogIH07CiAgbmV3IE11dGF0aW9uT2JzZXJ2ZXIoc3RhcnQpLm9ic2VydmUocm9vbSx7YXR0cmlidXRlczp0cnVlLGF0dHJpYnV0ZUZpbHRlcjpbJ2NsYXNzJ119KTsKICBzdGFydCgpOwp9KSgpOwo8L3NjcmlwdD4K'
-              patch=base64.b64decode(data).decode('utf-8')
-              if html.count('</body>')!=1:
-                  raise SystemExit('Expected exactly one </body>; refusing to guess')
-              html=html.replace('</body>',patch+'\n</body>',1)
-              p.write_text(html,encoding='utf-8')
-          PY
-
-      - name: Verify RC276 and preserve locked layers
-        run: |
-          grep -q 'RC276 LIVE AUTOPLAY BROADCAST ONLY PLAYER' public/index.html
-          grep -q 'RC275 SOULCINEMA LIVE CENTER VPS EMBED RECOVERY' public/index.html
-          grep -q 'controls=false&muted=true&autoplay=true' public/index.html
-          grep -q 'RC272 DESKTOP LIVE TRUTH STATE + STALE CLIP GUARD' public/index.html
-          grep -q 'RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP' public/index.html
-          grep -q 'RC269 MASTER MOBILE MEDIA AUTHORITY LOCK' public/index.html
-          grep -q 'RC268 MASTER MOBILE PORTAL RUNTIME CLEANUP' public/index.html
-          grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
-          grep -q 'rc258-mobile-screening-theater-restore' public/index.html
-
-      - name: Lock RC276 into source
-        run: |
-          if git diff --quiet -- public/index.html; then
-            echo "RC276 already locked"
-          else
-            git config user.name "SoulCinema Direct Deploy"
-            git config user.email "actions@users.noreply.github.com"
-            git add public/index.html
-            git commit -m "RC276 live autoplay broadcast-only player behavior"
-            git push origin HEAD:main
-          fi
+              data='CjwhLS0gUkMyNzcgREVTS1RPUCBMSVZFIENFTlRFUiAtPiBMT0JCWSBDTEVBTiBIQU5ET0ZGIC0tPgo8c3R5bGUgaWQ9InJjMjc3LWxpdmUtbG9iYnktaGFuZG9mZi1jc3MiPgpAbWVkaWEgKG1pbi13aWR0aDo3MDFweCl7CiAgI2xpdmVDZW50ZXIucmMyNzctZXhpdGluZ3tvcGFjaXR5OjEhaW1wb3J0YW50O3RyYW5zZm9ybTpub25lIWltcG9ydGFudDt9Cn0KPC9zdHlsZT4KPHNjcmlwdCBpZD0icmMyNzctbGl2ZS1sb2JieS1oYW5kb2ZmIj4KKCgpPT57CiAgJ3VzZSBzdHJpY3QnOwogIGNvbnN0IGRlc2t0b3A9KCk9Pm1hdGNoTWVkaWEoJyhtaW4td2lkdGg6NzAxcHgpJykubWF0Y2hlczsKICBjb25zdCBidG49ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3JldHVybkxvYmJ5Jyk7CiAgY29uc3QgbGl2ZT1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbGl2ZUNlbnRlcicpOwogIGNvbnN0IGxvYmJ5PWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdsb2JieScpOwogIGNvbnN0IHZlaWw9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2pvdXJuZXlUcmFuc2l0aW9uJyk7CiAgY29uc3QgdGl0bGU9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2pvdXJuZXlUaXRsZScpOwogIGNvbnN0IGtpY2tlcj1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnam91cm5leUtpY2tlcicpOwogIGNvbnN0IHN1Yj1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCg nam91cm5leVN1YicpOwogIGlmKCFidG58fCFsaXZlfHwhbG9iYnl8fCF2ZWlsKXJldHVybjsKCiAgbGV0IGJ1c3k9ZmFsc2U7CiAgY29uc3QgY2xlYW5FeGl0PShlKT0+ewogICAgaWYoIWRlc2t0b3AoKXx8IWxpdmUuY2xhc3NMaXN0LmNvbnRhaW5zKCdhY3RpdmUnKXx8YnVzeSlyZXR1cm47CiAgICBlLnByZXZlbnREZWZhdWx0KCk7CiAgICBlLnN0b3BQcm9wYWdhdGlvbigpOwogICAgZS5zdG9wSW1tZWRpYXRlUHJvcGFnYXRpb24oKTsKICAgIGJ1c3k9dHJ1ZTsKCiAgICB0cnl7CiAgICAgIGNvbnN0IG9sZD1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbGl2ZVBsYXllcicpOwogICAgICBpZihvbGQpb2xkLnBhdXNlKCk7CiAgICB9Y2F0Y2goX2Upe30KICAgIGRvY3VtZW50LmJvZHkuZGF0YXNldC5saXZlTW9kZT0nc3RhbmRieSc7CgogICAgaWYodGl0bGUptGl0bGUudGV4dENvbnRlbnQ9J1RIRSd+...
