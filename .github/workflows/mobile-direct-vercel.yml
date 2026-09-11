@@ -18,39 +18,79 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC272 desktop Live truth-state fix
+      - name: Apply RC273 SoulCinema Live Center VPS feed
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='RC272 DESKTOP LIVE TRUTH STATE + STALE CLIP GUARD'
+          marker='RC273 SOULCINEMA VPS LIVE CENTER FEED'
           if marker not in html:
-              patch='''\n<!-- RC272 DESKTOP LIVE TRUTH STATE + STALE CLIP GUARD -->\n<script id="rc272-desktop-live-truth-state">\n(()=>{\n  'use strict';\n  const desktop=()=>matchMedia('(min-width:701px)').matches;\n  const room=()=>document.getElementById('liveCenter');\n  const video=()=>document.getElementById('livePlayer');\n  const forceStandby=()=>{\n    if(!desktop())return;\n    const v=video();\n    if(v){\n      try{v.pause()}catch(_e){}\n      try{v.currentTime=0}catch(_e){}\n    }\n    try{if(typeof setLiveMode==='function')setLiveMode('standby')}catch(_e){}\n  };\n  const r=room();\n  if(!r)return;\n\n  /* A cached/ended fragment is not proof of a current live broadcast.\n     Desktop room entry starts truthful: OFF AIR until the existing Live controls/engine\n     explicitly establish a current broadcast. */\n  const observer=new MutationObserver(()=>{\n    if(!desktop())return;\n    if(!r.classList.contains('active'))return;\n    const v=video();\n    if(!v)return;\n    const finiteClip=Number.isFinite(v.duration) && v.duration>0;\n    const endedOrTiny=!!v.ended || (finiteClip && v.duration<=30);\n    if(endedOrTiny)forceStandby();\n  });\n  observer.observe(r,{attributes:true,attributeFilter:['class']});\n\n  const v=video();\n  if(v){\n    v.addEventListener('ended',()=>{\n      if(desktop()&&r.classList.contains('active'))forceStandby();\n    },true);\n    v.addEventListener('durationchange',()=>{\n      if(!desktop()||!r.classList.contains('active'))return;\n      if(Number.isFinite(v.duration)&&v.duration>0&&v.duration<=30)forceStandby();\n    },true);\n  }\n})();\n</script>\n'''
+              patch='''
+<!-- RC273 SOULCINEMA VPS LIVE CENTER FEED -->
+<style id="rc273-live-vps-feed-css">
+#liveCenter #rc273LiveFrame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#050505;display:block}
+body[data-live-mode="live"] #liveCenter #livePlayerWrap{display:block!important;inset:0!important;border-radius:16px!important;background:#050505!important}
+body[data-live-mode="live"] #liveCenter #liveCopy{display:none!important}
+body[data-live-mode="live"] #liveCenter #liveMain::before,
+body[data-live-mode="live"] #liveCenter #liveMain::after{display:none!important}
+</style>
+<script id="rc273-live-vps-feed">
+(()=>{
+  'use strict';
+  const FEED='https://live.soulcinema.studio/soulcinemad/?controls=true&muted=false&autoplay=true&playsInline=true';
+  const room=document.getElementById('liveCenter');
+  const wrap=document.getElementById('livePlayerWrap');
+  const oldVideo=document.getElementById('livePlayer');
+  if(!room||!wrap)return;
+  if(oldVideo){try{oldVideo.pause()}catch(_e){} oldVideo.style.display='none';}
+  let frame=document.getElementById('rc273LiveFrame');
+  if(!frame){
+    frame=document.createElement('iframe');
+    frame.id='rc273LiveFrame';
+    frame.title='SoulCinema Live Broadcast';
+    frame.allow='autoplay; fullscreen; picture-in-picture';
+    frame.setAttribute('allowfullscreen','');
+    frame.setAttribute('scrolling','no');
+    frame.src=FEED;
+    wrap.appendChild(frame);
+  }
+  const activate=()=>{
+    if(!room.classList.contains('active'))return;
+    try{if(typeof setLiveMode==='function')setLiveMode('live')}catch(_e){}
+    wrap.style.display='block';
+  };
+  const observer=new MutationObserver(()=>{if(room.classList.contains('active'))activate()});
+  observer.observe(room,{attributes:true,attributeFilter:['class']});
+  if(room.classList.contains('active'))activate();
+})();
+</script>
+'''
               if html.count('</body>')!=1:
                   raise SystemExit('Expected exactly one </body>; refusing to guess')
               html=html.replace('</body>',patch+'\n</body>',1)
               p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC272 and preserve RC271/mobile locks
+      - name: Verify RC273 and preserve locked layers
         run: |
+          grep -q 'RC273 SOULCINEMA VPS LIVE CENTER FEED' public/index.html
+          grep -q 'https://live.soulcinema.studio/soulcinemad/' public/index.html
           grep -q 'RC272 DESKTOP LIVE TRUTH STATE + STALE CLIP GUARD' public/index.html
-          grep -q 'rc272-desktop-live-truth-state' public/index.html
           grep -q 'RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP' public/index.html
           grep -q 'RC269 MASTER MOBILE MEDIA AUTHORITY LOCK' public/index.html
           grep -q 'RC268 MASTER MOBILE PORTAL RUNTIME CLEANUP' public/index.html
           grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
 
-      - name: Lock RC272 into source
+      - name: Lock RC273 into source
         run: |
           if git diff --quiet -- public/index.html; then
-            echo "RC272 already locked"
+            echo "RC273 already locked"
           else
             git config user.name "SoulCinema Direct Deploy"
             git config user.email "actions@users.noreply.github.com"
             git add public/index.html
-            git commit -m "RC272 desktop Live truth state and stale clip guard"
+            git commit -m "RC273 integrate VPS live feed into Live Center"
             git push origin HEAD:main
           fi
