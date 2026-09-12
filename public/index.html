@@ -2724,8 +2724,8 @@ function openBible(){clearTimers();visualBibleRoom.classList.add('bible-arriving
 function returnFromBible(){journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{/* RC285 VISUAL BIBLE OUT — SINGLE CINEMATIC HANDOFF */SceneManager.goTo('lobby');visualBibleRoom.classList.remove('active');lobby.classList.add('active');transitionCount++;updateRuntimeMonitor();setTimeout(showPortals,420)})}
 function openAbout(){clearTimers();journeyTransition('ABOUT US','THE STUDIO','WHY SOULCINEMA EXISTS',()=>{/* RC286 ABOUT US IN — SINGLE CINEMATIC HANDOFF */SceneManager.goTo('about');lobby.classList.remove('active');aboutRoom.classList.add('active');transitionCount++;updateRuntimeMonitor()})}
 function returnFromAbout(){journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{/* RC286 ABOUT US OUT — SINGLE CINEMATIC HANDOFF */SceneManager.goTo('lobby');aboutRoom.classList.remove('active');lobby.classList.add('active');transitionCount++;updateRuntimeMonitor();setTimeout(showPortals,420)})}
-function openContact(){clearTimers();journeyTransition('CONTACT','STUDIO CONNECTION','LET THE NEXT STORY BEGIN',()=>{SceneManager.goTo('contact');scene(lobby,contactRoom)})}
-function returnFromContact(){journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{SceneManager.goTo('lobby');scene(contactRoom,lobby);setTimeout(showPortals,520)})}
+function openContact(){clearTimers();journeyTransition('CONTACT','STUDIO CONNECTION','LET THE NEXT STORY BEGIN',()=>{/* RC288 CONTACT IN — SINGLE CINEMATIC HANDOFF */SceneManager.goTo('contact');lobby.classList.remove('active');contactRoom.classList.add('active');transitionCount++;updateRuntimeMonitor()})}
+function returnFromContact(){journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{/* RC288 CONTACT OUT — SINGLE CINEMATIC HANDOFF */SceneManager.goTo('lobby');contactRoom.classList.remove('active');lobby.classList.add('active');transitionCount++;updateRuntimeMonitor();setTimeout(showPortals,420)})}
 function primeTheaterOpening(){
  const v=$('#theaterPlayer');if(!v)return;
  theaterStage='opening';
