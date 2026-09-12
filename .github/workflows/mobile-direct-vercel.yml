@@ -18,26 +18,29 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC279 inner Live screen alignment
+      - name: Apply RC280 safe native-ratio Live fill
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='<!-- RC279 LIVE INNER SCREEN ALIGNMENT -->'
+          marker='<!-- RC280 LIVE SAFE NATIVE RATIO FILL -->'
           if marker not in html:
-              old='<div id="livePlayerWrap" style="display:none;position:absolute;inset:6% 9%;background:#050505;border-radius:12px;overflow:hidden">'
-              new=marker+'\n  <div id="livePlayerWrap" style="display:none;position:absolute;inset:1.5% 1.5%;background:#050505;border-radius:12px;overflow:hidden">'
+              old='<div id="livePlayerWrap" style="display:none;position:absolute;inset:1.5% 1.5%;background:#050505;border-radius:12px;overflow:hidden">'
+              new=marker+'\n  <div id="livePlayerWrap" style="display:none;position:absolute;inset:0;background:#050505;border-radius:12px;overflow:hidden">'
               if html.count(old)!=1:
-                  raise SystemExit(f'Expected exactly one Live inner screen inset target, found {html.count(old)}; refusing to guess')
+                  raise SystemExit(f'Expected exactly one RC279 Live inner target, found {html.count(old)}; refusing to guess')
               html=html.replace(old,new,1)
               p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC279 and preserve locked layers
+      - name: Verify RC280 and preserve locked layers
         run: |
+          grep -q 'RC280 LIVE SAFE NATIVE RATIO FILL' public/index.html
+          grep -q 'id="livePlayerWrap" style="display:none;position:absolute;inset:0;' public/index.html
+          grep -q 'object-fit:contain' public/index.html
+          grep -q 'aspect-ratio:16/9' public/index.html
           grep -q 'RC279 LIVE INNER SCREEN ALIGNMENT' public/index.html
-          grep -q 'inset:1.5% 1.5%' public/index.html
           grep -q 'RC278 LIVE CENTER CINEMA WALL SCALE' public/index.html
           grep -q 'RC277 DESKTOP LIVE CENTER RETURN — SINGLE CINEMATIC HANDOFF' public/index.html
           grep -q 'RC276 LIVE AUTOPLAY BROADCAST ONLY PLAYER' public/index.html
@@ -48,18 +51,18 @@ jobs:
           grep -q 'RC268 MASTER MOBILE PORTAL RUNTIME CLEANUP' public/index.html
           grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
-          if grep -q 'inset:6% 9%' public/index.html; then
-            echo 'Old Live inner inset still present'; exit 1
+          if grep -q 'id="livePlayerWrap" style="display:none;position:absolute;inset:1.5% 1.5%' public/index.html; then
+            echo 'RC279 inset still active'; exit 1
           fi
 
-      - name: Lock RC279 into source
+      - name: Lock RC280 into source
         run: |
           if git diff --quiet -- public/index.html; then
-            echo "RC279 already locked"
+            echo "RC280 already locked"
           else
             git config user.name "SoulCinema Direct Deploy"
             git config user.email "actions@users.noreply.github.com"
             git add public/index.html
-            git commit -m "RC279 align inner live screen with cinema wall"
+            git commit -m "RC280 maximize live image safely at native aspect ratio"
             git push origin HEAD:main
           fi
