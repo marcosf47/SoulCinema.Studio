@@ -18,28 +18,52 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC294 mobile Skip soft full-hitbox owner
+      - name: Apply RC295 restore mobile lobby control layout
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='<!-- RC294 MOBILE SKIP SOFT FULL HITBOX OWNER -->'
+          marker='<!-- RC295 MOBILE LOBBY CONTROL LAYOUT RESTORE -->'
           if marker not in html:
-              anchor='\n<!-- RC293 MOBILE SKIP IMMEDIATE PORTAL OWNER -->'
+              anchor='\n<!-- RC294 MOBILE SKIP SOFT FULL HITBOX OWNER -->'
               if html.count(anchor)!=1:
-                  raise SystemExit(f'RC293 anchor count={html.count(anchor)}; refusing to guess')
-              payload='CjwhLS0gUkMyOTQgTU9CSUxFIFNLSVAgU09GVCBGVUxMIEhJVEJPWCBPV05FUiAtLT4KPHN0eWxlIGlkPSJyYzI5NC1tb2JpbGUtc2tpcC1zb2Z0LWhpdGJveC1jc3MiPgpAbWVkaWEobWF4LXdpZHRoOjcwMHB4KXsKICAjbG9iYnkgI3NraXB7CiAgICBwb3NpdGlvbjpyZWxhdGl2ZSFpbXBvcnRhbnQ7CiAgICB6LWluZGV4OjEyMDAhaW1wb3J0YW50OwogICAgcG9pbnRlci1ldmVudHM6YXV0byFpbXBvcnRhbnQ7CiAgICB0b3VjaC1hY3Rpb246bWFuaXB1bGF0aW9uIWltcG9ydGFudDsKICAgIC13ZWJraXQtdGFwLWhpZ2hsaWdodC1jb2xvcjp0cmFuc3BhcmVudCFpbXBvcnRhbnQ7CiAgfQogICNsb2JieSAjc2tpcDo6YmVmb3JlewogICAgY29udGVudDoiIjsKICAgIHBvc2l0aW9uOmFic29sdXRlOwogICAgaW5zZXQ6LTE4cHggLTI4cHg7CiAgICBib3JkZXItcmFkaXVzOjk5OXB4OwogICAgcG9pbnRlci1ldmVudHM6YXV0bzsKICB9Cn0KPC9zdHlsZT4KPHNjcmlwdCBpZD0icmMyOTQtbW9iaWxlLXNraXAtc29mdC1oaXRib3gtb3duZXIiPgooKCk9PnsKICAndXNlIHN0cmljdCc7CiAgY29uc3QgbW9iaWxlPSgpPT5tYXRjaE1lZGlhKCcobWF4LXdpZHRoOjcwMHB4KScpLm1hdGNoZXM7CiAgaWYoIW1vYmlsZSgpKXJldHVybjsKICBjb25zdCBza2lwPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdza2lwJyk7CiAgY29uc3QgbG9iYnk9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2xvYmJ5Jyk7CiAgY29uc3QgcG9ydGFscz1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncG9ydGFscycpOwogIGlmKCFza2lwfHwhbG9iYnl8fCFwb3J0YWxzKXJldHVybjsKCiAgbGV0IGJ1c3k9ZmFsc2U7CiAgY29uc3QgcG9pbnQ9KGUpPT57CiAgICBpZihlPy50b3VjaGVzPy5bMF0pIHJldHVybiB7eDplLnRvdWNoZXNbMF0uY2xpZW50WCx5OmUudG91Y2hlc1swXS5jbGllbnRZfTsKICAgIGlmKE51bWJlci5pc0Zpbml0ZShlPy5jbGllbnRYKSYmTnVtYmVyLmlzRmluaXRlKGU/LmNsaWVudFkpKSByZXR1cm4ge3g6ZS5jbGllbnRYLHk6ZS5jbGllbnRZfTsKICAgIHJldHVybiBudWxsOwogIH07CiAgY29uc3QgaW5zaWRlRXhwYW5kZWRTa2lwPShlKT0+ewogICAgY29uc3QgcHQ9cG9pbnQoZSk7IGlmKCFwdClyZXR1cm4gZmFsc2U7CiAgICBjb25zdCByPXNraXAuZ2V0Qm91bmRpbmdDbGllbnRSZWN0KCk7CiAgICByZXR1cm4gcHQueD49ci5sZWZ0LTM2ICYmIHB0Lng8PXIucmlnaHQrMzYgJiYgcHQueT49ci50b3AtMjIgJiYgcHQueTw9ci5ib3R0b20rMjI7CiAgfTsKICBjb25zdCBzdG9wTWVkaWE9KCk9PnsKICAgIGRvY3VtZW50LmJvZHkuZGF0YXNldC5tb2JpbGVQb3J0YWxMb2NrPScxJzsKICAgIGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoJyNsb2JieSB2aWRlbywjbG9iYnkgYXVkaW8sI2FtYmllbnQnKS5mb3JFYWNoKG09PnsKICAgICAgaWYoIShtIGluc3RhbmNlb2YgSFRNTE1lZGlhRWxlbWVudCkpcmV0dXJuOwogICAgICB0cnl7bS5wYXVzZSgpfWNhdGNoKF9lKXt9CiAgICB9KTsKICB9OwogIGNvbnN0IG9wZW5Qb3J0YWxzTm93PShlKT0+ewogICAgaWYoIW1vYmlsZSgpfHxidXN5fHxnZXRDb21wdXRlZFN0eWxlKHNraXApLmRpc3BsYXk9PT0nbm9uZScpcmV0dXJuOwogICAgaWYoIWluc2lkZUV4cGFuZGVkU2tpcChlKSlyZXR1cm47CiAgICBidXN5PXRydWU7CiAgICBpZihlPy5jYW5jZWxhYmxlKWUucHJldmVudERlZmF1bHQoKTsKICAgIGU/LnN0b3BJbW1lZGlhdGVQcm9wYWdhdGlvbj8uKCk7CiAgICB0cnl7aWYodHlwZW9mIGNsZWFyVGltZXJzPT09J2Z1bmN0aW9uJyljbGVhclRpbWVycygpfWNhdGNoKF9lKXt9CiAgICBzdG9wTWVkaWEoKTsKICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdoZWFydCcpPy5jbGFzc0xpc3QucmVtb3ZlKCdzaG93Jyk7CiAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncHJlbWllcmVDYXJkJyk/LmNsYXNzTGlzdC5yZW1vdmUoJ3Nob3cnKTsKICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdmYWRlJyk/LmNsYXNzTGlzdC5yZW1vdmUoJ29uJyk7CiAgICBjb25zdCBqb3VybmV5PWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdqb3VybmV5VHJhbnNpdGlvbicpOwogICAgaWYoam91cm5leSl7am91cm5leS5jbGFzc0xpc3QucmVtb3ZlKCdvbicpO2pvdXJuZXkuc2V0QXR0cmlidXRlKCdhcmlhLWhpZGRlbicsJ3RydWUnKTt9CiAgICBsb2JieS5jbGFzc0xpc3QuYWRkKCdhY3RpdmUnLCdwb3J0YWwtbW9kZScpOwogICAgcG9ydGFscy5jbGFzc0xpc3QuYWRkKCdzaG93Jyk7CiAgICBza2lwLnN0eWxlLmRpc3BsYXk9J25vbmUnOwogICAgZG9jdW1lbnQuYm9keS5kYXRhc2V0LnNjZW5lPSdsb2JieSc7CiAgICBkb2N1bWVudC5ib2R5LmRhdGFzZXQuZXhwZXJpZW5jZT0ncG9ydGFsX21vZGUnOwogICAgc3RvcE1lZGlhKCk7CiAgICByZXF1ZXN0QW5pbWF0aW9uRnJhbWUoKCk9PntzdG9wTWVkaWEoKTtidXN5PWZhbHNlO30pOwogIH07CgogIHdpbmRvdy5hZGRFdmVudExpc3RlbmVyKCdwb2ludGVyZG93bicsb3BlblBvcnRhbHNOb3cse2NhcHR1cmU6dHJ1ZSxwYXNzaXZlOmZhbHNlfSk7CiAgd2luZG93LmFkZEV2ZW50TGlzdGVuZXIoJ3RvdWNoc3RhcnQnLG9wZW5Qb3J0YWxzTm93LHtjYXB0dXJlOnRydWUscGFzc2l2ZTpmYWxzZX0pOwp9KSgpOwo8L3NjcmlwdD4K'
-              patch=base64.b64decode(payload).decode('utf-8')
+                  raise SystemExit(f'RC294 anchor count={html.count(anchor)}; refusing to guess')
+              patch=r'''
+<!-- RC295 MOBILE LOBBY CONTROL LAYOUT RESTORE -->
+<style id="rc295-mobile-lobby-control-layout-restore">
+@media(max-width:700px){
+  #lobby #skip{
+    position:absolute!important;
+    right:18px!important;
+    left:auto!important;
+    bottom:18px!important;
+    top:auto!important;
+    margin:0!important;
+    transform:none!important;
+    z-index:1200!important;
+  }
+  #lobby .audio{
+    position:absolute!important;
+    left:18px!important;
+    right:auto!important;
+    top:72px!important;
+    bottom:auto!important;
+    margin:0!important;
+    transform:none!important;
+    z-index:20!important;
+  }
+}
+</style>
+'''
               html=html.replace(anchor,'\n'+patch+anchor,1)
               p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC294 and preserve current locks
+      - name: Verify RC295 and preserve current locks
         run: |
+          grep -q 'RC295 MOBILE LOBBY CONTROL LAYOUT RESTORE' public/index.html
           grep -q 'RC294 MOBILE SKIP SOFT FULL HITBOX OWNER' public/index.html
-          grep -q 'rc294-mobile-skip-soft-hitbox-owner' public/index.html
           grep -q 'RC293 MOBILE SKIP IMMEDIATE PORTAL OWNER' public/index.html
           grep -q 'RC292 MOBILE PORTAL THEATER GHOST PLAY GUARD' public/index.html
           grep -q 'RC291 MOBILE PORTAL AMBIENT HARD FREEZE' public/index.html
@@ -50,14 +74,14 @@ jobs:
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
           grep -q 'RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP' public/index.html
 
-      - name: Commit RC294 source
+      - name: Commit RC295 source
         run: |
           git config user.name "SoulCinema Direct Deploy"
           git config user.email "actions@users.noreply.github.com"
           if git diff --quiet -- public/index.html; then
-            echo "RC294 already applied"
+            echo "RC295 already applied"
           else
             git add public/index.html
-            git commit -m "RC294 mobile Skip soft full hitbox owner"
+            git commit -m "RC295 restore mobile lobby control layout"
             git push origin HEAD:main
           fi
