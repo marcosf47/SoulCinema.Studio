@@ -6008,6 +6008,83 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 })();
 </script>
 
+<!-- RC290 MOBILE PORTAL HARD MEDIA FREEZE -->
+<style id="rc290-mobile-portal-hard-freeze-css">
+@media(max-width:700px){
+  #lobby.portal-mode #lobbyVideo{display:none!important;}
+}
+</style>
+<script id="rc290-mobile-portal-hard-freeze">
+(()=>{
+  'use strict';
+  const mobile=()=>matchMedia('(max-width:700px)').matches;
+  if(!mobile())return;
+  const lobby=document.getElementById('lobby');
+  const portals=document.getElementById('portals');
+  const skip=document.getElementById('skip');
+  const video=document.getElementById('lobbyVideo');
+  const source=video?.querySelector('source');
+  const ambient=document.getElementById('ambient');
+  if(!lobby||!portals||!skip||!video||!source)return;
+
+  const originalSrc=source.getAttribute('src')||'';
+  let detached=false;
+
+  const freeze=()=>{
+    if(!mobile())return;
+    document.body.dataset.mobilePortalLock='1';
+    try{video.pause()}catch(_e){}
+    try{ambient?.pause()}catch(_e){}
+    if(!detached){
+      detached=true;
+      video.dataset.rc290Src=originalSrc;
+      source.removeAttribute('src');
+      try{video.removeAttribute('src')}catch(_e){}
+      try{video.load()}catch(_e){}
+    }
+  };
+
+  const restore=()=>{
+    if(!mobile()||!detached)return;
+    if(document.body.dataset.mobilePortalLock==='1'&&!document.getElementById('gate')?.classList.contains('active'))return;
+    source.setAttribute('src',video.dataset.rc290Src||originalSrc);
+    try{video.load()}catch(_e){}
+    detached=false;
+  };
+
+  const portalActive=()=>lobby.classList.contains('portal-mode')||portals.classList.contains('show');
+  const sync=()=>{if(portalActive())freeze();};
+
+  window.addEventListener('pointerdown',e=>{
+    if(!mobile())return;
+    if(e.target?.closest?.('#skip'))freeze();
+  },true);
+  window.addEventListener('touchstart',e=>{
+    if(!mobile())return;
+    if(e.target?.closest?.('#skip'))freeze();
+  },{capture:true,passive:true});
+
+  new MutationObserver(sync).observe(lobby,{attributes:true,attributeFilter:['class']});
+  new MutationObserver(sync).observe(portals,{attributes:true,attributeFilter:['class']});
+
+  const gate=document.getElementById('gate');
+  if(gate)new MutationObserver(()=>{
+    if(gate.classList.contains('active')){
+      delete document.body.dataset.mobilePortalLock;
+      restore();
+    }
+  }).observe(gate,{attributes:true,attributeFilter:['class']});
+
+  document.addEventListener('play',e=>{
+    if(!portalActive())return;
+    const m=e.target;
+    if(m===video||m===ambient){try{m.pause()}catch(_e){}}
+  },true);
+
+  sync();
+})();
+</script>
+
 <!-- RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP -->
 <script id="rc271-desktop-live-exit-media-stop">
 (()=>{
