@@ -6085,6 +6085,76 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 })();
 </script>
 
+<!-- RC291 MOBILE PORTAL AMBIENT HARD FREEZE -->
+<script id="rc291-mobile-ambient-hard-freeze">
+ (()=>{
+  'use strict';
+  const mobile=()=>matchMedia('(max-width:700px)').matches;
+  if(!mobile())return;
+  const lobby=document.getElementById('lobby');
+  const portals=document.getElementById('portals');
+  const skip=document.getElementById('skip');
+  const ambient=document.getElementById('ambient');
+  const source=ambient?.querySelector('source');
+  if(!lobby||!portals||!skip||!ambient||!source)return;
+
+  const originalSrc=source.getAttribute('src')||'';
+  let detached=false;
+
+  const freezeAmbient=()=>{
+    if(!mobile())return;
+    document.body.dataset.mobilePortalLock='1';
+    try{ambient.pause()}catch(_e){}
+    if(!detached){
+      detached=true;
+      ambient.dataset.rc291Src=originalSrc;
+      source.removeAttribute('src');
+      try{ambient.removeAttribute('src')}catch(_e){}
+      try{ambient.load()}catch(_e){}
+    }
+  };
+
+  const restoreAmbient=()=>{
+    if(!mobile()||!detached)return;
+    const gate=document.getElementById('gate');
+    if(!gate?.classList.contains('active'))return;
+    source.setAttribute('src',ambient.dataset.rc291Src||originalSrc);
+    try{ambient.load()}catch(_e){}
+    detached=false;
+  };
+
+  const portalActive=()=>lobby.classList.contains('portal-mode')||portals.classList.contains('show');
+  const sync=()=>{
+    if(portalActive())freezeAmbient();
+  };
+
+  window.addEventListener('pointerdown',e=>{
+    if(!mobile())return;
+    if(e.target?.closest?.('#skip'))freezeAmbient();
+  },true);
+  window.addEventListener('touchstart',e=>{
+    if(!mobile())return;
+    if(e.target?.closest?.('#skip'))freezeAmbient();
+  },{capture:true,passive:true});
+
+  new MutationObserver(sync).observe(lobby,{attributes:true,attributeFilter:['class']});
+  new MutationObserver(sync).observe(portals,{attributes:true,attributeFilter:['class']});
+  const gate=document.getElementById('gate');
+  if(gate)new MutationObserver(restoreAmbient).observe(gate,{attributes:true,attributeFilter:['class']});
+
+  const nativePlay=ambient.play.bind(ambient);
+  ambient.play=function(){
+    if(mobile()&&(portalActive()||document.body.dataset.mobilePortalLock==='1')){
+      try{this.pause()}catch(_e){}
+      return Promise.resolve();
+    }
+    return nativePlay();
+  };
+  ambient.addEventListener('play',()=>{if(portalActive()){try{ambient.pause()}catch(_e){}}},true);
+  sync();
+})();
+</script>
+
 <!-- RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP -->
 <script id="rc271-desktop-live-exit-media-stop">
 (()=>{
