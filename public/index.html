@@ -3340,16 +3340,18 @@ html.rc103-portal-cursor,html.rc103-portal-cursor *{cursor:pointer!important}
   document.addEventListener('pointerleave',()=>{cards.forEach(c=>c.classList.remove('rc-master-hover'));document.body.style.cursor='';},true);
 
   /* One master coordinate click path for all seven rooms. */
-  document.addEventListener('pointerdown',e=>{
-    if(!activeLobby())return;
-    const card=hit(e.clientX,e.clientY);
-    if(!card)return;
-    e.preventDefault();
-    e.stopPropagation();
-    e.stopImmediatePropagation();
-    card.classList.add('rc-master-hover');
-    route(card.dataset.room);
-  },true);
+  if(matchMedia('(min-width:701px)').matches){
+    document.addEventListener('pointerdown',e=>{
+      if(!activeLobby())return;
+      const card=hit(e.clientX,e.clientY);
+      if(!card)return;
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      card.classList.add('rc-master-hover');
+      route(card.dataset.room);
+    },true);
+  }
 
   /* Keyboard stays native and deterministic. */
   cards.forEach(card=>card.addEventListener('keydown',e=>{
@@ -5496,74 +5498,7 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 
 
 
-<script id="rc248-mobile-portal-click-owner">
-(()=>{
-  const ready=(fn)=>document.readyState==='loading'
-    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
-  ready(()=>{
-    const mobile=()=>matchMedia('(max-width:700px)').matches;
-    const portalFrom=(target)=>target&&target.closest&&target.closest('#lobby.portal-mode #portals .portal');
-    const inArrow=(portal,x)=>{
-      const r=portal.getBoundingClientRect();
-      return x>=r.right-92 && x<=r.right-6;
-    };
-    const route=(room)=>{
-      if(room==='Live Center')return window.openLive?.();
-      if(room==='Screening Theater')return window.openTheater?.();
-      if(room==='Music Room')return window.openMusic?.();
-      if(room==='Production Room')return window.openProduction?.();
-      if(room==='Story Room')return window.openStory?.();
-      if(room==='Journal')return window.openJournal?.();
-      if(room==='Visual Bible')return window.openBible?.();
-      if(room==='About Us')return window.openAbout?.();
-      if(room==='Contact')return window.openContact?.();
-    };
-    const portals=[...document.querySelectorAll('#portals .portal[data-room]')];
-    const neutralize=()=>{ if(mobile())portals.forEach(p=>{p.onclick=null;}); };
-    neutralize();
-    window.addEventListener('resize',neutralize,{passive:true});
 
-    let sx=0,sy=0,st=0,moved=false,portal=null;
-    document.addEventListener('touchstart',e=>{
-      if(!mobile())return;
-      portal=portalFrom(e.target);
-      if(!portal)return;
-      const t=e.touches[0];
-      sx=t.clientX; sy=t.clientY; st=Date.now(); moved=false;
-      neutralize();
-    },{passive:true,capture:true});
-    document.addEventListener('touchmove',e=>{
-      if(!mobile()||!portal)return;
-      const t=e.touches[0];
-      if(Math.abs(t.clientY-sy)>2 || Math.abs(t.clientX-sx)>5)moved=true;
-    },{passive:true,capture:true});
-    document.addEventListener('touchend',e=>{
-      if(!mobile())return;
-      const p=portal||portalFrom(e.target);
-      if(!p)return;
-      const t=e.changedTouches&&e.changedTouches[0];
-      const x=t?t.clientX:sx;
-      const y=t?t.clientY:sy;
-      const fastTap=Date.now()-st<360;
-      const intentional=!moved && fastTap && inArrow(p,x) && Math.abs(y-sy)<=2;
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      portal=null;
-      moved=false;
-      neutralize();
-      if(intentional)setTimeout(()=>route(p.dataset.room),0);
-    },{passive:false,capture:true});
-    document.addEventListener('click',e=>{
-      if(!mobile())return;
-      const p=portalFrom(e.target);
-      if(!p)return;
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      neutralize();
-    },true);
-  });
-})();
-</script>
 
 <style id="rc249-mobile-real-arrow-buttons">
 /* RC249 — portals scroll like panels; only the real arrow button opens rooms. */
@@ -5613,314 +5548,34 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 
 <script id="rc250-mobile-portal-div-rebuild">
 (()=>{
-  const ready=(fn)=>document.readyState==='loading'
-    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
+  const ready=(fn)=>document.readyState==='loading'?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
   ready(()=>{
     if(!matchMedia('(max-width:700px)').matches)return;
-    const route=(room)=>{
-      if(room==='Live Center')return window.openLive?.();
-      if(room==='Screening Theater')return window.openTheater?.();
-      if(room==='Music Room')return window.openMusic?.();
-      if(room==='Production Room')return window.openProduction?.();
-      if(room==='Story Room')return window.openStory?.();
-      if(room==='Journal')return window.openJournal?.();
-      if(room==='Visual Bible')return window.openBible?.();
-      if(room==='About Us')return window.openAbout?.();
-      if(room==='Contact')return window.openContact?.();
-    };
-    document.querySelectorAll('#portals button.portal[data-room]').forEach((old)=>{
+    document.querySelectorAll('#portals button.portal[data-room]').forEach(old=>{
       const panel=document.createElement('div');
-      for(const attr of old.attributes){
-        if(attr.name==='type'||attr.name==='onclick')continue;
-        panel.setAttribute(attr.name,attr.value);
-      }
-      panel.setAttribute('role','group');
+      for(const attr of old.attributes){if(attr.name!=='type'&&attr.name!=='onclick')panel.setAttribute(attr.name,attr.value);}
+      panel.setAttribute('role','button');
+      panel.setAttribute('tabindex','0');
       panel.className=old.className;
       panel.innerHTML=old.innerHTML;
-      const hit=document.createElement('button');
-      hit.type='button';
+      const hit=document.createElement('span');
       hit.className='sc-mobile-portal-hit';
-      hit.setAttribute('aria-label','Open '+old.dataset.room);
+      hit.setAttribute('aria-hidden','true');
       hit.textContent='→';
       panel.appendChild(hit);
-      let sx=0,sy=0,moved=false;
-      hit.addEventListener('touchstart',(e)=>{
-        const t=e.touches[0]; sx=t.clientX; sy=t.clientY; moved=false;
-      },{passive:true});
-      hit.addEventListener('touchmove',(e)=>{
-        const t=e.touches[0];
-        if(Math.abs(t.clientY-sy)>3 || Math.abs(t.clientX-sx)>5)moved=true;
-      },{passive:true});
-      hit.addEventListener('touchend',(e)=>{
-        e.preventDefault();
-        e.stopPropagation();
-        if(!moved)route(panel.dataset.room);
-      },{passive:false});
-      hit.addEventListener('click',(e)=>{
-        e.preventDefault();
-        e.stopPropagation();
-        route(panel.dataset.room);
-      });
-      panel.addEventListener('click',(e)=>{
-        if(!e.target.closest('.sc-mobile-portal-hit')){
-          e.preventDefault();
-          e.stopPropagation();
-        }
-      });
       old.replaceWith(panel);
     });
   });
 })();
 </script>
 
-<script id="rc251-mobile-arrow-route-rebind">
-(()=>{
-  const ready=(fn)=>document.readyState==='loading'
-    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
-  ready(()=>{
-    const mobile=()=>matchMedia('(max-width:700px)').matches;
-    const route=(room)=>{
-      if(room==='Live Center'){ if(typeof openLive==='function')openLive(); return; }
-      if(room==='Screening Theater'){ if(typeof openTheater==='function')openTheater(); return; }
-      if(room==='Music Room'){ if(typeof openMusic==='function')openMusic(); return; }
-      if(room==='Production Room'){ if(typeof openProductionHard==='function')openProductionHard(); else if(typeof openProduction==='function')openProduction(); return; }
-      if(room==='Story Room'){ if(typeof openStory==='function')openStory(); return; }
-      if(room==='Journal'){ if(typeof openJournal==='function')openJournal(); return; }
-      if(room==='Visual Bible'){ if(typeof openBibleHard==='function')openBibleHard(); else if(typeof openBible==='function')openBible(); return; }
-      if(room==='About Us'){ if(typeof openAbout==='function')openAbout(); return; }
-      if(room==='Contact'){ if(typeof openContact==='function')openContact(); return; }
-    };
-    document.querySelectorAll('#portals .portal[data-room] .sc-mobile-portal-hit').forEach((hit)=>{
-      if(hit.dataset.rc251Bound==='1')return;
-      hit.dataset.rc251Bound='1';
-      let sx=0,sy=0,moved=false;
-      hit.addEventListener('touchstart',(e)=>{
-        if(!mobile())return;
-        const t=e.touches[0]; sx=t.clientX; sy=t.clientY; moved=false;
-      },{passive:true,capture:true});
-      hit.addEventListener('touchmove',(e)=>{
-        if(!mobile())return;
-        const t=e.touches[0];
-        if(Math.abs(t.clientY-sy)>3 || Math.abs(t.clientX-sx)>5)moved=true;
-      },{passive:true,capture:true});
-      hit.addEventListener('touchend',(e)=>{
-        if(!mobile())return;
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        const panel=hit.closest('.portal[data-room]');
-        if(panel && !moved)route(panel.dataset.room);
-        moved=false;
-      },{passive:false,capture:true});
-      hit.addEventListener('click',(e)=>{
-        if(!mobile())return;
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        const panel=hit.closest('.portal[data-room]');
-        if(panel)route(panel.dataset.room);
-      },true);
-    });
-  });
-})();
-</script>
 
-<script id="rc252-mobile-direct-room-router">
-(()=>{
-  const ready=(fn)=>document.readyState==='loading'
-    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
-  ready(()=>{
-    const mobile=()=>matchMedia('(max-width:700px)').matches;
-    const map={
-      'Screening Theater':'screeningTheater',
-      'Music Room':'musicRoom',
-      'Live Center':'liveCenter',
-      'Production Room':'productionRoom',
-      'Story Room':'storyRoom',
-      'Journal':'journalRoom',
-      'Visual Bible':'visualBibleRoom',
-      'About Us':'aboutRoom',
-      'Contact':'contactRoom'
-    };
-    const go=(room)=>{
-      const id=map[room];
-      const target=id&&document.getElementById(id);
-      const lobby=document.getElementById('lobby');
-      if(!target)return;
-      document.querySelectorAll('.scene.active').forEach(el=>el.classList.remove('active'));
-      target.classList.add('active');
-      if(lobby)lobby.classList.remove('active','portal-mode');
-      const portals=document.getElementById('portals');
-      if(portals)portals.classList.remove('show');
-      document.body.dataset.scene=id.replace('Room','').replace('screeningTheater','theater').replace('liveCenter','live').replace('visualBible','visual-bible');
-      document.body.dataset.experience='room_active';
 
-      if(room==='Screening Theater'){
-        const poster=document.getElementById('theaterPoster');
-        const status=document.getElementById('theaterStatus');
-        const title=document.getElementById('theaterCurrentTitle');
-        if(poster)poster.classList.remove('hidden');
-        if(status)status.textContent='PREMIERE READY';
-        if(title)title.textContent='MWEN POUKONT MWEN';
-      }
-      if(room==='Live Center' && typeof setLiveMode==='function')setLiveMode(document.body.dataset.liveMode||'standby');
-    };
-    document.querySelectorAll('#portals .portal[data-room] .sc-mobile-portal-hit').forEach(hit=>{
-      if(hit.dataset.rc252Bound==='1')return;
-      hit.dataset.rc252Bound='1';
-      let sx=0,sy=0,moved=false;
-      hit.addEventListener('touchstart',e=>{
-        if(!mobile())return;
-        const t=e.touches[0];sx=t.clientX;sy=t.clientY;moved=false;
-      },{passive:true,capture:true});
-      hit.addEventListener('touchmove',e=>{
-        if(!mobile())return;
-        const t=e.touches[0];
-        if(Math.abs(t.clientY-sy)>3||Math.abs(t.clientX-sx)>5)moved=true;
-      },{passive:true,capture:true});
-      hit.addEventListener('touchend',e=>{
-        if(!mobile())return;
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        const panel=hit.closest('.portal[data-room]');
-        if(panel&&!moved)go(panel.dataset.room);
-        moved=false;
-      },{passive:false,capture:true});
-      hit.addEventListener('click',e=>{
-        if(!mobile())return;
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        const panel=hit.closest('.portal[data-room]');
-        if(panel)go(panel.dataset.room);
-      },true);
-    });
-  });
-})();
-</script>
 
-<script id="rc253-mobile-clean-arrow-router">
-(()=>{
-  const ready=(fn)=>document.readyState==='loading'
-    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
-  ready(()=>{
-    const mobile=()=>matchMedia('(max-width:700px)').matches;
-    if(!mobile())return;
-    const directGo=(room)=>{
-      const ids={
-        'Screening Theater':'screeningTheater',
-        'Music Room':'musicRoom',
-        'Live Center':'liveCenter',
-        'Production Room':'productionRoom',
-        'Story Room':'storyRoom',
-        'Journal':'journalRoom',
-        'Visual Bible':'visualBibleRoom',
-        'About Us':'aboutRoom',
-        'Contact':'contactRoom'
-      };
-      const lobby=document.getElementById('lobby');
-      const target=document.getElementById(ids[room]||'');
-      if(!target)return;
-      document.querySelectorAll('.scene.active').forEach(el=>el.classList.remove('active'));
-      document.getElementById('portals')?.classList.remove('show');
-      lobby?.classList.remove('active','portal-mode');
-      target.classList.add('active');
-      document.body.dataset.scene=ids[room]||room;
-      document.body.dataset.experience='room_active';
-    };
-    document.querySelectorAll('#portals .portal[data-room]').forEach(panel=>{
-      panel.onclick=null;
-      const old=panel.querySelector('.sc-mobile-portal-hit');
-      const hit=document.createElement('button');
-      hit.type='button';
-      hit.className='sc-mobile-portal-hit';
-      hit.textContent='→';
-      hit.setAttribute('aria-label','Open '+panel.dataset.room);
-      if(old)old.replaceWith(hit); else panel.appendChild(hit);
-      let sx=0,sy=0,moved=false;
-      hit.addEventListener('touchstart',e=>{
-        const t=e.touches[0];
-        sx=t.clientX;sy=t.clientY;moved=false;
-      },{passive:true});
-      hit.addEventListener('touchmove',e=>{
-        const t=e.touches[0];
-        if(Math.abs(t.clientY-sy)>3||Math.abs(t.clientX-sx)>5)moved=true;
-      },{passive:true});
-      hit.addEventListener('touchend',e=>{
-        e.preventDefault();
-        e.stopPropagation();
-        if(!moved)directGo(panel.dataset.room);
-        moved=false;
-      },{passive:false});
-      hit.addEventListener('click',e=>{
-        e.preventDefault();
-        e.stopPropagation();
-        directGo(panel.dataset.room);
-      });
-    });
-  });
-})();
-</script>
 
-<script id="rc254-mobile-pointer-route-owner">
-(()=>{
-  const ready=(fn)=>document.readyState==='loading'
-    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
-  ready(()=>{
-    const mobile=()=>matchMedia('(max-width:700px)').matches;
-    const ids={
-      'Screening Theater':'screeningTheater',
-      'Music Room':'musicRoom',
-      'Live Center':'liveCenter',
-      'Production Room':'productionRoom',
-      'Story Room':'storyRoom',
-      'Journal':'journalRoom',
-      'Visual Bible':'visualBibleRoom',
-      'About Us':'aboutRoom',
-      'Contact':'contactRoom'
-    };
-    const go=(room)=>{
-      const target=document.getElementById(ids[room]||'');
-      const lobby=document.getElementById('lobby');
-      const portals=document.getElementById('portals');
-      if(!target)return;
-      document.querySelectorAll('.scene.active').forEach(el=>el.classList.remove('active'));
-      portals?.classList.remove('show');
-      lobby?.classList.remove('active','portal-mode');
-      target.classList.add('active');
-      document.body.dataset.scene=ids[room]||room;
-      document.body.dataset.experience='room_active';
-      if(room==='Screening Theater'){
-        document.getElementById('theaterPoster')?.classList.remove('hidden');
-        const status=document.getElementById('theaterStatus');
-        const title=document.getElementById('theaterCurrentTitle');
-        if(status)status.textContent='PREMIERE READY';
-        if(title)title.textContent='MWEN POUKONT MWEN';
-      }
-    };
-    document.querySelectorAll('#portals .portal[data-room] .sc-mobile-portal-hit').forEach(hit=>{
-      if(hit.dataset.rc254Bound==='1')return;
-      hit.dataset.rc254Bound='1';
-      let sx=0,sy=0,moved=false;
-      hit.addEventListener('pointerdown',e=>{
-        if(!mobile())return;
-        sx=e.clientX;sy=e.clientY;moved=false;
-      },{capture:true});
-      hit.addEventListener('pointermove',e=>{
-        if(!mobile())return;
-        if(Math.abs(e.clientY-sy)>3||Math.abs(e.clientX-sx)>5)moved=true;
-      },{capture:true});
-      hit.addEventListener('pointerup',e=>{
-        if(!mobile())return;
-        e.preventDefault();
-        e.stopPropagation();
-        if(!moved){
-          const panel=hit.closest('.portal[data-room]');
-          if(panel)go(panel.dataset.room);
-        }
-        moved=false;
-      },{capture:true});
-    });
-  });
-})();
-</script>
+
+
+
 
 <style id="rc255-mobile-wide-arrow-zone">
 @media(max-width:700px){
@@ -5944,50 +5599,7 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 }
 </style>
 
-<script id="rc255-mobile-wide-arrow-zone">
-(()=>{
-  const ready=(fn)=>document.readyState==='loading'
-    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
-  ready(()=>{
-    const mobile=()=>matchMedia('(max-width:700px)').matches;
-    const ids={
-      'Screening Theater':'screeningTheater',
-      'Music Room':'musicRoom',
-      'Live Center':'liveCenter',
-      'Production Room':'productionRoom',
-      'Story Room':'storyRoom',
-      'Journal':'journalRoom',
-      'Visual Bible':'visualBibleRoom',
-      'About Us':'aboutRoom',
-      'Contact':'contactRoom'
-    };
-    const go=(room)=>{
-      const target=document.getElementById(ids[room]||'');
-      const lobby=document.getElementById('lobby');
-      if(!target)return;
-      document.querySelectorAll('.scene.active').forEach(el=>el.classList.remove('active'));
-      document.getElementById('portals')?.classList.remove('show');
-      lobby?.classList.remove('active','portal-mode');
-      target.classList.add('active');
-      document.body.dataset.scene=ids[room]||room;
-      document.body.dataset.experience='room_active';
-    };
-    document.addEventListener('pointerup',e=>{
-      if(!mobile())return;
-      const portal=e.target.closest&&e.target.closest('#lobby.portal-mode #portals .portal[data-room]');
-      if(!portal)return;
-      const rect=portal.getBoundingClientRect();
-      const inWideRight=e.clientX>=rect.right-112;
-      const moved=Math.abs((e.movementY||0))>3||Math.abs((e.movementX||0))>5;
-      if(inWideRight&&!moved){
-        e.preventDefault();
-        e.stopPropagation();
-        go(portal.dataset.room);
-      }
-    },true);
-  });
-})();
-</script>
+
 
 <style id="rc256-mobile-full-card-tap-normal-arrows">
 @media(max-width:700px){
@@ -6010,69 +5622,7 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 }
 </style>
 
-<script id="rc256-mobile-full-card-tap-router">
-(()=>{
-  const ready=(fn)=>document.readyState==='loading'
-    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
-  ready(()=>{
-    const mobile=()=>matchMedia('(max-width:700px)').matches;
-    if(!mobile())return;
-    const ids={
-      'Screening Theater':'screeningTheater',
-      'Music Room':'musicRoom',
-      'Live Center':'liveCenter',
-      'Production Room':'productionRoom',
-      'Story Room':'storyRoom',
-      'Journal':'journalRoom',
-      'Visual Bible':'visualBibleRoom',
-      'About Us':'aboutRoom',
-      'Contact':'contactRoom'
-    };
-    const go=(room)=>{
-      const target=document.getElementById(ids[room]||'');
-      const lobby=document.getElementById('lobby');
-      if(!target)return;
-      document.querySelectorAll('.scene.active').forEach(el=>el.classList.remove('active'));
-      document.getElementById('portals')?.classList.remove('show');
-      lobby?.classList.remove('active','portal-mode');
-      target.classList.add('active');
-      document.body.dataset.scene=ids[room]||room;
-      document.body.dataset.experience='room_active';
-    };
-    document.querySelectorAll('#portals .portal[data-room]').forEach(panel=>{
-      if(panel.dataset.rc256Bound==='1')return;
-      panel.dataset.rc256Bound='1';
-      panel.onclick=null;
-      let sx=0,sy=0,st=0,moved=false;
-      panel.addEventListener('touchstart',e=>{
-        if(!mobile())return;
-        const t=e.touches[0];
-        sx=t.clientX;sy=t.clientY;st=Date.now();moved=false;
-      },{passive:true,capture:true});
-      panel.addEventListener('touchmove',e=>{
-        if(!mobile())return;
-        const t=e.touches[0];
-        if(Math.abs(t.clientY-sy)>6||Math.abs(t.clientX-sx)>10)moved=true;
-      },{passive:true,capture:true});
-      panel.addEventListener('touchend',e=>{
-        if(!mobile())return;
-        const t=e.changedTouches&&e.changedTouches[0];
-        const dy=t?Math.abs(t.clientY-sy):0;
-        const dx=t?Math.abs(t.clientX-sx):0;
-        const tap=!moved && dy<=6 && dx<=10 && Date.now()-st<420;
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        if(tap)go(panel.dataset.room);
-      },{passive:false,capture:true});
-      panel.addEventListener('click',e=>{
-        if(!mobile())return;
-        e.preventDefault();
-        e.stopImmediatePropagation();
-      },true);
-    });
-  });
-})();
-</script>
+
 
 <style id="rc257-mobile-card-tap-small-arrows">
 @media(max-width:700px){
@@ -6100,76 +5650,7 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 }
 </style>
 
-<script id="rc257-mobile-card-tap-small-arrows">
-(()=>{
-  const ready=(fn)=>document.readyState==='loading'
-    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
-  ready(()=>{
-    const mobile=()=>matchMedia('(max-width:700px)').matches;
-    const ids={
-      'Screening Theater':'screeningTheater',
-      'Music Room':'musicRoom',
-      'Live Center':'liveCenter',
-      'Production Room':'productionRoom',
-      'Story Room':'storyRoom',
-      'Journal':'journalRoom',
-      'Visual Bible':'visualBibleRoom',
-      'About Us':'aboutRoom',
-      'Contact':'contactRoom'
-    };
-    const go=(room)=>{
-      const target=document.getElementById(ids[room]||'');
-      const lobby=document.getElementById('lobby');
-      if(!target)return;
-      document.querySelectorAll('.scene.active').forEach(el=>el.classList.remove('active'));
-      document.getElementById('portals')?.classList.remove('show');
-      lobby?.classList.remove('active','portal-mode');
-      target.classList.add('active');
-      document.body.dataset.scene=ids[room]||room;
-      document.body.dataset.experience='room_active';
-      if(room==='Screening Theater'){
-        document.getElementById('theaterPoster')?.classList.remove('hidden');
-        const status=document.getElementById('theaterStatus');
-        const title=document.getElementById('theaterCurrentTitle');
-        if(status)status.textContent='PREMIERE READY';
-        if(title)title.textContent='MWEN POUKONT MWEN';
-      }
-      if(room==='Live Center' && typeof setLiveMode==='function'){
-        setLiveMode(document.body.dataset.liveMode||'standby');
-      }
-    };
-    document.querySelectorAll('#portals .portal[data-room]').forEach(panel=>{
-      if(panel.dataset.rc257Bound==='1')return;
-      panel.dataset.rc257Bound='1';
-      panel.onclick=null;
-      panel.style.touchAction='pan-y';
-      let sx=0,sy=0,st=0,moved=false,down=false;
-      panel.addEventListener('pointerdown',e=>{
-        if(!mobile()||e.pointerType==='mouse')return;
-        sx=e.clientX;sy=e.clientY;st=Date.now();moved=false;down=true;
-      },{capture:true});
-      panel.addEventListener('pointermove',e=>{
-        if(!mobile()||!down)return;
-        if(Math.abs(e.clientY-sy)>8||Math.abs(e.clientX-sx)>12)moved=true;
-      },{capture:true});
-      panel.addEventListener('pointerup',e=>{
-        if(!mobile()||!down)return;
-        const tap=!moved&&Math.abs(e.clientY-sy)<=8&&Math.abs(e.clientX-sx)<=12&&Date.now()-st<430;
-        down=false;
-        if(tap){
-          e.preventDefault();
-          e.stopPropagation();
-          go(panel.dataset.room);
-        }
-      },{capture:true});
-      panel.addEventListener('pointercancel',()=>{
-        down=false;
-        moved=true;
-      },{capture:true});
-    });
-  });
-})();
-</script>
+
 
 
 <style id="rc258-mobile-screening-theater-restore">
@@ -6230,35 +5711,7 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 
 
 
-<script id="rc265-mobile-skip-coordinate-owner">
-(()=>{
-  'use strict';
-  const isMobile=()=>matchMedia('(max-width:700px)').matches;
-  const point=(e)=>{
-    if(e.touches&&e.touches[0])return e.touches[0];
-    if(e.changedTouches&&e.changedTouches[0])return e.changedTouches[0];
-    return e;
-  };
-  const inside=(el,x,y)=>{
-    const r=el.getBoundingClientRect();
-    return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom;
-  };
-  const forcePortals=(e)=>{
-    if(!isMobile())return;
-    const lobby=document.getElementById('lobby');
-    const skip=document.getElementById('skip');
-    if(!lobby||!skip||!lobby.classList.contains('active')||lobby.classList.contains('portal-mode'))return;
-    const p=point(e);
-    if(!p||!inside(skip,p.clientX,p.clientY))return;
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    lobby.classList.add('portal-mode');
-    if(typeof showPortals==='function')showPortals();
-  };
-  document.addEventListener('pointerdown',forcePortals,true);
-  document.addEventListener('touchstart',forcePortals,{capture:true,passive:false});
-})();
-</script>
+
 <style id="rc265-mobile-skip-coordinate-lock">
 @media(max-width:700px){
   #lobby #skip{z-index:1000!important;pointer-events:auto!important;touch-action:manipulation!important}
@@ -6452,6 +5905,108 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 
 
 
+
+<!-- RC289 MOBILE PORTAL SINGLE OWNER + QUIET MEDIA -->
+<style id="rc289-mobile-portal-final-css">
+@media(max-width:700px){
+  #lobby.portal-mode #portals,
+  #lobby.portal-mode #portals .portal-shell,
+  #lobby.portal-mode #portals .portal{touch-action:pan-y!important;}
+  #lobby.portal-mode #portals .portal{cursor:pointer!important;}
+  #lobby.portal-mode #portals .sc-mobile-portal-hit{pointer-events:none!important;}
+}
+</style>
+<script id="rc289-mobile-portal-single-owner">
+(()=>{
+  'use strict';
+  const mobile=()=>matchMedia('(max-width:700px)').matches;
+  if(!mobile())return;
+  const lobby=document.getElementById('lobby');
+  const portals=document.getElementById('portals');
+  const skip=document.getElementById('skip');
+  if(!lobby||!portals||!skip)return;
+
+  const stopLobbyMedia=()=>{
+    document.body.dataset.mobilePortalLock='1';
+    document.querySelectorAll('#lobby video,#lobby audio,#ambient').forEach(m=>{
+      if(!(m instanceof HTMLMediaElement))return;
+      try{m.pause()}catch(_e){}
+    });
+  };
+
+  const openPortals=()=>{
+    if(typeof clearTimers==='function'){try{clearTimers()}catch(_e){}}
+    stopLobbyMedia();
+    document.getElementById('heart')?.classList.remove('show');
+    document.getElementById('premiereCard')?.classList.remove('show');
+    document.getElementById('fade')?.classList.remove('on');
+    const journey=document.getElementById('journeyTransition');
+    if(journey){journey.classList.remove('on');journey.setAttribute('aria-hidden','true');}
+    lobby.classList.add('active','portal-mode');
+    portals.classList.add('show');
+    skip.style.display='none';
+    document.body.dataset.scene='lobby';
+    document.body.dataset.experience='portal_mode';
+    stopLobbyMedia();
+    requestAnimationFrame(stopLobbyMedia);
+  };
+
+  skip.onclick=(e)=>{e.preventDefault();e.stopPropagation();openPortals();};
+
+  const route=(room)=>{
+    stopLobbyMedia();
+    if(room==='Screening Theater'&&typeof openTheater==='function')return openTheater();
+    if(room==='Music Room'&&typeof openMusic==='function')return openMusic();
+    if(room==='Live Center'&&typeof openLive==='function')return openLive();
+    if(room==='Production Room'){if(typeof openProductionHard==='function')return openProductionHard();if(typeof openProduction==='function')return openProduction();}
+    if(room==='Story Room'&&typeof openStory==='function')return openStory();
+    if(room==='Journal'&&typeof openJournal==='function')return openJournal();
+    if(room==='Visual Bible'){if(typeof openBibleHard==='function')return openBibleHard();if(typeof openBible==='function')return openBible();}
+    if(room==='About Us'&&typeof openAbout==='function')return openAbout();
+    if(room==='Contact'&&typeof openContact==='function')return openContact();
+  };
+
+  const bindCards=()=>{
+    document.querySelectorAll('#portals .portal[data-room]').forEach(card=>{
+      if(card.dataset.rc289Bound==='1')return;
+      card.dataset.rc289Bound='1';
+      card.onclick=null;
+      let sx=0,sy=0,st=0,moved=false,down=false;
+      card.addEventListener('pointerdown',e=>{
+        if(!mobile()||e.pointerType==='mouse')return;
+        sx=e.clientX;sy=e.clientY;st=Date.now();moved=false;down=true;
+      },{passive:true});
+      card.addEventListener('pointermove',e=>{
+        if(!down)return;
+        if(Math.abs(e.clientY-sy)>10||Math.abs(e.clientX-sx)>14)moved=true;
+      },{passive:true});
+      card.addEventListener('pointercancel',()=>{down=false;moved=true;},{passive:true});
+      card.addEventListener('pointerup',e=>{
+        if(!down)return;
+        const tap=!moved&&Math.abs(e.clientY-sy)<=10&&Math.abs(e.clientX-sx)<=14&&Date.now()-st<520;
+        down=false;
+        if(!tap)return;
+        e.preventDefault();
+        e.stopPropagation();
+        route(card.dataset.room);
+      });
+      card.addEventListener('keydown',e=>{
+        if(e.key==='Enter'||e.key===' '){e.preventDefault();route(card.dataset.room);}
+      });
+    });
+  };
+
+  bindCards();
+  new MutationObserver(()=>{bindCards();if(portals.classList.contains('show'))stopLobbyMedia();})
+    .observe(portals,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+  document.addEventListener('play',e=>{
+    const m=e.target;
+    if(document.body.dataset.mobilePortalLock==='1'&&m instanceof HTMLMediaElement&&((m.closest&&m.closest('#lobby'))||m.id==='ambient')){
+      try{m.pause()}catch(_e){}
+    }
+  },true);
+})();
+</script>
 
 <!-- RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP -->
 <script id="rc271-desktop-live-exit-media-stop">
