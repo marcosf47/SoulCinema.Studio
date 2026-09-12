@@ -6155,6 +6155,63 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 })();
 </script>
 
+<!-- RC292 MOBILE PORTAL THEATER GHOST PLAY GUARD -->
+<script id="rc292-mobile-portal-theater-ghost-play-guard">
+(()=>{
+  'use strict';
+  const mobile=()=>matchMedia('(max-width:700px)').matches;
+  if(!mobile())return;
+  const lobby=document.getElementById('lobby');
+  const portals=document.getElementById('portals');
+  const theater=document.getElementById('screeningTheater');
+  const player=document.getElementById('theaterPlayer');
+  const warm=document.getElementById('kidsWarmupPlayer');
+  if(!lobby||!portals||!theater||!player)return;
+
+  const portalMode=()=>lobby.classList.contains('portal-mode')||portals.classList.contains('show')||document.body.dataset.mobilePortalLock==='1';
+  const theaterActive=()=>theater.classList.contains('active');
+
+  const stopTheaterGhost=()=>{
+    if(!mobile()||theaterActive())return;
+    try{player.pause()}catch(_e){}
+    try{
+      const src=(player.currentSrc||player.getAttribute('src')||'');
+      if(src.includes('collection-family-01.mp4')) player.currentTime=0;
+    }catch(_e){}
+    if(warm){try{warm.pause()}catch(_e){}}
+  };
+
+  const nativePlay=player.play.bind(player);
+  player.play=function(){
+    if(mobile()&&!theaterActive()&&(portalMode()||lobby.classList.contains('active'))){
+      stopTheaterGhost();
+      return Promise.resolve();
+    }
+    return nativePlay();
+  };
+
+  player.addEventListener('play',()=>{
+    if(!theaterActive()&&(portalMode()||lobby.classList.contains('active')))stopTheaterGhost();
+  },true);
+
+  const guard=()=>{
+    if(portalMode()&&!theaterActive())stopTheaterGhost();
+  };
+  new MutationObserver(guard).observe(lobby,{attributes:true,attributeFilter:['class']});
+  new MutationObserver(guard).observe(portals,{attributes:true,attributeFilter:['class']});
+  new MutationObserver(guard).observe(theater,{attributes:true,attributeFilter:['class']});
+
+  window.addEventListener('pointerdown',e=>{
+    if(e.target?.closest?.('#skip')) stopTheaterGhost();
+  },true);
+  window.addEventListener('touchstart',e=>{
+    if(e.target?.closest?.('#skip')) stopTheaterGhost();
+  },{capture:true,passive:true});
+
+  guard();
+})();
+</script>
+
 <!-- RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP -->
 <script id="rc271-desktop-live-exit-media-stop">
 (()=>{
