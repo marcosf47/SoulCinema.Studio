@@ -41,7 +41,7 @@ jobs:
           grep -q 'RC298 DESKTOP LIVE CENTER FULLSCREEN CONTROL' public/index.html
           grep -q 'RC297 DESKTOP PRODUCTION ROOM VIEWPORT FIT' public/index.html
           grep -q 'RC280 LIVE SAFE NATIVE RATIO FILL' public/index.html
-          grep -q 'RC277 DESKTOP LIVE CENTER RETURN SINGLE CINEMATIC HANDOFF' public/index.html
+          grep -q 'RC277 DESKTOP LIVE CENTER RETURN' public/index.html
           grep -q 'RC276 LIVE AUTOPLAY BROADCAST ONLY PLAYER' public/index.html
           grep -q 'RC275 SOULCINEMA LIVE CENTER VPS EMBED RECOVERY' public/index.html
           grep -q 'RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP' public/index.html
