@@ -18,28 +18,50 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC286 About Us single cinematic handoffs
+      - name: Apply RC287 official Contact inbox
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          old_open="function openAbout(){clearTimers();journeyTransition('ABOUT US','THE STUDIO','WHY SOULCINEMA EXISTS',()=>{SceneManager.goTo('about');scene(lobby,aboutRoom)})}"
-          new_open="function openAbout(){clearTimers();journeyTransition('ABOUT US','THE STUDIO','WHY SOULCINEMA EXISTS',()=>{/* RC286 ABOUT US IN — SINGLE CINEMATIC HANDOFF */SceneManager.goTo('about');lobby.classList.remove('active');aboutRoom.classList.add('active');transitionCount++;updateRuntimeMonitor()})}"
-          old_return="function returnFromAbout(){journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{SceneManager.goTo('lobby');scene(aboutRoom,lobby);setTimeout(showPortals,520)})}"
-          new_return="function returnFromAbout(){journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{/* RC286 ABOUT US OUT — SINGLE CINEMATIC HANDOFF */SceneManager.goTo('lobby');aboutRoom.classList.remove('active');lobby.classList.add('active');transitionCount++;updateRuntimeMonitor();setTimeout(showPortals,420)})}"
-          if html.count(old_open)!=1 or html.count(old_return)!=1:
-              raise SystemExit(f'Expected exact About Us targets once each; open={html.count(old_open)} return={html.count(old_return)}; refusing to guess')
-          html=html.replace(old_open,new_open,1).replace(old_return,new_return,1)
+
+          old_intro='<section class="contact-intro"><small>START A CONVERSATION</small><h3>Bring the story to the studio.</h3><p>Use the inquiry composer to prepare a message for SoulCinema. The public direct-contact destination will be connected before official launch; no address is invented in this build.</p>'
+          new_intro='<!-- RC287 OFFICIAL SOULCINEMA CONTACT INBOX -->\n      <section class="contact-intro"><small>START A CONVERSATION</small><h3>Bring the story to the studio.</h3><p>Use the inquiry composer to prepare your message, then email SoulCinema directly at <strong style="color:#f2d783">soulcinema77@gmail.com</strong>.</p>'
+
+          old_status='<div id="contactStatus" class="contact-status" role="status">DIRECT CHANNEL · CONFIGURATION RESERVED FOR PUBLIC LAUNCH</div>'
+          new_status='<div id="contactStatus" class="contact-status" role="status">OFFICIAL INBOX · soulcinema77@gmail.com</div>'
+
+          old_reveal='<div id="contactReveal" class="contact-reveal" aria-hidden="true"><div class="contact-reveal-card"><small>INQUIRY PREPARED</small><h3 id="contactRevealTitle">Your message is ready.</h3><pre id="contactRevealText"></pre><div class="contact-reveal-actions"><button id="contactCopy" type="button">COPY INQUIRY</button><button id="contactRevealClose" class="ghost" type="button">RETURN TO CONTACT</button></div><p>No message has been sent. A direct inbox will be connected before public launch.</p></div></div>'
+          new_reveal='<div id="contactReveal" class="contact-reveal" aria-hidden="true"><div class="contact-reveal-card"><small>INQUIRY PREPARED</small><h3 id="contactRevealTitle">Your message is ready.</h3><pre id="contactRevealText"></pre><div class="contact-reveal-actions"><button id="contactEmailSend" type="button">EMAIL INQUIRY</button><button id="contactCopy" type="button">COPY INQUIRY</button><button id="contactRevealClose" class="ghost" type="button">RETURN TO CONTACT</button></div><p>EMAIL INQUIRY opens your email app with SoulCinema’s official inbox, subject and message prefilled. Nothing is sent until you press Send.</p></div></div>'
+
+          old_js="// RC11.13.17 — About + Contact integration. Contact is intentionally local-only until a public inbox is configured.\nlet contactType='COLLABORATION';"
+          new_js="// RC287 — Official SoulCinema Contact inbox.\nconst SOULCINEMA_CONTACT_EMAIL='soulcinema77@gmail.com';\nlet contactType='COLLABORATION';"
+
+          old_clear="$('#contactClear').onclick=()=>{$('#contactName').value='';$('#contactEmail').value='';$('#contactMessage').value='';$('#contactStatus').textContent='DIRECT CHANNEL · CONFIGURATION RESERVED FOR PUBLIC LAUNCH'};"
+          new_clear="$('#contactClear').onclick=()=>{$('#contactName').value='';$('#contactEmail').value='';$('#contactMessage').value='';$('#contactStatus').textContent='OFFICIAL INBOX · '+SOULCINEMA_CONTACT_EMAIL};"
+
+          old_copy="$('#contactCopy').onclick=async()=>{const text=buildContactInquiry();try{await navigator.clipboard.writeText(text);$('#contactCopy').textContent='COPIED';setTimeout(()=>$('#contactCopy').textContent='COPY INQUIRY',1400)}catch(e){$('#contactCopy').textContent='SELECT + COPY';contactRevealText.focus?.()}};"
+          new_copy="$('#contactEmailSend').onclick=()=>{const subject=`SoulCinema ${contactType} Inquiry`;const body=buildContactInquiry();window.location.href=`mailto:${SOULCINEMA_CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`};\n$('#contactCopy').onclick=async()=>{const text=buildContactInquiry();try{await navigator.clipboard.writeText(text);$('#contactCopy').textContent='COPIED';setTimeout(()=>$('#contactCopy').textContent='COPY INQUIRY',1400)}catch(e){$('#contactCopy').textContent='SELECT + COPY';contactRevealText.focus?.()}};"
+
+          targets=[(old_intro,new_intro,'intro'),(old_status,new_status,'status'),(old_reveal,new_reveal,'reveal'),(old_js,new_js,'js header'),(old_clear,new_clear,'clear status'),(old_copy,new_copy,'email action')]
+          for old,new,label in targets:
+              if html.count(old)!=1:
+                  raise SystemExit(f'Expected exact Contact {label} target once; found {html.count(old)}; refusing to guess')
+              html=html.replace(old,new,1)
+
           p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC286 and preserve locked layers
+      - name: Verify RC287 and preserve locked layers
         run: |
+          grep -q 'RC287 OFFICIAL SOULCINEMA CONTACT INBOX' public/index.html
+          grep -q "SOULCINEMA_CONTACT_EMAIL='soulcinema77@gmail.com'" public/index.html
+          grep -q 'id="contactEmailSend"' public/index.html
+          grep -q 'mailto:${SOULCINEMA_CONTACT_EMAIL}' public/index.html
+          grep -q 'OFFICIAL INBOX · soulcinema77@gmail.com' public/index.html
+          if grep -q 'CONFIGURATION RESERVED FOR PUBLIC LAUNCH' public/index.html; then echo 'Old Contact placeholder still present'; exit 1; fi
           grep -q 'RC286 ABOUT US IN — SINGLE CINEMATIC HANDOFF' public/index.html
           grep -q 'RC286 ABOUT US OUT — SINGLE CINEMATIC HANDOFF' public/index.html
-          if grep -q "SceneManager.goTo('about');scene(lobby,aboutRoom)" public/index.html; then echo 'Old About IN nested scene remains'; exit 1; fi
-          if grep -q "SceneManager.goTo('lobby');scene(aboutRoom,lobby)" public/index.html; then echo 'Old About OUT nested scene remains'; exit 1; fi
           grep -q 'RC285 VISUAL BIBLE OUT — SINGLE CINEMATIC HANDOFF' public/index.html
           grep -q 'RC284 JOURNAL IN — SINGLE CINEMATIC HANDOFF' public/index.html
           grep -q 'RC284 JOURNAL OUT — SINGLE CINEMATIC HANDOFF' public/index.html
@@ -55,14 +77,14 @@ jobs:
           grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
 
-      - name: Lock RC286 into source
+      - name: Lock RC287 into source
         run: |
           if git diff --quiet -- public/index.html; then
-            echo "RC286 already locked"
+            echo "RC287 already locked"
           else
             git config user.name "SoulCinema Direct Deploy"
             git config user.email "actions@users.noreply.github.com"
             git add public/index.html
-            git commit -m "RC286 smooth About Us in and out transitions"
+            git commit -m "RC287 connect official SoulCinema contact inbox"
             git push origin HEAD:main
           fi
