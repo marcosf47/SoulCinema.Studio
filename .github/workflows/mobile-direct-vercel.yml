@@ -18,49 +18,48 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC282 Production return single cinematic handoff
+      - name: Apply RC283 Story Room single cinematic handoffs
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          old="function returnFromProduction(){journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{SceneManager.goTo('lobby');scene(productionRoom,lobby);setTimeout(showPortals,520)})}"
-          new="function returnFromProduction(){journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{/* RC282 PRODUCTION ROOM RETURN — SINGLE CINEMATIC HANDOFF */SceneManager.goTo('lobby');productionRoom.classList.remove('active');lobby.classList.add('active');transitionCount++;updateRuntimeMonitor();setTimeout(showPortals,420)})}"
-          if html.count(old)!=1:
-              raise SystemExit(f'Expected exactly one Production return target, found {html.count(old)}; refusing to guess')
-          html=html.replace(old,new,1)
+          old_open="function openStory(){clearTimers();storyRoom.classList.add('story-arriving');journeyTransition('STORY ROOM','STORY ARCHIVE','EVERY HEART HIDES A STORY',()=>{SceneManager.goTo('story');scene(lobby,storyRoom);setTimeout(()=>storyRoom.classList.remove('story-arriving'),1200)})}"
+          new_open="function openStory(){clearTimers();storyRoom.classList.add('story-arriving');journeyTransition('STORY ROOM','STORY ARCHIVE','EVERY HEART HIDES A STORY',()=>{/* RC283 STORY ROOM IN — SINGLE CINEMATIC HANDOFF */SceneManager.goTo('story');lobby.classList.remove('active');storyRoom.classList.add('active');transitionCount++;updateRuntimeMonitor();setTimeout(()=>storyRoom.classList.remove('story-arriving'),900)})}"
+          old_return="function returnFromStory(){journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{SceneManager.goTo('lobby');scene(storyRoom,lobby);setTimeout(showPortals,520)})}"
+          new_return="function returnFromStory(){journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{/* RC283 STORY ROOM OUT — SINGLE CINEMATIC HANDOFF */SceneManager.goTo('lobby');storyRoom.classList.remove('active');lobby.classList.add('active');transitionCount++;updateRuntimeMonitor();setTimeout(showPortals,420)})}"
+          if html.count(old_open)!=1 or html.count(old_return)!=1:
+              raise SystemExit(f'Expected exact Story targets once each; open={html.count(old_open)} return={html.count(old_return)}; refusing to guess')
+          html=html.replace(old_open,new_open,1).replace(old_return,new_return,1)
           p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC282 and preserve locked layers
+      - name: Verify RC283 and preserve locked layers
         run: |
+          grep -q 'RC283 STORY ROOM IN — SINGLE CINEMATIC HANDOFF' public/index.html
+          grep -q 'RC283 STORY ROOM OUT — SINGLE CINEMATIC HANDOFF' public/index.html
+          grep -q "lobby.classList.remove('active');storyRoom.classList.add('active')" public/index.html
+          grep -q "storyRoom.classList.remove('active');lobby.classList.add('active')" public/index.html
+          if grep -q "SceneManager.goTo('story');scene(lobby,storyRoom)" public/index.html; then echo 'Old Story IN nested scene remains'; exit 1; fi
+          if grep -q "SceneManager.goTo('lobby');scene(storyRoom,lobby)" public/index.html; then echo 'Old Story OUT nested scene remains'; exit 1; fi
           grep -q 'RC282 PRODUCTION ROOM RETURN — SINGLE CINEMATIC HANDOFF' public/index.html
-          grep -q "productionRoom.classList.remove('active');lobby.classList.add('active')" public/index.html
-          if grep -q "SceneManager.goTo('lobby');scene(productionRoom,lobby)" public/index.html; then
-            echo 'Old nested Production scene transition still present'; exit 1
-          fi
           grep -q 'RC281 SCREENING THEATER RETURN — SINGLE CINEMATIC HANDOFF' public/index.html
           grep -q 'RC280 LIVE SAFE NATIVE RATIO FILL' public/index.html
-          grep -q 'RC279 LIVE INNER SCREEN ALIGNMENT' public/index.html
-          grep -q 'RC278 LIVE CENTER CINEMA WALL SCALE' public/index.html
           grep -q 'RC277 DESKTOP LIVE CENTER RETURN — SINGLE CINEMATIC HANDOFF' public/index.html
           grep -q 'RC276 LIVE AUTOPLAY BROADCAST ONLY PLAYER' public/index.html
-          grep -q 'RC275 SOULCINEMA LIVE CENTER VPS EMBED RECOVERY' public/index.html
-          grep -q 'RC272 DESKTOP LIVE TRUTH STATE + STALE CLIP GUARD' public/index.html
-          grep -q 'RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP' public/index.html
           grep -q 'RC269 MASTER MOBILE MEDIA AUTHORITY LOCK' public/index.html
           grep -q 'RC268 MASTER MOBILE PORTAL RUNTIME CLEANUP' public/index.html
           grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
 
-      - name: Lock RC282 into source
+      - name: Lock RC283 into source
         run: |
           if git diff --quiet -- public/index.html; then
-            echo "RC282 already locked"
+            echo "RC283 already locked"
           else
             git config user.name "SoulCinema Direct Deploy"
             git config user.email "actions@users.noreply.github.com"
             git add public/index.html
-            git commit -m "RC282 smooth Production Room return to Grand Lobby"
+            git commit -m "RC283 smooth Story Room in and out transitions"
             git push origin HEAD:main
           fi
