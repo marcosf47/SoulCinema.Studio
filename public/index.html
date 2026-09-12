@@ -6154,6 +6154,30 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
   sync();
 })();
 </script>
+<!-- RC297 DESKTOP PRODUCTION ROOM VIEWPORT FIT -->
+<style id="rc297-desktop-production-viewport-fit">
+@media (min-width:861px){
+  #productionRoom .center{
+    padding-left:24px!important;
+    padding-right:24px!important;
+    overflow:hidden!important;
+  }
+  #productionRoom .production-shell{
+    width:min(1320px,calc(100vw - 64px))!important;
+    max-width:calc(100vw - 64px)!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    min-width:0!important;
+  }
+  #productionRoom .production-grid,
+  #productionRoom .production-feature,
+  #productionRoom .production-stack,
+  #productionRoom .production-card{
+    min-width:0!important;
+  }
+}
+</style>
+
 <!-- RC296 MOBILE LOBBY LAYOUT REGRESSION ROLLBACK -->
 
 <!-- RC293 MOBILE SKIP IMMEDIATE PORTAL OWNER -->
