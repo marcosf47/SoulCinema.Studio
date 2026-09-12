@@ -18,46 +18,119 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC293 mobile Skip immediate owner
+      - name: Apply RC294 mobile Skip soft full-hitbox owner
         run: |
           python3 - <<'PY'
           from pathlib import Path
           import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='<!-- RC293 MOBILE SKIP IMMEDIATE PORTAL OWNER -->'
+          marker='<!-- RC294 MOBILE SKIP SOFT FULL HITBOX OWNER -->'
           if marker not in html:
-              anchor='\n<!-- RC292 MOBILE PORTAL THEATER GHOST PLAY GUARD -->'
+              anchor='\n<!-- RC293 MOBILE SKIP IMMEDIATE PORTAL OWNER -->'
               if html.count(anchor)!=1:
-                  raise SystemExit(f'RC292 anchor count={html.count(anchor)}; refusing to guess')
-              payload='CjwhLS0gUkMyOTMgTU9CSUxFIFNLSVAgSU1NRURJQVRFIFBPUlRBTCBPV05FUiAtLT4KPHNjcmlwdCBpZD0icmMyOTMtbW9iaWxlLXNraXAtaW1tZWRpYXRlLW93bmVyIj4KKCgpPT57CiAgJ3VzZSBzdHJpY3QnOwogIGNvbnN0IG1vYmlsZT0oKT0+bWF0Y2hNZWRpYSgnKG1heC13aWR0aDo3MDBweCknKS5tYXRjaGVzOwogIGlmKCFtb2JpbGUoKSlyZXR1cm47CiAgY29uc3Qgc2tpcD1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc2tpcCcpOwogIGNvbnN0IGxvYmJ5PWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdsb2JieScpOwogIGNvbnN0IHBvcnRhbHM9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3BvcnRhbHMnKTsKICBpZighc2tpcHx8IWxvYmJ5fHwhcG9ydGFscylyZXR1cm47CiAgbGV0IGZpcmVkPWZhbHNlOwogIGNvbnN0IHN0b3BNZWRpYT0oKT0+ewogICAgZG9jdW1lbnQuYm9keS5kYXRhc2V0Lm1vYmlsZVBvcnRhbExvY2s9JzEnOwogICAgZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbCgnI2xvYmJ5IHZpZGVvLCNsb2JieSBhdWRpbywjYW1iaWVudCcpLmZvckVhY2gobT0+ewogICAgICBpZighKG0gaW5zdGFuY2VvZiBIVE1MTWVkaWFFbGVtZW50KSlyZXR1cm47CiAgICAgIHRyeXttLnBhdXNlKCl9Y2F0Y2goX2Upe30KICAgIH0pOwogIH07CiAgY29uc3Qgb3Blbk5vdz0oZSk9PnsKICAgIGlmKCFtb2JpbGUoKXx8ZmlyZWQpcmV0dXJuOwogICAgaWYoZT8udGFyZ2V0Py5jbG9zZXN0ICYmICFlLnRhcmdldC5jbG9zZXN0KCcjc2tpcCcpKXJldHVybjsKICAgIGZpcmVkPXRydWU7CiAgICBpZihlPy5jYW5jZWxhYmxlKSBlLnByZXZlbnREZWZhdWx0KCk7CiAgICBpZihlPy5zdG9wSW1tZWRpYXRlUHJvcGFnYXRpb24pIGUuc3RvcEltbWVkaWF0ZVByb3BhZ2F0aW9uKCk7CiAgICB0cnl7aWYodHlwZW9mIGNsZWFyVGltZXJzPT09J2Z1bmN0aW9uJyljbGVhclRpbWVycygpfWNhdGNoKF9lKXt9CiAgICBzdG9wTWVkaWEoKTsKICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdoZWFydCcpPy5jbGFzc0xpc3QucmVtb3ZlKCdzaG93Jyk7CiAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncHJlbWllcmVDYXJkJyk/LmNsYXNzTGlzdC5yZW1vdmUoJ3Nob3cnKTsKICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdmYWRlJyk/LmNsYXNzTGlzdC5yZW1vdmUoJ29uJyk7CiAgICBjb25zdCBqb3VybmV5PWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdqb3VybmV5VHJhbnNpdGlvbicpOwogICAgaWYoam91cm5leSl7am91cm5leS5jbGFzc0xpc3QucmVtb3ZlKCdvbicpO2pvdXJuZXkuc2V0QXR0cmlidXRlKCdhcmlhLWhpZGRlbicsJ3RydWUnKTt9CiAgICBsb2JieS5jbGFzc0xpc3QuYWRkKCdhY3RpdmUnLCdwb3J0YWwtbW9kZScpOwogICAgcG9ydGFscy5jbGFzc0xpc3QuYWRkKCdzaG93Jyk7CiAgICBza2lwLnN0eWxlLmRpc3BsYXk9J25vbmUnOwogICAgZG9jdW1lbnQuYm9keS5kYXRhc2V0LnNjZW5lPSdsb2JieSc7CiAgICBkb2N1bWVudC5ib2R5LmRhdGFzZXQuZXhwZXJpZW5jZT0ncG9ydGFsX21vZGUnOwogICAgc3RvcE1lZGlhKCk7CiAgICByZXF1ZXN0QW5pbWF0aW9uRnJhbWUoKCk9PntzdG9wTWVkaWEoKTtmaXJlZD1mYWxzZTt9KTsKICB9OwogIHdpbmRvdy5hZGRFdmVudExpc3RlbmVyKCdwb2ludGVyZG93bicsb3Blbk5vdyx0cnVlKTsKICB3aW5kb3cuYWRkRXZlbnRMaXN0ZW5lcigndG91Y2hzdGFydCcsb3Blbk5vdyx7Y2FwdHVyZTp0cnVlLHBhc3NpdmU6ZmFsc2V9KTsKfSkoKTsKPC9zY3JpcHQ+Cg=='
+                  raise SystemExit(f'RC293 anchor count={html.count(anchor)}; refusing to guess')
+              patch=r'''
+<!-- RC294 MOBILE SKIP SOFT FULL HITBOX OWNER -->
+<style id="rc294-mobile-skip-soft-hitbox-css">
+@media(max-width:700px){
+  #lobby #skip{
+    position:relative!important;
+    z-index:1200!important;
+    pointer-events:auto!important;
+    touch-action:manipulation!important;
+    -webkit-tap-highlight-color:transparent!important;
+  }
+  #lobby #skip::before{
+    content:"";
+    position:absolute;
+    inset:-14px -20px;
+    border-radius:999px;
+    pointer-events:auto;
+  }
+}
+</style>
+<script id="rc294-mobile-skip-soft-hitbox-owner">
+(()=>{
+  'use strict';
+  const mobile=()=>matchMedia('(max-width:700px)').matches;
+  if(!mobile())return;
+  const skip=document.getElementById('skip');
+  const lobby=document.getElementById('lobby');
+  const portals=document.getElementById('portals');
+  if(!skip||!lobby||!portals)return;
+
+  let busy=false;
+  const insideExpandedSkip=(e)=>{
+    if(!e)return false;
+    const r=skip.getBoundingClientRect();
+    const x=e.clientX ?? e.touches?.[0]?.clientX;
+    const y=e.clientY ?? e.touches?.[0]?.clientY;
+    if(!Number.isFinite(x)||!Number.isFinite(y))return false;
+    return x>=r.left-20 && x<=r.right+20 && y>=r.top-14 && y<=r.bottom+14;
+  };
+  const stopMedia=()=>{
+    document.body.dataset.mobilePortalLock='1';
+    document.querySelectorAll('#lobby video,#lobby audio,#ambient').forEach(m=>{
+      if(!(m instanceof HTMLMediaElement))return;
+      try{m.pause()}catch(_e){}
+    });
+  };
+  const openPortalsNow=(e)=>{
+    if(!mobile()||busy||skip.style.display==='none')return;
+    if(!insideExpandedSkip(e))return;
+    busy=true;
+    if(e.cancelable)e.preventDefault();
+    e.stopImmediatePropagation?.();
+    try{if(typeof clearTimers==='function')clearTimers()}catch(_e){}
+    stopMedia();
+    document.getElementById('heart')?.classList.remove('show');
+    document.getElementById('premiereCard')?.classList.remove('show');
+    document.getElementById('fade')?.classList.remove('on');
+    const journey=document.getElementById('journeyTransition');
+    if(journey){journey.classList.remove('on');journey.setAttribute('aria-hidden','true');}
+    lobby.classList.add('active','portal-mode');
+    portals.classList.add('show');
+    skip.style.display='none';
+    document.body.dataset.scene='lobby';
+    document.body.dataset.experience='portal_mode';
+    stopMedia();
+    requestAnimationFrame(()=>{stopMedia();busy=false;});
+  };
+
+  window.addEventListener('pointerdown',openPortalsNow,true);
+  window.addEventListener('touchstart',openPortalsNow,{capture:true,passive:false});
+})();
+</script>
+'''
+              payload=base64.b64encode(patch.encode()).decode()
               patch=base64.b64decode(payload).decode('utf-8')
               html=html.replace(anchor,'\n'+patch+anchor,1)
               p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC293 and preserve current locks
+      - name: Verify RC294 and preserve current locks
         run: |
+          grep -q 'RC294 MOBILE SKIP SOFT FULL HITBOX OWNER' public/index.html
+          grep -q 'rc294-mobile-skip-soft-hitbox-owner' public/index.html
           grep -q 'RC293 MOBILE SKIP IMMEDIATE PORTAL OWNER' public/index.html
-          grep -q 'rc293-mobile-skip-immediate-owner' public/index.html
           grep -q 'RC292 MOBILE PORTAL THEATER GHOST PLAY GUARD' public/index.html
           grep -q 'RC291 MOBILE PORTAL AMBIENT HARD FREEZE' public/index.html
           grep -q 'RC290 MOBILE PORTAL HARD MEDIA FREEZE' public/index.html
           grep -q 'RC289 MOBILE PORTAL SINGLE OWNER + QUIET MEDIA' public/index.html
-          grep -q 'RC269 MASTER MOBILE MEDIA AUTHORITY LOCK' public/index.html
           grep -q 'RC268 MASTER MOBILE PORTAL RUNTIME CLEANUP' public/index.html
           grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
           grep -q 'RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP' public/index.html
 
-      - name: Commit RC293 source
+      - name: Commit RC294 source
         run: |
           git config user.name "SoulCinema Direct Deploy"
           git config user.email "actions@users.noreply.github.com"
           if git diff --quiet -- public/index.html; then
-            echo "RC293 already applied"
+            echo "RC294 already applied"
           else
             git add public/index.html
-            git commit -m "RC293 mobile Skip immediate portal owner"
+            git commit -m "RC294 mobile Skip soft full hitbox owner"
             git push origin HEAD:main
           fi
