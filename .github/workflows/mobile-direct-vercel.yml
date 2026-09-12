@@ -18,30 +18,72 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC288 Contact single cinematic handoffs
+      - name: Apply RC289 mobile portal single-owner cleanup
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import re
+
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          old_open="function openContact(){clearTimers();journeyTransition('CONTACT','STUDIO CONNECTION','LET THE NEXT STORY BEGIN',()=>{SceneManager.goTo('contact');scene(lobby,contactRoom)})}"
-          new_open="function openContact(){clearTimers();journeyTransition('CONTACT','STUDIO CONNECTION','LET THE NEXT STORY BEGIN',()=>{/* RC288 CONTACT IN — SINGLE CINEMATIC HANDOFF */SceneManager.goTo('contact');lobby.classList.remove('active');contactRoom.classList.add('active');transitionCount++;updateRuntimeMonitor()})}"
-          old_return="function returnFromContact(){journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{SceneManager.goTo('lobby');scene(contactRoom,lobby);setTimeout(showPortals,520)})}"
-          new_return="function returnFromContact(){journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{/* RC288 CONTACT OUT — SINGLE CINEMATIC HANDOFF */SceneManager.goTo('lobby');contactRoom.classList.remove('active');lobby.classList.add('active');transitionCount++;updateRuntimeMonitor();setTimeout(showPortals,420)})}"
-          if html.count(old_open)!=1 or html.count(old_return)!=1:
-              raise SystemExit(f'Expected exact Contact targets once each; open={html.count(old_open)} return={html.count(old_return)}; refusing to guess')
-          html=html.replace(old_open,new_open,1).replace(old_return,new_return,1)
+
+          # 1) Desktop keeps the legacy RC103 pointer owner; mobile no longer receives it.
+          old="""  document.addEventListener('pointerdown',e=>{\n    if(!activeLobby())return;\n    const card=hit(e.clientX,e.clientY);\n    if(!card)return;\n    e.preventDefault();\n    e.stopPropagation();\n    e.stopImmediatePropagation();\n    card.classList.add('rc-master-hover');\n    route(card.dataset.room);\n  },true);"""
+          new="""  if(matchMedia('(min-width:701px)').matches){\n    document.addEventListener('pointerdown',e=>{\n      if(!activeLobby())return;\n      const card=hit(e.clientX,e.clientY);\n      if(!card)return;\n      e.preventDefault();\n      e.stopPropagation();\n      e.stopImmediatePropagation();\n      card.classList.add('rc-master-hover');\n      route(card.dataset.room);\n    },true);\n  }"""
+          if html.count(old)!=1:
+              raise SystemExit(f'RC103 pointer owner target count={html.count(old)}; refusing to guess')
+          html=html.replace(old,new,1)
+
+          # 2) Keep RC250 DOM conversion only so current mobile visuals/arrows remain,
+          #    but remove all legacy touch/click routing from it.
+          rc250=re.compile(r'<script id="rc250-mobile-portal-div-rebuild">.*?</script>',re.S)
+          if len(rc250.findall(html))!=1:
+              raise SystemExit('Expected exactly one RC250 script')
+          rc250_clean='''<script id="rc250-mobile-portal-div-rebuild">\n(()=>{\n  const ready=(fn)=>document.readyState==='loading'?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();\n  ready(()=>{\n    if(!matchMedia('(max-width:700px)').matches)return;\n    document.querySelectorAll('#portals button.portal[data-room]').forEach(old=>{\n      const panel=document.createElement('div');\n      for(const attr of old.attributes){if(attr.name!=='type'&&attr.name!=='onclick')panel.setAttribute(attr.name,attr.value);}\n      panel.setAttribute('role','button');\n      panel.setAttribute('tabindex','0');\n      panel.className=old.className;\n      panel.innerHTML=old.innerHTML;\n      const hit=document.createElement('span');\n      hit.className='sc-mobile-portal-hit';\n      hit.setAttribute('aria-hidden','true');\n      hit.textContent='→';\n      panel.appendChild(hit);\n      old.replaceWith(panel);\n    });\n  });\n})();\n</script>'''
+          html=rc250.sub(rc250_clean,html,1)
+
+          # 3) Remove stacked mobile routing owners. They were all active together and
+          #    competed for touchend/pointerup/click, which is the verified source conflict.
+          stale_ids=[
+            'rc248-mobile-portal-click-owner',
+            'rc251-mobile-arrow-route-rebind',
+            'rc252-mobile-direct-room-router',
+            'rc253-mobile-clean-arrow-router',
+            'rc254-mobile-pointer-route-owner',
+            'rc255-mobile-wide-arrow-zone',
+            'rc256-mobile-full-card-tap-router',
+            'rc257-mobile-card-tap-small-arrows',
+            'rc265-mobile-skip-coordinate-owner'
+          ]
+          for sid in stale_ids:
+              pat=re.compile(r'<script id="'+re.escape(sid)+r'">.*?</script>',re.S)
+              matches=pat.findall(html)
+              if len(matches)!=1:
+                  raise SystemExit(f'{sid} count={len(matches)}; refusing to guess')
+              html=pat.sub('',html,1)
+
+          # 4) One mobile owner: Skip -> quiet portals; natural pan-y scroll; tap-anywhere routing.
+          marker='<!-- RC289 MOBILE PORTAL SINGLE OWNER + QUIET MEDIA -->'
+          if marker in html:
+              raise SystemExit('RC289 already present unexpectedly')
+          rc289='''\n<!-- RC289 MOBILE PORTAL SINGLE OWNER + QUIET MEDIA -->\n<style id="rc289-mobile-portal-final-css">\n@media(max-width:700px){\n  #lobby.portal-mode #portals,\n  #lobby.portal-mode #portals .portal-shell,\n  #lobby.portal-mode #portals .portal{touch-action:pan-y!important;}\n  #lobby.portal-mode #portals .portal{cursor:pointer!important;}\n  #lobby.portal-mode #portals .sc-mobile-portal-hit{pointer-events:none!important;}\n}\n</style>\n<script id="rc289-mobile-portal-single-owner">\n(()=>{\n  'use strict';\n  const mobile=()=>matchMedia('(max-width:700px)').matches;\n  if(!mobile())return;\n  const lobby=document.getElementById('lobby');\n  const portals=document.getElementById('portals');\n  const skip=document.getElementById('skip');\n  if(!lobby||!portals||!skip)return;\n\n  const stopLobbyMedia=()=>{\n    document.body.dataset.mobilePortalLock='1';\n    document.querySelectorAll('#lobby video,#lobby audio,#ambient').forEach(m=>{\n      if(!(m instanceof HTMLMediaElement))return;\n      try{m.pause()}catch(_e){}\n    });\n  };\n\n  const openPortals=()=>{\n    if(typeof clearTimers==='function'){try{clearTimers()}catch(_e){}}\n    stopLobbyMedia();\n    document.getElementById('heart')?.classList.remove('show');\n    document.getElementById('premiereCard')?.classList.remove('show');\n    document.getElementById('fade')?.classList.remove('on');\n    const journey=document.getElementById('journeyTransition');\n    if(journey){journey.classList.remove('on');journey.setAttribute('aria-hidden','true');}\n    lobby.classList.add('active','portal-mode');\n    portals.classList.add('show');\n    skip.style.display='none';\n    document.body.dataset.scene='lobby';\n    document.body.dataset.experience='portal_mode';\n    stopLobbyMedia();\n    requestAnimationFrame(stopLobbyMedia);\n  };\n\n  skip.onclick=(e)=>{e.preventDefault();e.stopPropagation();openPortals();};\n\n  const route=(room)=>{\n    stopLobbyMedia();\n    if(room==='Screening Theater'&&typeof openTheater==='function')return openTheater();\n    if(room==='Music Room'&&typeof openMusic==='function')return openMusic();\n    if(room==='Live Center'&&typeof openLive==='function')return openLive();\n    if(room==='Production Room'){if(typeof openProductionHard==='function')return openProductionHard();if(typeof openProduction==='function')return openProduction();}\n    if(room==='Story Room'&&typeof openStory==='function')return openStory();\n    if(room==='Journal'&&typeof openJournal==='function')return openJournal();\n    if(room==='Visual Bible'){if(typeof openBibleHard==='function')return openBibleHard();if(typeof openBible==='function')return openBible();}\n    if(room==='About Us'&&typeof openAbout==='function')return openAbout();\n    if(room==='Contact'&&typeof openContact==='function')return openContact();\n  };\n\n  const bindCards=()=>{\n    document.querySelectorAll('#portals .portal[data-room]').forEach(card=>{\n      if(card.dataset.rc289Bound==='1')return;\n      card.dataset.rc289Bound='1';\n      card.onclick=null;\n      let sx=0,sy=0,st=0,moved=false,down=false;\n      card.addEventListener('pointerdown',e=>{\n        if(!mobile()||e.pointerType==='mouse')return;\n        sx=e.clientX;sy=e.clientY;st=Date.now();moved=false;down=true;\n      },{passive:true});\n      card.addEventListener('pointermove',e=>{\n        if(!down)return;\n        if(Math.abs(e.clientY-sy)>10||Math.abs(e.clientX-sx)>14)moved=true;\n      },{passive:true});\n      card.addEventListener('pointercancel',()=>{down=false;moved=true;},{passive:true});\n      card.addEventListener('pointerup',e=>{\n        if(!down)return;\n        const tap=!moved&&Math.abs(e.clientY-sy)<=10&&Math.abs(e.clientX-sx)<=14&&Date.now()-st<520;\n        down=false;\n        if(!tap)return;\n        e.preventDefault();\n        e.stopPropagation();\n        route(card.dataset.room);\n      });\n      card.addEventListener('keydown',e=>{\n        if(e.key==='Enter'||e.key===' '){e.preventDefault();route(card.dataset.room);}\n      });\n    });\n  };\n\n  bindCards();\n  new MutationObserver(()=>{bindCards();if(portals.classList.contains('show'))stopLobbyMedia();})\n    .observe(portals,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});\n  document.addEventListener('play',e=>{\n    const m=e.target;\n    if(document.body.dataset.mobilePortalLock==='1'&&m instanceof HTMLMediaElement&&((m.closest&&m.closest('#lobby'))||m.id==='ambient')){\n      try{m.pause()}catch(_e){}\n    }\n  },true);\n})();\n</script>\n'''
+          html=html.replace('\n<!-- RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP -->',rc289+'\n<!-- RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP -->',1)
+
           p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC288 and preserve locked layers
+      - name: Verify RC289 and preserve desktop lock
         run: |
+          grep -q 'RC289 MOBILE PORTAL SINGLE OWNER + QUIET MEDIA' public/index.html
+          grep -q 'rc289-mobile-portal-single-owner' public/index.html
+          grep -q "matchMedia('(min-width:701px)').matches" public/index.html
+          grep -q 'RC269 MASTER MOBILE MEDIA AUTHORITY LOCK' public/index.html
+          grep -q 'RC268 MASTER MOBILE PORTAL RUNTIME CLEANUP' public/index.html
+          grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
+          grep -q 'rc258-mobile-screening-theater-restore' public/index.html
           grep -q 'RC288 CONTACT IN — SINGLE CINEMATIC HANDOFF' public/index.html
           grep -q 'RC288 CONTACT OUT — SINGLE CINEMATIC HANDOFF' public/index.html
-          if grep -q "SceneManager.goTo('contact');scene(lobby,contactRoom)" public/index.html; then echo 'Old Contact IN nested scene remains'; exit 1; fi
-          if grep -q "SceneManager.goTo('lobby');scene(contactRoom,lobby)" public/index.html; then echo 'Old Contact OUT nested scene remains'; exit 1; fi
           grep -q 'RC287 OFFICIAL SOULCINEMA CONTACT INBOX' public/index.html
-          grep -q "SOULCINEMA_CONTACT_EMAIL='soulcinema77@gmail.com'" public/index.html
           grep -q 'RC286 ABOUT US IN — SINGLE CINEMATIC HANDOFF' public/index.html
           grep -q 'RC286 ABOUT US OUT — SINGLE CINEMATIC HANDOFF' public/index.html
           grep -q 'RC285 VISUAL BIBLE OUT — SINGLE CINEMATIC HANDOFF' public/index.html
@@ -54,19 +96,18 @@ jobs:
           grep -q 'RC280 LIVE SAFE NATIVE RATIO FILL' public/index.html
           grep -q 'RC277 DESKTOP LIVE CENTER RETURN — SINGLE CINEMATIC HANDOFF' public/index.html
           grep -q 'RC276 LIVE AUTOPLAY BROADCAST ONLY PLAYER' public/index.html
-          grep -q 'RC269 MASTER MOBILE MEDIA AUTHORITY LOCK' public/index.html
-          grep -q 'RC268 MASTER MOBILE PORTAL RUNTIME CLEANUP' public/index.html
-          grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
-          grep -q 'rc258-mobile-screening-theater-restore' public/index.html
+          for id in rc248-mobile-portal-click-owner rc251-mobile-arrow-route-rebind rc252-mobile-direct-room-router rc253-mobile-clean-arrow-router rc254-mobile-pointer-route-owner rc256-mobile-full-card-tap-router rc257-mobile-card-tap-small-arrows rc265-mobile-skip-coordinate-owner; do
+            if grep -q "<script id=\"$id\"" public/index.html; then echo "Legacy owner remains: $id"; exit 1; fi
+          done
 
-      - name: Lock RC288 into source
+      - name: Commit RC289 source
         run: |
+          git config user.name "SoulCinema Direct Deploy"
+          git config user.email "actions@users.noreply.github.com"
           if git diff --quiet -- public/index.html; then
-            echo "RC288 already locked"
+            echo "RC289 already applied"
           else
-            git config user.name "SoulCinema Direct Deploy"
-            git config user.email "actions@users.noreply.github.com"
             git add public/index.html
-            git commit -m "RC288 smooth Contact in and out transitions"
+            git commit -m "RC289 mobile portal single-owner cleanup"
             git push origin HEAD:main
           fi
