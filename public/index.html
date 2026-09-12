@@ -6154,6 +6154,82 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
   sync();
 })();
 </script>
+<!-- RC298 DESKTOP LIVE CENTER FULLSCREEN CONTROL -->
+<style id="rc298-desktop-live-fullscreen-css">
+@media (min-width:861px){
+  #liveCenter #rc298LiveFullscreen{
+    display:none;
+    position:absolute;
+    right:14px;
+    bottom:14px;
+    z-index:99;
+    width:46px;
+    height:46px;
+    min-width:46px;
+    min-height:46px;
+    padding:0;
+    border-radius:50%;
+    border:1px solid rgba(242,215,131,.72);
+    background:rgba(0,0,0,.62);
+    color:#f2d783;
+    font:400 25px/1 Georgia,serif;
+    letter-spacing:0;
+    place-items:center;
+    backdrop-filter:blur(8px);
+  }
+  body[data-live-mode="live"] #liveCenter.active #rc298LiveFullscreen{display:grid;}
+  #liveCenter #livePlayerWrap:fullscreen,
+  #liveCenter #livePlayerWrap:-webkit-full-screen{
+    width:100vw!important;
+    height:100vh!important;
+    inset:0!important;
+    border-radius:0!important;
+    background:#000!important;
+  }
+}
+</style>
+<script id="rc298-desktop-live-fullscreen-control">
+(()=>{
+  'use strict';
+  if(!matchMedia('(min-width:861px)').matches)return;
+  const room=document.getElementById('liveCenter');
+  const wrap=document.getElementById('livePlayerWrap');
+  if(!room||!wrap)return;
+  let btn=document.getElementById('rc298LiveFullscreen');
+  if(!btn){
+    btn=document.createElement('button');
+    btn.id='rc298LiveFullscreen';
+    btn.type='button';
+    btn.setAttribute('aria-label','Full screen');
+    btn.setAttribute('title','Full screen');
+    btn.textContent='⤢';
+    wrap.appendChild(btn);
+  }
+  const inFs=()=>document.fullscreenElement===wrap||document.webkitFullscreenElement===wrap;
+  const sync=()=>{
+    btn.textContent=inFs()?'⤡':'⤢';
+    btn.setAttribute('aria-label',inFs()?'Exit full screen':'Full screen');
+    btn.setAttribute('title',inFs()?'Exit full screen':'Full screen');
+  };
+  const enter=()=>{
+    if(wrap.requestFullscreen)return wrap.requestFullscreen();
+    if(wrap.webkitRequestFullscreen)return wrap.webkitRequestFullscreen();
+  };
+  const exit=()=>{
+    if(document.exitFullscreen)return document.exitFullscreen();
+    if(document.webkitExitFullscreen)return document.webkitExitFullscreen();
+  };
+  btn.addEventListener('click',(e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    try{inFs()?exit():enter()}catch(_e){}
+  });
+  document.addEventListener('fullscreenchange',sync);
+  document.addEventListener('webkitfullscreenchange',sync);
+  sync();
+})();
+</script>
+
 <!-- RC297 DESKTOP PRODUCTION ROOM VIEWPORT FIT -->
 <style id="rc297-desktop-production-viewport-fit">
 @media (min-width:861px){
