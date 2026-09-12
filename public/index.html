@@ -2518,7 +2518,8 @@ body[data-live-mode="live"] #liveCenter #publicLiveBadge{
   <div class="center"><div class="contact-shell">
     <header class="contact-head"><div><div class="eyebrow">SC · STUDIO CONNECTION</div><h2>CONTACT</h2></div><div class="contact-meta">COLLABORATION · PRODUCTION · PRESS<br>DIRECT CHANNEL PREP</div></header>
     <div class="contact-grid">
-      <section class="contact-intro"><small>START A CONVERSATION</small><h3>Bring the story to the studio.</h3><p>Use the inquiry composer to prepare a message for SoulCinema. The public direct-contact destination will be connected before official launch; no address is invented in this build.</p>
+      <!-- RC287 OFFICIAL SOULCINEMA CONTACT INBOX -->
+      <section class="contact-intro"><small>START A CONVERSATION</small><h3>Bring the story to the studio.</h3><p>Use the inquiry composer to prepare your message, then email SoulCinema directly at <strong style="color:#f2d783">soulcinema77@gmail.com</strong>.</p>
         <div class="contact-types">
           <button class="contact-type is-active" data-contact-type="COLLABORATION">COLLABORATION</button>
           <button class="contact-type" data-contact-type="PRODUCTION">PRODUCTION</button>
@@ -2531,10 +2532,10 @@ body[data-live-mode="live"] #liveCenter #publicLiveBadge{
         <label><span>EMAIL</span><input id="contactEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
         <label class="contact-message"><span>MESSAGE</span><textarea id="contactMessage" rows="6" placeholder="Tell SoulCinema what you would like to create, discuss or explore."></textarea></label>
         <div class="contact-actions"><button id="contactPrepare" type="button">PREPARE INQUIRY</button><button id="contactClear" class="ghost" type="button">CLEAR</button></div>
-        <div id="contactStatus" class="contact-status" role="status">DIRECT CHANNEL · CONFIGURATION RESERVED FOR PUBLIC LAUNCH</div>
+        <div id="contactStatus" class="contact-status" role="status">OFFICIAL INBOX · soulcinema77@gmail.com</div>
       </form>
     </div>
-    <div id="contactReveal" class="contact-reveal" aria-hidden="true"><div class="contact-reveal-card"><small>INQUIRY PREPARED</small><h3 id="contactRevealTitle">Your message is ready.</h3><pre id="contactRevealText"></pre><div class="contact-reveal-actions"><button id="contactCopy" type="button">COPY INQUIRY</button><button id="contactRevealClose" class="ghost" type="button">RETURN TO CONTACT</button></div><p>No message has been sent. A direct inbox will be connected before public launch.</p></div></div>
+    <div id="contactReveal" class="contact-reveal" aria-hidden="true"><div class="contact-reveal-card"><small>INQUIRY PREPARED</small><h3 id="contactRevealTitle">Your message is ready.</h3><pre id="contactRevealText"></pre><div class="contact-reveal-actions"><button id="contactEmailSend" type="button">EMAIL INQUIRY</button><button id="contactCopy" type="button">COPY INQUIRY</button><button id="contactRevealClose" class="ghost" type="button">RETURN TO CONTACT</button></div><p>EMAIL INQUIRY opens your email app with SoulCinema’s official inbox, subject and message prefilled. Nothing is sent until you press Send.</p></div></div>
     <footer class="contact-footer"><button id="contactReturn" class="ghost return">← GRAND LOBBY</button><div class="contact-signature"><small>SOULCINEMA CONNECTION</small><strong>LET THE NEXT STORY BEGIN</strong></div><div class="contact-note"></div></footer>
   </div></div>
 </section>
@@ -3152,15 +3153,17 @@ $('#productionRevealClose').onclick=closeProductionReveal;productionReveal.oncli
 
 $('#journalReturn').onclick=returnFromJournal;$('#bibleReturn').onclick=returnFromBible;$('#aboutReturn').onclick=returnFromAbout;$('#contactReturn').onclick=returnFromContact;
 
-// RC11.13.17 — About + Contact integration. Contact is intentionally local-only until a public inbox is configured.
+// RC287 — Official SoulCinema Contact inbox.
+const SOULCINEMA_CONTACT_EMAIL='soulcinema77@gmail.com';
 let contactType='COLLABORATION';
 $$('.contact-type').forEach(btn=>btn.onclick=()=>{contactType=btn.dataset.contactType;$$('.contact-type').forEach(x=>x.classList.toggle('is-active',x===btn))});
 const contactReveal=$('#contactReveal'),contactRevealText=$('#contactRevealText');
 function buildContactInquiry(){const name=$('#contactName').value.trim()||'Not provided';const email=$('#contactEmail').value.trim()||'Not provided';const message=$('#contactMessage').value.trim()||'No message entered.';return `SOULCINEMA INQUIRY\nTYPE: ${contactType}\nNAME: ${name}\nEMAIL: ${email}\n\nMESSAGE:\n${message}`}
 $('#contactPrepare').onclick=()=>{contactRevealText.textContent=buildContactInquiry();contactReveal.classList.add('open');contactReveal.setAttribute('aria-hidden','false')};
-$('#contactClear').onclick=()=>{$('#contactName').value='';$('#contactEmail').value='';$('#contactMessage').value='';$('#contactStatus').textContent='DIRECT CHANNEL · CONFIGURATION RESERVED FOR PUBLIC LAUNCH'};
+$('#contactClear').onclick=()=>{$('#contactName').value='';$('#contactEmail').value='';$('#contactMessage').value='';$('#contactStatus').textContent='OFFICIAL INBOX · '+SOULCINEMA_CONTACT_EMAIL};
 $('#contactRevealClose').onclick=()=>{contactReveal.classList.remove('open');contactReveal.setAttribute('aria-hidden','true')};
 contactReveal.onclick=e=>{if(e.target===contactReveal)$('#contactRevealClose').click()};
+$('#contactEmailSend').onclick=()=>{const subject=`SoulCinema ${contactType} Inquiry`;const body=buildContactInquiry();window.location.href=`mailto:${SOULCINEMA_CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`};
 $('#contactCopy').onclick=async()=>{const text=buildContactInquiry();try{await navigator.clipboard.writeText(text);$('#contactCopy').textContent='COPIED';setTimeout(()=>$('#contactCopy').textContent='COPY INQUIRY',1400)}catch(e){$('#contactCopy').textContent='SELECT + COPY';contactRevealText.focus?.()}};
 
 
