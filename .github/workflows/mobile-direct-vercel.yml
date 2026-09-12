@@ -22,6 +22,7 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
           marker='<!-- RC293 MOBILE SKIP IMMEDIATE PORTAL OWNER -->'
@@ -29,51 +30,8 @@ jobs:
               anchor='\n<!-- RC292 MOBILE PORTAL THEATER GHOST PLAY GUARD -->'
               if html.count(anchor)!=1:
                   raise SystemExit(f'RC292 anchor count={html.count(anchor)}; refusing to guess')
-              patch=r'''
-<!-- RC293 MOBILE SKIP IMMEDIATE PORTAL OWNER -->
-<script id="rc293-mobile-skip-immediate-owner">
-(()=>{
-  'use strict';
-  const mobile=()=>matchMedia('(max-width:700px)').matches;
-  if(!mobile())return;
-  const skip=document.getElementById('skip');
-  const lobby=document.getElementById('lobby');
-  const portals=document.getElementById('portals');
-  if(!skip||!lobby||!portals)return;
-  let fired=false;
-  const stopMedia=()=>{
-    document.body.dataset.mobilePortalLock='1';
-    document.querySelectorAll('#lobby video,#lobby audio,#ambient').forEach(m=>{
-      if(!(m instanceof HTMLMediaElement))return;
-      try{m.pause()}catch(_e){}
-    });
-  };
-  const openNow=(e)=>{
-    if(!mobile()||fired)return;
-    if(e?.target?.closest && !e.target.closest('#skip'))return;
-    fired=true;
-    if(e?.cancelable) e.preventDefault();
-    if(e?.stopImmediatePropagation) e.stopImmediatePropagation();
-    try{if(typeof clearTimers==='function')clearTimers()}catch(_e){}
-    stopMedia();
-    document.getElementById('heart')?.classList.remove('show');
-    document.getElementById('premiereCard')?.classList.remove('show');
-    document.getElementById('fade')?.classList.remove('on');
-    const journey=document.getElementById('journeyTransition');
-    if(journey){journey.classList.remove('on');journey.setAttribute('aria-hidden','true');}
-    lobby.classList.add('active','portal-mode');
-    portals.classList.add('show');
-    skip.style.display='none';
-    document.body.dataset.scene='lobby';
-    document.body.dataset.experience='portal_mode';
-    stopMedia();
-    requestAnimationFrame(()=>{stopMedia();fired=false;});
-  };
-  window.addEventListener('pointerdown',openNow,true);
-  window.addEventListener('touchstart',openNow,{capture:true,passive:false});
-})();
-</script>
-'''
+              payload='CjwhLS0gUkMyOTMgTU9CSUxFIFNLSVAgSU1NRURJQVRFIFBPUlRBTCBPV05FUiAtLT4KPHNjcmlwdCBpZD0icmMyOTMtbW9iaWxlLXNraXAtaW1tZWRpYXRlLW93bmVyIj4KKCgpPT57CiAgJ3VzZSBzdHJpY3QnOwogIGNvbnN0IG1vYmlsZT0oKT0+bWF0Y2hNZWRpYSgnKG1heC13aWR0aDo3MDBweCknKS5tYXRjaGVzOwogIGlmKCFtb2JpbGUoKSlyZXR1cm47CiAgY29uc3Qgc2tpcD1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc2tpcCcpOwogIGNvbnN0IGxvYmJ5PWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdsb2JieScpOwogIGNvbnN0IHBvcnRhbHM9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3BvcnRhbHMnKTsKICBpZighc2tpcHx8IWxvYmJ5fHwhcG9ydGFscylyZXR1cm47CiAgbGV0IGZpcmVkPWZhbHNlOwogIGNvbnN0IHN0b3BNZWRpYT0oKT0+ewogICAgZG9jdW1lbnQuYm9keS5kYXRhc2V0Lm1vYmlsZVBvcnRhbExvY2s9JzEnOwogICAgZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbCgnI2xvYmJ5IHZpZGVvLCNsb2JieSBhdWRpbywjYW1iaWVudCcpLmZvckVhY2gobT0+ewogICAgICBpZighKG0gaW5zdGFuY2VvZiBIVE1MTWVkaWFFbGVtZW50KSlyZXR1cm47CiAgICAgIHRyeXttLnBhdXNlKCl9Y2F0Y2goX2Upe30KICAgIH0pOwogIH07CiAgY29uc3Qgb3Blbk5vdz0oZSk9PnsKICAgIGlmKCFtb2JpbGUoKXx8ZmlyZWQpcmV0dXJuOwogICAgaWYoZT8udGFyZ2V0Py5jbG9zZXN0ICYmICFlLnRhcmdldC5jbG9zZXN0KCcjc2tpcCcpKXJldHVybjsKICAgIGZpcmVkPXRydWU7CiAgICBpZihlPy5jYW5jZWxhYmxlKSBlLnByZXZlbnREZWZhdWx0KCk7CiAgICBpZihlPy5zdG9wSW1tZWRpYXRlUHJvcGFnYXRpb24pIGUuc3RvcEltbWVkaWF0ZVByb3BhZ2F0aW9uKCk7CiAgICB0cnl7aWYodHlwZW9mIGNsZWFyVGltZXJzPT09J2Z1bmN0aW9uJyljbGVhclRpbWVycygpfWNhdGNoKF9lKXt9CiAgICBzdG9wTWVkaWEoKTsKICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdoZWFydCcpPy5jbGFzc0xpc3QucmVtb3ZlKCdzaG93Jyk7CiAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncHJlbWllcmVDYXJkJyk/LmNsYXNzTGlzdC5yZW1vdmUoJ3Nob3cnKTsKICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdmYWRlJyk/LmNsYXNzTGlzdC5yZW1vdmUoJ29uJyk7CiAgICBjb25zdCBqb3VybmV5PWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdqb3VybmV5VHJhbnNpdGlvbicpOwogICAgaWYoam91cm5leSl7am91cm5leS5jbGFzc0xpc3QucmVtb3ZlKCdvbicpO2pvdXJuZXkuc2V0QXR0cmlidXRlKCdhcmlhLWhpZGRlbicsJ3RydWUnKTt9CiAgICBsb2JieS5jbGFzc0xpc3QuYWRkKCdhY3RpdmUnLCdwb3J0YWwtbW9kZScpOwogICAgcG9ydGFscy5jbGFzc0xpc3QuYWRkKCdzaG93Jyk7CiAgICBza2lwLnN0eWxlLmRpc3BsYXk9J25vbmUnOwogICAgZG9jdW1lbnQuYm9keS5kYXRhc2V0LnNjZW5lPSdsb2JieSc7CiAgICBkb2N1bWVudC5ib2R5LmRhdGFzZXQuZXhwZXJpZW5jZT0ncG9ydGFsX21vZGUnOwogICAgc3RvcE1lZGlhKCk7CiAgICByZXF1ZXN0QW5pbWF0aW9uRnJhbWUoKCk9PntzdG9wTWVkaWEoKTtmaXJlZD1mYWxzZTt9KTsKICB9OwogIHdpbmRvdy5hZGRFdmVudExpc3RlbmVyKCdwb2ludGVyZG93bicsb3Blbk5vdyx0cnVlKTsKICB3aW5kb3cuYWRkRXZlbnRMaXN0ZW5lcigndG91Y2hzdGFydCcsb3Blbk5vdyx7Y2FwdHVyZTp0cnVlLHBhc3NpdmU6ZmFsc2V9KTsKfSkoKTsKPC9zY3JpcHQ+Cg=='
+              patch=base64.b64decode(payload).decode('utf-8')
               html=html.replace(anchor,'\n'+patch+anchor,1)
               p.write_text(html,encoding='utf-8')
           PY
