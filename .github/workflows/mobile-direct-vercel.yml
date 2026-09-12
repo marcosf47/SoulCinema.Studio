@@ -18,25 +18,29 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC285 Visual Bible OUT single cinematic handoff
+      - name: Apply RC286 About Us single cinematic handoffs
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          old="function returnFromBible(){journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{SceneManager.goTo('lobby');scene(visualBibleRoom,lobby);setTimeout(showPortals,520)})}"
-          new="function returnFromBible(){journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{/* RC285 VISUAL BIBLE OUT — SINGLE CINEMATIC HANDOFF */SceneManager.goTo('lobby');visualBibleRoom.classList.remove('active');lobby.classList.add('active');transitionCount++;updateRuntimeMonitor();setTimeout(showPortals,420)})}"
-          if html.count(old)!=1:
-              raise SystemExit(f'Expected exact Visual Bible OUT target once; found {html.count(old)}; refusing to guess')
-          html=html.replace(old,new,1)
+          old_open="function openAbout(){clearTimers();journeyTransition('ABOUT US','THE STUDIO','WHY SOULCINEMA EXISTS',()=>{SceneManager.goTo('about');scene(lobby,aboutRoom)})}"
+          new_open="function openAbout(){clearTimers();journeyTransition('ABOUT US','THE STUDIO','WHY SOULCINEMA EXISTS',()=>{/* RC286 ABOUT US IN — SINGLE CINEMATIC HANDOFF */SceneManager.goTo('about');lobby.classList.remove('active');aboutRoom.classList.add('active');transitionCount++;updateRuntimeMonitor()})}"
+          old_return="function returnFromAbout(){journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{SceneManager.goTo('lobby');scene(aboutRoom,lobby);setTimeout(showPortals,520)})}"
+          new_return="function returnFromAbout(){journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{/* RC286 ABOUT US OUT — SINGLE CINEMATIC HANDOFF */SceneManager.goTo('lobby');aboutRoom.classList.remove('active');lobby.classList.add('active');transitionCount++;updateRuntimeMonitor();setTimeout(showPortals,420)})}"
+          if html.count(old_open)!=1 or html.count(old_return)!=1:
+              raise SystemExit(f'Expected exact About Us targets once each; open={html.count(old_open)} return={html.count(old_return)}; refusing to guess')
+          html=html.replace(old_open,new_open,1).replace(old_return,new_return,1)
           p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC285 and preserve locked layers
+      - name: Verify RC286 and preserve locked layers
         run: |
+          grep -q 'RC286 ABOUT US IN — SINGLE CINEMATIC HANDOFF' public/index.html
+          grep -q 'RC286 ABOUT US OUT — SINGLE CINEMATIC HANDOFF' public/index.html
+          if grep -q "SceneManager.goTo('about');scene(lobby,aboutRoom)" public/index.html; then echo 'Old About IN nested scene remains'; exit 1; fi
+          if grep -q "SceneManager.goTo('lobby');scene(aboutRoom,lobby)" public/index.html; then echo 'Old About OUT nested scene remains'; exit 1; fi
           grep -q 'RC285 VISUAL BIBLE OUT — SINGLE CINEMATIC HANDOFF' public/index.html
-          if grep -q "SceneManager.goTo('lobby');scene(visualBibleRoom,lobby)" public/index.html; then echo 'Old Visual Bible OUT nested scene remains'; exit 1; fi
-          grep -q "function openBible(){clearTimers();visualBibleRoom.classList.add('bible-arriving')" public/index.html
           grep -q 'RC284 JOURNAL IN — SINGLE CINEMATIC HANDOFF' public/index.html
           grep -q 'RC284 JOURNAL OUT — SINGLE CINEMATIC HANDOFF' public/index.html
           grep -q 'RC283 STORY ROOM IN — SINGLE CINEMATIC HANDOFF' public/index.html
@@ -51,14 +55,14 @@ jobs:
           grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
 
-      - name: Lock RC285 into source
+      - name: Lock RC286 into source
         run: |
           if git diff --quiet -- public/index.html; then
-            echo "RC285 already locked"
+            echo "RC286 already locked"
           else
             git config user.name "SoulCinema Direct Deploy"
             git config user.email "actions@users.noreply.github.com"
             git add public/index.html
-            git commit -m "RC285 smooth Visual Bible return transition"
+            git commit -m "RC286 smooth About Us in and out transitions"
             git push origin HEAD:main
           fi
