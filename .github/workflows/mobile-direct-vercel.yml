@@ -18,29 +18,26 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC281 Theater return single cinematic handoff
+      - name: Repair RC281 Theater return syntax
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='// RC281 SCREENING THEATER RETURN — SINGLE CINEMATIC HANDOFF'
-          if marker not in html:
-              old="function returnFromTheater(){const v=$('#theaterPlayer');if(v)v.pause();journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{SceneManager.goTo('lobby');scene(screeningTheater,lobby);setTimeout(showPortals,520)})}"
-              new="function returnFromTheater(){const v=$('#theaterPlayer');if(v)v.pause();journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{"+marker+";SceneManager.goTo('lobby');screeningTheater.classList.remove('active');lobby.classList.add('active');transitionCount++;updateRuntimeMonitor();setTimeout(showPortals,420)})}"
-              if html.count(old)!=1:
-                  raise SystemExit(f'Expected exactly one Theater return target, found {html.count(old)}; refusing to guess')
-              html=html.replace(old,new,1)
-              p.write_text(html,encoding='utf-8')
+          old="function returnFromTheater(){const v=$('#theaterPlayer');if(v)v.pause();journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{// RC281 SCREENING THEATER RETURN — SINGLE CINEMATIC HANDOFF;SceneManager.goTo('lobby');screeningTheater.classList.remove('active');lobby.classList.add('active');transitionCount++;updateRuntimeMonitor();setTimeout(showPortals,420)})}"
+          new="function returnFromTheater(){const v=$('#theaterPlayer');if(v)v.pause();journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{/* RC281 SCREENING THEATER RETURN — SINGLE CINEMATIC HANDOFF */SceneManager.goTo('lobby');screeningTheater.classList.remove('active');lobby.classList.add('active');transitionCount++;updateRuntimeMonitor();setTimeout(showPortals,420)})}"
+          if html.count(old)!=1:
+              raise SystemExit(f'Expected exactly one malformed RC281 Theater return, found {html.count(old)}; refusing to guess')
+          html=html.replace(old,new,1)
+          p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC281 and preserve locked layers
+      - name: Verify RC281 repair and locked layers
         run: |
           grep -q 'RC281 SCREENING THEATER RETURN — SINGLE CINEMATIC HANDOFF' public/index.html
-          grep -q "function returnFromTheater(){" public/index.html
           grep -q "screeningTheater.classList.remove('active');lobby.classList.add('active')" public/index.html
-          if grep -q "SceneManager.goTo('lobby');scene(screeningTheater,lobby)" public/index.html; then
-            echo 'Old nested Theater scene transition still present'; exit 1
+          if grep -q "()=>{// RC281 SCREENING THEATER RETURN" public/index.html; then
+            echo 'Malformed RC281 line comment still present'; exit 1
           fi
           grep -q 'RC280 LIVE SAFE NATIVE RATIO FILL' public/index.html
           grep -q 'RC279 LIVE INNER SCREEN ALIGNMENT' public/index.html
@@ -55,14 +52,10 @@ jobs:
           grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
 
-      - name: Lock RC281 into source
+      - name: Lock RC281 repair into source
         run: |
-          if git diff --quiet -- public/index.html; then
-            echo "RC281 already locked"
-          else
-            git config user.name "SoulCinema Direct Deploy"
-            git config user.email "actions@users.noreply.github.com"
-            git add public/index.html
-            git commit -m "RC281 smooth Screening Theater return to Grand Lobby"
-            git push origin HEAD:main
-          fi
+          git config user.name "SoulCinema Direct Deploy"
+          git config user.email "actions@users.noreply.github.com"
+          git add public/index.html
+          git commit -m "RC281 repair Theater return script syntax"
+          git push origin HEAD:main
