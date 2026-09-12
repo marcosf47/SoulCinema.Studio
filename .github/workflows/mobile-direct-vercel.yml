@@ -22,7 +22,7 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
-
+          import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
           marker='<!-- RC290 MOBILE PORTAL HARD MEDIA FREEZE -->'
@@ -31,85 +31,8 @@ jobs:
           anchor='\n<!-- RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP -->'
           if html.count(anchor)!=1:
               raise SystemExit(f'RC271 anchor count={html.count(anchor)}; refusing to guess')
-
-          rc290=r'''
-<!-- RC290 MOBILE PORTAL HARD MEDIA FREEZE -->
-<style id="rc290-mobile-portal-hard-freeze-css">
-@media(max-width:700px){
-  #lobby.portal-mode #lobbyVideo{display:none!important;}
-}
-</style>
-<script id="rc290-mobile-portal-hard-freeze">
-(()=>{
-  'use strict';
-  const mobile=()=>matchMedia('(max-width:700px)').matches;
-  if(!mobile())return;
-  const lobby=document.getElementById('lobby');
-  const portals=document.getElementById('portals');
-  const skip=document.getElementById('skip');
-  const video=document.getElementById('lobbyVideo');
-  const source=video?.querySelector('source');
-  const ambient=document.getElementById('ambient');
-  if(!lobby||!portals||!skip||!video||!source)return;
-
-  const originalSrc=source.getAttribute('src')||'';
-  let detached=false;
-
-  const freeze=()=>{
-    if(!mobile())return;
-    document.body.dataset.mobilePortalLock='1';
-    try{video.pause()}catch(_e){}
-    try{ambient?.pause()}catch(_e){}
-    if(!detached){
-      detached=true;
-      video.dataset.rc290Src=originalSrc;
-      source.removeAttribute('src');
-      try{video.removeAttribute('src')}catch(_e){}
-      try{video.load()}catch(_e){}
-    }
-  };
-
-  const restore=()=>{
-    if(!mobile()||!detached)return;
-    if(document.body.dataset.mobilePortalLock==='1'&&!document.getElementById('gate')?.classList.contains('active'))return;
-    source.setAttribute('src',video.dataset.rc290Src||originalSrc);
-    try{video.load()}catch(_e){}
-    detached=false;
-  };
-
-  const portalActive=()=>lobby.classList.contains('portal-mode')||portals.classList.contains('show');
-  const sync=()=>{if(portalActive())freeze();};
-
-  window.addEventListener('pointerdown',e=>{
-    if(!mobile())return;
-    if(e.target?.closest?.('#skip'))freeze();
-  },true);
-  window.addEventListener('touchstart',e=>{
-    if(!mobile())return;
-    if(e.target?.closest?.('#skip'))freeze();
-  },{capture:true,passive:true});
-
-  new MutationObserver(sync).observe(lobby,{attributes:true,attributeFilter:['class']});
-  new MutationObserver(sync).observe(portals,{attributes:true,attributeFilter:['class']});
-
-  const gate=document.getElementById('gate');
-  if(gate)new MutationObserver(()=>{
-    if(gate.classList.contains('active')){
-      delete document.body.dataset.mobilePortalLock;
-      restore();
-    }
-  }).observe(gate,{attributes:true,attributeFilter:['class']});
-
-  document.addEventListener('play',e=>{
-    if(!portalActive())return;
-    const m=e.target;
-    if(m===video||m===ambient){try{m.pause()}catch(_e){}}
-  },true);
-
-  sync();
-})();
-</script>
-'''
+          payload='CjwhLS0gUkMyOTAgTU9CSUxFIFBPUlRBTCBIQVJEIE1FRElBIEZSRUVaRSAtLT4KPHN0eWxlIGlkPSJyYzI5MC1tb2JpbGUtcG9ydGFsLWhhcmQtZnJlZXplLWNzcyI+CkBtZWRpYShtYXgtd2lkdGg6NzAwcHgpewogICNsb2JieS5wb3J0YWwtbW9kZSAjbG9iYnlWaWRlb3tkaXNwbGF5Om5vbmUhaW1wb3J0YW50O30KfQo8L3N0eWxlPgo8c2NyaXB0IGlkPSJyYzI5MC1tb2JpbGUtcG9ydGFsLWhhcmQtZnJlZXplIj4KKCgpPT57CiAgJ3VzZSBzdHJpY3QnOwogIGNvbnN0IG1vYmlsZT0oKT0+bWF0Y2hNZWRpYSgnKG1heC13aWR0aDo3MDBweCknKS5tYXRjaGVzOwogIGlmKCFtb2JpbGUoKSlyZXR1cm47CiAgY29uc3QgbG9iYnk9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2xvYmJ5Jyk7CiAgY29uc3QgcG9ydGFscz1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncG9ydGFscycpOwogIGNvbnN0IHNraXA9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3NraXAnKTsKICBjb25zdCB2aWRlbz1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbG9iYnlWaWRlbycpOwogIGNvbnN0IHNvdXJjZT12aWRlbz8ucXVlcnlTZWxlY3Rvcignc291cmNlJyk7CiAgY29uc3QgYW1iaWVudD1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYW1iaWVudCcpOwogIGlmKCFsb2JieXx8IXBvcnRhbHN8fCFza2lwfHwhdmlkZW98fCFzb3VyY2UpcmV0dXJuOwoKICBjb25zdCBvcmlnaW5hbFNyYz1zb3VyY2UuZ2V0QXR0cmlidXRlKCdzcmMnKXx8Jyc7CiAgbGV0IGRldGFjaGVkPWZhbHNlOwoKICBjb25zdCBmcmVlemU9KCk9PnsKICAgIGlmKCFtb2JpbGUoKSlyZXR1cm47CiAgICBkb2N1bWVudC5ib2R5LmRhdGFzZXQubW9iaWxlUG9ydGFsTG9jaz0nMSc7CiAgICB0cnl7dmlkZW8ucGF1c2UoKX1jYXRjaChfZSl7fQogICAgdHJ5e2FtYmllbnQ/LnBhdXNlKCl9Y2F0Y2goX2Upe30KICAgIGlmKCFkZXRhY2hlZCl7CiAgICAgIGRldGFjaGVkPXRydWU7CiAgICAgIHZpZGVvLmRhdGFzZXQucmMyOTBTcmM9b3JpZ2luYWxTcmM7CiAgICAgIHNvdXJjZS5yZW1vdmVBdHRyaWJ1dGUoJ3NyYycpOwogICAgICB0cnl7dmlkZW8ucmVtb3ZlQXR0cmlidXRlKCdzcmMnKX1jYXRjaChfZSl7fQogICAgICB0cnl7dmlkZW8ubG9hZCgpfWNhdGNoKF9lKXt9CiAgICB9CiAgfTsKCiAgY29uc3QgcmVzdG9yZT0oKT0+ewogICAgaWYoIW1vYmlsZSgpfHwhZGV0YWNoZWQpcmV0dXJuOwogICAgaWYoZG9jdW1lbnQuYm9keS5kYXRhc2V0Lm1vYmlsZVBvcnRhbExvY2s9PT0nMScmJiFkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZ2F0ZScpPy5jbGFzc0xpc3QuY29udGFpbnMoJ2FjdGl2ZScpKXJldHVybjsKICAgIHNvdXJjZS5zZXRBdHRyaWJ1dGUoJ3NyYycsdmlkZW8uZGF0YXNldC5yYzI5MFNyY3x8b3JpZ2luYWxTcmMpOwogICAgdHJ5e3ZpZGVvLmxvYWQoKX1jYXRjaChfZSl7fQogICAgZGV0YWNoZWQ9ZmFsc2U7CiAgfTsKCiAgY29uc3QgcG9ydGFsQWN0aXZlPSgpPT5sb2JieS5jbGFzc0xpc3QuY29udGFpbnMoJ3BvcnRhbC1tb2RlJyl8fHBvcnRhbHMuY2xhc3NMaXN0LmNvbnRhaW5zKCdzaG93Jyk7CiAgY29uc3Qgc3luYz0oKT0+e2lmKHBvcnRhbEFjdGl2ZSgpKWZyZWV6ZSgpO307CgogIHdpbmRvdy5hZGRFdmVudExpc3RlbmVyKCdwb2ludGVyZG93bicsZT0+ewogICAgaWYoIW1vYmlsZSgpKXJldHVybjsKICAgIGlmKGUudGFyZ2V0Py5jbG9zZXN0Py4oJyNza2lwJykpZnJlZXplKCk7CiAgfSx0cnVlKTsKICB3aW5kb3cuYWRkRXZlbnRMaXN0ZW5lcigndG91Y2hzdGFydCcsZT0+ewogICAgaWYoIW1vYmlsZSgpKXJldHVybjsKICAgIGlmKGUudGFyZ2V0Py5jbG9zZXN0Py4oJyNza2lwJykpZnJlZXplKCk7CiAgfSx7Y2FwdHVyZTp0cnVlLHBhc3NpdmU6dHJ1ZX0pOwoKICBuZXcgTXV0YXRpb25PYnNlcnZlcihzeW5jKS5vYnNlcnZlKGxvYmJ5LHthdHRyaWJ1dGVzOnRydWUsYXR0cmlidXRlRmlsdGVyOlsnY2xhc3MnXX0pOwogIG5ldyBNdXRhdGlvbk9ic2VydmVyKHN5bmMpLm9ic2VydmUocG9ydGFscyx7YXR0cmlidXRlczp0cnVlLGF0dHJpYnV0ZUZpbHRlcjpbJ2NsYXNzJ119KTsKCiAgY29uc3QgZ2F0ZT1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZ2F0ZScpOwogIGlmKGdhdGUpbmV3IE11dGF0aW9uT2JzZXJ2ZXIoKCk9PnsKICAgIGlmKGdhdGUuY2xhc3NMaXN0LmNvbnRhaW5zKCdhY3RpdmUnKSl7CiAgICAgIGRlbGV0ZSBkb2N1bWVudC5ib2R5LmRhdGFzZXQubW9iaWxlUG9ydGFsTG9jazsKICAgICAgcmVzdG9yZSgpOwogICAgfQogIH0pLm9ic2VydmUoZ2F0ZSx7YXR0cmlidXRlczp0cnVlLGF0dHJpYnV0ZUZpbHRlcjpbJ2NsYXNzJ119KTsKCiAgZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcigncGxheScsZT0+ewogICAgaWYoIXBvcnRhbEFjdGl2ZSgpKXJldHVybjsKICAgIGNvbnN0IG09ZS50YXJnZXQ7CiAgICBpZihtPT09dmlkZW98fG09PT1hbWJpZW50KXt0cnl7bS5wYXVzZSgpfWNhdGNoKF9lKXt9fQogIH0sdHJ1ZSk7CgogIHN5bmMoKTsKfSkoKTsKPC9zY3JpcHQ+Cg=='
+          rc290=base64.b64decode(payload).decode('utf-8')
           html=html.replace(anchor,rc290+anchor,1)
           p.write_text(html,encoding='utf-8')
           PY
