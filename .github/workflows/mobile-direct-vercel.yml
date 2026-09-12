@@ -18,36 +18,50 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC296 rollback lobby layout regression
+      - name: Apply RC297 desktop Production Room viewport fit
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import re
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          # Remove only the two patches that introduced/attempted to repair the current lobby layout regression.
-          patterns=[
-            r'\n*<!-- RC295 MOBILE LOBBY CONTROL LAYOUT RESTORE -->\s*<style id="rc295-mobile-lobby-control-layout-restore">.*?</style>\s*',
-            r'\n*<!-- RC294 MOBILE SKIP SOFT FULL HITBOX OWNER -->\s*<style id="rc294-mobile-skip-soft-hitbox-css">.*?</style>\s*<script id="rc294-mobile-skip-soft-hitbox-owner">.*?</script>\s*'
-          ]
-          for pat in patterns:
-              html,n=re.subn(pat,'\n',html,count=1,flags=re.S)
-              if n!=1:
-                  raise SystemExit(f'expected exactly one regression block, removed={n}; refusing to guess')
-          marker='<!-- RC296 MOBILE LOBBY LAYOUT REGRESSION ROLLBACK -->'
-          anchor='\n<!-- RC293 MOBILE SKIP IMMEDIATE PORTAL OWNER -->'
+          marker='<!-- RC297 DESKTOP PRODUCTION ROOM VIEWPORT FIT -->'
+          anchor='\n<!-- RC296 MOBILE LOBBY LAYOUT REGRESSION ROLLBACK -->'
           if marker not in html:
               if html.count(anchor)!=1:
-                  raise SystemExit(f'RC293 anchor count={html.count(anchor)}; refusing to guess')
-              html=html.replace(anchor,'\n'+marker+'\n'+anchor,1)
-          p.write_text(html,encoding='utf-8')
+                  raise SystemExit(f'RC296 anchor count={html.count(anchor)}; refusing to guess')
+              patch=r'''
+<!-- RC297 DESKTOP PRODUCTION ROOM VIEWPORT FIT -->
+<style id="rc297-desktop-production-viewport-fit">
+@media (min-width:861px){
+  #productionRoom .center{
+    padding-left:24px!important;
+    padding-right:24px!important;
+    overflow:hidden!important;
+  }
+  #productionRoom .production-shell{
+    width:min(1320px,calc(100vw - 64px))!important;
+    max-width:calc(100vw - 64px)!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    min-width:0!important;
+  }
+  #productionRoom .production-grid,
+  #productionRoom .production-feature,
+  #productionRoom .production-stack,
+  #productionRoom .production-card{
+    min-width:0!important;
+  }
+}
+</style>
+'''
+              html=html.replace(anchor,'\n'+patch+anchor,1)
+              p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify rollback and preserve locks
+      - name: Verify RC297 and preserve locks
         run: |
+          grep -q 'RC297 DESKTOP PRODUCTION ROOM VIEWPORT FIT' public/index.html
           grep -q 'RC296 MOBILE LOBBY LAYOUT REGRESSION ROLLBACK' public/index.html
-          ! grep -q 'RC295 MOBILE LOBBY CONTROL LAYOUT RESTORE' public/index.html
-          ! grep -q 'RC294 MOBILE SKIP SOFT FULL HITBOX OWNER' public/index.html
           grep -q 'RC293 MOBILE SKIP IMMEDIATE PORTAL OWNER' public/index.html
           grep -q 'RC292 MOBILE PORTAL THEATER GHOST PLAY GUARD' public/index.html
           grep -q 'RC291 MOBILE PORTAL AMBIENT HARD FREEZE' public/index.html
@@ -58,10 +72,14 @@ jobs:
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
           grep -q 'RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP' public/index.html
 
-      - name: Commit RC296 source
+      - name: Commit RC297 source
         run: |
           git config user.name "SoulCinema Direct Deploy"
           git config user.email "actions@users.noreply.github.com"
-          git add public/index.html
-          git commit -m "RC296 rollback mobile lobby layout regression"
-          git push origin HEAD:main
+          if git diff --quiet -- public/index.html; then
+            echo "RC297 already applied"
+          else
+            git add public/index.html
+            git commit -m "RC297 desktop Production Room viewport fit"
+            git push origin HEAD:main
+          fi
