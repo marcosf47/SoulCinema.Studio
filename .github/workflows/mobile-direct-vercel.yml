@@ -22,6 +22,7 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
           marker='<!-- RC295 MOBILE LOBBY CONTROL LAYOUT RESTORE -->'
@@ -29,33 +30,8 @@ jobs:
               anchor='\n<!-- RC294 MOBILE SKIP SOFT FULL HITBOX OWNER -->'
               if html.count(anchor)!=1:
                   raise SystemExit(f'RC294 anchor count={html.count(anchor)}; refusing to guess')
-              patch=r'''
-<!-- RC295 MOBILE LOBBY CONTROL LAYOUT RESTORE -->
-<style id="rc295-mobile-lobby-control-layout-restore">
-@media(max-width:700px){
-  #lobby #skip{
-    position:absolute!important;
-    right:18px!important;
-    left:auto!important;
-    bottom:18px!important;
-    top:auto!important;
-    margin:0!important;
-    transform:none!important;
-    z-index:1200!important;
-  }
-  #lobby .audio{
-    position:absolute!important;
-    left:18px!important;
-    right:auto!important;
-    top:72px!important;
-    bottom:auto!important;
-    margin:0!important;
-    transform:none!important;
-    z-index:20!important;
-  }
-}
-</style>
-'''
+              payload='CjwhLS0gUkMyOTUgTU9CSUxFIExPQkJZIENPTlRST0wgTEFZT1VUIFJFU1RPUkUgLS0+CjxzdHlsZSBpZD0icmMyOTUtbW9iaWxlLWxvYmJ5LWNvbnRyb2wtbGF5b3V0LXJlc3RvcmUiPgpAbWVkaWEobWF4LXdpZHRoOjcwMHB4KXsKICAjbG9iYnkgI3NraXB7CiAgICBwb3NpdGlvbjphYnNvbHV0ZSFpbXBvcnRhbnQ7CiAgICByaWdodDoxOHB4IWltcG9ydGFudDsKICAgIGxlZnQ6YXV0byFpbXBvcnRhbnQ7CiAgICBib3R0b206MThweCFpbXBvcnRhbnQ7CiAgICB0b3A6YXV0byFpbXBvcnRhbnQ7CiAgICBtYXJnaW46MCFpbXBvcnRhbnQ7CiAgICB0cmFuc2Zvcm06bm9uZSFpbXBvcnRhbnQ7CiAgICB6LWluZGV4OjEyMDAhaW1wb3J0YW50OwogIH0KICAjbG9iYnkgLmF1ZGlvewogICAgcG9zaXRpb246YWJzb2x1dGUhaW1wb3J0YW50OwogICAgbGVmdDoxOHB4IWltcG9ydGFudDsKICAgIHJpZ2h0OmF1dG8haW1wb3J0YW50OwogICAgdG9wOjcycHghaW1wb3J0YW50OwogICAgYm90dG9tOmF1dG8haW1wb3J0YW50OwogICAgbWFyZ2luOjAhaW1wb3J0YW50OwogICAgdHJhbnNmb3JtOm5vbmUhaW1wb3J0YW50OwogICAgei1pbmRleDoyMCFpbXBvcnRhbnQ7CiAgfQp9Cjwvc3R5bGU+Cg=='
+              patch=base64.b64decode(payload).decode('utf-8')
               html=html.replace(anchor,'\n'+patch+anchor,1)
               p.write_text(html,encoding='utf-8')
           PY
