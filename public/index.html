@@ -2763,7 +2763,7 @@ function playTheater(){
  $('#theaterStatus').textContent='● PREMIERE OPENING'
 }
 function handoffToFeature(){const v=$('#theaterPlayer');if(!v||theaterHandoffBusy)return;theaterHandoffBusy=true;$('#theaterStatus').textContent='ENTERING THE STORY';v.classList.remove('theater-handoff','theater-portal-push','theater-feature-enter');loadTheaterStage('film',true);void v.offsetWidth;v.classList.add('theater-feature-enter');$('#theaterStatus').textContent='● NOW PLAYING · MWEN POUKONT MWEN';setTimeout(()=>v.classList.remove('theater-feature-enter'),900);theaterHandoffBusy=false}
-function returnFromTheater(){const v=$('#theaterPlayer');if(v)v.pause();journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{SceneManager.goTo('lobby');scene(screeningTheater,lobby);setTimeout(showPortals,520)})}
+function returnFromTheater(){const v=$('#theaterPlayer');if(v)v.pause();journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{// RC281 SCREENING THEATER RETURN — SINGLE CINEMATIC HANDOFF;SceneManager.goTo('lobby');screeningTheater.classList.remove('active');lobby.classList.add('active');transitionCount++;updateRuntimeMonitor();setTimeout(showPortals,420)})}
 function backToTheaterHome(){
  const v=$('#theaterPlayer'),p=$('#theaterPoster');if(!v)return;
  theaterHandoffBusy=false;theaterStage='opening';
