@@ -18,28 +18,36 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC295 restore mobile lobby control layout
+      - name: Apply RC296 rollback lobby layout regression
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import base64
+          import re
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='<!-- RC295 MOBILE LOBBY CONTROL LAYOUT RESTORE -->'
+          # Remove only the two patches that introduced/attempted to repair the current lobby layout regression.
+          patterns=[
+            r'\n*<!-- RC295 MOBILE LOBBY CONTROL LAYOUT RESTORE -->\s*<style id="rc295-mobile-lobby-control-layout-restore">.*?</style>\s*',
+            r'\n*<!-- RC294 MOBILE SKIP SOFT FULL HITBOX OWNER -->\s*<style id="rc294-mobile-skip-soft-hitbox-css">.*?</style>\s*<script id="rc294-mobile-skip-soft-hitbox-owner">.*?</script>\s*'
+          ]
+          for pat in patterns:
+              html,n=re.subn(pat,'\n',html,count=1,flags=re.S)
+              if n!=1:
+                  raise SystemExit(f'expected exactly one regression block, removed={n}; refusing to guess')
+          marker='<!-- RC296 MOBILE LOBBY LAYOUT REGRESSION ROLLBACK -->'
+          anchor='\n<!-- RC293 MOBILE SKIP IMMEDIATE PORTAL OWNER -->'
           if marker not in html:
-              anchor='\n<!-- RC294 MOBILE SKIP SOFT FULL HITBOX OWNER -->'
               if html.count(anchor)!=1:
-                  raise SystemExit(f'RC294 anchor count={html.count(anchor)}; refusing to guess')
-              payload='CjwhLS0gUkMyOTUgTU9CSUxFIExPQkJZIENPTlRST0wgTEFZT1VUIFJFU1RPUkUgLS0+CjxzdHlsZSBpZD0icmMyOTUtbW9iaWxlLWxvYmJ5LWNvbnRyb2wtbGF5b3V0LXJlc3RvcmUiPgpAbWVkaWEobWF4LXdpZHRoOjcwMHB4KXsKICAjbG9iYnkgI3NraXB7CiAgICBwb3NpdGlvbjphYnNvbHV0ZSFpbXBvcnRhbnQ7CiAgICByaWdodDoxOHB4IWltcG9ydGFudDsKICAgIGxlZnQ6YXV0byFpbXBvcnRhbnQ7CiAgICBib3R0b206MThweCFpbXBvcnRhbnQ7CiAgICB0b3A6YXV0byFpbXBvcnRhbnQ7CiAgICBtYXJnaW46MCFpbXBvcnRhbnQ7CiAgICB0cmFuc2Zvcm06bm9uZSFpbXBvcnRhbnQ7CiAgICB6LWluZGV4OjEyMDAhaW1wb3J0YW50OwogIH0KICAjbG9iYnkgLmF1ZGlvewogICAgcG9zaXRpb246YWJzb2x1dGUhaW1wb3J0YW50OwogICAgbGVmdDoxOHB4IWltcG9ydGFudDsKICAgIHJpZ2h0OmF1dG8haW1wb3J0YW50OwogICAgdG9wOjcycHghaW1wb3J0YW50OwogICAgYm90dG9tOmF1dG8haW1wb3J0YW50OwogICAgbWFyZ2luOjAhaW1wb3J0YW50OwogICAgdHJhbnNmb3JtOm5vbmUhaW1wb3J0YW50OwogICAgei1pbmRleDoyMCFpbXBvcnRhbnQ7CiAgfQp9Cjwvc3R5bGU+Cg=='
-              patch=base64.b64decode(payload).decode('utf-8')
-              html=html.replace(anchor,'\n'+patch+anchor,1)
-              p.write_text(html,encoding='utf-8')
+                  raise SystemExit(f'RC293 anchor count={html.count(anchor)}; refusing to guess')
+              html=html.replace(anchor,'\n'+marker+'\n'+anchor,1)
+          p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC295 and preserve current locks
+      - name: Verify rollback and preserve locks
         run: |
-          grep -q 'RC295 MOBILE LOBBY CONTROL LAYOUT RESTORE' public/index.html
-          grep -q 'RC294 MOBILE SKIP SOFT FULL HITBOX OWNER' public/index.html
+          grep -q 'RC296 MOBILE LOBBY LAYOUT REGRESSION ROLLBACK' public/index.html
+          ! grep -q 'RC295 MOBILE LOBBY CONTROL LAYOUT RESTORE' public/index.html
+          ! grep -q 'RC294 MOBILE SKIP SOFT FULL HITBOX OWNER' public/index.html
           grep -q 'RC293 MOBILE SKIP IMMEDIATE PORTAL OWNER' public/index.html
           grep -q 'RC292 MOBILE PORTAL THEATER GHOST PLAY GUARD' public/index.html
           grep -q 'RC291 MOBILE PORTAL AMBIENT HARD FREEZE' public/index.html
@@ -50,14 +58,10 @@ jobs:
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
           grep -q 'RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP' public/index.html
 
-      - name: Commit RC295 source
+      - name: Commit RC296 source
         run: |
           git config user.name "SoulCinema Direct Deploy"
           git config user.email "actions@users.noreply.github.com"
-          if git diff --quiet -- public/index.html; then
-            echo "RC295 already applied"
-          else
-            git add public/index.html
-            git commit -m "RC295 restore mobile lobby control layout"
-            git push origin HEAD:main
-          fi
+          git add public/index.html
+          git commit -m "RC296 rollback mobile lobby layout regression"
+          git push origin HEAD:main
