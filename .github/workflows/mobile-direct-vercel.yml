@@ -18,30 +18,31 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC290 mobile portal hard media freeze
+      - name: Apply RC291 mobile ambient hard freeze
         run: |
           python3 - <<'PY'
           from pathlib import Path
           import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='<!-- RC290 MOBILE PORTAL HARD MEDIA FREEZE -->'
+          marker='<!-- RC291 MOBILE PORTAL AMBIENT HARD FREEZE -->'
           if marker in html:
-              raise SystemExit('RC290 already present unexpectedly')
+              raise SystemExit('RC291 already present unexpectedly')
           anchor='\n<!-- RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP -->'
           if html.count(anchor)!=1:
               raise SystemExit(f'RC271 anchor count={html.count(anchor)}; refusing to guess')
-          payload='CjwhLS0gUkMyOTAgTU9CSUxFIFBPUlRBTCBIQVJEIE1FRElBIEZSRUVaRSAtLT4KPHN0eWxlIGlkPSJyYzI5MC1tb2JpbGUtcG9ydGFsLWhhcmQtZnJlZXplLWNzcyI+CkBtZWRpYShtYXgtd2lkdGg6NzAwcHgpewogICNsb2JieS5wb3J0YWwtbW9kZSAjbG9iYnlWaWRlb3tkaXNwbGF5Om5vbmUhaW1wb3J0YW50O30KfQo8L3N0eWxlPgo8c2NyaXB0IGlkPSJyYzI5MC1tb2JpbGUtcG9ydGFsLWhhcmQtZnJlZXplIj4KKCgpPT57CiAgJ3VzZSBzdHJpY3QnOwogIGNvbnN0IG1vYmlsZT0oKT0+bWF0Y2hNZWRpYSgnKG1heC13aWR0aDo3MDBweCknKS5tYXRjaGVzOwogIGlmKCFtb2JpbGUoKSlyZXR1cm47CiAgY29uc3QgbG9iYnk9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2xvYmJ5Jyk7CiAgY29uc3QgcG9ydGFscz1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncG9ydGFscycpOwogIGNvbnN0IHNraXA9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3NraXAnKTsKICBjb25zdCB2aWRlbz1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbG9iYnlWaWRlbycpOwogIGNvbnN0IHNvdXJjZT12aWRlbz8ucXVlcnlTZWxlY3Rvcignc291cmNlJyk7CiAgY29uc3QgYW1iaWVudD1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYW1iaWVudCcpOwogIGlmKCFsb2JieXx8IXBvcnRhbHN8fCFza2lwfHwhdmlkZW98fCFzb3VyY2UpcmV0dXJuOwoKICBjb25zdCBvcmlnaW5hbFNyYz1zb3VyY2UuZ2V0QXR0cmlidXRlKCdzcmMnKXx8Jyc7CiAgbGV0IGRldGFjaGVkPWZhbHNlOwoKICBjb25zdCBmcmVlemU9KCk9PnsKICAgIGlmKCFtb2JpbGUoKSlyZXR1cm47CiAgICBkb2N1bWVudC5ib2R5LmRhdGFzZXQubW9iaWxlUG9ydGFsTG9jaz0nMSc7CiAgICB0cnl7dmlkZW8ucGF1c2UoKX1jYXRjaChfZSl7fQogICAgdHJ5e2FtYmllbnQ/LnBhdXNlKCl9Y2F0Y2goX2Upe30KICAgIGlmKCFkZXRhY2hlZCl7CiAgICAgIGRldGFjaGVkPXRydWU7CiAgICAgIHZpZGVvLmRhdGFzZXQucmMyOTBTcmM9b3JpZ2luYWxTcmM7CiAgICAgIHNvdXJjZS5yZW1vdmVBdHRyaWJ1dGUoJ3NyYycpOwogICAgICB0cnl7dmlkZW8ucmVtb3ZlQXR0cmlidXRlKCdzcmMnKX1jYXRjaChfZSl7fQogICAgICB0cnl7dmlkZW8ubG9hZCgpfWNhdGNoKF9lKXt9CiAgICB9CiAgfTsKCiAgY29uc3QgcmVzdG9yZT0oKT0+ewogICAgaWYoIW1vYmlsZSgpfHwhZGV0YWNoZWQpcmV0dXJuOwogICAgaWYoZG9jdW1lbnQuYm9keS5kYXRhc2V0Lm1vYmlsZVBvcnRhbExvY2s9PT0nMScmJiFkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZ2F0ZScpPy5jbGFzc0xpc3QuY29udGFpbnMoJ2FjdGl2ZScpKXJldHVybjsKICAgIHNvdXJjZS5zZXRBdHRyaWJ1dGUoJ3NyYycsdmlkZW8uZGF0YXNldC5yYzI5MFNyY3x8b3JpZ2luYWxTcmMpOwogICAgdHJ5e3ZpZGVvLmxvYWQoKX1jYXRjaChfZSl7fQogICAgZGV0YWNoZWQ9ZmFsc2U7CiAgfTsKCiAgY29uc3QgcG9ydGFsQWN0aXZlPSgpPT5sb2JieS5jbGFzc0xpc3QuY29udGFpbnMoJ3BvcnRhbC1tb2RlJyl8fHBvcnRhbHMuY2xhc3NMaXN0LmNvbnRhaW5zKCdzaG93Jyk7CiAgY29uc3Qgc3luYz0oKT0+e2lmKHBvcnRhbEFjdGl2ZSgpKWZyZWV6ZSgpO307CgogIHdpbmRvdy5hZGRFdmVudExpc3RlbmVyKCdwb2ludGVyZG93bicsZT0+ewogICAgaWYoIW1vYmlsZSgpKXJldHVybjsKICAgIGlmKGUudGFyZ2V0Py5jbG9zZXN0Py4oJyNza2lwJykpZnJlZXplKCk7CiAgfSx0cnVlKTsKICB3aW5kb3cuYWRkRXZlbnRMaXN0ZW5lcigndG91Y2hzdGFydCcsZT0+ewogICAgaWYoIW1vYmlsZSgpKXJldHVybjsKICAgIGlmKGUudGFyZ2V0Py5jbG9zZXN0Py4oJyNza2lwJykpZnJlZXplKCk7CiAgfSx7Y2FwdHVyZTp0cnVlLHBhc3NpdmU6dHJ1ZX0pOwoKICBuZXcgTXV0YXRpb25PYnNlcnZlcihzeW5jKS5vYnNlcnZlKGxvYmJ5LHthdHRyaWJ1dGVzOnRydWUsYXR0cmlidXRlRmlsdGVyOlsnY2xhc3MnXX0pOwogIG5ldyBNdXRhdGlvbk9ic2VydmVyKHN5bmMpLm9ic2VydmUocG9ydGFscyx7YXR0cmlidXRlczp0cnVlLGF0dHJpYnV0ZUZpbHRlcjpbJ2NsYXNzJ119KTsKCiAgY29uc3QgZ2F0ZT1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZ2F0ZScpOwogIGlmKGdhdGUpbmV3IE11dGF0aW9uT2JzZXJ2ZXIoKCk9PnsKICAgIGlmKGdhdGUuY2xhc3NMaXN0LmNvbnRhaW5zKCdhY3RpdmUnKSl7CiAgICAgIGRlbGV0ZSBkb2N1bWVudC5ib2R5LmRhdGFzZXQubW9iaWxlUG9ydGFsTG9jazsKICAgICAgcmVzdG9yZSgpOwogICAgfQogIH0pLm9ic2VydmUoZ2F0ZSx7YXR0cmlidXRlczp0cnVlLGF0dHJpYnV0ZUZpbHRlcjpbJ2NsYXNzJ119KTsKCiAgZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcigncGxheScsZT0+ewogICAgaWYoIXBvcnRhbEFjdGl2ZSgpKXJldHVybjsKICAgIGNvbnN0IG09ZS50YXJnZXQ7CiAgICBpZihtPT09dmlkZW98fG09PT1hbWJpZW50KXt0cnl7bS5wYXVzZSgpfWNhdGNoKF9lKXt9fQogIH0sdHJ1ZSk7CgogIHN5bmMoKTsKfSkoKTsKPC9zY3JpcHQ+Cg=='
-          rc290=base64.b64decode(payload).decode('utf-8')
-          html=html.replace(anchor,rc290+anchor,1)
+          payload='CjwhLS0gUkMyOTEgTU9CSUxFIFBPUlRBTCBBTUJJRU5UIEhBUkQgRlJFRVpFIC0tPgo8c2NyaXB0IGlkPSJyYzI5MS1tb2JpbGUtYW1iaWVudC1oYXJkLWZyZWV6ZSI+CiAoKCk9PnsKICAndXNlIHN0cmljdCc7CiAgY29uc3QgbW9iaWxlPSgpPT5tYXRjaE1lZGlhKCcobWF4LXdpZHRoOjcwMHB4KScpLm1hdGNoZXM7CiAgaWYoIW1vYmlsZSgpKXJldHVybjsKICBjb25zdCBsb2JieT1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbG9iYnknKTsKICBjb25zdCBwb3J0YWxzPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdwb3J0YWxzJyk7CiAgY29uc3Qgc2tpcD1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc2tpcCcpOwogIGNvbnN0IGFtYmllbnQ9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2FtYmllbnQnKTsKICBjb25zdCBzb3VyY2U9YW1iaWVudD8ucXVlcnlTZWxlY3Rvcignc291cmNlJyk7CiAgaWYoIWxvYmJ5fHwhcG9ydGFsc3x8IXNraXB8fCFhbWJpZW50fHwhc291cmNlKXJldHVybjsKCiAgY29uc3Qgb3JpZ2luYWxTcmM9c291cmNlLmdldEF0dHJpYnV0ZSgnc3JjJyl8fCc nOwogIGxldCBkZXRhY2hlZD1mYWxzZTsKCiAgY29uc3QgZnJlZXplQW1iaWVudD0oKT0+ewogICAgaWYoIW1vYmlsZSgpKXJldHVybjsKICAgIGRvY3VtZW50LmJvZHkuZGF0YXNldC5tb2JpbGVQb3J0YWxMb2NrPScxJzsKICAgIHRyeXthbWJpZW50LnBhdXNlKCl9Y2F0Y2goX2Upe30KICAgIGlmKCFkZXRhY2hlZCl7CiAgICAgIGRldGFjaGVkPXRydWU7CiAgICAgIGFtYmllbnQuZGF0YXNldC5yYzI5MVNyYz1vcmlnaW5hbFNyYzsKICAgICAgc291cmNlLnJlbW92ZUF0dHJpYnV0ZSgnc3JjJyk7CiAgICAgIHRyeXthbWJpZW50LnJlbW92ZUF0dHJpYnV0ZSgnc3JjJyl9Y2F0Y2goX2Upe30KICAgICAgdHJ5e2FtYmllbnQubG9hZCgpfWNhdGNoKF9lKXt9CiAgICB9CiAgfTsKCiAgY29uc3QgcmVzdG9yZUFtYmllbnQ9KCk9PnsKICAgIGlmKCFtb2JpbGUoKXx8IWRldGFjaGVkKXJldHVybjsKICAgIGNvbnN0IGdhdGU9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2dhdGUnKTsKICAgIGlmKCFnYXRlPy5jbGFzc0xpc3QuY29udGFpbnMoJ2FjdGl2ZScpKXJldHVybjsKICAgIHNvdXJjZS5zZXRBdHRyaWJ1dGUoJ3NyYycsYW1iaWVudC5kYXRhc2V0LnJjMjkxU3JjfHxvcmlnaW5hbFNyYyk7CiAgICB0cnl7YW1iaWVudC5sb2FkKCl9Y2F0Y2goX2Upe30KICAgIGRldGFjaGVkPWZhbHNlOwogIH07CgogIGNvbnN0IHBvcnRhbEFjdGl2ZT0oKT0+bG9iYnkuY2xhc3NMaXN0LmNvbnRhaW5zKCdwb3J0YWwtbW9kZScpfHxwb3J0YWxzLmNsYXNzTGlzdC5jb250YWlucygnc2hvdycpOwogIGNvbnN0IHN5bmM9KCk9PnsKICAgIGlmKHBvcnRhbEFjdGl2ZSgpKWZyZWV6ZUFtYmllbnQoKTsKICB9OwoKICB3aW5kb3cuYWRkRXZlbnRMaXN0ZW5lcigncG9pbnRlcmRvd24nLGU9PnsKICAgIGlmKCFtb2JpbGUoKSlyZXR1cm47CiAgICBpZihlLnRhcmdldD8uY2xvc2VzdD8uKCcjc2tpcCcpKWZyZWV6ZUFtYmllbnQoKTsKICB9LHRydWUpOwogIHdpbmRvdy5hZGRFdmVudExpc3RlbmVyKCd0b3VjaHN0YXJ0JyxlPT57CiAgICBpZighbW9iaWxlKCkpcmV0dXJuOwogICAgaWYoZS50YXJnZXQ/LmNsb3Nlc3Q/LignI3NraXAnKSlmcmVlemVBbWJpZW50KCk7CiAgfSx7Y2FwdHVyZTp0cnVlLHBhc3NpdmU6dHJ1ZX0pOwoKICBuZXcgTXV0YXRpb25PYnNlcnZlcihzeW5jKS5vYnNlcnZlKGxvYmJ5LHthdHRyaWJ1dGVzOnRydWUsYXR0cmlidXRlRmlsdGVyOlsnY2xhc3MnXX0pOwogIG5ldyBNdXRhdGlvbk9ic2VydmVyKHN5bmMpLm9ic2VydmUocG9ydGFscyx7YXR0cmlidXRlczp0cnVlLGF0dHJpYnV0ZUZpbHRlcjpbJ2NsYXNzJ119KTsKICBjb25zdCBnYXRlPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdnYXRlJyk7CiAgaWYoZ2F0ZSluZXcgTXV0YXRpb25PYnNlcnZlcihyZXN0b3JlQW1iaWVudCkub2JzZXJ2ZShnYXRlLHthdHRyaWJ1dGVzOnRydWUsYXR0cmlidXRlRmlsdGVyOlsnY2xhc3MnXX0pOwoKICBjb25zdCBuYXRpdmVQbGF5PWFtYmllbnQucGxheS5iaW5kKGFtYmllbnQpOwogIGFtYmllbnQucGxheT1mdW5jdGlvbigpewogICAgaWYobW9iaWxlKCkmJihwb3J0YWxBY3RpdmUoKXx8ZG9jdW1lbnQuYm9keS5kYXRhc2V0Lm1vYmlsZVBvcnRhbExvY2s9PT0nMScpKXsKICAgICAgdHJ5e3RoaXMucGF1c2UoKX1jYXRjaChfZSl7fQogICAgICByZXR1cm4gUHJvbWlzZS5yZXNvbHZlKCk7CiAgICB9CiAgICByZXR1cm4gbmF0aXZlUGxheSgpOwogIH07CiAgYW1iaWVudC5hZGRFdmVudExpc3RlbmVyKCdwbGF5JywoKT0+e2lmKHBvcnRhbEFjdGl2ZSgpKXt0cnl7YW1iaWVudC5wYXVzZSgpfWNhdGNoKF9lKXt9fX0sdHJ1ZSk7CiAgc3luYygpOwp9KSgpOwo8L3NjcmlwdD4K'
+          rc291=base64.b64decode(payload.replace(' ','')).decode('utf-8')
+          html=html.replace(anchor,rc291+anchor,1)
           p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC290 and locked layers
+      - name: Verify RC291 and locked layers
         run: |
+          grep -q 'RC291 MOBILE PORTAL AMBIENT HARD FREEZE' public/index.html
+          grep -q 'rc291-mobile-ambient-hard-freeze' public/index.html
+          grep -q 'rc291Src' public/index.html
           grep -q 'RC290 MOBILE PORTAL HARD MEDIA FREEZE' public/index.html
-          grep -q 'rc290-mobile-portal-hard-freeze' public/index.html
-          grep -q "source.removeAttribute('src')" public/index.html
           grep -q 'RC289 MOBILE PORTAL SINGLE OWNER + QUIET MEDIA' public/index.html
           grep -q 'RC269 MASTER MOBILE MEDIA AUTHORITY LOCK' public/index.html
           grep -q 'RC268 MASTER MOBILE PORTAL RUNTIME CLEANUP' public/index.html
@@ -63,14 +64,14 @@ jobs:
           grep -q 'RC277 DESKTOP LIVE CENTER RETURN — SINGLE CINEMATIC HANDOFF' public/index.html
           grep -q 'RC276 LIVE AUTOPLAY BROADCAST ONLY PLAYER' public/index.html
 
-      - name: Commit RC290 source
+      - name: Commit RC291 source
         run: |
           git config user.name "SoulCinema Direct Deploy"
           git config user.email "actions@users.noreply.github.com"
           if git diff --quiet -- public/index.html; then
-            echo "RC290 already applied"
+            echo "RC291 already applied"
           else
             git add public/index.html
-            git commit -m "RC290 hard-freeze mobile lobby media in portal mode"
+            git commit -m "RC291 hard-freeze mobile ambient audio in portal mode"
             git push origin HEAD:main
           fi
