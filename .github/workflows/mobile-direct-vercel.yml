@@ -18,46 +18,44 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC297 desktop Production Room viewport fit
+      - name: Apply RC298 desktop Live Center fullscreen control
         run: |
           python3 - <<'PY'
           from pathlib import Path
           import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='<!-- RC297 DESKTOP PRODUCTION ROOM VIEWPORT FIT -->'
-          anchor='\n<!-- RC296 MOBILE LOBBY LAYOUT REGRESSION ROLLBACK -->'
+          marker='<!-- RC298 DESKTOP LIVE CENTER FULLSCREEN CONTROL -->'
+          anchor='\n<!-- RC297 DESKTOP PRODUCTION ROOM VIEWPORT FIT -->'
           if marker not in html:
               if html.count(anchor)!=1:
-                  raise SystemExit(f'RC296 anchor count={html.count(anchor)}; refusing to guess')
-              payload='PCEtLSBSQzI5NyBERVNLVE9QIFBST0RVQ1RJT04gUk9PTSBWSUVXUE9SVCBGSVQgLS0+CjxzdHlsZSBpZD0icmMyOTctZGVza3RvcC1wcm9kdWN0aW9uLXZpZXdwb3J0LWZpdCI+CkBtZWRpYSAobWluLXdpZHRoOjg2MXB4KXsKICAjcHJvZHVjdGlvblJvb20gLmNlbnRlcnsKICAgIHBhZGRpbmctbGVmdDoyNHB4IWltcG9ydGFudDsKICAgIHBhZGRpbmctcmlnaHQ6MjRweCFpbXBvcnRhbnQ7CiAgICBvdmVyZmxvdzpoaWRkZW4haW1wb3J0YW50OwogIH0KICAjcHJvZHVjdGlvblJvb20gLnByb2R1Y3Rpb24tc2hlbGx7CiAgICB3aWR0aDptaW4oMTMyMHB4LGNhbGMoMTAwdncgLSA2NHB4KSkhaW1wb3J0YW50OwogICAgbWF4LXdpZHRoOmNhbGMoMTAwdncgLSA2NHB4KSFpbXBvcnRhbnQ7CiAgICBtYXJnaW4tbGVmdDphdXRvIWltcG9ydGFudDsKICAgIG1hcmdpbi1yaWdodDphdXRvIWltcG9ydGFudDsKICAgIG1pbi13aWR0aDowIWltcG9ydGFudDsKICB9CiAgI3Byb2R1Y3Rpb25Sb29tIC5wcm9kdWN0aW9uLWdyaWQsCiAgI3Byb2R1Y3Rpb25Sb29tIC5wcm9kdWN0aW9uLWZlYXR1cmUsCiAgI3Byb2R1Y3Rpb25Sb29tIC5wcm9kdWN0aW9uLXN0YWNrLAogICNwcm9kdWN0aW9uUm9vbSAucHJvZHVjdGlvbi1jYXJkewogICAgbWluLXdpZHRoOjAhaW1wb3J0YW50OwogIH0KfQo8L3N0eWxlPgo='
+                  raise SystemExit(f'RC297 anchor count={html.count(anchor)}; refusing to guess')
+              payload='PCEtLSBSQzI5OCBERVNLVE9QIExJVkUgQ0VOVEVSIEZVTExTQ1JFRU4gQ09OVFJPTCAtLT4KPHN0eWxlIGlkPSJyYzI5OC1kZXNrdG9wLWxpdmUtZnVsbHNjcmVlbi1jc3MiPgpAbWVkaWEgKG1pbi13aWR0aDo4NjFweCl7CiAgI2xpdmVDZW50ZXIgI3JjMjk4TGl2ZUZ1bGxzY3JlZW57CiAgICBkaXNwbGF5Om5vbmU7CiAgICBwb3NpdGlvbjphYnNvbHV0ZTsKICAgIHJpZ2h0OjE0cHg7CiAgICBib3R0b206MTRweDsKICAgIHotaW5kZXg6OTk7CiAgICB3aWR0aDo0NnB4OwogICAgaGVpZ2h0OjQ2cHg7CiAgICBtaW4td2lkdGg6NDZweDsKICAgIG1pbi1oZWlnaHQ6NDZweDsKICAgIHBhZGRpbmc6MDsKICAgIGJvcmRlci1yYWRpdXM6NTAlOwogICAgYm9yZGVyOjFweCBzb2xpZCByZ2JhKDI0MiwyMTUsMTMxLC43Mik7CiAgICBiYWNrZ3JvdW5kOnJnYmEoMCwwLDAsLjYyKTsKICAgIGNvbG9yOiNmMmQ3ODM7CiAgICBmb250OjQwMCAyNXB4LzEgR2VvcmdpYSxzZXJpZjsKICAgIGxldHRlci1zcGFjaW5nOjA7CiAgICBwbGFjZS1pdGVtczpjZW50ZXI7CiAgICBiYWNrZHJvcC1maWx0ZXI6Ymx1cig4cHgpOwogIH0KICBib2R5W2RhdGEtbGl2ZS1tb2RlPSJsaXZlIl0gI2xpdmVDZW50ZXIuYWN0aXZlICNyYzI5OExpdmVGdWxsc2NyZWVue2Rpc3BsYXk6Z3JpZDt9CiAgI2xpdmVDZW50ZXIgI2xpdmVQbGF5ZXJXcmFwOmZ1bGxzY3JlZW4sCiAgI2xpdmVDZW50ZXIgI2xpdmVQbGF5ZXJXcmFwOi13ZWJraXQtZnVsbC1zY3JlZW57CiAgICB3aWR0aDoxMDB2dyFpbXBvcnRhbnQ7CiAgICBoZWlnaHQ6MTAwdmghaW1wb3J0YW50OwogICAgaW5zZXQ6MCFpbXBvcnRhbnQ7CiAgICBib3JkZXItcmFkaXVzOjAhaW1wb3J0YW50OwogICAgYmFja2dyb3VuZDojMDAwIWltcG9ydGFudDsKICB9Cn0KPC9zdHlsZT4KPHNjcmlwdCBpZD0icmMyOTgtZGVza3RvcC1saXZlLWZ1bGxzY3JlZW4tY29udHJvbCI+CigoKT0+ewogICd1c2Ugc3RyaWN0JzsKICBpZighbWF0Y2hNZWRpYSgnKG1pbi13aWR0aDo4NjFweCknKS5tYXRjaGVzKXJldHVybjsKICBjb25zdCByb29tPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdsaXZlQ2VudGVyJyk7CiAgY29uc3Qgd3JhcD1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbGl2ZVBsYXllcldyYXAnKTsKICBpZighcm9vbXx8IXdyYXApcmV0dXJuOwogIGxldCBidG49ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3JjMjk4TGl2ZUZ1bGxzY3JlZW4nKTsKICBpZighYnRuKXsKICAgIGJ0bj1kb2N1bWVudC5jcmVhdGVFbGVtZW50KCdidXR0b24nKTsKICAgIGJ0bi5pZD0ncmMyOThMaXZlRnVsbHNjcmVlbic7CiAgICBidG4udHlwZT0nYnV0dG9uJzsKICAgIGJ0bi5zZXRBdHRyaWJ1dGUoJ2FyaWEtbGFiZWwnLCdGdWxsIHNjcmVlbicpOwogICAgYnRuLnNldEF0dHJpYnV0ZSgndGl0bGUnLCdGdWxsIHNjcmVlbicpOwogICAgYnRuLnRleHRDb250ZW50PSfipKInOwogICAgd3JhcC5hcHBlbmRDaGlsZChidG4pOwogIH0KICBjb25zdCBpbkZzPSgpPT5kb2N1bWVudC5mdWxsc2NyZWVuRWxlbWVudD09PXdyYXB8fGRvY3VtZW50LndlYmtpdEZ1bGxzY3JlZW5FbGVtZW50PT09d3JhcDsKICBjb25zdCBzeW5jPSgpPT57CiAgICBidG4udGV4dENvbnRlbnQ9aW5GcygpPyfipKEnOifipKInOwogICAgYnRuLnNldEF0dHJpYnV0ZSgnYXJpYS1sYWJlbCcsaW5GcygpPydFeGl0IGZ1bGwgc2NyZWVuJzonRnVsbCBzY3JlZW4nKTsKICAgIGJ0bi5zZXRBdHRyaWJ1dGUoJ3RpdGxlJyxpbkZzKCk/J0V4aXQgZnVsbCBzY3JlZW4nOidGdWxsIHNjcmVlbicpOwogIH07CiAgY29uc3QgZW50ZXI9KCk9PnsKICAgIGlmKHdyYXAucmVxdWVzdEZ1bGxzY3JlZW4pcmV0dXJuIHdyYXAucmVxdWVzdEZ1bGxzY3JlZW4oKTsKICAgIGlmKHdyYXAud2Via2l0UmVxdWVzdEZ1bGxzY3JlZW4pcmV0dXJuIHdyYXAud2Via2l0UmVxdWVzdEZ1bGxzY3JlZW4oKTsKICB9OwogIGNvbnN0IGV4aXQ9KCk9PnsKICAgIGlmKGRvY3VtZW50LmV4aXRGdWxsc2NyZWVuKXJldHVybiBkb2N1bWVudC5leGl0RnVsbHNjcmVlbigpOwogICAgaWYoZG9jdW1lbnQud2Via2l0RXhpdEZ1bGxzY3JlZW4pcmV0dXJuIGRvY3VtZW50LndlYmtpdEV4aXRGdWxsc2NyZWVuKCk7CiAgfTsKICBidG4uYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLChlKT0+ewogICAgZS5wcmV2ZW50RGVmYXVsdCgpOwogICAgZS5zdG9wUHJvcGFnYXRpb24oKTsKICAgIHRyeXtpbkZzKCk/ZXhpdCgpOmVudGVyKCl9Y2F0Y2goX2Upe30KICB9KTsKICBkb2N1bWVudC5hZGRFdmVudExpc3RlbmVyKCdmdWxsc2NyZWVuY2hhbmdlJyxzeW5jKTsKICBkb2N1bWVudC5hZGRFdmVudExpc3RlbmVyKCd3ZWJraXRmdWxsc2NyZWVuY2hhbmdlJyxzeW5jKTsKICBzeW5jKCk7Cn0pKCk7Cjwvc2NyaXB0Pgo='
               patch=base64.b64decode(payload).decode('utf-8')
               html=html.replace(anchor,'\n'+patch+anchor,1)
               p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC297 and preserve locks
+      - name: Verify RC298 and preserve locks
         run: |
+          grep -q 'RC298 DESKTOP LIVE CENTER FULLSCREEN CONTROL' public/index.html
           grep -q 'RC297 DESKTOP PRODUCTION ROOM VIEWPORT FIT' public/index.html
-          grep -q 'RC296 MOBILE LOBBY LAYOUT REGRESSION ROLLBACK' public/index.html
-          grep -q 'RC293 MOBILE SKIP IMMEDIATE PORTAL OWNER' public/index.html
-          grep -q 'RC292 MOBILE PORTAL THEATER GHOST PLAY GUARD' public/index.html
-          grep -q 'RC291 MOBILE PORTAL AMBIENT HARD FREEZE' public/index.html
-          grep -q 'RC290 MOBILE PORTAL HARD MEDIA FREEZE' public/index.html
-          grep -q 'RC289 MOBILE PORTAL SINGLE OWNER + QUIET MEDIA' public/index.html
-          grep -q 'RC268 MASTER MOBILE PORTAL RUNTIME CLEANUP' public/index.html
-          grep -q 'RC261 MASTER MOBILE THE GATE BACK FIX' public/index.html
-          grep -q 'rc258-mobile-screening-theater-restore' public/index.html
+          grep -q 'RC280 LIVE SAFE NATIVE RATIO FILL' public/index.html
+          grep -q 'RC277 DESKTOP LIVE CENTER RETURN SINGLE CINEMATIC HANDOFF' public/index.html
+          grep -q 'RC276 LIVE AUTOPLAY BROADCAST ONLY PLAYER' public/index.html
+          grep -q 'RC275 SOULCINEMA LIVE CENTER VPS EMBED RECOVERY' public/index.html
           grep -q 'RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP' public/index.html
+          grep -q 'RC293 MOBILE SKIP IMMEDIATE PORTAL OWNER' public/index.html
+          grep -q 'rc258-mobile-screening-theater-restore' public/index.html
 
-      - name: Commit RC297 source
+      - name: Commit RC298 source
         run: |
           git config user.name "SoulCinema Direct Deploy"
           git config user.email "actions@users.noreply.github.com"
           if git diff --quiet -- public/index.html; then
-            echo "RC297 already applied"
+            echo "RC298 already applied"
           else
             git add public/index.html
-            git commit -m "RC297 desktop Production Room viewport fit"
+            git commit -m "RC298 desktop Live Center fullscreen control"
             git push origin HEAD:main
           fi
