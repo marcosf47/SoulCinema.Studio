@@ -18,43 +18,42 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC310 desktop Live Center hard size cap
+      - name: Apply RC311 desktop Live Now panel shift left
         run: |
           python3 - <<'PY'
           from pathlib import Path
           import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='<!-- RC310 DESKTOP LIVE CENTER HARD SIZE CAP -->'
-          anchor='<!-- RC309 DESKTOP LIVE CENTER MASTER OVERSIZE FIX -->'
-          payload='PCEtLSBSQzMxMCBERVNLVE9QIExJVkUgQ0VOVEVSIEhBUkQgU0laRSBDQVAgLS0+CjxzdHlsZSBpZD0icmMzMTAtZGVza3RvcC1saXZlLWhhcmQtc2l6ZS1jYXAiPgpAbWVkaWEgKG1pbi13aWR0aDo4NjFweCl7CiAgI2xpdmVDZW50ZXIuYWN0aXZlICNsaXZlUGxheWVyV3JhcHsKICAgIHBvc2l0aW9uOmFic29sdXRlIWltcG9ydGFudDsKICAgIHRvcDoxNTBweCFpbXBvcnRhbnQ7CiAgICBsZWZ0OjUycHghaW1wb3J0YW50OwogICAgcmlnaHQ6YXV0byFpbXBvcnRhbnQ7CiAgICBib3R0b206YXV0byFpbXBvcnRhbnQ7CiAgICB3aWR0aDptaW4oNjh2dyw5NjBweCkhaW1wb3J0YW50OwogICAgaGVpZ2h0OmF1dG8haW1wb3J0YW50OwogICAgYXNwZWN0LXJhdGlvOjE2LzkhaW1wb3J0YW50OwogICAgbWF4LXdpZHRoOjk2MHB4IWltcG9ydGFudDsKICAgIG1heC1oZWlnaHQ6NTQwcHghaW1wb3J0YW50OwogICAgbWluLXdpZHRoOjAhaW1wb3J0YW50OwogICAgbWluLWhlaWdodDowaW1wb3J0YW50OwogICAgbWFyZ2luOjAhaW1wb3J0YW50OwogICAgb3ZlcmZsb3c6aGlkZGVuIWltcG9ydGFudDsKICAgIGJveC1zaXppbmc6Ym9yZGVyLWJveCFpbXBvcnRhbnQ7CiAgfQogICNsaXZlQ2VudGVyLmFjdGl2ZSAjcmMyNzVMaXZlRnJhbWV7CiAgICBwb3NpdGlvbjphYnNvbHV0ZSFpbXBvcnRhbnQ7CiAgICBpbnNldDowaW1wb3J0YW50OwogICAgd2lkdGg6MTAwJSFpbXBvcnRhbnQ7CiAgICBoZWlnaHQ6MTAwJSFpbXBvcnRhbnQ7CiAgICBtYXgtd2lkdGg6MTAwJSFpbXBvcnRhbnQ7CiAgICBtYXgtaGVpZ2h0OjEwMCUhaW1wb3J0YW50OwogICAgYm9yZGVyOjAhaW1wb3J0YW50OwogIH0KICAjbGl2ZUNlbnRlci5hY3RpdmUgI3JjMzA3TGl2ZUluZm97CiAgICB0b3A6MTUwcHghaW1wb3J0YW50OwogICAgcmlnaHQ6NTJweCFpbXBvcnRhbnQ7CiAgICBib3R0b206YXV0byFpbXBvcnRhbnQ7CiAgICB3aWR0aDoyNTBweCFpbXBvcnRhbnQ7CiAgICBoZWlnaHQ6NTQwcHghaW1wb3J0YW50OwogICAgbWF4LWhlaWdodDo1NDBweCFpbXBvcnRhbnQ7CiAgICBtaW4taGVpZ2h0OjAhaW1wb3J0YW50OwogICAgb3ZlcmZsb3c6aGlkZGVuIWltcG9ydGFudDsKICB9CiAgI2xpdmVDZW50ZXIuYWN0aXZlICNyYzI5OExpdmVGdWxsc2NyZWVuewogICAgdG9wOjE0cHghaW1wb3J0YW50OwogICAgcmlnaHQ6MTRweCFpbXBvcnRhbnQ7CiAgICB6LWluZGV4OjE0MCFpbXBvcnRhbnQ7CiAgfQogICNsaXZlUGxheWVyV3JhcDpmdWxsc2NyZWVuLCNsaXZlUGxheWVyV3JhcDotd2Via2l0LWZ1bGwtc2NyZWVuewogICAgcG9zaXRpb246Zml4ZWQhaW1wb3J0YW50OwogICAgaW5zZXQ6MCFpbXBvcnRhbnQ7CiAgICB3aWR0aDoxMDB2dyFpbXBvcnRhbnQ7CiAgICBoZWlnaHQ6MTAwdmghaW1wb3J0YW50OwogICAgbWF4LXdpZHRoOjEwMHZ3IWltcG9ydGFudDsKICAgIG1heC1oZWlnaHQ6MTAwdmghaW1wb3J0YW50OwogICAgbWFyZ2luOjAhaW1wb3J0YW50OwogICAgYm9yZGVyOjAhaW1wb3J0YW50OwogICAgYm9yZGVyLXJhZGl1czowaW1wb3J0YW50OwogICAgYmFja2dyb3VuZDojMDAwIWltcG9ydGFudDsKICB9Cn0KPC9zdHlsZT4K'
+          marker='<!-- RC311 DESKTOP LIVE NOW PANEL SHIFT LEFT -->'
+          anchor='<!-- RC310 DESKTOP LIVE CENTER HARD SIZE CAP -->'
+          payload='PCEtLSBSQzMxMSBERVNLVE9QIExJVkUgTk9XIFBBTkVMIFNISUZUIExFRlQgLS0+CjxzdHlsZSBpZD0icmMzMTEtZGVza3RvcC1saXZlLW5vdy1wYW5lbC1zaGlmdC1sZWZ0Ij4KQG1lZGlhIChtaW4td2lkdGg6ODYxcHgpewogICNsaXZlQ2VudGVyLmFjdGl2ZSAjcmMzMDdMaXZlSW5mb3sKICAgIHJpZ2h0Ojg0cHghaW1wb3J0YW50OwogIH0KfQo8L3N0eWxlPgo='
           patch=base64.b64decode(payload).decode('utf-8')
           if marker not in html:
               if html.count(anchor)!=1:
-                  raise SystemExit('RC309 anchor mismatch; refusing to guess')
+                  raise SystemExit('RC310 anchor mismatch; refusing to guess')
               html=html.replace(anchor,patch+anchor,1)
               p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC310 and preserve locks
+      - name: Verify RC311 and preserve locks
         run: |
+          grep -q 'RC311 DESKTOP LIVE NOW PANEL SHIFT LEFT' public/index.html
           grep -q 'RC310 DESKTOP LIVE CENTER HARD SIZE CAP' public/index.html
           grep -q 'RC309 DESKTOP LIVE CENTER MASTER OVERSIZE FIX' public/index.html
-          grep -q 'RC308 DESKTOP LIVE CENTER 16X9 FIT + FULLSCREEN POLISH' public/index.html
-          grep -q 'RC307 DESKTOP LIVE CENTER LUXURY COMPOSITION' public/index.html
           grep -q 'RC305 DESKTOP LIVE CENTER IFRAME STATE AUTHORITY' public/index.html
           grep -q 'RC297 DESKTOP PRODUCTION ROOM VIEWPORT FIT' public/index.html
           grep -q 'RC293 MOBILE SKIP IMMEDIATE PORTAL OWNER' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
 
-      - name: Commit RC310 source
+      - name: Commit RC311 source
         run: |
           git config user.name "SoulCinema Direct Deploy"
           git config user.email "actions@users.noreply.github.com"
           if git diff --quiet -- public/index.html; then
-            echo "RC310 already applied"
+            echo "RC311 already applied"
           else
             git add public/index.html
-            git commit -m "RC310 desktop Live Center hard size cap"
+            git commit -m "RC311 desktop Live Now panel shift left"
             git push origin HEAD:main
           fi
