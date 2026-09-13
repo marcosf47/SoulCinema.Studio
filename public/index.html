@@ -6256,6 +6256,32 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 (()=>{'use strict';if(!matchMedia('(min-width:861px)').matches)return;const r=document.getElementById('liveCenter'),w=document.getElementById('livePlayerWrap');if(!r||!w)return;let b=document.getElementById('rc298LiveFullscreen');if(!b){b=document.createElement('button');b.id='rc298LiveFullscreen';b.type='button';b.textContent='⤢';w.appendChild(b)}const fs=()=>document.fullscreenElement===w||document.webkitFullscreenElement===w,s=()=>{b.style.display=r.classList.contains('active')?'grid':'none';b.textContent=fs()?'⤡':'⤢';b.title=fs()?'Exit full screen':'Full screen';b.setAttribute('aria-label',b.title)};if(b.dataset.rc303!=='1'){b.dataset.rc303='1';b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();try{fs()?(document.exitFullscreen?.()||document.webkitExitFullscreen?.()):(w.requestFullscreen?.()||w.webkitRequestFullscreen?.())}catch(_){}})}new MutationObserver(s).observe(r,{attributes:true,attributeFilter:['class']});document.addEventListener('fullscreenchange',s);document.addEventListener('webkitfullscreenchange',s);s()})();
 </script>
 
+<!-- RC309 DESKTOP LIVE CENTER MASTER OVERSIZE FIX -->
+<style id="rc309-desktop-live-master-oversize-fix">
+@media (min-width:861px) {
+  #liveCenter.active {height:100dvh!important;max-height:100dvh!important;overflow:hidden!important;box-sizing:border-box!important;}
+  #liveCenter.active #livePlayerWrap {
+    position:absolute!important;
+    top:158px!important;
+    left:52px!important;
+    right:auto!important;
+    bottom:auto!important;
+    width:min(calc(100vw - 390px), calc((100dvh - 245px)*16/9))!important;
+    height:auto!important;
+    aspect-ratio:16/9!important;
+    max-height:calc(100dvh - 245px)!important;
+    margin:0!important;
+    overflow:hidden!important;
+    box-sizing:border-box!important;
+    border-radius:20px!important;
+  }
+  #liveCenter.active #rc275LiveFrame {position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;border:0!important;border-radius:19px!important;}
+  #liveCenter.active #rc307LiveInfo {top:158px!important;right:52px!important;bottom:auto!important;width:270px!important;height:min(calc(100dvh - 245px),500px)!important;min-height:0!important;max-height:500px!important;overflow:hidden!important;}
+  #liveCenter.active #rc298LiveFullscreen {top:16px!important;right:16px!important;z-index:120!important;}
+  #livePlayerWrap:fullscreen,#livePlayerWrap:-webkit-full-screen {position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;max-width:100vw!important;max-height:100vh!important;aspect-ratio:auto!important;margin:0!important;border:0!important;border-radius:0!important;background:#000!important;overflow:hidden!important;}
+  #livePlayerWrap:fullscreen #rc275LiveFrame,#livePlayerWrap:-webkit-full-screen #rc275LiveFrame {position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border-radius:0!important;}
+}
+</style>
 <!-- RC308 DESKTOP LIVE CENTER 16X9 FIT + FULLSCREEN POLISH -->
 <style id="rc308-desktop-live-16x9-fit">
 @media(min-width:861px){
