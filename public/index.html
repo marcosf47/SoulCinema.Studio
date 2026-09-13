@@ -6256,6 +6256,13 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 (()=>{'use strict';if(!matchMedia('(min-width:861px)').matches)return;const r=document.getElementById('liveCenter'),w=document.getElementById('livePlayerWrap');if(!r||!w)return;let b=document.getElementById('rc298LiveFullscreen');if(!b){b=document.createElement('button');b.id='rc298LiveFullscreen';b.type='button';b.textContent='⤢';w.appendChild(b)}const fs=()=>document.fullscreenElement===w||document.webkitFullscreenElement===w,s=()=>{b.style.display=r.classList.contains('active')?'grid':'none';b.textContent=fs()?'⤡':'⤢';b.title=fs()?'Exit full screen':'Full screen';b.setAttribute('aria-label',b.title)};if(b.dataset.rc303!=='1'){b.dataset.rc303='1';b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();try{fs()?(document.exitFullscreen?.()||document.webkitExitFullscreen?.()):(w.requestFullscreen?.()||w.webkitRequestFullscreen?.())}catch(_){}})}new MutationObserver(s).observe(r,{attributes:true,attributeFilter:['class']});document.addEventListener('fullscreenchange',s);document.addEventListener('webkitfullscreenchange',s);s()})();
 </script>
 
+<!-- RC313 DESKTOP LIVE PANEL ALIGN + LOBBY UNDER PANEL -->
+<style id="rc313-desktop-live-panel-lobby-align">
+@media (min-width:861px){
+#liveCenter.active #rc307LiveInfo{right:54px!important;top:158px!important;}
+#liveCenter.active #returnLobby{left:auto!important;right:54px!important;top:auto!important;bottom:18px!important;width:270px!important;justify-content:center!important;box-sizing:border-box!important;}
+}
+</style>
 <!-- RC312 DESKTOP LIVE NOW PANEL + RETURN LOBBY -->
 <style id="rc312-desktop-live-panel-return">
 @media (min-width:861px){
