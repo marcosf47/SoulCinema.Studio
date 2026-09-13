@@ -22,6 +22,7 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
           marker='<!-- RC299 DESKTOP LIVE CENTER LUXURY LARGER SCREEN -->'
@@ -29,42 +30,8 @@ jobs:
           if marker not in html:
               if html.count(anchor)!=1:
                   raise SystemExit(f'RC298 anchor count={html.count(anchor)}; refusing to guess')
-              patch=r'''
-<!-- RC299 DESKTOP LIVE CENTER LUXURY LARGER SCREEN -->
-<style id="rc299-desktop-live-luxury-larger-screen">
-@media (min-width:861px){
-  #liveCenter #livePlayerWrap{
-    width:min(1480px,94vw)!important;
-    max-width:94vw!important;
-    aspect-ratio:16/9!important;
-    margin-left:auto!important;
-    margin-right:auto!important;
-    border:1px solid rgba(217,183,96,.58)!important;
-    border-radius:22px!important;
-    overflow:hidden!important;
-    background:#000!important;
-    box-shadow:0 34px 100px rgba(0,0,0,.72),0 0 0 1px rgba(255,239,185,.045) inset,0 0 46px rgba(217,183,96,.10)!important;
-  }
-  #liveCenter #livePlayerWrap iframe,
-  #liveCenter #livePlayerWrap video{
-    width:100%!important;
-    height:100%!important;
-    border-radius:inherit!important;
-  }
-  #liveCenter #rc298LiveFullscreen{
-    right:18px!important;
-    bottom:18px!important;
-    width:48px!important;
-    height:48px!important;
-    min-width:48px!important;
-    min-height:48px!important;
-    border-color:rgba(242,215,131,.82)!important;
-    background:linear-gradient(180deg,rgba(34,27,12,.82),rgba(0,0,0,.90))!important;
-    box-shadow:0 12px 32px rgba(0,0,0,.48),0 0 24px rgba(217,183,96,.12)!important;
-  }
-}
-</style>
-'''
+              payload='PCEtLSBSQzI5OSBERVNLVE9QIExJVkUgQ0VOVEVSIExVWFVSWSBMQVJHRVIgU0NSRUVOIC0tPgo8c3R5bGUgaWQ9InJjMjk5LWRlc2t0b3AtbGl2ZS1sdXh1cnktbGFyZ2VyLXNjcmVlbiI+CkBtZWRpYSAobWluLXdpZHRoOjg2MXB4KXsKICAjbGl2ZUNlbnRlciAjbGl2ZVBsYXllcldyYXB7CiAgICB3aWR0aDptaW4oMTQ4MHB4LDk0dncpIWltcG9ydGFudDsKICAgIG1heC13aWR0aDo5NHZ3IWltcG9ydGFudDsKICAgIGFzcGVjdC1yYXRpbzoxNi85IWltcG9ydGFudDsKICAgIG1hcmdpbi1sZWZ0OmF1dG8haW1wb3J0YW50OwogICAgbWFyZ2luLXJpZ2h0OmF1dG8haW1wb3J0YW50OwogICAgYm9yZGVyOjFweCBzb2xpZCByZ2JhKDIxNywxODMsOTYsLjU4KSFpbXBvcnRhbnQ7CiAgICBib3JkZXItcmFkaXVzOjIycHghaW1wb3J0YW50OwogICAgb3ZlcmZsb3c6aGlkZGVuIWltcG9ydGFudDsKICAgIGJhY2tncm91bmQ6IzAwMCFpbXBvcnRhbnQ7CiAgICBib3gtc2hhZG93OjAgMzRweCAxMDBweCByZ2JhKDAsMCwwLC43MiksMCAwIDAgMXB4IHJnYmEoMjU1LDIzOSwxODUsLjA0NSkgaW5zZXQsMCAwIDQ2cHggcmdiYSgyMTcsMTgzLDk2LC4xMCkhaW1wb3J0YW50OwogIH0KICAjbGl2ZUNlbnRlciAjbGl2ZVBsYXllcldyYXAgaWZyYW1lLAogICNsaXZlQ2VudGVyICNsaXZlUGxheWVyV3JhcCB2aWRlb3sKICAgIHdpZHRoOjEwMCUhaW1wb3J0YW50OwogICAgaGVpZ2h0OjEwMCUhaW1wb3J0YW50OwogICAgYm9yZGVyLXJhZGl1czppbmhlcml0IWltcG9ydGFudDsKICB9CiAgI2xpdmVDZW50ZXIgI3JjMjk4TGl2ZUZ1bGxzY3JlZW57CiAgICByaWdodDoxOHB4IWltcG9ydGFudDsKICAgIGJvdHRvbToxOHB4IWltcG9ydGFudDsKICAgIHdpZHRoOjQ4cHghaW1wb3J0YW50OwogICAgaGVpZ2h0OjQ4cHghaW1wb3J0YW50OwogICAgbWluLXdpZHRoOjQ4cHghaW1wb3J0YW50OwogICAgbWluLWhlaWdodDo0OHB4IWltcG9ydGFudDsKICAgIGJvcmRlci1jb2xvcjpyZ2JhKDI0MiwyMTUsMTMxLC44MikhaW1wb3J0YW50OwogICAgYmFja2dyb3VuZDpsaW5lYXItZ3JhZGllbnQoMTgwZGVnLHJnYmEoMzQsMjcsMTIsLjgyKSxyZ2JhKDAsMCwwLC45MCkpIWltcG9ydGFudDsKICAgIGJveC1zaGFkb3c6MCAxMnB4IDMycHggcmdiYSgwLDAsMCwuNDgpLDAgMCAyNHB4IHJnYmEoMjE3LDE4Myw5NiwuMTIpIWltcG9ydGFudDsKICB9Cn0KPC9zdHlsZT4K'
+              patch=base64.b64decode(payload).decode('utf-8')
               html=html.replace(anchor,'\n'+patch+anchor,1)
               p.write_text(html,encoding='utf-8')
           PY
