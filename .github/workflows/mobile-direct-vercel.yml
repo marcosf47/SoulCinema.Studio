@@ -18,42 +18,42 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC311 desktop Live Now panel shift left
+      - name: Apply RC312 desktop Live Now panel and return lobby
         run: |
           python3 - <<'PY'
           from pathlib import Path
           import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='<!-- RC311 DESKTOP LIVE NOW PANEL SHIFT LEFT -->'
-          anchor='<!-- RC310 DESKTOP LIVE CENTER HARD SIZE CAP -->'
-          payload='PCEtLSBSQzMxMSBERVNLVE9QIExJVkUgTk9XIFBBTkVMIFNISUZUIExFRlQgLS0+CjxzdHlsZSBpZD0icmMzMTEtZGVza3RvcC1saXZlLW5vdy1wYW5lbC1zaGlmdC1sZWZ0Ij4KQG1lZGlhIChtaW4td2lkdGg6ODYxcHgpewogICNsaXZlQ2VudGVyLmFjdGl2ZSAjcmMzMDdMaXZlSW5mb3sKICAgIHJpZ2h0Ojg0cHghaW1wb3J0YW50OwogIH0KfQo8L3N0eWxlPgo='
+          marker='<!-- RC312 DESKTOP LIVE NOW PANEL + RETURN LOBBY -->'
+          anchor='<!-- RC311 DESKTOP LIVE NOW PANEL SHIFT LEFT -->'
+          payload='PCEtLSBSQzMxMiBERVNLVE9QIExJVkUgTk9XIFBBTkVMICsgUkVUVVJOIExPQkJZIC0tPgo8c3R5bGUgaWQ9InJjMzEyLWRlc2t0b3AtbGl2ZS1wYW5lbC1yZXR1cm4iPgpAbWVkaWEgKG1pbi13aWR0aDo4NjFweCl7CiAgI2xpdmVDZW50ZXIuYWN0aXZlICNyYzMwN0xpdmVJbmZvewogICAgcmlnaHQ6ODZweCFpbXBvcnRhbnQ7CiAgfQogICNsaXZlQ2VudGVyLmFjdGl2ZSAjcmV0dXJuTG9iYnl7CiAgICBkaXNwbGF5OmlubGluZS1mbGV4IWltcG9ydGFudDsKICAgIHBvc2l0aW9uOmFic29sdXRlIWltcG9ydGFudDsKICAgIGxlZnQ6NTRweCFpbXBvcnRhbnQ7CiAgICBib3R0b206MThweCFpbXBvcnRhbnQ7CiAgICB0b3A6YXV0byFpbXBvcnRhbnQ7CiAgICByaWdodDphdXRvIWltcG9ydGFudDsKICAgIHotaW5kZXg6MTgwIWltcG9ydGFudDsKICAgIHZpc2liaWxpdHk6dmlzaWJsZSFpbXBvcnRhbnQ7CiAgICBvcGFjaXR5OjEhaW1wb3J0YW50OwogICAgcG9pbnRlci1ldmVudHM6YXV0byFpbXBvcnRhbnQ7CiAgICBtYXJnaW46MCFpbXBvcnRhbnQ7CiAgfQp9Cjwvc3R5bGU+Cg=='
           patch=base64.b64decode(payload).decode('utf-8')
           if marker not in html:
               if html.count(anchor)!=1:
-                  raise SystemExit('RC310 anchor mismatch; refusing to guess')
+                  raise SystemExit('RC311 anchor mismatch; refusing to guess')
               html=html.replace(anchor,patch+anchor,1)
               p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC311 and preserve locks
+      - name: Verify RC312 and preserve locks
         run: |
+          grep -q 'RC312 DESKTOP LIVE NOW PANEL + RETURN LOBBY' public/index.html
           grep -q 'RC311 DESKTOP LIVE NOW PANEL SHIFT LEFT' public/index.html
           grep -q 'RC310 DESKTOP LIVE CENTER HARD SIZE CAP' public/index.html
-          grep -q 'RC309 DESKTOP LIVE CENTER MASTER OVERSIZE FIX' public/index.html
           grep -q 'RC305 DESKTOP LIVE CENTER IFRAME STATE AUTHORITY' public/index.html
           grep -q 'RC297 DESKTOP PRODUCTION ROOM VIEWPORT FIT' public/index.html
           grep -q 'RC293 MOBILE SKIP IMMEDIATE PORTAL OWNER' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
 
-      - name: Commit RC311 source
+      - name: Commit RC312 source
         run: |
           git config user.name "SoulCinema Direct Deploy"
           git config user.email "actions@users.noreply.github.com"
           if git diff --quiet -- public/index.html; then
-            echo "RC311 already applied"
+            echo "RC312 already applied"
           else
             git add public/index.html
-            git commit -m "RC311 desktop Live Now panel shift left"
+            git commit -m "RC312 desktop Live Now panel and return lobby fix"
             git push origin HEAD:main
           fi
