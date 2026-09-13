@@ -18,26 +18,27 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC301 desktop Live Center remove lower live badge
+      - name: Apply RC302 desktop Live Center fullscreen button force visible
         run: |
           python3 - <<'PY'
           from pathlib import Path
           import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='<!-- RC301 DESKTOP LIVE CENTER REMOVE LOWER LIVE BADGE -->'
-          anchor='\n<!-- RC300 DESKTOP LIVE CENTER FIT + NATIVE FULLSCREEN RESTORE -->'
+          marker='<!-- RC302 DESKTOP LIVE CENTER FULLSCREEN BUTTON FORCE VISIBLE -->'
+          anchor='\n<!-- RC298 DESKTOP LIVE CENTER FULLSCREEN CONTROL -->'
           if marker not in html:
               if html.count(anchor)!=1:
-                  raise SystemExit(f'RC300 anchor count={html.count(anchor)}; refusing to guess')
-              payload='PCEtLSBSQzMwMSBERVNLVE9QIExJVkUgQ0VOVEVSIFJFTU9WRSBMT1dFUiBMSVZFIEJBREdFIC0tPgo8c3R5bGUgaWQ9InJjMzAxLWRlc2t0b3AtbGl2ZS1oaWRlLWxvd2VyLWJhZGdlIj4KQG1lZGlhIChtaW4td2lkdGg6ODYxcHgpewogIGh0bWwgYm9keSAjbGl2ZUNlbnRlciAjcHVibGljTGl2ZUJhZGdlLAogIGh0bWwgYm9keVtkYXRhLWxpdmUtbW9kZT0ibGl2ZSJdICNsaXZlQ2VudGVyICNwdWJsaWNMaXZlQmFkZ2V7CiAgICBkaXNwbGF5Om5vbmUhaW1wb3J0YW50OwogIH0KfQo8L3N0eWxlPgo='
+                  raise SystemExit(f'RC298 anchor count={html.count(anchor)}; refusing to guess')
+              payload='PCEtLSBSQzMwMiBERVNLVE9QIExJVkUgQ0VOVEVSIEZVTExTQ1JFRU4gQlVUVE9OIEZPUkNFIFZJU0lCTEUgLS0+CjxzdHlsZSBpZD0icmMzMDItZGVza3RvcC1saXZlLWZ1bGxzY3JlZW4tZm9yY2UiPgpAbWVkaWEgKG1pbi13aWR0aDo4NjFweCl7CiAgYm9keVtkYXRhLWxpdmUtbW9kZT0ibGl2ZSJdICNsaXZlQ2VudGVyLmFjdGl2ZSAjbGl2ZVBsYXllcldyYXAgI3JjMjk4TGl2ZUZ1bGxzY3JlZW57CiAgICBkaXNwbGF5OmdyaWQhaW1wb3J0YW50OwogICAgdmlzaWJpbGl0eTp2aXNpYmxlIWltcG9ydGFudDsKICAgIG9wYWNpdHk6MSFpbXBvcnRhbnQ7CiAgICBwb2ludGVyLWV2ZW50czphdXRvIWltcG9ydGFudDsKICAgIHBvc2l0aW9uOmFic29sdXRlIWltcG9ydGFudDsKICAgIHJpZ2h0OjE2cHghaW1wb3J0YW50OwogICAgYm90dG9tOjE2cHghaW1wb3J0YW50OwogICAgei1pbmRleDoyMTQ3NDgzNjQ2IWltcG9ydGFudDsKICAgIHdpZHRoOjQ2cHghaW1wb3J0YW50OwogICAgaGVpZ2h0OjQ2cHghaW1wb3J0YW50OwogICAgbWluLXdpZHRoOjQ2cHghaW1wb3J0YW50OwogICAgbWluLWhlaWdodDo0NnB4IWltcG9ydGFudDsKICB9Cn0KPC9zdHlsZT4K'
               patch=base64.b64decode(payload).decode('utf-8')
               html=html.replace(anchor,'\n'+patch+anchor,1)
               p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC301 and preserve locks
+      - name: Verify RC302 and preserve locks
         run: |
+          grep -q 'RC302 DESKTOP LIVE CENTER FULLSCREEN BUTTON FORCE VISIBLE' public/index.html
           grep -q 'RC301 DESKTOP LIVE CENTER REMOVE LOWER LIVE BADGE' public/index.html
           grep -q 'RC300 DESKTOP LIVE CENTER FIT + NATIVE FULLSCREEN RESTORE' public/index.html
           grep -q 'RC299 DESKTOP LIVE CENTER LUXURY LARGER SCREEN' public/index.html
@@ -48,14 +49,14 @@ jobs:
           grep -q 'RC293 MOBILE SKIP IMMEDIATE PORTAL OWNER' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
 
-      - name: Commit RC301 source
+      - name: Commit RC302 source
         run: |
           git config user.name "SoulCinema Direct Deploy"
           git config user.email "actions@users.noreply.github.com"
           if git diff --quiet -- public/index.html; then
-            echo "RC301 already applied"
+            echo "RC302 already applied"
           else
             git add public/index.html
-            git commit -m "RC301 desktop Live Center remove lower live badge"
+            git commit -m "RC302 desktop Live Center fullscreen button force visible"
             git push origin HEAD:main
           fi
