@@ -18,26 +18,27 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC302 desktop Live Center fullscreen button force visible
+      - name: Apply RC303 desktop Live Center luxury + always fullscreen
         run: |
           python3 - <<'PY'
           from pathlib import Path
           import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='<!-- RC302 DESKTOP LIVE CENTER FULLSCREEN BUTTON FORCE VISIBLE -->'
-          anchor='\n<!-- RC298 DESKTOP LIVE CENTER FULLSCREEN CONTROL -->'
+          marker='<!-- RC303 DESKTOP LIVE CENTER LUXURY + ALWAYS FULLSCREEN -->'
+          anchor='\n<!-- RC302 DESKTOP LIVE CENTER FULLSCREEN BUTTON FORCE VISIBLE -->'
           if marker not in html:
               if html.count(anchor)!=1:
-                  raise SystemExit(f'RC298 anchor count={html.count(anchor)}; refusing to guess')
-              payload='PCEtLSBSQzMwMiBERVNLVE9QIExJVkUgQ0VOVEVSIEZVTExTQ1JFRU4gQlVUVE9OIEZPUkNFIFZJU0lCTEUgLS0+CjxzdHlsZSBpZD0icmMzMDItZGVza3RvcC1saXZlLWZ1bGxzY3JlZW4tZm9yY2UiPgpAbWVkaWEgKG1pbi13aWR0aDo4NjFweCl7CiAgYm9keVtkYXRhLWxpdmUtbW9kZT0ibGl2ZSJdICNsaXZlQ2VudGVyLmFjdGl2ZSAjbGl2ZVBsYXllcldyYXAgI3JjMjk4TGl2ZUZ1bGxzY3JlZW57CiAgICBkaXNwbGF5OmdyaWQhaW1wb3J0YW50OwogICAgdmlzaWJpbGl0eTp2aXNpYmxlIWltcG9ydGFudDsKICAgIG9wYWNpdHk6MSFpbXBvcnRhbnQ7CiAgICBwb2ludGVyLWV2ZW50czphdXRvIWltcG9ydGFudDsKICAgIHBvc2l0aW9uOmFic29sdXRlIWltcG9ydGFudDsKICAgIHJpZ2h0OjE2cHghaW1wb3J0YW50OwogICAgYm90dG9tOjE2cHghaW1wb3J0YW50OwogICAgei1pbmRleDoyMTQ3NDgzNjQ2IWltcG9ydGFudDsKICAgIHdpZHRoOjQ2cHghaW1wb3J0YW50OwogICAgaGVpZ2h0OjQ2cHghaW1wb3J0YW50OwogICAgbWluLXdpZHRoOjQ2cHghaW1wb3J0YW50OwogICAgbWluLWhlaWdodDo0NnB4IWltcG9ydGFudDsKICB9Cn0KPC9zdHlsZT4K'
+                  raise SystemExit(f'RC302 anchor count={html.count(anchor)}; refusing to guess')
+              payload='PCEtLSBSQzMwMyBERVNLVE9QIExJVkUgQ0VOVEVSIExVWFVSWSArIEFMV0FZUyBGVUxMU0NSRUVOIC0tPgo8c3R5bGUgaWQ9InJjMzAzLWRlc2t0b3AtbGl2ZS1sdXh1cnkiPgpAbWVkaWEobWluLXdpZHRoOjg2MXB4KXsKI2xpdmVDZW50ZXIuYWN0aXZle2JhY2tncm91bmQ6cmFkaWFsLWdyYWRpZW50KGNpcmNsZSBhdCA1MCUgMzAlLHJnYmEoMjE3LDE4Myw5NiwuMDgpLHRyYW5zcGFyZW50IDM0JSksbGluZWFyLWdyYWRpZW50KDE0NWRlZywjMDgwNzA1LCMwZDBiMDcgNDYlLCMwNTA1MDUpIWltcG9ydGFudH0KI2xpdmVDZW50ZXIgLmNlbnRlcj5kaXZ7d2lkdGg6bWluKDE1MDBweCw5MnZ3KSFpbXBvcnRhbnR9CiNsaXZlQ2VudGVyICNsaXZlUGxheWVyV3JhcHtwb3NpdGlvbjpyZWxhdGl2ZSFpbXBvcnRhbnQ7d2lkdGg6bWluKDE1MDBweCw5MnZ3KSFpbXBvcnRhbnQ7bWF4LXdpZHRoOj92dyFpbXBvcnRhbnQ7YXNwZWN0LXJhdGlvOjE2LzkhaW1wb3J0YW50O21hcmdpbjoxNHB4IGF1dG8gMCFpbXBvcnRhbnQ7Ym9yZGVyOjFweCBzb2xpZCByZ2JhKDIzOCwyMDUsMTE1LC43NikhaW1wb3J0YW50O2JvcmRlci1yYWRpdXM6MjRweCFpbXBvcnRhbnQ7b3ZlcmZsb3c6aGlkZGVuIWltcG9ydGFudDtiYWNrZ3JvdW5kOnJhZGlhbC1ncmFkaWVudChjaXJjbGUgYXQgNTAlIDQyJSxyZ2JhKDIxNywxODMsOTYsLjA4KSx0cmFuc3BhcmVudCAzMCUpLCMwMzAzMDMhaW1wb3J0YW50O2JveC1zaGFkb3c6MCAzOHB4IDExMHB4IHJnYmEoMCwwLDAsLjc4KSwwIDAgMCAxcHggcmdiYSgyNTUsMjM5LDE4NSwuMDYpIGluc2V0LDAgMCA1NHB4IHJnYmEoMjE3LDE4Myw5NiwuMTApIWltcG9ydGFudH0KI2xpdmVDZW50ZXIgI2xpdmVQbGF5ZXJXcmFwOmJlZm9yZXtjb250ZW50OiJTT1VMQ0lORU1BICDCtyAgTElWRSI7cG9zaXRpb246YWJzb2x1dGU7dG9wOjE2cHg7bGVmdDoyMHB4O3otaW5kZXg6MjU7cG9pbnRlci1ldmVudHM6bm9uZTtwYWRkaW5nOjhweCAxM3B4O2JvcmRlcjoxcHggc29saWQgcmdiYSgyMzQsMTk5LDEwMywuMzYpO2JvcmRlci1yYWRpdXM6OTk5cHg7YmFja2dyb3VuZDpyZ2JhKDQsNCw0LC41OCk7Y29sb3I6cmdiYSgyNDksMjI1LDE1OCwuOSk7Zm9udDo2MDAgOXB4LzEgSW50ZXIsQXJpYWwsc2Fucy1zZXJpZjtsZXR0ZXItc3BhY2luZzouMjRlbX0KI2xpdmVDZW50ZXIgI2xpdmVQbGF5ZXJXcmFwOmFmdGVye2NvbnRlbnQ6IkVWRVJZIEhFQVJUIEhJREVTIEEgU1RPUlkuIjtwb3NpdGlvbjphYnNvbHV0ZTtyaWdodDo4NHB4O2JvdHRvbToyMHB4O3otaW5kZXg6MjU7cG9pbnRlci1ldmVudHM6bm9uZTtjb2xvcjpyZ2JhKDI0OCwyMzMsMTk0LC40OCk7Zm9udDo1MDAgOHB4LzEgSW50ZXIsQXJpYWwsc2Fucy1zZXJpZjtsZXR0ZXItc3BhY2luZzouMmVtfQojbGl2ZUNlbnRlciAjbGl2ZU1haW57d2lkdGg6MTAwJSFpbXBvcnRhbnQ7aGVpZ2h0OjEwMCUhaW1wb3J0YW50O21heC1oZWlnaHQ6bm9uZSFpbXBvcnRhbnQ7YXNwZWN0LXJhdGlvOjE2LzkhaW1wb3J0YW50O2JvcmRlci1yYWRpdXM6aW5oZXJpdCFpbXBvcnRhbnQ7b3ZlcmZsb3c6aGlkZGVuIWltcG9ydGFudH0KI2xpdmVDZW50ZXIgI3JjMjk4TGl2ZUZ1bGxzY3JlZW57ZGlzcGxheTpncmlkIWltcG9ydGFudDt2aXNpYmlsaXR5OnZpc2libGUhaW1wb3J0YW50O29wYWNpdHk6MSFpbXBvcnRhbnQ7cG9pbnRlci1ldmVudHM6YXV0byFpbXBvcnRhbnQ7cG9zaXRpb246YWJzb2x1dGUhaW1wb3J0YW50O3JpZ2h0OjE4cHghaW1wb3J0YW50O3RvcDoxNnB4IWltcG9ydGFudDtib3R0b206YXV0byFpbXBvcnRhbnQ7ei1pbmRleDoyMTQ3NDgzNjQ2IWltcG9ydGFudDt3aWR0aDo1MnB4IWltcG9ydGFudDtoZWlnaHQ6NTJweCFpbXBvcnRhbnQ7bWluLXdpZHRoOjUycHghaW1wb3J0YW50O21pbi1oZWlnaHQ6NTJweCFpbXBvcnRhbnQ7Ym9yZGVyOjFweCBzb2xpZCByZ2JhKDI0NiwyMTUsMTI3LC45NClhaW1wb3J0YW50O2JvcmRlci1yYWRpdXM6NTAlIWltcG9ydGFudDtiYWNrZ3JvdW5kOmxpbmVhci1ncmFkaWVudCgxODBkZWcscmdiYSgzNywyOCwxMCwuOSkscmdiYSgzLDMsMywuOTUpKSFpbXBvcnRhbnQ7Y29sb3I6I2Y1ZDk3OSFpbXBvcnRhbnQ7Ym94LXNoYWRvdzowIDEycHggMzJweCByZ2JhKDAsMCwwLC41NSksMCAwIDI4cHggcmdiYSgyMTcsMTgzLDk2LC4xOCkhaW1wb3J0YW50fQojbGl2ZUNlbnRlciAjbGl2ZVBsYXllcldyYXA6ZnVsbHNjcmVlbiwjbGl2ZUNlbnRlciAjbGl2ZVBsYXllcldyYXA6LXdlYmtpdC1mdWxsLXNjcmVlbnt3aWR0aDoxMDB2dyFpbXBvcnRhbnQ7bWF4LXdpZHRoOm5vbmUhaW1wb3J0YW50O2hlaWdodDoxMDB2aCFpbXBvcnRhbnQ7bWF4LWhlaWdodDpub25lIWltcG9ydGFudDthc3BlY3QtcmF0aW86YXV0byFpbXBvcnRhbnQ7bWFyZ2luOjAhaW1wb3J0YW50O2JvcmRlcjowIWltcG9ydGFudDtib3JkZXItcmFkaXVzOjAhaW1wb3J0YW50O2JhY2tncm91bmQ6IzAwMCFpbXBvcnRhbnQ7Ym94LXNoYWRvdzpub25lIWltcG9ydGFudH0KI2xpdmVDZW50ZXIgI2xpdmVQbGF5ZXJXcmFwOmZ1bGxzY3JlZW4gI2xpdmVNYWluLCNsaXZlQ2VudGVyICNsaXZlUGxheWVyV3JhcDotd2Via2l0LWZ1bGwtc2NyZWVuICNsaXZlTWFpbnt3aWR0aDoxMDB2dyFpbXBvcnRhbnQ7aGVpZ2h0OjEwMHZoIWltcG9ydGFudDttYXgtaGVpZ2h0Om5vbmUhaW1wb3J0YW50fQp9Cjwvc3R5bGU+CjxzY3JpcHQgaWQ9InJjMzAzLWRlc2t0b3AtbGl2ZS1mdWxsc2NyZWVuLWFsd2F5cyI+CigoKT0+eyd1c2Ugc3RyaWN0JztpZighbWF0Y2hNZWRpYSgnKG1pbi13aWR0aDo4NjFweCknKS5tYXRjaGVzKXJldHVybjtjb25zdCByPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdsaXZlQ2VudGVyJyksdz1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbGl2ZVBsYXllcldyYXAnKTtpZighcnx8IXcpcmV0dXJuO2xldCBiPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyYzI5OExpdmVGdWxsc2NyZWVuJyk7aWYoIWIpe2I9ZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnYnV0dG9uJyk7Yi5pZD0ncmMyOThMaXZlRnVsbHNjcmVlbic7Yi50eXBlPSdidXR0b24nO2IudGV4dENvbnRlbnQ9J+Kkoic7dy5hcHBlbmRDaGlsZChiKX1jb25zdCBmcz0oKT0+ZG9jdW1lbnQuZnVsbHNjcmVlbkVsZW1lbnQ9PT13fHxkb2N1bWVudC53ZWJraXRGdWxsc2NyZWVuRWxlbWVudD09PXcscz0oKT0+e2Iuc3R5bGUuZGlzcGxheT1yLmNsYXNzTGlzdC5jb250YWlucygnYWN0aXZlJyk/J2dyaWQnOidub25lJztiLnRleHRDb250ZW50PWZzKCk/J+KkoSc6J+Kkoic7Yi50aXRsZT1mcygpPydFeGl0IGZ1bGwgc2NyZWVuJzonRnVsbCBzY3JlZW4nO2Iuc2V0QXR0cmlidXRlKCdhcmlhLWxhYmVsJyxiLnRpdGxlKX07aWYoYi5kYXRhc2V0LnJjMzAzIT09JzEnKXtiLmRhdGFzZXQucmMzMDM9JzEnO2IuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLGU9PntlLnByZXZlbnREZWZhdWx0KCk7ZS5zdG9wUHJvcGFnYXRpb24oKTt0cnl7ZnMoKT8oZG9jdW1lbnQuZXhpdEZ1bGxzY3JlZW4/LigpfHxkb2N1bWVudC53ZWJraXRFeGl0RnVsbHNjcmVlbi8uKCkpOih3LnJlcXVlc3RGdWxsc2NyZWVuPy4oKXx8dy53ZWJraXRSZXF1ZXN0RnVsbHNjcmVlbi8uKCkpfWNhdGNoKF8pe319KX1uZXcgTXV0YXRpb25PYnNlcnZlcihzKS5vYnNlcnZlKHIse2F0dHJpYnV0ZXM6dHJ1ZSxhdHRyaWJ1dGVGaWx0ZXI6WydjbGFzcyddfSk7ZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignZnVsbHNjcmVlbmNoYW5nZScscyk7ZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignd2Via2l0ZnVsbHNjcmVlbmNoYW5nZScscyk7cygpfSkoKTsKPC9zY3JpcHQ+Cg=='
               patch=base64.b64decode(payload).decode('utf-8')
               html=html.replace(anchor,'\n'+patch+anchor,1)
               p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC302 and preserve locks
+      - name: Verify RC303 and preserve locks
         run: |
+          grep -q 'RC303 DESKTOP LIVE CENTER LUXURY + ALWAYS FULLSCREEN' public/index.html
           grep -q 'RC302 DESKTOP LIVE CENTER FULLSCREEN BUTTON FORCE VISIBLE' public/index.html
           grep -q 'RC301 DESKTOP LIVE CENTER REMOVE LOWER LIVE BADGE' public/index.html
           grep -q 'RC300 DESKTOP LIVE CENTER FIT + NATIVE FULLSCREEN RESTORE' public/index.html
@@ -49,14 +50,14 @@ jobs:
           grep -q 'RC293 MOBILE SKIP IMMEDIATE PORTAL OWNER' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
 
-      - name: Commit RC302 source
+      - name: Commit RC303 source
         run: |
           git config user.name "SoulCinema Direct Deploy"
           git config user.email "actions@users.noreply.github.com"
           if git diff --quiet -- public/index.html; then
-            echo "RC302 already applied"
+            echo "RC303 already applied"
           else
             git add public/index.html
-            git commit -m "RC302 desktop Live Center fullscreen button force visible"
+            git commit -m "RC303 desktop Live Center luxury and always fullscreen"
             git push origin HEAD:main
           fi
