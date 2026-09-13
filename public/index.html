@@ -6238,6 +6238,24 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 }
 </style>
 
+<!-- RC303 DESKTOP LIVE CENTER LUXURY + ALWAYS FULLSCREEN -->
+<style id="rc303-desktop-live-luxury">
+@media(min-width:861px){
+#liveCenter.active{background:radial-gradient(circle at 50% 30%,rgba(217,183,96,.08),transparent 34%),linear-gradient(145deg,#080705,#0d0b07 46%,#050505)!important}
+#liveCenter .center>div{width:min(1500px,92vw)!important}
+#liveCenter #livePlayerWrap{position:relative!important;width:min(1500px,92vw)!important;max-width:?vw!important;aspect-ratio:16/9!important;margin:14px auto 0!important;border:1px solid rgba(238,205,115,.76)!important;border-radius:24px!important;overflow:hidden!important;background:radial-gradient(circle at 50% 42%,rgba(217,183,96,.08),transparent 30%),#030303!important;box-shadow:0 38px 110px rgba(0,0,0,.78),0 0 0 1px rgba(255,239,185,.06) inset,0 0 54px rgba(217,183,96,.10)!important}
+#liveCenter #livePlayerWrap:before{content:"SOULCINEMA  ·  LIVE";position:absolute;top:16px;left:20px;z-index:25;pointer-events:none;padding:8px 13px;border:1px solid rgba(234,199,103,.36);border-radius:999px;background:rgba(4,4,4,.58);color:rgba(249,225,158,.9);font:600 9px/1 Inter,Arial,sans-serif;letter-spacing:.24em}
+#liveCenter #livePlayerWrap:after{content:"EVERY HEART HIDES A STORY.";position:absolute;right:84px;bottom:20px;z-index:25;pointer-events:none;color:rgba(248,233,194,.48);font:500 8px/1 Inter,Arial,sans-serif;letter-spacing:.2em}
+#liveCenter #liveMain{width:100%!important;height:100%!important;max-height:none!important;aspect-ratio:16/9!important;border-radius:inherit!important;overflow:hidden!important}
+#liveCenter #rc298LiveFullscreen{display:grid!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;position:absolute!important;right:18px!important;top:16px!important;bottom:auto!important;z-index:2147483646!important;width:52px!important;height:52px!important;min-width:52px!important;min-height:52px!important;border:1px solid rgba(246,215,127,.94)aimportant;border-radius:50%!important;background:linear-gradient(180deg,rgba(37,28,10,.9),rgba(3,3,3,.95))!important;color:#f5d979!important;box-shadow:0 12px 32px rgba(0,0,0,.55),0 0 28px rgba(217,183,96,.18)!important}
+#liveCenter #livePlayerWrap:fullscreen,#liveCenter #livePlayerWrap:-webkit-full-screen{width:100vw!important;max-width:none!important;height:100vh!important;max-height:none!important;aspect-ratio:auto!important;margin:0!important;border:0!important;border-radius:0!important;background:#000!important;box-shadow:none!important}
+#liveCenter #livePlayerWrap:fullscreen #liveMain,#liveCenter #livePlayerWrap:-webkit-full-screen #liveMain{width:100vw!important;height:100vh!important;max-height:none!important}
+}
+</style>
+<script id="rc303-desktop-live-fullscreen-always">
+(()=>{'use strict';if(!matchMedia('(min-width:861px)').matches)return;const r=document.getElementById('liveCenter'),w=document.getElementById('livePlayerWrap');if(!r||!w)return;let b=document.getElementById('rc298LiveFullscreen');if(!b){b=document.createElement('button');b.id='rc298LiveFullscreen';b.type='button';b.textContent='⤢';w.appendChild(b)}const fs=()=>document.fullscreenElement===w||document.webkitFullscreenElement===w,s=()=>{b.style.display=r.classList.contains('active')?'grid':'none';b.textContent=fs()?'⤡':'⤢';b.title=fs()?'Exit full screen':'Full screen';b.setAttribute('aria-label',b.title)};if(b.dataset.rc303!=='1'){b.dataset.rc303='1';b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();try{fs()?(document.exitFullscreen?.()||document.webkitExitFullscreen/.()):(w.requestFullscreen?.()||w.webkitRequestFullscreen/.())}catch(_){}})}new MutationObserver(s).observe(r,{attributes:true,attributeFilter:['class']});document.addEventListener('fullscreenchange',s);document.addEventListener('webkitfullscreenchange',s);s()})();
+</script>
+
 <!-- RC302 DESKTOP LIVE CENTER FULLSCREEN BUTTON FORCE VISIBLE -->
 <style id="rc302-desktop-live-fullscreen-force">
 @media (min-width:861px){
