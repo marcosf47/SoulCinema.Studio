@@ -24,62 +24,24 @@ jobs:
           from pathlib import Path
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          start='<!-- RC303 DESKTOP LIVE CENTER LUXURY + ALWAYS FULLSCREEN -->'
-          end='<!-- RC302 DESKTOP LIVE CENTER FULLSCREEN BUTTON FORCE VISIBLE -->'
-          if html.count(start)!=1 or html.count(end)!=1:
-              raise SystemExit(f'anchors invalid rc303={html.count(start)} rc302={html.count(end)}; refusing to guess')
-          patch=r'''<!-- RC304 DESKTOP LIVE CENTER RECOVERY + RC303 REPAIR -->
-<style id="rc304-desktop-live-recovery-css">
-@media (min-width:861px){
-  #liveCenter.active{background:radial-gradient(circle at 50% 30%,rgba(217,183,96,.08),transparent 34%),linear-gradient(145deg,#080705,#0d0b07 46%,#050505)!important;}
-  #liveCenter .center>div{width:min(1500px,92vw)!important;}
-  #liveCenter #livePlayerWrap{position:relative!important;width:min(1500px,92vw)!important;max-width:92vw!important;aspect-ratio:16/9!important;margin:14px auto 0!important;border:1px solid rgba(238,205,115,.76)!important;border-radius:24px!important;overflow:hidden!important;background:radial-gradient(circle at 50% 42%,rgba(217,183,96,.08),transparent 30%),#030303!important;box-shadow:0 38px 110px rgba(0,0,0,.78),0 0 0 1px rgba(255,239,185,.06) inset,0 0 54px rgba(217,183,96,.10)!important;}
-  #liveCenter #livePlayerWrap::before{content:"SOULCINEMA · LIVE";position:absolute;top:16px;left:20px;z-index:25;pointer-events:none;padding:8px 13px;border:1px solid rgba(234,199,103,.36);border-radius:999px;background:rgba(4,4,4,.58);color:rgba(249,225,158,.9);font:600 9px/1 Inter,Arial,sans-serif;letter-spacing:.24em;}
-  #liveCenter #livePlayerWrap::after{content:"EVERY HEART HIDES A STORY.";position:absolute;right:84px;bottom:20px;z-index:25;pointer-events:none;color:rgba(248,233,194,.48);font:500 8px/1 Inter,Arial,sans-serif;letter-spacing:.2em;}
-  #liveCenter #liveMain{width:100%!important;height:100%!important;max-height:none!important;aspect-ratio:16/9!important;border-radius:inherit!important;overflow:hidden!important;}
-  #liveCenter #rc275LiveFrame{display:block!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border:0!important;z-index:21!important;background:#050505!important;pointer-events:auto!important;}
-  #liveCenter #liveCopy{display:none!important;}
-  #liveCenter #rc298LiveFullscreen{display:grid!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;position:absolute!important;right:18px!important;top:16px!important;bottom:auto!important;z-index:2147483646!important;width:52px!important;height:52px!important;min-width:52px!important;min-height:52px!important;border:1px solid rgba(246,215,127,.94)!important;border-radius:50%!important;background:linear-gradient(180deg,rgba(37,28,10,.90),rgba(3,3,3,.95))!important;color:#f5d979!important;box-shadow:0 12px 32px rgba(0,0,0,.55),0 0 28px rgba(217,183,96,.18)!important;}
-  #liveCenter #livePlayerWrap:fullscreen,#liveCenter #livePlayerWrap:-webkit-full-screen{width:100vw!important;max-width:none!important;height:100vh!important;max-height:none!important;aspect-ratio:auto!important;margin:0!important;border:0!important;border-radius:0!important;background:#000!important;box-shadow:none!important;}
-  #liveCenter #livePlayerWrap:fullscreen #liveMain,#liveCenter #livePlayerWrap:-webkit-full-screen #liveMain,#liveCenter #livePlayerWrap:fullscreen #rc275LiveFrame,#liveCenter #livePlayerWrap:-webkit-full-screen #rc275LiveFrame{width:100vw!important;height:100vh!important;max-height:none!important;}
-}
-</style>
-<script id="rc304-desktop-live-recovery">
-(()=>{
-  'use strict';
-  if(!matchMedia('(min-width:861px)').matches)return;
-  const FEED='https://live.soulcinema.studio/soulcinemad/?controls=true&muted=false&autoplay=true&playsInline=true';
-  const room=document.getElementById('liveCenter');
-  const wrap=document.getElementById('livePlayerWrap');
-  const state=document.getElementById('liveState');
-  if(!room||!wrap)return;
-  let frame=document.getElementById('rc275LiveFrame');
-  if(!frame){frame=document.createElement('iframe');frame.id='rc275LiveFrame';frame.title='SoulCinema Live Broadcast';frame.allow='autoplay; fullscreen; picture-in-picture';frame.setAttribute('allowfullscreen','');frame.setAttribute('scrolling','no');wrap.appendChild(frame);}
-  let btn=document.getElementById('rc298LiveFullscreen');
-  if(!btn){btn=document.createElement('button');btn.id='rc298LiveFullscreen';btn.type='button';btn.textContent='⤢';wrap.appendChild(btn);}
-  const activate=()=>{if(!room.classList.contains('active'))return;document.body.dataset.liveMode='live';if(state)state.textContent='SOULCINEMA · ON AIR';wrap.style.setProperty('display','block','important');if(frame.getAttribute('src')!==FEED)frame.setAttribute('src',FEED);frame.style.pointerEvents='auto';btn.style.display='grid';};
-  const inFs=()=>document.fullscreenElement===wrap||document.webkitFullscreenElement===wrap;
-  const syncBtn=()=>{btn.textContent=inFs()?'⤡':'⤢';btn.title=inFs()?'Exit full screen':'Full screen';btn.setAttribute('aria-label',btn.title);};
-  if(btn.dataset.rc304!=='1'){btn.dataset.rc304='1';btn.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();try{if(inFs()){if(document.exitFullscreen)document.exitFullscreen();else if(document.webkitExitFullscreen)document.webkitExitFullscreen();}else{if(wrap.requestFullscreen)wrap.requestFullscreen();else if(wrap.webkitRequestFullscreen)wrap.webkitRequestFullscreen();}}catch(_e){}});}
-  new MutationObserver(()=>{activate();syncBtn();}).observe(room,{attributes:true,attributeFilter:['class']});
-  document.addEventListener('fullscreenchange',syncBtn);
-  document.addEventListener('webkitfullscreenchange',syncBtn);
-  activate();setTimeout(activate,150);setTimeout(activate,700);syncBtn();
-})();
-</script>
-'''
-          a=html.index(start)
-          b=html.index(end)
-          if a>=b:
-              raise SystemExit('RC303/RC302 order invalid; refusing to guess')
-          html=html[:a]+patch+'\n'+html[b:]
+          html=html.replace('max-width:?vw!important;','max-width:92vw!important;')
+          html=html.replace('rgba(246,215,127,.94)aimportant','rgba(246,215,127,.94)!important')
+          html=html.replace('document.webkitExitFullscreen/.()','document.webkitExitFullscreen?.()')
+          html=html.replace('w.webkitRequestFullscreen/.()','w.webkitRequestFullscreen?.()')
+          marker='<!-- RC304 DESKTOP LIVE CENTER RECOVERY OWNER -->'
+          anchor='<!-- RC302 DESKTOP LIVE CENTER FULLSCREEN BUTTON FORCE VISIBLE -->'
+          patch='<!-- RC304 DESKTOP LIVE CENTER RECOVERY OWNER -->\n<style id="rc304-desktop-live-owner-css">@media(min-width:861px){#liveCenter.active #rc275LiveFrame{display:block!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;z-index:21!important;border:0!important;background:#050505!important;pointer-events:auto!important}#liveCenter.active #liveCopy{display:none!important}}</style>\n<script id="rc304-desktop-live-owner">(()=>{\'use strict\';if(!matchMedia(\'(min-width:861px)\').matches)return;const FEED=\'https://live.soulcinema.studio/soulcinemad/?controls=true&muted=false&autoplay=true&playsInline=true\',room=document.getElementById(\'liveCenter\'),wrap=document.getElementById(\'livePlayerWrap\'),state=document.getElementById(\'liveState\');if(!room||!wrap)return;let frame=document.getElementById(\'rc275LiveFrame\');if(!frame){frame=document.createElement(\'iframe\');frame.id=\'rc275LiveFrame\';frame.title=\'SoulCinema Live Broadcast\';frame.allow=\'autoplay; fullscreen; picture-in-picture\';frame.setAttribute(\'allowfullscreen\',\'\');wrap.appendChild(frame)}const go=()=>{if(!room.classList.contains(\'active\'))return;document.body.dataset.liveMode=\'live\';if(state)state.textContent=\'SOULCINEMA · ON AIR\';wrap.style.setProperty(\'display\',\'block\',\'important\');if(frame.getAttribute(\'src\')!==FEED)frame.setAttribute(\'src\',FEED);frame.style.pointerEvents=\'auto\'};new MutationObserver(go).observe(room,{attributes:true,attributeFilter:[\'class\']});go();setTimeout(go,150);setTimeout(go,700)})();</script>\n'
+          if marker not in html:
+              if html.count(anchor)!=1:
+                  raise SystemExit(f'RC302 anchor count={html.count(anchor)}; refusing to guess')
+              html=html.replace(anchor,patch+anchor,1)
           p.write_text(html,encoding='utf-8')
           PY
 
       - name: Verify RC304 and preserve locks
         run: |
-          grep -q 'RC304 DESKTOP LIVE CENTER RECOVERY + RC303 REPAIR' public/index.html
-          ! grep -q 'RC303 DESKTOP LIVE CENTER LUXURY + ALWAYS FULLSCREEN' public/index.html
+          grep -q 'RC304 DESKTOP LIVE CENTER RECOVERY OWNER' public/index.html
+          grep -q 'RC303 DESKTOP LIVE CENTER LUXURY + ALWAYS FULLSCREEN' public/index.html
           grep -q 'RC302 DESKTOP LIVE CENTER FULLSCREEN BUTTON FORCE VISIBLE' public/index.html
           grep -q 'RC301 DESKTOP LIVE CENTER REMOVE LOWER LIVE BADGE' public/index.html
           grep -q 'RC300 DESKTOP LIVE CENTER FIT + NATIVE FULLSCREEN RESTORE' public/index.html
@@ -91,6 +53,10 @@ jobs:
           grep -q 'RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP' public/index.html
           grep -q 'RC293 MOBILE SKIP IMMEDIATE PORTAL OWNER' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
+          ! grep -q 'max-width:?vw!important;' public/index.html
+          ! grep -q 'aimportant' public/index.html
+          ! grep -q 'webkitExitFullscreen/.()' public/index.html
+          ! grep -q 'webkitRequestFullscreen/.()' public/index.html
 
       - name: Commit RC304 source
         run: |
@@ -100,6 +66,6 @@ jobs:
             echo "RC304 already applied"
           else
             git add public/index.html
-            git commit -m "RC304 desktop Live Center recovery and RC303 repair"
+            git commit -m "RC304 desktop Live Center recovery owner"
             git push origin HEAD:main
           fi
