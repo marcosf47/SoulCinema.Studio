@@ -6154,6 +6154,16 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
   sync();
 })();
 </script>
+<!-- RC301 DESKTOP LIVE CENTER REMOVE LOWER LIVE BADGE -->
+<style id="rc301-desktop-live-hide-lower-badge">
+@media (min-width:861px){
+  html body #liveCenter #publicLiveBadge,
+  html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
+    display:none!important;
+  }
+}
+</style>
+
 <!-- RC300 DESKTOP LIVE CENTER FIT + NATIVE FULLSCREEN RESTORE -->
 <style id="rc300-desktop-live-fit-native-controls">
 @media (min-width:861px){
