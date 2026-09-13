@@ -18,26 +18,27 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC300 desktop Live Center fit and native fullscreen restore
+      - name: Apply RC301 desktop Live Center remove lower live badge
         run: |
           python3 - <<'PY'
           from pathlib import Path
           import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='<!-- RC300 DESKTOP LIVE CENTER FIT + NATIVE FULLSCREEN RESTORE -->'
-          anchor='\n<!-- RC299 DESKTOP LIVE CENTER LUXURY LARGER SCREEN -->'
+          marker='<!-- RC301 DESKTOP LIVE CENTER REMOVE LOWER LIVE BADGE -->'
+          anchor='\n<!-- RC300 DESKTOP LIVE CENTER FIT + NATIVE FULLSCREEN RESTORE -->'
           if marker not in html:
               if html.count(anchor)!=1:
-                  raise SystemExit(f'RC299 anchor count={html.count(anchor)}; refusing to guess')
-              payload='PCEtLSBSQzMwMCBERVNLVE9QIExJVkUgQ0VOVEVSIEZJVCArIE5BVElWRSBGVUxMU0NSRUVOIFJFU1RPUkUgLS0+CjxzdHlsZSBpZD0icmMzMDAtZGVza3RvcC1saXZlLWZpdC1uYXRpdmUtY29udHJvbHMiPgpAbWVkaWEgKG1pbi13aWR0aDo4NjFweCl7CiAgI2xpdmVDZW50ZXIgLmNlbnRlciA+IGRpdnsKICAgIHdpZHRoOm1pbigxMjQwcHgsODZ2dykhaW1wb3J0YW50OwogIH0KICAjbGl2ZUNlbnRlciAjbGl2ZU1haW57CiAgICBhc3BlY3QtcmF0aW86MTYvOSFpbXBvcnRhbnQ7CiAgICBtYXgtaGVpZ2h0OjYydmghaW1wb3J0YW50OwogICAgb3ZlcmZsb3c6aGlkZGVuIWltcG9ydGFudDsKICB9CiAgI2xpdmVDZW50ZXIgI3JjMjc1TGl2ZUZyYW1lewogICAgcG9pbnRlci1ldmVudHM6YXV0byFpbXBvcnRhbnQ7CiAgfQogICNsaXZlQ2VudGVyICNyYzI5OExpdmVGdWxsc2NyZWVuewogICAgZGlzcGxheTpub25lIWltcG9ydGFudDsKICB9Cn0KPC9zdHlsZT4KPHNjcmlwdCBpZD0icmMzMDAtZGVza3RvcC1saXZlLWZpdC1uYXRpdmUtY29udHJvbHMtanMiPgooKCk9PnsKICAndXNlIHN0cmljdCc7CiAgaWYoIW1hdGNoTWVkaWEoJyhtaW4td2lkdGg6ODYxcHgpJykubWF0Y2hlcylyZXR1cm47CiAgY29uc3QgZnJhbWU9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3JjMjc1TGl2ZUZyYW1lJyk7CiAgY29uc3Qgcm9vbT1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbGl2ZUNlbnRlcicpOwogIGlmKCFmcmFtZXx8IXJvb20pcmV0dXJuOwogIGNvbnN0IExJVkU9J2h0dHBzOi8vbGl2ZS5zb3VsY2luZW1hLnN0dWRpby9zb3VsY2luZW1hZC8/Y29udHJvbHM9dHJ1ZSZtdXRlZD1mYWxzZSZhdXRvcGxheT10cnVlJnBsYXlzSW5saW5lPXRydWUnOwogIGNvbnN0IHN5bmM9KCk9PnsKICAgIGlmKCFyb29tLmNsYXNzTGlzdC5jb250YWlucygnYWN0aXZlJykpcmV0dXJuOwogICAgaWYoZG9jdW1lbnQuYm9keT8uZGF0YXNldD8ubGl2ZU1vZGUhPT0nbGl2ZScpcmV0dXJuOwogICAgaWYoZnJhbWUuZ2V0QXR0cmlidXRlKCdzcmMnKSE9PUxJVkUpIGZyYW1lLnNldEF0dHJpYnV0ZSgnc3JjJyxMSVZFKTsKICAgIGZyYW1lLnN0eWxlLnBvaW50ZXJFdmVudHM9J2F1dG8nOwogIH07CiAgbmV3IE11dGF0aW9uT2JzZXJ2ZXIoc3luYykub2JzZXJ2ZShyb29tLHthdHRyaWJ1dGVzOnRydWUsYXR0cmlidXRlRmlsdGVyOlsnY2xhc3MnXX0pOwogIG5ldyBNdXRhdGlvbk9ic2VydmVyKHN5bmMpLm9ic2VydmUoZG9jdW1lbnQuYm9keSx7YXR0cmlidXRlczp0cnVlLGF0dHJpYnV0ZUZpbHRlcjpbJ2RhdGEtbGl2ZS1tb2RlJ119KTsKICBzeW5jKCk7Cn0pKCk7Cjwvc2NyaXB0Pgo='
+                  raise SystemExit(f'RC300 anchor count={html.count(anchor)}; refusing to guess')
+              payload='PCEtLSBSQzMwMSBERVNLVE9QIExJVkUgQ0VOVEVSIFJFTU9WRSBMT1dFUiBMSVZFIEJBREdFIC0tPgo8c3R5bGUgaWQ9InJjMzAxLWRlc2t0b3AtbGl2ZS1oaWRlLWxvd2VyLWJhZGdlIj4KQG1lZGlhIChtaW4td2lkdGg6ODYxcHgpewogIGh0bWwgYm9keSAjbGl2ZUNlbnRlciAjcHVibGljTGl2ZUJhZGdlLAogIGh0bWwgYm9keVtkYXRhLWxpdmUtbW9kZT0ibGl2ZSJdICNsaXZlQ2VudGVyICNwdWJsaWNMaXZlQmFkZ2V7CiAgICBkaXNwbGF5Om5vbmUhaW1wb3J0YW50OwogIH0KfQo8L3N0eWxlPgo='
               patch=base64.b64decode(payload).decode('utf-8')
               html=html.replace(anchor,'\n'+patch+anchor,1)
               p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC300 and preserve locks
+      - name: Verify RC301 and preserve locks
         run: |
+          grep -q 'RC301 DESKTOP LIVE CENTER REMOVE LOWER LIVE BADGE' public/index.html
           grep -q 'RC300 DESKTOP LIVE CENTER FIT + NATIVE FULLSCREEN RESTORE' public/index.html
           grep -q 'RC299 DESKTOP LIVE CENTER LUXURY LARGER SCREEN' public/index.html
           grep -q 'RC298 DESKTOP LIVE CENTER FULLSCREEN CONTROL' public/index.html
@@ -47,14 +48,14 @@ jobs:
           grep -q 'RC293 MOBILE SKIP IMMEDIATE PORTAL OWNER' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
 
-      - name: Commit RC300 source
+      - name: Commit RC301 source
         run: |
           git config user.name "SoulCinema Direct Deploy"
           git config user.email "actions@users.noreply.github.com"
           if git diff --quiet -- public/index.html; then
-            echo "RC300 already applied"
+            echo "RC301 already applied"
           else
             git add public/index.html
-            git commit -m "RC300 desktop Live Center fit and native fullscreen restore"
+            git commit -m "RC301 desktop Live Center remove lower live badge"
             git push origin HEAD:main
           fi
