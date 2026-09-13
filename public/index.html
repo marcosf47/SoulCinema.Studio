@@ -6238,6 +6238,26 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 }
 </style>
 
+<!-- RC302 DESKTOP LIVE CENTER FULLSCREEN BUTTON FORCE VISIBLE -->
+<style id="rc302-desktop-live-fullscreen-force">
+@media (min-width:861px){
+  body[data-live-mode="live"] #liveCenter.active #livePlayerWrap #rc298LiveFullscreen{
+    display:grid!important;
+    visibility:visible!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+    position:absolute!important;
+    right:16px!important;
+    bottom:16px!important;
+    z-index:2147483646!important;
+    width:46px!important;
+    height:46px!important;
+    min-width:46px!important;
+    min-height:46px!important;
+  }
+}
+</style>
+
 <!-- RC298 DESKTOP LIVE CENTER FULLSCREEN CONTROL -->
 <style id="rc298-desktop-live-fullscreen-css">
 @media (min-width:861px){
