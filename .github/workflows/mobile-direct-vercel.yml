@@ -22,45 +22,13 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
           marker='<!-- RC307 DESKTOP LIVE CENTER LUXURY COMPOSITION -->'
           anchor='<!-- RC306 DESKTOP LIVE CENTER VIEWPORT FIT -->'
-          patch='''<!-- RC307 DESKTOP LIVE CENTER LUXURY COMPOSITION -->
-<style id="rc307-desktop-live-luxury-composition">
-@media(min-width:861px){
-  #liveCenter.active{position:relative!important;height:100dvh!important;max-height:100dvh!important;overflow:hidden!important;box-sizing:border-box!important;padding-bottom:0!important}
-  #liveCenter.active #livePlayerWrap{position:absolute!important;top:168px!important;left:64px!important;right:344px!important;bottom:70px!important;width:auto!important;height:auto!important;min-height:0!important;max-height:none!important;margin:0!important;border:1px solid rgba(225,184,79,.78)!important;border-radius:22px!important;overflow:hidden!important;box-shadow:0 20px 70px rgba(0,0,0,.55),0 0 0 1px rgba(255,220,125,.08) inset!important;background:#030303!important}
-  #liveCenter.active #rc275LiveFrame{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;border:0!important;border-radius:21px!important;background:#030303!important}
-  #liveCenter.active #rc298LiveFullscreen{z-index:80!important;right:18px!important;top:18px!important}
-  #rc307LiveInfo{position:absolute;top:168px;right:64px;bottom:70px;width:248px;z-index:35;display:flex;flex-direction:column;gap:14px;padding:24px 22px;box-sizing:border-box;border:1px solid rgba(225,184,79,.42);border-radius:22px;background:linear-gradient(180deg,rgba(13,12,10,.94),rgba(5,5,5,.90));box-shadow:0 18px 60px rgba(0,0,0,.42);color:#f2ead9;font-family:Arial,sans-serif}
-  #rc307LiveInfo .rc307-kicker{font-size:13px;letter-spacing:.16em;color:#e3bd59;font-weight:700;text-transform:uppercase}
-  #rc307LiveInfo .rc307-title{font-family:Georgia,serif;font-size:21px;line-height:1.15;color:#fff4d6;margin-top:2px}
-  #rc307LiveInfo .rc307-sub{font-size:14px;line-height:1.5;color:rgba(242,234,217,.70);padding-bottom:14px;border-bottom:1px solid rgba(225,184,79,.20)}
-  #rc307LiveInfo .rc307-list{display:grid;gap:12px;font-size:14px;color:rgba(242,234,217,.84)}
-  #rc307LiveInfo .rc307-list span{display:flex;align-items:center;gap:10px}
-  #rc307LiveInfo .rc307-dot{width:7px;height:7px;border-radius:50%;background:#e3bd59;box-shadow:0 0 12px rgba(227,189,89,.45);flex:none}
-  #rc307LiveInfo .rc307-upcoming{margin-top:auto;padding:15px 14px;border:1px solid rgba(225,184,79,.28);border-radius:14px;background:rgba(255,255,255,.02)}
-  #rc307LiveInfo .rc307-upcoming b{display:block;font-size:12px;letter-spacing:.14em;color:#e3bd59;margin-bottom:7px;text-transform:uppercase}
-  #rc307LiveInfo .rc307-upcoming span{font-size:13px;line-height:1.45;color:rgba(242,234,217,.70)}
-}
-</style>
-<script id="rc307-desktop-live-luxury-composition-js">
-(()=>{
-  'use strict';
-  if(!matchMedia('(min-width:861px)').matches)return;
-  const room=document.getElementById('liveCenter');
-  if(!room)return;
-  if(!document.getElementById('rc307LiveInfo')){
-    const panel=document.createElement('aside');
-    panel.id='rc307LiveInfo';
-    panel.setAttribute('aria-label','SoulCinema Live information');
-    panel.innerHTML='<div class="rc307-kicker">LIVE NOW</div><div class="rc307-title">SoulCinema Live Stream</div><div class="rc307-sub">Events - Talk - Music - Specials</div><div class="rc307-list"><span><i class="rc307-dot"></i>Live Events</span><span><i class="rc307-dot"></i>Special Interviews</span><span><i class="rc307-dot"></i>Music Sessions</span><span><i class="rc307-dot"></i>Behind the Scenes</span></div><div class="rc307-upcoming"><b>Upcoming</b><span>Stay connected for our next live experience.</span></div>';
-    room.appendChild(panel);
-  }
-})();
-</script>
-'''
+          payload='PCEtLSBSQzMwNyBERVNLVE9QIExJVkUgQ0VOVEVSIExVWFVSWSBDT01QT1NJVElPTiAtLT4KPHN0eWxlIGlkPSJyYzMwNy1kZXNrdG9wLWxpdmUtbHV4dXJ5LWNvbXBvc2l0aW9uIj4KQG1lZGlhKG1pbi13aWR0aDo4NjFweCl7CiAgI2xpdmVDZW50ZXIuYWN0aXZle3Bvc2l0aW9uOnJlbGF0aXZlIWltcG9ydGFudDtoZWlnaHQ6MTAwZHZoIWltcG9ydGFudDttYXgtaGVpZ2h0OjEwMGR2aCFpbXBvcnRhbnQ7b3ZlcmZsb3c6aGlkZGVuIWltcG9ydGFudDtib3gtc2l6aW5nOmJvcmRlci1ib3ghaW1wb3J0YW50O3BhZGRpbmctYm90dG9tOjAhaW1wb3J0YW50fQogICNsaXZlQ2VudGVyLmFjdGl2ZSAjbGl2ZVBsYXllcldyYXB7cG9zaXRpb246YWJzb2x1dGUhaW1wb3J0YW50O3RvcDoxNjhweCFpbXBvcnRhbnQ7bGVmdDo2NHB4IWltcG9ydGFudDtyaWdodDozNDRweCFpbXBvcnRhbnQ7Ym90dG9tOjcwcHghaW1wb3J0YW50O3dpZHRoOmF1dG8haW1wb3J0YW50O2hlaWdodDphdXRvIWltcG9ydGFudDttaW4taGVpZ2h0OjAhaW1wb3J0YW50O21heC1oZWlnaHQ6bm9uZSFpbXBvcnRhbnQ7bWFyZ2luOjAhaW1wb3J0YW50O2JvcmRlcjoxcHggc29saWQgcmdiYSgyMjUsMTg0LDc5LC43OCkhaW1wb3J0YW50O2JvcmRlci1yYWRpdXM6MjJweCFpbXBvcnRhbnQ7b3ZlcmZsb3c6aGlkZGVuIWltcG9ydGFudDtib3gtc2hhZG93OjAgMjBweCA3MHB4IHJnYmEoMCwwLDAsLjU1KSwwIDAgMCAxcHggcmdiYSgyNTUsMjIwLDEyNSwuMDgpIGluc2V0IWltcG9ydGFudDtiYWNrZ3JvdW5kOiMwMzAzMDMhaW1wb3J0YW50fQogICNsaXZlQ2VudGVyLmFjdGl2ZSAjcmMyNzVMaXZlRnJhbWV7cG9zaXRpb246YWJzb2x1dGUhaW1wb3J0YW50O2luc2V0OjAhaW1wb3J0YW50O3dpZHRoOjEwMCUhaW1wb3J0YW50O2hlaWdodDoxMDAlIWltcG9ydGFudDttYXgtd2lkdGg6MTAwJSFpbXBvcnRhbnQ7bWF4LWhlaWdodDoxMDAlIWltcG9ydGFudDtib3JkZXI6MCFpbXBvcnRhbnQ7Ym9yZGVyLXJhZGl1czoyMXB4IWltcG9ydGFudDtiYWNrZ3JvdW5kOiMwMzAzMDMhaW1wb3J0YW50fQogICNsaXZlQ2VudGVyLmFjdGl2ZSAjcmMyOThMaXZlRnVsbHNjcmVlbnt6LWluZGV4OjgwIWltcG9ydGFudDtyaWdodDoxOHB4IWltcG9ydGFudDt0b3A6MThweCFpbXBvcnRhbnR9CiAgI3JjMzA3TGl2ZUluZm97cG9zaXRpb246YWJzb2x1dGU7dG9wOjE2OHB4O3JpZ2h0OjY0cHg7Ym90dG9tOjcwcHg7d2lkdGg6MjQ4cHg7ei1pbmRleDozNTtkaXNwbGF5OmZsZXg7ZmxleC1kaXJlY3Rpb246Y29sdW1uO2dhcDoxNHB4O3BhZGRpbmc6MjRweCAyMnB4O2JveC1zaXppbmc6Ym9yZGVyLWJveDtib3JkZXI6MXB4IHNvbGlkIHJnYmEoMjI1LDE4NCw3OSwuNDIpO2JvcmRlci1yYWRpdXM6MjJweDtiYWNrZ3JvdW5kOmxpbmVhci1ncmFkaWVudCgxODBkZWcscmdiYSgxMywxMiwxMCwuOTQpLHJnYmEoNSw1LDUsLjkwKSk7Ym94LXNoYWRvdzowIDE4cHggNjBweCByZ2JhKDAsMCwwLC40Mik7Y29sb3I6I2YyZWFkOTtmb250LWZhbWlseTpBcmlhbCxzYW5zLXNlcmlmfQogICNyYzMwN0xpdmVJbmZvIC5yYzMwNy1raWNrZXJ7Zm9udC1zaXplOjEzcHg7bGV0dGVyLXNwYWNpbmc6LjE2ZW07Y29sb3I6I2UzYmQ1OTtmb250LXdlaWdodDo3MDA7dGV4dC10cmFuc2Zvcm06dXBwZXJjYXNlfQogICNyYzMwN0xpdmVJbmZvIC5yYzMwNy10aXRsZXtmb250LWZhbWlseTpHZW9yZ2lhLHNlcmlmO2ZvbnQtc2l6ZToyMXB4O2xpbmUtaGVpZ2h0OjEuMTU7Y29sb3I6I2ZmZjRkNjttYXJnaW4tdG9wOjJweH0KICAjcmMzMDdMaXZlSW5mbyAucmMzMDctc3Vie2ZvbnQtc2l6ZToxNHB4O2xpbmUtaGVpZ2h0OjEuNTtjb2xvcjpyZ2JhKDI0MiwyMzQsMjE3LC43MCk7cGFkZGluZy1ib3R0b206MTRweDtib3JkZXItYm90dG9tOjFweCBzb2xpZCByZ2JhKDIyNSwxODQsNzksLjIwKX0KICAjcmMzMDdMaXZlSW5mbyAucmMzMDctbGlzdHtkaXNwbGF5OmdyaWQ7Z2FwOjEycHg7Zm9udC1zaXplOjE0cHg7Y29sb3I6cmdiYSgyNDIsMjM0LDIxNywuODQpfQogICNyYzMwN0xpdmVJbmZvIC5yYzMwNy1saXN0IHNwYW57ZGlzcGxheTpmbGV4O2FsaWduLWl0ZW1zOmNlbnRlcjtnYXA6MTBweH0KICAjcmMzMDdMaXZlSW5mbyAucmMzMDctZG90e3dpZHRoOjdweDtoZWlnaHQ6N3B4O2JvcmRlci1yYWRpdXM6NTAlO2JhY2tncm91bmQ6I2UzYmQ1OTtib3gtc2hhZG93OjAgMCAxMnB4IHJnYmEoMjI3LDE4OSw4OSwuNDUpO2ZsZXg6bm9uZX0KICAjcmMzMDdMaXZlSW5mbyAucmMzMDctdXBjb21pbmd7bWFyZ2luLXRvcDphdXRvO3BhZGRpbmc6MTVweCAxNHB4O2JvcmRlcjoxcHggc29saWQgcmdiYSgyMjUsMTg0LDc5LC4yOCk7Ym9yZGVyLXJhZGl1czoxNHB4O2JhY2tncm91bmQ6cmdiYSgyNTUsMjU1LDI1NSwuMDIpfQogICNyYzMwN0xpdmVJbmZvIC5yYzMwNy11cGNvbWluZyBie2Rpc3BsYXk6YmxvY2s7Zm9udC1zaXplOjEycHg7bGV0dGVyLXNwYWNpbmc6LjE0ZW07Y29sb3I6I2UzYmQ1OTttYXJnaW4tYm90dG9tOjdweDt0ZXh0LXRyYW5zZm9ybTp1cHBlcmNhc2V9CiAgI3JjMzA3TGl2ZUluZm8gLnJjMzA3LXVwY29taW5nIHNwYW57Zm9udC1zaXplOjEzcHg7bGluZS1oZWlnaHQ6MS40NTtjb2xvcjpyZ2JhKDI0MiwyMzQsMjE3LC43MCl9Cn0KPC9zdHlsZT4KPHNjcmlwdCBpZD0icmMzMDctZGVza3RvcC1saXZlLWx1eHVyeS1jb21wb3NpdGlvbi1qcyI+CigoKT0+ewogICd1c2Ugc3RyaWN0JzsKICBpZighbWF0Y2hNZWRpYSgnKG1pbi13aWR0aDo4NjFweCknKS5tYXRjaGVzKXJldHVybjsKICBjb25zdCByb29tPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdsaXZlQ2VudGVyJyk7CiAgaWYoIXJvb20pcmV0dXJuOwogIGlmKCFkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncmMzMDdMaXZlSW5mbycpKXsKICAgIGNvbnN0IHBhbmVsPWRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2FzaWRlJyk7CiAgICBwYW5lbC5pZD0ncmMzMDdMaXZlSW5mbyc7CiAgICBwYW5lbC5zZXRBdHRyaWJ1dGUoJ2FyaWEtbGFiZWwnLCdTb3VsQ2luZW1hIExpdmUgaW5mb3JtYXRpb24nKTsKICAgIHBhbmVsLmlubmVySFRNTD0nPGRpdiBjbGFzcz0icmMzMDcta2lja2VyIj5MSVZFIE5PVzwvZGl2PjxkaXYgY2xhc3M9InJjMzA3LXRpdGxlIj5Tb3VsQ2luZW1hIExpdmUgU3RyZWFtPC9kaXY+PGRpdiBjbGFzcz0icmMzMDctc3ViIj5FdmVudHMgLSBUYWxrIC0gTXVzaWMgLSBTcGVjaWFsczwvZGl2PjxkaXYgY2xhc3M9InJjMzA3LWxpc3QiPjxzcGFuPjxpIGNsYXNzPSJyYzMwNy1kb3QiPjwvaT5MaXZlIEV2ZW50czwvc3Bhbj48c3Bhbj48aSBjbGFzcz0icmMzMDctZG90Ij48L2k+U3BlY2lhbCBJbnRlcnZpZXdzPC9zcGFuPjxzcGFuPjxpIGNsYXNzPSJyYzMwNy1kb3QiPjwvaT5NdXNpYyBTZXNzaW9uczwvc3Bhbj48c3Bhbj48aSBjbGFzcz0icmMzMDctZG90Ij48L2k+QmVoaW5kIHRoZSBTY2VuZXM8L3NwYW4+PC9kaXY+PGRpdiBjbGFzcz0icmMzMDctdXBjb21pbmciPjxiPlVwY29taW5nPC9iPjxzcGFuPlN0YXkgY29ubmVjdGVkIGZvciBvdXIgbmV4dCBsaXZlIGV4cGVyaWVuY2UuPC9zcGFuPjwvZGl2Pic7CiAgICByb29tLmFwcGVuZENoaWxkKHBhbmVsKTsKICB9Cn0pKCk7Cjwvc2NyaXB0Pgo='
+          patch=base64.b64decode(payload).decode('utf-8')
           if marker not in html:
               if html.count(anchor)!=1:
                   raise SystemExit(f'RC306 anchor count={html.count(anchor)}; refusing to guess')
