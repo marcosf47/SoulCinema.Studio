@@ -6256,6 +6256,40 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 (()=>{'use strict';if(!matchMedia('(min-width:861px)').matches)return;const r=document.getElementById('liveCenter'),w=document.getElementById('livePlayerWrap');if(!r||!w)return;let b=document.getElementById('rc298LiveFullscreen');if(!b){b=document.createElement('button');b.id='rc298LiveFullscreen';b.type='button';b.textContent='⤢';w.appendChild(b)}const fs=()=>document.fullscreenElement===w||document.webkitFullscreenElement===w,s=()=>{b.style.display=r.classList.contains('active')?'grid':'none';b.textContent=fs()?'⤡':'⤢';b.title=fs()?'Exit full screen':'Full screen';b.setAttribute('aria-label',b.title)};if(b.dataset.rc303!=='1'){b.dataset.rc303='1';b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();try{fs()?(document.exitFullscreen?.()||document.webkitExitFullscreen?.()):(w.requestFullscreen?.()||w.webkitRequestFullscreen?.())}catch(_){}})}new MutationObserver(s).observe(r,{attributes:true,attributeFilter:['class']});document.addEventListener('fullscreenchange',s);document.addEventListener('webkitfullscreenchange',s);s()})();
 </script>
 
+<!-- RC307 DESKTOP LIVE CENTER LUXURY COMPOSITION -->
+<style id="rc307-desktop-live-luxury-composition">
+@media(min-width:861px){
+  #liveCenter.active{position:relative!important;height:100dvh!important;max-height:100dvh!important;overflow:hidden!important;box-sizing:border-box!important;padding-bottom:0!important}
+  #liveCenter.active #livePlayerWrap{position:absolute!important;top:168px!important;left:64px!important;right:344px!important;bottom:70px!important;width:auto!important;height:auto!important;min-height:0!important;max-height:none!important;margin:0!important;border:1px solid rgba(225,184,79,.78)!important;border-radius:22px!important;overflow:hidden!important;box-shadow:0 20px 70px rgba(0,0,0,.55),0 0 0 1px rgba(255,220,125,.08) inset!important;background:#030303!important}
+  #liveCenter.active #rc275LiveFrame{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;border:0!important;border-radius:21px!important;background:#030303!important}
+  #liveCenter.active #rc298LiveFullscreen{z-index:80!important;right:18px!important;top:18px!important}
+  #rc307LiveInfo{position:absolute;top:168px;right:64px;bottom:70px;width:248px;z-index:35;display:flex;flex-direction:column;gap:14px;padding:24px 22px;box-sizing:border-box;border:1px solid rgba(225,184,79,.42);border-radius:22px;background:linear-gradient(180deg,rgba(13,12,10,.94),rgba(5,5,5,.90));box-shadow:0 18px 60px rgba(0,0,0,.42);color:#f2ead9;font-family:Arial,sans-serif}
+  #rc307LiveInfo .rc307-kicker{font-size:13px;letter-spacing:.16em;color:#e3bd59;font-weight:700;text-transform:uppercase}
+  #rc307LiveInfo .rc307-title{font-family:Georgia,serif;font-size:21px;line-height:1.15;color:#fff4d6;margin-top:2px}
+  #rc307LiveInfo .rc307-sub{font-size:14px;line-height:1.5;color:rgba(242,234,217,.70);padding-bottom:14px;border-bottom:1px solid rgba(225,184,79,.20)}
+  #rc307LiveInfo .rc307-list{display:grid;gap:12px;font-size:14px;color:rgba(242,234,217,.84)}
+  #rc307LiveInfo .rc307-list span{display:flex;align-items:center;gap:10px}
+  #rc307LiveInfo .rc307-dot{width:7px;height:7px;border-radius:50%;background:#e3bd59;box-shadow:0 0 12px rgba(227,189,89,.45);flex:none}
+  #rc307LiveInfo .rc307-upcoming{margin-top:auto;padding:15px 14px;border:1px solid rgba(225,184,79,.28);border-radius:14px;background:rgba(255,255,255,.02)}
+  #rc307LiveInfo .rc307-upcoming b{display:block;font-size:12px;letter-spacing:.14em;color:#e3bd59;margin-bottom:7px;text-transform:uppercase}
+  #rc307LiveInfo .rc307-upcoming span{font-size:13px;line-height:1.45;color:rgba(242,234,217,.70)}
+}
+</style>
+<script id="rc307-desktop-live-luxury-composition-js">
+(()=>{
+  'use strict';
+  if(!matchMedia('(min-width:861px)').matches)return;
+  const room=document.getElementById('liveCenter');
+  if(!room)return;
+  if(!document.getElementById('rc307LiveInfo')){
+    const panel=document.createElement('aside');
+    panel.id='rc307LiveInfo';
+    panel.setAttribute('aria-label','SoulCinema Live information');
+    panel.innerHTML='<div class="rc307-kicker">LIVE NOW</div><div class="rc307-title">SoulCinema Live Stream</div><div class="rc307-sub">Events - Talk - Music - Specials</div><div class="rc307-list"><span><i class="rc307-dot"></i>Live Events</span><span><i class="rc307-dot"></i>Special Interviews</span><span><i class="rc307-dot"></i>Music Sessions</span><span><i class="rc307-dot"></i>Behind the Scenes</span></div><div class="rc307-upcoming"><b>Upcoming</b><span>Stay connected for our next live experience.</span></div>';
+    room.appendChild(panel);
+  }
+})();
+</script>
 <!-- RC305 DESKTOP LIVE CENTER IFRAME STATE AUTHORITY -->
 <style id="rc305-desktop-live-iframe-authority-css">
 @media(min-width:861px){
