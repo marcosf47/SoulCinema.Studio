@@ -18,70 +18,41 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC314 live sound activation fix
+      - name: Apply RC315 remove public sound button
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p = Path('public/index.html')
           html = p.read_text(encoding='utf-8')
-          marker = '<!-- RC314 DESKTOP LIVE SOUND USER ACTIVATION -->'
-          anchor = '<!-- RC313 DESKTOP LIVE PANEL ALIGN + LOBBY UNDER PANEL -->'
-          lines = [
-            marker,
-            '<style id="rc314-desktop-live-sound-css">',
-            '@media (min-width:861px){',
-            '#liveCenter.active #rc314LiveSound{display:inline-flex!important;position:absolute!important;left:18px!important;top:18px!important;z-index:130!important;min-height:38px!important;padding:10px 16px!important;align-items:center!important;justify-content:center!important;}',
-            '}',
-            '</style>',
-            '<script id="rc314-desktop-live-sound-js">',
-            '(()=>{',
-            "'use strict';",
-            "if(!matchMedia('(min-width:861px)').matches)return;",
-            "const room=document.getElementById('liveCenter'),wrap=document.getElementById('livePlayerWrap');",
-            'if(!room||!wrap)return;',
-            "let btn=document.getElementById('rc314LiveSound');",
-            "if(!btn){btn=document.createElement('button');btn.id='rc314LiveSound';btn.type='button';btn.textContent='SOUND ON';btn.setAttribute('aria-label','Turn live sound on');wrap.appendChild(btn);}",
-            "btn.addEventListener('click',()=>{",
-            "const frame=document.getElementById('rc275LiveFrame');if(!frame)return;",
-            "frame.setAttribute('allow','autoplay; fullscreen; picture-in-picture');",
-            "const live='https://live.soulcinema.studio/soulcinemad/?controls=true&muted=false&autoplay=true&playsInline=true&sound=on&t='+Date.now();",
-            "frame.setAttribute('src',live);",
-            "btn.textContent='SOUND ON ✓';",
-            "setTimeout(()=>{btn.style.opacity='.72';},1200);",
-            '});',
-            "const sync=()=>{btn.style.display=room.classList.contains('active')?'inline-flex':'none';};",
-            "new MutationObserver(sync).observe(room,{attributes:true,attributeFilter:['class']});sync();",
-            '})();',
-            '</script>',
-            ''
-          ]
-          patch = '\n'.join(lines)
-          if marker not in html:
-              if html.count(anchor) != 1:
-                  raise SystemExit('RC313 anchor mismatch; refusing to guess')
-              html = html.replace(anchor, patch + anchor, 1)
+          start = '<!-- RC314 DESKTOP LIVE SOUND USER ACTIVATION -->'
+          end = '<!-- RC313 DESKTOP LIVE PANEL ALIGN + LOBBY UNDER PANEL -->'
+          if start in html:
+              a = html.index(start)
+              b = html.index(end, a)
+              html = html[:a] + html[b:]
               p.write_text(html, encoding='utf-8')
           PY
 
-      - name: Verify RC314 and preserve locks
+      - name: Verify RC315 and preserve locks
         run: |
-          grep -q 'RC314 DESKTOP LIVE SOUND USER ACTIVATION' public/index.html
+          ! grep -q 'rc314LiveSound' public/index.html
           grep -q 'RC313 DESKTOP LIVE PANEL ALIGN + LOBBY UNDER PANEL' public/index.html
           grep -q 'RC312 DESKTOP LIVE NOW PANEL + RETURN LOBBY' public/index.html
           grep -q 'RC310 DESKTOP LIVE CENTER HARD SIZE CAP' public/index.html
           grep -q 'RC305 DESKTOP LIVE CENTER IFRAME STATE AUTHORITY' public/index.html
+          grep -q 'controls=true&muted=false&autoplay=true&playsInline=true' public/index.html
           grep -q 'RC297 DESKTOP PRODUCTION ROOM VIEWPORT FIT' public/index.html
           grep -q 'RC293 MOBILE SKIP IMMEDIATE PORTAL OWNER' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
 
-      - name: Commit RC314 source
+      - name: Commit RC315 source
         run: |
           git config user.name 'SoulCinema Direct Deploy'
           git config user.email 'actions@users.noreply.github.com'
           if git diff --quiet -- public/index.html; then
-            echo 'RC314 already applied'
+            echo 'RC315 already applied'
           else
             git add public/index.html
-            git commit -m 'RC314 desktop live sound activation fix'
+            git commit -m 'RC315 remove public sound button'
             git push origin HEAD:main
           fi
