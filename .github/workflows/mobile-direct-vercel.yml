@@ -18,28 +18,67 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC304 desktop Live Center recovery
+      - name: Apply RC305 desktop Live Center iframe state authority
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          html=html.replace('max-width:?vw!important;','max-width:92vw!important;')
-          html=html.replace('rgba(246,215,127,.94)aimportant','rgba(246,215,127,.94)!important')
-          html=html.replace('document.webkitExitFullscreen/.()','document.webkitExitFullscreen?.()')
-          html=html.replace('w.webkitRequestFullscreen/.()','w.webkitRequestFullscreen?.()')
-          marker='<!-- RC304 DESKTOP LIVE CENTER RECOVERY OWNER -->'
-          anchor='<!-- RC302 DESKTOP LIVE CENTER FULLSCREEN BUTTON FORCE VISIBLE -->'
-          patch='<!-- RC304 DESKTOP LIVE CENTER RECOVERY OWNER -->\n<style id="rc304-desktop-live-owner-css">@media(min-width:861px){#liveCenter.active #rc275LiveFrame{display:block!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;z-index:21!important;border:0!important;background:#050505!important;pointer-events:auto!important}#liveCenter.active #liveCopy{display:none!important}}</style>\n<script id="rc304-desktop-live-owner">(()=>{\'use strict\';if(!matchMedia(\'(min-width:861px)\').matches)return;const FEED=\'https://live.soulcinema.studio/soulcinemad/?controls=true&muted=false&autoplay=true&playsInline=true\',room=document.getElementById(\'liveCenter\'),wrap=document.getElementById(\'livePlayerWrap\'),state=document.getElementById(\'liveState\');if(!room||!wrap)return;let frame=document.getElementById(\'rc275LiveFrame\');if(!frame){frame=document.createElement(\'iframe\');frame.id=\'rc275LiveFrame\';frame.title=\'SoulCinema Live Broadcast\';frame.allow=\'autoplay; fullscreen; picture-in-picture\';frame.setAttribute(\'allowfullscreen\',\'\');wrap.appendChild(frame)}const go=()=>{if(!room.classList.contains(\'active\'))return;document.body.dataset.liveMode=\'live\';if(state)state.textContent=\'SOULCINEMA · ON AIR\';wrap.style.setProperty(\'display\',\'block\',\'important\');if(frame.getAttribute(\'src\')!==FEED)frame.setAttribute(\'src\',FEED);frame.style.pointerEvents=\'auto\'};new MutationObserver(go).observe(room,{attributes:true,attributeFilter:[\'class\']});go();setTimeout(go,150);setTimeout(go,700)})();</script>\n'
+          marker='<!-- RC305 DESKTOP LIVE CENTER IFRAME STATE AUTHORITY -->'
+          anchor='<!-- RC304 DESKTOP LIVE CENTER RECOVERY OWNER -->'
+          patch=r'''<!-- RC305 DESKTOP LIVE CENTER IFRAME STATE AUTHORITY -->
+<style id="rc305-desktop-live-iframe-authority-css">
+@media(min-width:861px){
+  #liveCenter.active #livePlayerWrap{display:block!important;}
+  #liveCenter.active #liveCopy{display:none!important;}
+  #liveCenter.active #rc275LiveFrame{
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+  }
+}
+</style>
+<script id="rc305-desktop-live-iframe-authority">
+(()=>{
+  'use strict';
+  if(!matchMedia('(min-width:861px)').matches)return;
+  const FEED='https://live.soulcinema.studio/soulcinemad/?controls=true&muted=false&autoplay=true&playsInline=true';
+  const room=document.getElementById('liveCenter');
+  const wrap=document.getElementById('livePlayerWrap');
+  const copy=document.getElementById('liveCopy');
+  const state=document.getElementById('liveState');
+  if(!room||!wrap)return;
+  const own=()=>{
+    if(!room.classList.contains('active'))return;
+    const frame=document.getElementById('rc275LiveFrame');
+    if(!frame)return;
+    if(document.body.dataset.liveMode!=='live')document.body.dataset.liveMode='live';
+    wrap.style.setProperty('display','block','important');
+    if(copy)copy.style.setProperty('display','none','important');
+    frame.style.setProperty('display','block','important');
+    frame.style.setProperty('visibility','visible','important');
+    frame.style.setProperty('opacity','1','important');
+    frame.style.setProperty('pointer-events','auto','important');
+    if(frame.getAttribute('src')!==FEED)frame.setAttribute('src',FEED);
+    if(state)state.textContent='SOULCINEMA \u00b7 ON AIR';
+  };
+  new MutationObserver(own).observe(document.body,{attributes:true,attributeFilter:['data-live-mode']});
+  new MutationObserver(own).observe(room,{attributes:true,attributeFilter:['class']});
+  [0,100,500,1000,1800,2200,3000].forEach(ms=>setTimeout(own,ms));
+})();
+</script>
+'''
           if marker not in html:
               if html.count(anchor)!=1:
-                  raise SystemExit(f'RC302 anchor count={html.count(anchor)}; refusing to guess')
+                  raise SystemExit(f'RC304 anchor count={html.count(anchor)}; refusing to guess')
               html=html.replace(anchor,patch+anchor,1)
           p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC304 and preserve locks
+      - name: Verify RC305 and preserve locks
         run: |
+          grep -q 'RC305 DESKTOP LIVE CENTER IFRAME STATE AUTHORITY' public/index.html
           grep -q 'RC304 DESKTOP LIVE CENTER RECOVERY OWNER' public/index.html
           grep -q 'RC303 DESKTOP LIVE CENTER LUXURY + ALWAYS FULLSCREEN' public/index.html
           grep -q 'RC302 DESKTOP LIVE CENTER FULLSCREEN BUTTON FORCE VISIBLE' public/index.html
@@ -53,19 +92,15 @@ jobs:
           grep -q 'RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP' public/index.html
           grep -q 'RC293 MOBILE SKIP IMMEDIATE PORTAL OWNER' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
-          ! grep -q 'max-width:?vw!important;' public/index.html
-          ! grep -q 'aimportant' public/index.html
-          ! grep -q 'webkitExitFullscreen/.()' public/index.html
-          ! grep -q 'webkitRequestFullscreen/.()' public/index.html
 
-      - name: Commit RC304 source
+      - name: Commit RC305 source
         run: |
           git config user.name "SoulCinema Direct Deploy"
           git config user.email "actions@users.noreply.github.com"
           if git diff --quiet -- public/index.html; then
-            echo "RC304 already applied"
+            echo "RC305 already applied"
           else
             git add public/index.html
-            git commit -m "RC304 desktop Live Center recovery owner"
+            git commit -m "RC305 desktop Live Center iframe state authority"
             git push origin HEAD:main
           fi
