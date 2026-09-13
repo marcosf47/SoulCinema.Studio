@@ -6154,6 +6154,41 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
   sync();
 })();
 </script>
+<!-- RC299 DESKTOP LIVE CENTER LUXURY LARGER SCREEN -->
+<style id="rc299-desktop-live-luxury-larger-screen">
+@media (min-width:861px){
+  #liveCenter #livePlayerWrap{
+    width:min(1480px,94vw)!important;
+    max-width:94vw!important;
+    aspect-ratio:16/9!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    border:1px solid rgba(217,183,96,.58)!important;
+    border-radius:22px!important;
+    overflow:hidden!important;
+    background:#000!important;
+    box-shadow:0 34px 100px rgba(0,0,0,.72),0 0 0 1px rgba(255,239,185,.045) inset,0 0 46px rgba(217,183,96,.10)!important;
+  }
+  #liveCenter #livePlayerWrap iframe,
+  #liveCenter #livePlayerWrap video{
+    width:100%!important;
+    height:100%!important;
+    border-radius:inherit!important;
+  }
+  #liveCenter #rc298LiveFullscreen{
+    right:18px!important;
+    bottom:18px!important;
+    width:48px!important;
+    height:48px!important;
+    min-width:48px!important;
+    min-height:48px!important;
+    border-color:rgba(242,215,131,.82)!important;
+    background:linear-gradient(180deg,rgba(34,27,12,.82),rgba(0,0,0,.90))!important;
+    box-shadow:0 12px 32px rgba(0,0,0,.48),0 0 24px rgba(217,183,96,.12)!important;
+  }
+}
+</style>
+
 <!-- RC298 DESKTOP LIVE CENTER FULLSCREEN CONTROL -->
 <style id="rc298-desktop-live-fullscreen-css">
 @media (min-width:861px){
