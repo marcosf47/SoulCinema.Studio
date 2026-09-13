@@ -22,69 +22,13 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
           marker='<!-- RC310 DESKTOP LIVE CENTER HARD SIZE CAP -->'
           anchor='<!-- RC309 DESKTOP LIVE CENTER MASTER OVERSIZE FIX -->'
-          patch='''<!-- RC310 DESKTOP LIVE CENTER HARD SIZE CAP -->
-<style id="rc310-desktop-live-hard-size-cap">
-@media (min-width:861px){
-  #liveCenter.active #livePlayerWrap{
-    position:absolute!important;
-    top:170px!important;
-    left:54px!important;
-    right:auto!important;
-    bottom:auto!important;
-    width:min(70vw,1040px)!important;
-    height:min(58vh,585px)!important;
-    aspect-ratio:16/9!important;
-    max-width:1040px!important;
-    max-height:585px!important;
-    min-width:0!important;
-    min-height:0!important;
-    margin:0!important;
-    overflow:hidden!important;
-    box-sizing:border-box!important;
-  }
-  #liveCenter.active #rc275LiveFrame{
-    position:absolute!important;
-    inset:0!important;
-    width:100%!important;
-    height:100%!important;
-    max-width:100%!important;
-    max-height:100%!important;
-    border:0!important;
-  }
-  #liveCenter.active #rc307LiveInfo{
-    top:170px!important;
-    right:54px!important;
-    bottom:auto!important;
-    width:250px!important;
-    height:min(58vh,585px)!important;
-    min-height:0!important;
-    max-height:585px!important;
-    overflow:hidden!important;
-  }
-  #liveCenter.active #rc298LiveFullscreen{
-    top:14px!important;
-    right:14px!important;
-    z-index:140!important;
-  }
-  #livePlayerWrap:fullscreen,#livePlayerWrap:-webkit-full-screen{
-    position:fixed!important;
-    inset:0!important;
-    width:100vw!important;
-    height:100vh!important;
-    max-width:100vw!important;
-    max-height:100vh!important;
-    margin:0!important;
-    border:0!important;
-    border-radius:0!important;
-    background:#000!important;
-  }
-}
-</style>
-'''
+          payload='PCEtLSBSQzMxMCBERVNLVE9QIExJVkUgQ0VOVEVSIEhBUkQgU0laRSBDQVAgLS0+CjxzdHlsZSBpZD0icmMzMTAtZGVza3RvcC1saXZlLWhhcmQtc2l6ZS1jYXAiPgpAbWVkaWEgKG1pbi13aWR0aDo4NjFweCl7CiAgI2xpdmVDZW50ZXIuYWN0aXZlICNsaXZlUGxheWVyV3JhcHsKICAgIHBvc2l0aW9uOmFic29sdXRlIWltcG9ydGFudDsKICAgIHRvcDoxNTBweCFpbXBvcnRhbnQ7CiAgICBsZWZ0OjUycHghaW1wb3J0YW50OwogICAgcmlnaHQ6YXV0byFpbXBvcnRhbnQ7CiAgICBib3R0b206YXV0byFpbXBvcnRhbnQ7CiAgICB3aWR0aDptaW4oNjh2dyw5NjBweCkhaW1wb3J0YW50OwogICAgaGVpZ2h0OmF1dG8haW1wb3J0YW50OwogICAgYXNwZWN0LXJhdGlvOjE2LzkhaW1wb3J0YW50OwogICAgbWF4LXdpZHRoOjk2MHB4IWltcG9ydGFudDsKICAgIG1heC1oZWlnaHQ6NTQwcHghaW1wb3J0YW50OwogICAgbWluLXdpZHRoOjAhaW1wb3J0YW50OwogICAgbWluLWhlaWdodDowaW1wb3J0YW50OwogICAgbWFyZ2luOjAhaW1wb3J0YW50OwogICAgb3ZlcmZsb3c6aGlkZGVuIWltcG9ydGFudDsKICAgIGJveC1zaXppbmc6Ym9yZGVyLWJveCFpbXBvcnRhbnQ7CiAgfQogICNsaXZlQ2VudGVyLmFjdGl2ZSAjcmMyNzVMaXZlRnJhbWV7CiAgICBwb3NpdGlvbjphYnNvbHV0ZSFpbXBvcnRhbnQ7CiAgICBpbnNldDowaW1wb3J0YW50OwogICAgd2lkdGg6MTAwJSFpbXBvcnRhbnQ7CiAgICBoZWlnaHQ6MTAwJSFpbXBvcnRhbnQ7CiAgICBtYXgtd2lkdGg6MTAwJSFpbXBvcnRhbnQ7CiAgICBtYXgtaGVpZ2h0OjEwMCUhaW1wb3J0YW50OwogICAgYm9yZGVyOjAhaW1wb3J0YW50OwogIH0KICAjbGl2ZUNlbnRlci5hY3RpdmUgI3JjMzA3TGl2ZUluZm97CiAgICB0b3A6MTUwcHghaW1wb3J0YW50OwogICAgcmlnaHQ6NTJweCFpbXBvcnRhbnQ7CiAgICBib3R0b206YXV0byFpbXBvcnRhbnQ7CiAgICB3aWR0aDoyNTBweCFpbXBvcnRhbnQ7CiAgICBoZWlnaHQ6NTQwcHghaW1wb3J0YW50OwogICAgbWF4LWhlaWdodDo1NDBweCFpbXBvcnRhbnQ7CiAgICBtaW4taGVpZ2h0OjAhaW1wb3J0YW50OwogICAgb3ZlcmZsb3c6aGlkZGVuIWltcG9ydGFudDsKICB9CiAgI2xpdmVDZW50ZXIuYWN0aXZlICNyYzI5OExpdmVGdWxsc2NyZWVuewogICAgdG9wOjE0cHghaW1wb3J0YW50OwogICAgcmlnaHQ6MTRweCFpbXBvcnRhbnQ7CiAgICB6LWluZGV4OjE0MCFpbXBvcnRhbnQ7CiAgfQogICNsaXZlUGxheWVyV3JhcDpmdWxsc2NyZWVuLCNsaXZlUGxheWVyV3JhcDotd2Via2l0LWZ1bGwtc2NyZWVuewogICAgcG9zaXRpb246Zml4ZWQhaW1wb3J0YW50OwogICAgaW5zZXQ6MCFpbXBvcnRhbnQ7CiAgICB3aWR0aDoxMDB2dyFpbXBvcnRhbnQ7CiAgICBoZWlnaHQ6MTAwdmghaW1wb3J0YW50OwogICAgbWF4LXdpZHRoOjEwMHZ3IWltcG9ydGFudDsKICAgIG1heC1oZWlnaHQ6MTAwdmghaW1wb3J0YW50OwogICAgbWFyZ2luOjAhaW1wb3J0YW50OwogICAgYm9yZGVyOjAhaW1wb3J0YW50OwogICAgYm9yZGVyLXJhZGl1czowaW1wb3J0YW50OwogICAgYmFja2dyb3VuZDojMDAwIWltcG9ydGFudDsKICB9Cn0KPC9zdHlsZT4K'
+          patch=base64.b64decode(payload).decode('utf-8')
           if marker not in html:
               if html.count(anchor)!=1:
                   raise SystemExit('RC309 anchor mismatch; refusing to guess')
