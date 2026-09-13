@@ -18,42 +18,58 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC312 desktop Live Now panel and return lobby
+      - name: Apply RC313 align Live Now panel and lobby button
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='<!-- RC312 DESKTOP LIVE NOW PANEL + RETURN LOBBY -->'
-          anchor='<!-- RC311 DESKTOP LIVE NOW PANEL SHIFT LEFT -->'
-          payload='PCEtLSBSQzMxMiBERVNLVE9QIExJVkUgTk9XIFBBTkVMICsgUkVUVVJOIExPQkJZIC0tPgo8c3R5bGUgaWQ9InJjMzEyLWRlc2t0b3AtbGl2ZS1wYW5lbC1yZXR1cm4iPgpAbWVkaWEgKG1pbi13aWR0aDo4NjFweCl7CiAgI2xpdmVDZW50ZXIuYWN0aXZlICNyYzMwN0xpdmVJbmZvewogICAgcmlnaHQ6ODZweCFpbXBvcnRhbnQ7CiAgfQogICNsaXZlQ2VudGVyLmFjdGl2ZSAjcmV0dXJuTG9iYnl7CiAgICBkaXNwbGF5OmlubGluZS1mbGV4IWltcG9ydGFudDsKICAgIHBvc2l0aW9uOmFic29sdXRlIWltcG9ydGFudDsKICAgIGxlZnQ6NTRweCFpbXBvcnRhbnQ7CiAgICBib3R0b206MThweCFpbXBvcnRhbnQ7CiAgICB0b3A6YXV0byFpbXBvcnRhbnQ7CiAgICByaWdodDphdXRvIWltcG9ydGFudDsKICAgIHotaW5kZXg6MTgwIWltcG9ydGFudDsKICAgIHZpc2liaWxpdHk6dmlzaWJsZSFpbXBvcnRhbnQ7CiAgICBvcGFjaXR5OjEhaW1wb3J0YW50OwogICAgcG9pbnRlci1ldmVudHM6YXV0byFpbXBvcnRhbnQ7CiAgICBtYXJnaW46MCFpbXBvcnRhbnQ7CiAgfQp9Cjwvc3R5bGU+Cg=='
-          patch=base64.b64decode(payload).decode('utf-8')
+          marker='<!-- RC313 DESKTOP LIVE PANEL ALIGN + LOBBY UNDER PANEL -->'
+          anchor='<!-- RC312 DESKTOP LIVE NOW PANEL + RETURN LOBBY -->'
+          patch='''<!-- RC313 DESKTOP LIVE PANEL ALIGN + LOBBY UNDER PANEL -->
+<style id="rc313-desktop-live-panel-lobby-align">
+@media (min-width:861px){
+  #liveCenter.active #rc307LiveInfo{
+    right:54px!important;
+    top:158px!important;
+  }
+  #liveCenter.active #returnLobby{
+    left:auto!important;
+    right:54px!important;
+    top:auto!important;
+    bottom:18px!important;
+    width:270px!important;
+    justify-content:center!important;
+    box-sizing:border-box!important;
+  }
+}
+</style>
+'''
           if marker not in html:
               if html.count(anchor)!=1:
-                  raise SystemExit('RC311 anchor mismatch; refusing to guess')
+                  raise SystemExit('RC312 anchor mismatch; refusing to guess')
               html=html.replace(anchor,patch+anchor,1)
               p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC312 and preserve locks
+      - name: Verify RC313 and preserve locks
         run: |
+          grep -q 'RC313 DESKTOP LIVE PANEL ALIGN + LOBBY UNDER PANEL' public/index.html
           grep -q 'RC312 DESKTOP LIVE NOW PANEL + RETURN LOBBY' public/index.html
-          grep -q 'RC311 DESKTOP LIVE NOW PANEL SHIFT LEFT' public/index.html
           grep -q 'RC310 DESKTOP LIVE CENTER HARD SIZE CAP' public/index.html
           grep -q 'RC305 DESKTOP LIVE CENTER IFRAME STATE AUTHORITY' public/index.html
           grep -q 'RC297 DESKTOP PRODUCTION ROOM VIEWPORT FIT' public/index.html
           grep -q 'RC293 MOBILE SKIP IMMEDIATE PORTAL OWNER' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
 
-      - name: Commit RC312 source
+      - name: Commit RC313 source
         run: |
           git config user.name "SoulCinema Direct Deploy"
           git config user.email "actions@users.noreply.github.com"
           if git diff --quiet -- public/index.html; then
-            echo "RC312 already applied"
+            echo "RC313 already applied"
           else
             git add public/index.html
-            git commit -m "RC312 desktop Live Now panel and return lobby fix"
+            git commit -m "RC313 align Live Now panel and lobby button"
             git push origin HEAD:main
           fi
