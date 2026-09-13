@@ -6154,6 +6154,45 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
   sync();
 })();
 </script>
+<!-- RC300 DESKTOP LIVE CENTER FIT + NATIVE FULLSCREEN RESTORE -->
+<style id="rc300-desktop-live-fit-native-controls">
+@media (min-width:861px){
+  #liveCenter .center > div{
+    width:min(1240px,86vw)!important;
+  }
+  #liveCenter #liveMain{
+    aspect-ratio:16/9!important;
+    max-height:62vh!important;
+    overflow:hidden!important;
+  }
+  #liveCenter #rc275LiveFrame{
+    pointer-events:auto!important;
+  }
+  #liveCenter #rc298LiveFullscreen{
+    display:none!important;
+  }
+}
+</style>
+<script id="rc300-desktop-live-fit-native-controls-js">
+(()=>{
+  'use strict';
+  if(!matchMedia('(min-width:861px)').matches)return;
+  const frame=document.getElementById('rc275LiveFrame');
+  const room=document.getElementById('liveCenter');
+  if(!frame||!room)return;
+  const LIVE='https://live.soulcinema.studio/soulcinemad/?controls=true&muted=false&autoplay=true&playsInline=true';
+  const sync=()=>{
+    if(!room.classList.contains('active'))return;
+    if(document.body?.dataset?.liveMode!=='live')return;
+    if(frame.getAttribute('src')!==LIVE) frame.setAttribute('src',LIVE);
+    frame.style.pointerEvents='auto';
+  };
+  new MutationObserver(sync).observe(room,{attributes:true,attributeFilter:['class']});
+  new MutationObserver(sync).observe(document.body,{attributes:true,attributeFilter:['data-live-mode']});
+  sync();
+})();
+</script>
+
 <!-- RC299 DESKTOP LIVE CENTER LUXURY LARGER SCREEN -->
 <style id="rc299-desktop-live-luxury-larger-screen">
 @media (min-width:861px){
