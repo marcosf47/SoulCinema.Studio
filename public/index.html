@@ -6256,32 +6256,6 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 (()=>{'use strict';if(!matchMedia('(min-width:861px)').matches)return;const r=document.getElementById('liveCenter'),w=document.getElementById('livePlayerWrap');if(!r||!w)return;let b=document.getElementById('rc298LiveFullscreen');if(!b){b=document.createElement('button');b.id='rc298LiveFullscreen';b.type='button';b.textContent='⤢';w.appendChild(b)}const fs=()=>document.fullscreenElement===w||document.webkitFullscreenElement===w,s=()=>{b.style.display=r.classList.contains('active')?'grid':'none';b.textContent=fs()?'⤡':'⤢';b.title=fs()?'Exit full screen':'Full screen';b.setAttribute('aria-label',b.title)};if(b.dataset.rc303!=='1'){b.dataset.rc303='1';b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();try{fs()?(document.exitFullscreen?.()||document.webkitExitFullscreen?.()):(w.requestFullscreen?.()||w.webkitRequestFullscreen?.())}catch(_){}})}new MutationObserver(s).observe(r,{attributes:true,attributeFilter:['class']});document.addEventListener('fullscreenchange',s);document.addEventListener('webkitfullscreenchange',s);s()})();
 </script>
 
-<!-- RC314 DESKTOP LIVE SOUND USER ACTIVATION -->
-<style id="rc314-desktop-live-sound-css">
-@media (min-width:861px){
-#liveCenter.active #rc314LiveSound{display:inline-flex!important;position:absolute!important;left:18px!important;top:18px!important;z-index:130!important;min-height:38px!important;padding:10px 16px!important;align-items:center!important;justify-content:center!important;}
-}
-</style>
-<script id="rc314-desktop-live-sound-js">
-(()=>{
-'use strict';
-if(!matchMedia('(min-width:861px)').matches)return;
-const room=document.getElementById('liveCenter'),wrap=document.getElementById('livePlayerWrap');
-if(!room||!wrap)return;
-let btn=document.getElementById('rc314LiveSound');
-if(!btn){btn=document.createElement('button');btn.id='rc314LiveSound';btn.type='button';btn.textContent='SOUND ON';btn.setAttribute('aria-label','Turn live sound on');wrap.appendChild(btn);}
-btn.addEventListener('click',()=>{
-const frame=document.getElementById('rc275LiveFrame');if(!frame)return;
-frame.setAttribute('allow','autoplay; fullscreen; picture-in-picture');
-const live='https://live.soulcinema.studio/soulcinemad/?controls=true&muted=false&autoplay=true&playsInline=true&sound=on&t='+Date.now();
-frame.setAttribute('src',live);
-btn.textContent='SOUND ON ✓';
-setTimeout(()=>{btn.style.opacity='.72';},1200);
-});
-const sync=()=>{btn.style.display=room.classList.contains('active')?'inline-flex':'none';};
-new MutationObserver(sync).observe(room,{attributes:true,attributeFilter:['class']});sync();
-})();
-</script>
 <!-- RC313 DESKTOP LIVE PANEL ALIGN + LOBBY UNDER PANEL -->
 <style id="rc313-desktop-live-panel-lobby-align">
 @media (min-width:861px){
