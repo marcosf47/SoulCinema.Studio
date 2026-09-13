@@ -18,44 +18,75 @@ jobs:
         with:
           ref: main
 
-      - name: Apply RC298 desktop Live Center fullscreen control
+      - name: Apply RC299 desktop Live Center luxury larger screen
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import base64
           p=Path('public/index.html')
           html=p.read_text(encoding='utf-8')
-          marker='<!-- RC298 DESKTOP LIVE CENTER FULLSCREEN CONTROL -->'
-          anchor='\n<!-- RC297 DESKTOP PRODUCTION ROOM VIEWPORT FIT -->'
+          marker='<!-- RC299 DESKTOP LIVE CENTER LUXURY LARGER SCREEN -->'
+          anchor='\n<!-- RC298 DESKTOP LIVE CENTER FULLSCREEN CONTROL -->'
           if marker not in html:
               if html.count(anchor)!=1:
-                  raise SystemExit(f'RC297 anchor count={html.count(anchor)}; refusing to guess')
-              payload='PCEtLSBSQzI5OCBERVNLVE9QIExJVkUgQ0VOVEVSIEZVTExTQ1JFRU4gQ09OVFJPTCAtLT4KPHN0eWxlIGlkPSJyYzI5OC1kZXNrdG9wLWxpdmUtZnVsbHNjcmVlbi1jc3MiPgpAbWVkaWEgKG1pbi13aWR0aDo4NjFweCl7CiAgI2xpdmVDZW50ZXIgI3JjMjk4TGl2ZUZ1bGxzY3JlZW57CiAgICBkaXNwbGF5Om5vbmU7CiAgICBwb3NpdGlvbjphYnNvbHV0ZTsKICAgIHJpZ2h0OjE0cHg7CiAgICBib3R0b206MTRweDsKICAgIHotaW5kZXg6OTk7CiAgICB3aWR0aDo0NnB4OwogICAgaGVpZ2h0OjQ2cHg7CiAgICBtaW4td2lkdGg6NDZweDsKICAgIG1pbi1oZWlnaHQ6NDZweDsKICAgIHBhZGRpbmc6MDsKICAgIGJvcmRlci1yYWRpdXM6NTAlOwogICAgYm9yZGVyOjFweCBzb2xpZCByZ2JhKDI0MiwyMTUsMTMxLC43Mik7CiAgICBiYWNrZ3JvdW5kOnJnYmEoMCwwLDAsLjYyKTsKICAgIGNvbG9yOiNmMmQ3ODM7CiAgICBmb250OjQwMCAyNXB4LzEgR2VvcmdpYSxzZXJpZjsKICAgIGxldHRlci1zcGFjaW5nOjA7CiAgICBwbGFjZS1pdGVtczpjZW50ZXI7CiAgICBiYWNrZHJvcC1maWx0ZXI6Ymx1cig4cHgpOwogIH0KICBib2R5W2RhdGEtbGl2ZS1tb2RlPSJsaXZlIl0gI2xpdmVDZW50ZXIuYWN0aXZlICNyYzI5OExpdmVGdWxsc2NyZWVue2Rpc3BsYXk6Z3JpZDt9CiAgI2xpdmVDZW50ZXIgI2xpdmVQbGF5ZXJXcmFwOmZ1bGxzY3JlZW4sCiAgI2xpdmVDZW50ZXIgI2xpdmVQbGF5ZXJXcmFwOi13ZWJraXQtZnVsbC1zY3JlZW57CiAgICB3aWR0aDoxMDB2dyFpbXBvcnRhbnQ7CiAgICBoZWlnaHQ6MTAwdmghaW1wb3J0YW50OwogICAgaW5zZXQ6MCFpbXBvcnRhbnQ7CiAgICBib3JkZXItcmFkaXVzOjAhaW1wb3J0YW50OwogICAgYmFja2dyb3VuZDojMDAwIWltcG9ydGFudDsKICB9Cn0KPC9zdHlsZT4KPHNjcmlwdCBpZD0icmMyOTgtZGVza3RvcC1saXZlLWZ1bGxzY3JlZW4tY29udHJvbCI+CigoKT0+ewogICd1c2Ugc3RyaWN0JzsKICBpZighbWF0Y2hNZWRpYSgnKG1pbi13aWR0aDo4NjFweCknKS5tYXRjaGVzKXJldHVybjsKICBjb25zdCByb29tPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdsaXZlQ2VudGVyJyk7CiAgY29uc3Qgd3JhcD1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbGl2ZVBsYXllcldyYXAnKTsKICBpZighcm9vbXx8IXdyYXApcmV0dXJuOwogIGxldCBidG49ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3JjMjk4TGl2ZUZ1bGxzY3JlZW4nKTsKICBpZighYnRuKXsKICAgIGJ0bj1kb2N1bWVudC5jcmVhdGVFbGVtZW50KCdidXR0b24nKTsKICAgIGJ0bi5pZD0ncmMyOThMaXZlRnVsbHNjcmVlbic7CiAgICBidG4udHlwZT0nYnV0dG9uJzsKICAgIGJ0bi5zZXRBdHRyaWJ1dGUoJ2FyaWEtbGFiZWwnLCdGdWxsIHNjcmVlbicpOwogICAgYnRuLnNldEF0dHJpYnV0ZSgndGl0bGUnLCdGdWxsIHNjcmVlbicpOwogICAgYnRuLnRleHRDb250ZW50PSfipKInOwogICAgd3JhcC5hcHBlbmRDaGlsZChidG4pOwogIH0KICBjb25zdCBpbkZzPSgpPT5kb2N1bWVudC5mdWxsc2NyZWVuRWxlbWVudD09PXdyYXB8fGRvY3VtZW50LndlYmtpdEZ1bGxzY3JlZW5FbGVtZW50PT09d3JhcDsKICBjb25zdCBzeW5jPSgpPT57CiAgICBidG4udGV4dENvbnRlbnQ9aW5GcygpPyfipKEnOifipKInOwogICAgYnRuLnNldEF0dHJpYnV0ZSgnYXJpYS1sYWJlbCcsaW5GcygpPydFeGl0IGZ1bGwgc2NyZWVuJzonRnVsbCBzY3JlZW4nKTsKICAgIGJ0bi5zZXRBdHRyaWJ1dGUoJ3RpdGxlJyxpbkZzKCk/J0V4aXQgZnVsbCBzY3JlZW4nOidGdWxsIHNjcmVlbicpOwogIH07CiAgY29uc3QgZW50ZXI9KCk9PnsKICAgIGlmKHdyYXAucmVxdWVzdEZ1bGxzY3JlZW4pcmV0dXJuIHdyYXAucmVxdWVzdEZ1bGxzY3JlZW4oKTsKICAgIGlmKHdyYXAud2Via2l0UmVxdWVzdEZ1bGxzY3JlZW4pcmV0dXJuIHdyYXAud2Via2l0UmVxdWVzdEZ1bGxzY3JlZW4oKTsKICB9OwogIGNvbnN0IGV4aXQ9KCk9PnsKICAgIGlmKGRvY3VtZW50LmV4aXRGdWxsc2NyZWVuKXJldHVybiBkb2N1bWVudC5leGl0RnVsbHNjcmVlbigpOwogICAgaWYoZG9jdW1lbnQud2Via2l0RXhpdEZ1bGxzY3JlZW4pcmV0dXJuIGRvY3VtZW50LndlYmtpdEV4aXRGdWxsc2NyZWVuKCk7CiAgfTsKICBidG4uYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLChlKT0+ewogICAgZS5wcmV2ZW50RGVmYXVsdCgpOwogICAgZS5zdG9wUHJvcGFnYXRpb24oKTsKICAgIHRyeXtpbkZzKCk/ZXhpdCgpOmVudGVyKCl9Y2F0Y2goX2Upe30KICB9KTsKICBkb2N1bWVudC5hZGRFdmVudExpc3RlbmVyKCdmdWxsc2NyZWVuY2hhbmdlJyxzeW5jKTsKICBkb2N1bWVudC5hZGRFdmVudExpc3RlbmVyKCd3ZWJraXRmdWxsc2NyZWVuY2hhbmdlJyxzeW5jKTsKICBzeW5jKCk7Cn0pKCk7Cjwvc2NyaXB0Pgo='
-              patch=base64.b64decode(payload).decode('utf-8')
+                  raise SystemExit(f'RC298 anchor count={html.count(anchor)}; refusing to guess')
+              patch=r'''
+<!-- RC299 DESKTOP LIVE CENTER LUXURY LARGER SCREEN -->
+<style id="rc299-desktop-live-luxury-larger-screen">
+@media (min-width:861px){
+  #liveCenter #livePlayerWrap{
+    width:min(1480px,94vw)!important;
+    max-width:94vw!important;
+    aspect-ratio:16/9!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    border:1px solid rgba(217,183,96,.58)!important;
+    border-radius:22px!important;
+    overflow:hidden!important;
+    background:#000!important;
+    box-shadow:0 34px 100px rgba(0,0,0,.72),0 0 0 1px rgba(255,239,185,.045) inset,0 0 46px rgba(217,183,96,.10)!important;
+  }
+  #liveCenter #livePlayerWrap iframe,
+  #liveCenter #livePlayerWrap video{
+    width:100%!important;
+    height:100%!important;
+    border-radius:inherit!important;
+  }
+  #liveCenter #rc298LiveFullscreen{
+    right:18px!important;
+    bottom:18px!important;
+    width:48px!important;
+    height:48px!important;
+    min-width:48px!important;
+    min-height:48px!important;
+    border-color:rgba(242,215,131,.82)!important;
+    background:linear-gradient(180deg,rgba(34,27,12,.82),rgba(0,0,0,.90))!important;
+    box-shadow:0 12px 32px rgba(0,0,0,.48),0 0 24px rgba(217,183,96,.12)!important;
+  }
+}
+</style>
+'''
               html=html.replace(anchor,'\n'+patch+anchor,1)
               p.write_text(html,encoding='utf-8')
           PY
 
-      - name: Verify RC298 and preserve locks
+      - name: Verify RC299 and preserve locks
         run: |
+          grep -q 'RC299 DESKTOP LIVE CENTER LUXURY LARGER SCREEN' public/index.html
           grep -q 'RC298 DESKTOP LIVE CENTER FULLSCREEN CONTROL' public/index.html
           grep -q 'RC297 DESKTOP PRODUCTION ROOM VIEWPORT FIT' public/index.html
-          grep -q 'RC280 LIVE SAFE NATIVE RATIO FILL' public/index.html
           grep -q 'RC277 DESKTOP LIVE CENTER RETURN' public/index.html
-          grep -q 'RC276 LIVE AUTOPLAY BROADCAST ONLY PLAYER' public/index.html
-          grep -q 'RC275 SOULCINEMA LIVE CENTER VPS EMBED RECOVERY' public/index.html
           grep -q 'RC271 DESKTOP LIVE CENTER EXIT MEDIA STOP' public/index.html
           grep -q 'RC293 MOBILE SKIP IMMEDIATE PORTAL OWNER' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
 
-      - name: Commit RC298 source
+      - name: Commit RC299 source
         run: |
           git config user.name "SoulCinema Direct Deploy"
           git config user.email "actions@users.noreply.github.com"
           if git diff --quiet -- public/index.html; then
-            echo "RC298 already applied"
+            echo "RC299 already applied"
           else
             git add public/index.html
-            git commit -m "RC298 desktop Live Center fullscreen control"
+            git commit -m "RC299 desktop Live Center luxury larger screen"
             git push origin HEAD:main
           fi
