@@ -17,56 +17,40 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-
-      - name: Apply RC309 desktop Live Center exact compact composition
+      - name: Apply RC309 master oversize fix
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          p = Path('public/index.html')
-          html = p.read_text(encoding='utf-8')
-          marker = '<!-- RC309 DESKTOP LIVE CENTER EXACT COMPACT COMPOSITION -->'
-          anchor = '<!-- RC308 DESKTOP LIVE CENTER 16X9 FIT + FULLSCREEN POLISH -->'
-          patch = '''<!-- RC309 DESKTOP LIVE CENTER EXACT COMPACT COMPOSITION -->
-<style id="rc309-desktop-live-exact-compact">
-@media (min-width:861px) {
-#liveCenter.active {height:100dvh!important;max-height:100dvh!important;overflow:hidden!important;box-sizing:border-box!important;}
-#liveCenter.active #livePlayerWrap {position:absolute!important;top:158px!important;left:52px!important;right:auto!important;bottom:auto!important;width:calc(100vw - 390px)!important;height:auto!important;aspect-ratio:16/9!important;max-height:calc(100dvh - 245px)!important;max-width:calc((100dvh - 245px)*16/9)!important;margin:0!important;overflow:hidden!important;box-sizing:border-box!important;border-radius:20px!important;}
-#liveCenter.active #rc275LiveFrame {position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;border:0!important;border-radius:19px!important;}
-#liveCenter.active #rc307LiveInfo {top:158px!important;right:52px!important;bottom:auto!important;width:270px!important;height:min(calc(100dvh - 245px),500px)!important;min-height:0!important;max-height:500px!important;overflow:hidden!important;}
-#liveCenter.active #rc298LiveFullscreen {top:16px!important;right:16px!important;z-index:120!important;}
-#livePlayerWrap:fullscreen,#livePlayerWrap:-webkit-full-screen {position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;max-width:100vw!important;max-height:100vh!important;aspect-ratio:auto!important;margin:0!important;border:0!important;border-radius:0!important;background:#000!important;overflow:hidden!important;}
-#livePlayerWrap:fullscreen #rc275LiveFrame,#livePlayerWrap:-webkit-full-screen #rc275LiveFrame {position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border-radius:0!important;}
-}
-</style>
-'''
+          import base64
+          p=Path('public/index.html')
+          html=p.read_text(encoding='utf-8')
+          marker='<!-- RC309 DESKTOP LIVE CENTER MASTER OVERSIZE FIX -->'
+          anchor='<!-- RC308 DESKTOP LIVE CENTER 16X9 FIT + FULLSCREEN POLISH -->'
+          payload='PCEtLSBSQzMwOSBERVNLVE9QIExJVkUgQ0VOVEVSIE1BU1RFUiBPVkVSU0laRSBGSVggLS0+CjxzdHlsZSBpZD0icmMzMDktZGVza3RvcC1saXZlLW1hc3Rlci1vdmVyc2l6ZS1maXgiPgpAbWVkaWEgKG1pbi13aWR0aDo4NjFweCkgewogICNsaXZlQ2VudGVyLmFjdGl2ZSB7aGVpZ2h0OjEwMGR2aCFpbXBvcnRhbnQ7bWF4LWhlaWdodDoxMDBkdmghaW1wb3J0YW50O292ZXJmbG93OmhpZGRlbiFpbXBvcnRhbnQ7Ym94LXNpemluZzpib3JkZXItYm94IWltcG9ydGFudDt9CiAgI2xpdmVDZW50ZXIuYWN0aXZlICNsaXZlUGxheWVyV3JhcCB7CiAgICBwb3NpdGlvbjphYnNvbHV0ZSFpbXBvcnRhbnQ7CiAgICB0b3A6MTU4cHghaW1wb3J0YW50OwogICAgbGVmdDo1MnB4IWltcG9ydGFudDsKICAgIHJpZ2h0OmF1dG8haW1wb3J0YW50OwogICAgYm90dG9tOmF1dG8haW1wb3J0YW50OwogICAgd2lkdGg6bWluKGNhbGMoMTAwdncgLSAzOTBweCksIGNhbGMoKDEwMGR2aCAtIDI0NXB4KSoxNi85KSkhaW1wb3J0YW50OwogICAgaGVpZ2h0OmF1dG8haW1wb3J0YW50OwogICAgYXNwZWN0LXJhdGlvOjE2LzkhaW1wb3J0YW50OwogICAgbWF4LWhlaWdodDpjYWxjKDEwMGR2aCAtIDI0NXB4KSFpbXBvcnRhbnQ7CiAgICBtYXJnaW46MCFpbXBvcnRhbnQ7CiAgICBvdmVyZmxvdzpoaWRkZW4haW1wb3J0YW50OwogICAgYm94LXNpemluZzpib3JkZXItYm94IWltcG9ydGFudDsKICAgIGJvcmRlci1yYWRpdXM6MjBweCFpbXBvcnRhbnQ7CiAgfQogICNsaXZlQ2VudGVyLmFjdGl2ZSAjcmMyNzVMaXZlRnJhbWUge3Bvc2l0aW9uOmFic29sdXRlIWltcG9ydGFudDtpbnNldDowIWltcG9ydGFudDt3aWR0aDoxMDAlIWltcG9ydGFudDtoZWlnaHQ6MTAwJSFpbXBvcnRhbnQ7bWF4LXdpZHRoOjEwMCUhaW1wb3J0YW50O21heC1oZWlnaHQ6MTAwJSFpbXBvcnRhbnQ7Ym9yZGVyOjAhaW1wb3J0YW50O2JvcmRlci1yYWRpdXM6MTlweCFpbXBvcnRhbnQ7fQogICNsaXZlQ2VudGVyLmFjdGl2ZSAjcmMzMDdMaXZlSW5mbyB7dG9wOjE1OHB4IWltcG9ydGFudDtyaWdodDo1MnB4IWltcG9ydGFudDtib3R0b206YXV0byFpbXBvcnRhbnQ7d2lkdGg6MjcwcHghaW1wb3J0YW50O2hlaWdodDptaW4oY2FsYygxMDBkdmggLSAyNDVweCksNTAwcHgpIWltcG9ydGFudDttaW4taGVpZ2h0OjAhaW1wb3J0YW50O21heC1oZWlnaHQ6NTAwcHghaW1wb3J0YW50O292ZXJmbG93OmhpZGRlbiFpbXBvcnRhbnQ7fQogICNsaXZlQ2VudGVyLmFjdGl2ZSAjcmMyOThMaXZlRnVsbHNjcmVlbiB7dG9wOjE2cHghaW1wb3J0YW50O3JpZ2h0OjE2cHghaW1wb3J0YW50O3otaW5kZXg6MTIwIWltcG9ydGFudDt9CiAgI2xpdmVQbGF5ZXJXcmFwOmZ1bGxzY3JlZW4sI2xpdmVQbGF5ZXJXcmFwOi13ZWJraXQtZnVsbC1zY3JlZW4ge3Bvc2l0aW9uOmZpeGVkIWltcG9ydGFudDtpbnNldDowIWltcG9ydGFudDt3aWR0aDoxMDB2dyFpbXBvcnRhbnQ7aGVpZ2h0OjEwMHZoIWltcG9ydGFudDttYXgtd2lkdGg6MTAwdnchaW1wb3J0YW50O21heC1oZWlnaHQ6MTAwdmghaW1wb3J0YW50O2FzcGVjdC1yYXRpbzphdXRvIWltcG9ydGFudDttYXJnaW46MCFpbXBvcnRhbnQ7Ym9yZGVyOjAhaW1wb3J0YW50O2JvcmRlci1yYWRpdXM6MCFpbXBvcnRhbnQ7YmFja2dyb3VuZDojMDAwIWltcG9ydGFudDtvdmVyZmxvdzpoaWRkZW4haW1wb3J0YW50O30KICAjbGl2ZVBsYXllcldyYXA6ZnVsbHNjcmVlbiAjcmMyNzVMaXZlRnJhbWUsI2xpdmVQbGF5ZXJXcmFwOi13ZWJraXQtZnVsbC1zY3JlZW4gI3JjMjc1TGl2ZUZyYW1lIHtwb3NpdGlvbjphYnNvbHV0ZSFpbXBvcnRhbnQ7aW5zZXQ6MCFpbXBvcnRhbnQ7d2lkdGg6MTAwJSFpbXBvcnRhbnQ7aGVpZ2h0OjEwMCUhaW1wb3J0YW50O2JvcmRlci1yYWRpdXM6MCFpbXBvcnRhbnQ7fQp9Cjwvc3R5bGU+Cg=='
+          patch=base64.b64decode(payload).decode('utf-8')
           if marker not in html:
-              if html.count(anchor) != 1:
+              if html.count(anchor)!=1:
                   raise SystemExit('RC308 anchor mismatch; refusing to guess')
-              html = html.replace(anchor, patch + anchor, 1)
-              p.write_text(html, encoding='utf-8')
+              html=html.replace(anchor,patch+anchor,1)
+              p.write_text(html,encoding='utf-8')
           PY
-
       - name: Verify RC309 and preserve locks
         run: |
-          grep -q 'RC309 DESKTOP LIVE CENTER EXACT COMPACT COMPOSITION' public/index.html
+          grep -q 'RC309 DESKTOP LIVE CENTER MASTER OVERSIZE FIX' public/index.html
           grep -q 'RC308 DESKTOP LIVE CENTER 16X9 FIT + FULLSCREEN POLISH' public/index.html
           grep -q 'RC307 DESKTOP LIVE CENTER LUXURY COMPOSITION' public/index.html
           grep -q 'RC305 DESKTOP LIVE CENTER IFRAME STATE AUTHORITY' public/index.html
-          grep -q 'RC304 DESKTOP LIVE CENTER RECOVERY OWNER' public/index.html
-          grep -q 'RC298 DESKTOP LIVE CENTER FULLSCREEN CONTROL' public/index.html
           grep -q 'RC297 DESKTOP PRODUCTION ROOM VIEWPORT FIT' public/index.html
-          grep -q 'RC275 SOULCINEMA LIVE CENTER VPS EMBED RECOVERY' public/index.html
           grep -q 'RC293 MOBILE SKIP IMMEDIATE PORTAL OWNER' public/index.html
           grep -q 'rc258-mobile-screening-theater-restore' public/index.html
-
       - name: Commit RC309 source
         run: |
-          git config user.name 'SoulCinema Direct Deploy'
-          git config user.email 'actions@users.noreply.github.com'
+          git config user.name "SoulCinema Direct Deploy"
+          git config user.email "actions@users.noreply.github.com"
           if git diff --quiet -- public/index.html; then
-            echo 'RC309 already applied'
+            echo "RC309 already applied"
           else
             git add public/index.html
-            git commit -m 'RC309 exact desktop Live Center compact composition'
+            git commit -m "RC309 master desktop Live Center oversize fix"
             git push origin HEAD:main
           fi
