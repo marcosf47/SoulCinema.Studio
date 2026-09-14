@@ -7288,4 +7288,42 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 }
 </style>
 
+<!-- RC324 MOBILE SKIP FINAL CLICK OWNER -->
+<style id="rc324-mobile-skip-final-css">
+@media(max-width:700px){
+  #lobby #skip{display:block!important;z-index:2147483647!important;pointer-events:auto!important;touch-action:manipulation!important}
+}
+</style>
+<script id="rc324-mobile-skip-final-js">
+(()=>{
+  'use strict';
+  const isMobile=()=>matchMedia('(max-width:700px)').matches;
+  const skip=document.getElementById('skip');
+  const lobby=document.getElementById('lobby');
+  const portals=document.getElementById('portals');
+  if(!skip||!lobby||!portals)return;
+  let busy=false;
+  const open=()=>{
+    if(!isMobile()||busy)return;
+    busy=true;
+    try{if(typeof clearTimers==='function')clearTimers()}catch(_e){}
+    document.body.dataset.mobilePortalLock='1';
+    document.querySelectorAll('#lobby video,#lobby audio,#ambient').forEach(m=>{try{m.pause()}catch(_e){}});
+    document.getElementById('heart')?.classList.remove('show');
+    document.getElementById('premiereCard')?.classList.remove('show');
+    document.getElementById('fade')?.classList.remove('on');
+    const journey=document.getElementById('journeyTransition');
+    if(journey){journey.classList.remove('on');journey.setAttribute('aria-hidden','true')}
+    lobby.classList.add('active','portal-mode');
+    portals.classList.add('show');
+    skip.style.setProperty('display','none','important');
+    document.body.dataset.scene='lobby';
+    document.body.dataset.experience='portal_mode';
+    requestAnimationFrame(()=>{document.querySelectorAll('#lobby video,#lobby audio,#ambient').forEach(m=>{try{m.pause()}catch(_e){}});busy=false});
+  };
+  skip.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();open()},true);
+  skip.addEventListener('touchend',e=>{e.preventDefault();e.stopImmediatePropagation();open()},{capture:true,passive:false});
+})();
+</script>
+
 </body></html>
