@@ -7490,4 +7490,26 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 })();
 </script>
 
+<!-- RC331 MOBILE PORTAL BUTTONS + SMOOTH SCROLL FINAL -->
+<style id="rc331-mobile-portal-buttons-smooth-scroll">
+@media(max-width:700px){
+  #lobby.portal-mode #portals{
+    scroll-behavior:smooth!important;
+    contain:none!important;
+    overflow-y:auto!important;
+    touch-action:pan-y!important;
+    -webkit-overflow-scrolling:touch!important;
+  }
+  #lobby.portal-mode #portals .portal,
+  #lobby.portal-mode #portals .portal .sc-mobile-portal-hit{
+    pointer-events:auto!important;
+    touch-action:manipulation!important;
+    cursor:pointer!important;
+  }
+  #lobby.portal-mode #portals .portal .sc-mobile-portal-hit{
+    z-index:20!important;
+  }
+}
+</style>
+
 </body></html>
