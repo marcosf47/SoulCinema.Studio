@@ -7628,4 +7628,52 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
   });
 })();
 </script>
+
+<style id="rc336-portal-return-unlock-css">
+@media(max-width:700px){
+  #lobby.portal-mode #portals.show{
+    pointer-events:auto!important;
+    z-index:40!important;
+  }
+  #lobby.portal-mode #portals.show .portal-shell,
+  #lobby.portal-mode #portals.show .portal,
+  #lobby.portal-mode #back{
+    pointer-events:auto!important;
+  }
+  #lobby.portal-mode #journeyTransition,
+  #lobby.portal-mode #fade{
+    pointer-events:none!important;
+  }
+}
+</style>
+<script id="rc336-portal-return-unlock">
+(()=> {
+  const ready=(fn)=>document.readyState==='loading'
+    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
+  ready(()=>{
+    const mobile=()=>matchMedia('(max-width:700px)').matches;
+    const normalize=()=>{
+      if(!mobile())return;
+      const p=document.getElementById('portals'), l=document.getElementById('lobby');
+      if(!p?.classList.contains('show'))return;
+      try{window.journeyBusy=false;window.transitionLocked=false;}catch(_e){}
+      const j=document.getElementById('journeyTransition');
+      if(j){j.classList.remove('on');j.setAttribute('aria-hidden','true');j.style.pointerEvents='none';}
+      const f=document.getElementById('fade');
+      if(f){f.classList.remove('on');f.style.pointerEvents='none';}
+      p.style.pointerEvents='auto';
+      p.style.zIndex='40';
+      l?.classList.add('active','portal-mode');
+      document.body.dataset.scene='lobby';
+      document.body.dataset.experience='portal_mode';
+      document.body.dataset.mobilePortalLock='1';
+    };
+    const p=document.getElementById('portals');
+    if(p)new MutationObserver(normalize).observe(p,{attributes:true,attributeFilter:['class']});
+    setTimeout(normalize,0);
+    setTimeout(normalize,700);
+    setTimeout(normalize,1900);
+  });
+})();
+</script>
 </body></html>
