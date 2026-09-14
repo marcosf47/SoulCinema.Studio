@@ -7041,4 +7041,45 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 })();
 </script>
 
+
+<!-- RC318 LIVE EXIT AUDIO KILL — UNLOAD REMOTE STREAM OFF-ROOM -->
+<script id="rc318-live-exit-audio-kill">
+(()=>{
+  'use strict';
+  const FEED='https://live.soulcinema.studio/soulcinemad-opus/?controls=true&muted=false&autoplay=true&playsInline=true';
+  const BLANK='about:blank';
+  const room=document.getElementById('liveCenter');
+  const frame=document.getElementById('rc275LiveFrame');
+  const back=document.getElementById('returnLobby');
+  const oldVideo=document.getElementById('livePlayer');
+  if(!room||!frame)return;
+
+  const stop=()=>{
+    if(room.classList.contains('active'))return;
+    if(oldVideo){
+      try{oldVideo.pause()}catch(_e){}
+      try{oldVideo.muted=true}catch(_e){}
+    }
+    if(frame.getAttribute('src')!==BLANK)frame.setAttribute('src',BLANK);
+  };
+
+  const start=()=>{
+    if(!room.classList.contains('active'))return;
+    if(oldVideo){try{oldVideo.pause()}catch(_e){}}
+    if(frame.getAttribute('src')!==FEED)frame.setAttribute('src',FEED);
+  };
+
+  const sync=()=>room.classList.contains('active')?start():stop();
+  new MutationObserver(sync).observe(room,{attributes:true,attributeFilter:['class']});
+  if(back)back.addEventListener('click',()=>{
+    requestAnimationFrame(stop);
+    setTimeout(stop,40);
+    setTimeout(stop,180);
+    setTimeout(stop,700);
+  },true);
+  window.addEventListener('pagehide',stop);
+  sync();
+})();
+</script>
+
 </body></html>
