@@ -7457,4 +7457,37 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 }
 </style>
 
+<!-- RC330 MOBILE SKIP COORDINATE HIT FALLBACK -->
+<script id="rc330-mobile-skip-coordinate-hit">
+(()=>{
+  'use strict';
+  if(!matchMedia('(max-width:700px)').matches)return;
+  const inside=(x,y,rect)=>x>=rect.left&&x<=rect.right&&y>=rect.top&&y<=rect.bottom;
+  const route=(e)=>{
+    const skip=document.getElementById('skip');
+    if(!skip||getComputedStyle(skip).display==='none')return;
+    const t=e.touches?.[0]||e.changedTouches?.[0]||e;
+    const rect=skip.getBoundingClientRect();
+    if(!inside(t.clientX,t.clientY,rect))return;
+    e.preventDefault();
+    try{if(typeof clearTimers==='function')clearTimers()}catch(_e){}
+    try{if(typeof showPortals==='function')showPortals()}catch(_e){}
+    const lobby=document.getElementById('lobby');
+    const portals=document.getElementById('portals');
+    if(lobby)lobby.classList.add('active','portal-mode');
+    if(portals){
+      portals.classList.add('show');
+      portals.style.setProperty('opacity','1','important');
+      portals.style.setProperty('visibility','visible','important');
+      portals.style.setProperty('pointer-events','auto','important');
+      portals.style.setProperty('transform','none','important');
+    }
+    skip.style.setProperty('display','none','important');
+    document.body.dataset.mobilePortalLock='1';
+  };
+  window.addEventListener('pointerup',route,{capture:true,passive:false});
+  window.addEventListener('touchend',route,{capture:true,passive:false});
+})();
+</script>
+
 </body></html>
