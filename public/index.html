@@ -7244,7 +7244,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
         live();
       }else if(confirmedOffline){
         confirmedMisses++;
-        if(!liveSeen||confirmedMisses>=4){
+        if(!liveSeen||confirmedMisses>=3){
           liveSeen=false;
           standby();
         }
@@ -7260,6 +7260,8 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
       confirmedMisses=0;
       cover.classList.remove('rc322-show');
       live();
+      setTimeout(check,5000);
+      timer=setInterval(check,3000);
     }else{
       cover.classList.remove('rc322-show');
     }
