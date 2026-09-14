@@ -7189,6 +7189,8 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 
   let timer=0;
   let checking=false;
+  let liveSeen=false;
+  let confirmedMisses=0;
 
   const standby=()=>{
     if(!room.classList.contains('active'))return;
@@ -7224,6 +7226,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     checking=true;
     try{
       let detected=false;
+      let confirmedOffline=false;
       for(const endpoint of STATUS_ENDPOINTS){
         const endpointController=new AbortController();
         const endpointTimeout=setTimeout(()=>endpointController.abort(),2200);
@@ -7231,10 +7234,21 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
           const response=await fetch(endpoint+(endpoint.includes('?')?'&':'?')+'rc322='+Date.now(),{cache:'no-store',signal:endpointController.signal});
           const status=await response.json();
           if(response.ok&&status.live===true){detected=true;break}
+          if(response.ok&&status.live===false&&status.reliable===true)confirmedOffline=true;
         }catch(_endpointError){}
         finally{clearTimeout(endpointTimeout)}
       }
-      detected?live():standby();
+      if(detected){
+        liveSeen=true;
+        confirmedMisses=0;
+        live();
+      }else if(confirmedOffline){
+        confirmedMisses++;
+        if(!liveSeen||confirmedMisses>=4){
+          liveSeen=false;
+          standby();
+        }
+      }
     }catch(_e){standby()}
     finally{checking=false}
   };
