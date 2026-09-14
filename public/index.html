@@ -7644,4 +7644,27 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
   back.addEventListener('touchend',goGate,{capture:true,passive:false});
 })();
 </script>
+
+<style id="rc341-mobile-inactive-scene-hit-lock">
+@media(max-width:700px){
+  body .scene:not(.active){
+    pointer-events:none!important;
+  }
+  body .scene.active{
+    pointer-events:auto!important;
+  }
+  #lobby.portal-mode .topbar{
+    z-index:100!important;
+    pointer-events:none!important;
+  }
+  #lobby.portal-mode #back{
+    pointer-events:auto!important;
+  }
+  #lobby.portal-mode #portals,
+  #lobby.portal-mode #portals .portal-shell,
+  #lobby.portal-mode #portals .portal{
+    pointer-events:auto!important;
+  }
+}
+</style>
 </body></html>
