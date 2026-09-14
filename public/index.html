@@ -7275,4 +7275,17 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 })();
 </script>
 
+<!-- RC323 MOBILE FINAL VIEWPORT + TOUCH STABILITY LOCK -->
+<style id="rc323-mobile-final-stability">
+@media (max-width:700px){
+  html,body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none}
+  body{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  .scene{min-height:100dvh}
+  button,a,[role="button"]{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .topbar{padding-top:max(18px,env(safe-area-inset-top));padding-left:max(18px,env(safe-area-inset-left));padding-right:max(18px,env(safe-area-inset-right))}
+  #lobby,#screeningTheater,#musicRoom,#liveCenter,#productionRoom,#aboutRoom,#contactRoom,#visualBibleRoom{padding-bottom:env(safe-area-inset-bottom)}
+  .journey-transition{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+}
+</style>
+
 </body></html>
