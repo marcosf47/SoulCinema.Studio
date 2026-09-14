@@ -7512,4 +7512,43 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 }
 </style>
 
+<!-- RC332 MOBILE FULL-CARD ROOM HIT AREA -->
+<script id="rc332-mobile-full-card-room-hit">
+(()=>{
+  'use strict';
+  if(!matchMedia('(max-width:700px)').matches)return;
+  let down=null;
+  const route=(room)=>{
+    try{if(typeof clearTimers==='function')clearTimers()}catch(_e){}
+    document.body.dataset.mobilePortalLock='1';
+    const fn={
+      'Screening Theater':window.openTheater,
+      'Music Room':window.openMusic,
+      'Live Center':window.openLive,
+      'Production Room':window.openProductionHard||window.openProduction,
+      'Story Room':window.openStory,
+      'Journal':window.openJournal,
+      'Visual Bible':window.openBibleHard||window.openBible,
+      'About Us':window.openAbout,
+      'Contact':window.openContact
+    }[room];
+    if(typeof fn==='function'){try{fn()}catch(_e){}}
+  };
+  window.addEventListener('pointerdown',e=>{
+    if(!document.body.dataset.mobilePortalLock||!document.getElementById('portals')?.classList.contains('show'))return;
+    const card=e.target?.closest?.('#portals .portal[data-room]');
+    if(card)down={x:e.clientX,y:e.clientY,card,time:Date.now()};
+  },{capture:true,passive:true});
+  window.addEventListener('pointerup',e=>{
+    if(!down)return;
+    const d=down;down=null;
+    const card=e.target?.closest?.('#portals .portal[data-room]')||d.card;
+    if(!card||Date.now()-d.time>650||Math.abs(e.clientX-d.x)>12||Math.abs(e.clientY-d.y)>12)return;
+    e.preventDefault();
+    e.stopPropagation();
+    route(card.dataset.room);
+  },{capture:true,passive:false});
+})();
+</script>
+
 </body></html>
