@@ -2322,7 +2322,7 @@ body[data-live-mode="live"] #liveCenter #publicLiveBadge{
       </div>
     </div></div>
     <div class="progress"><i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
-    <button id="skip" class="skip ghost">SKIP TO PORTALS</button><div id="toast" class="toast"></div>
+    <button id="skip" class="skip ghost" type="button" onclick="if(typeof showPortals==='function'){showPortals();}return false;" ontouchend="if(typeof showPortals==='function'){showPortals();}return false;">SKIP TO PORTALS</button><div id="toast" class="toast"></div>
   </div>
 </section>
 
