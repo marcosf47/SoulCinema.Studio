@@ -7259,11 +7259,10 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
   const sync=()=>{
     clearInterval(timer);
     if(room.classList.contains('active')){
-      liveSeen=true;
+      liveSeen=false;
       confirmedMisses=0;
-      cover.classList.remove('rc322-show');
-      live();
-      setTimeout(check,900);
+      standby();
+      setTimeout(check,0);
       timer=setInterval(check,1000);
     }else{
       cover.classList.remove('rc322-show');
