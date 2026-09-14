@@ -7160,11 +7160,8 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
   transition:opacity .45s ease,visibility .45s ease;
 }
 #rc322LiveStandby.rc322-show{opacity:1;visibility:visible}
-#rc322LiveStandby .rc322-standby-mark{text-align:center;padding:28px;text-shadow:0 8px 30px #000}
-#rc322LiveStandby .rc322-standby-line{width:76px;height:1px;margin:0 auto 20px;background:linear-gradient(90deg,transparent,#d9b760,transparent);box-shadow:0 0 20px rgba(217,183,96,.32)}
-#rc322LiveStandby small{display:block;color:#d9b760;font:700 9px/1 Arial,sans-serif;letter-spacing:.34em}
-#rc322LiveStandby strong{display:block;margin:13px 0 9px;color:#fff1c8;font:400 clamp(24px,3vw,42px)/1 Georgia,serif;letter-spacing:.05em}
-#rc322LiveStandby p{margin:0;color:rgba(255,255,255,.58);font:12px/1.6 Arial,sans-serif;letter-spacing:.08em}
+#rc322LiveStandby .rc322-standby-mark{text-align:center;padding:28px}
+#rc322LiveStandby .rc322-wordmark{display:block;color:#d9b760;font:700 10px/1 Arial,sans-serif;letter-spacing:.34em;text-shadow:0 0 18px rgba(217,183,96,.22)}
 </style>
 <script id="rc322-live-off-air-standby">
 (()=>{
@@ -7183,7 +7180,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     cover=document.createElement('div');
     cover.id='rc322LiveStandby';
     cover.setAttribute('aria-live','polite');
-    cover.innerHTML='<div class="rc322-standby-mark"><div class="rc322-standby-line"></div><small>SOULCINEMA · OFF AIR</small><strong>Live Experience Paused</strong><p>Stay connected. The next live moment will begin soon.</p></div>';
+    cover.innerHTML='<div class="rc322-standby-mark"><span class="rc322-wordmark">SOULCINEMA</span></div>';
     wrap.appendChild(cover);
   }
 
