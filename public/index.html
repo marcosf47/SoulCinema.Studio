@@ -6806,7 +6806,7 @@ body[data-live-mode="live"] #liveCenter #publicLiveBadge{display:block!important
     if(room.classList.contains('active'))return;
     wrap.style.removeProperty('display');
     if(document.body.dataset.liveMode==='live')document.body.dataset.liveMode='standby';
-    if(state)state.textContent='SOULCINEMA · OFF AIR';
+    if(state)state.textContent='OFF AIR · SOULCINEMA';
     if(badge){badge.style.removeProperty('display');badge.setAttribute('aria-hidden','true');}
   };
 
@@ -7160,8 +7160,12 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
   transition:opacity .45s ease,visibility .45s ease;
 }
 #rc322LiveStandby.rc322-show{opacity:1;visibility:visible}
-#rc322LiveStandby .rc322-standby-mark{text-align:center;padding:28px}
-#rc322LiveStandby .rc322-wordmark{display:block;color:#d9b760;font:700 10px/1 Arial,sans-serif;letter-spacing:.34em;text-shadow:0 0 18px rgba(217,183,96,.22)}
+#rc322LiveStandby .rc322-standby-mark{text-align:center;padding:28px;transform:translateY(8px)}
+#rc322LiveStandby .rc322-offline-title{display:block;margin:0;color:#f6f0df;font:400 clamp(25px,2.3vw,38px)/1.15 Georgia,serif;letter-spacing:.01em;text-shadow:0 8px 30px #000}
+#rc322LiveStandby .rc322-offline-copy{margin:16px 0 0;color:rgba(255,255,255,.58);font:13px/1.6 Arial,sans-serif}
+#rc322LiveStandby .rc322-offline-actions{display:flex;justify-content:center;gap:12px;margin-top:calc(clamp(110px,19vh,185px))}
+#rc322LiveStandby .rc322-offline-actions button{min-width:108px;padding:12px 22px}
+#rc322LiveStandby #rc322StandbyBtn{background:linear-gradient(180deg,#efd47a,#cfa84d);border-color:#f2d783;color:#090909}
 </style>
 <script id="rc322-live-off-air-standby">
 (()=>{
@@ -7180,8 +7184,13 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     cover=document.createElement('div');
     cover.id='rc322LiveStandby';
     cover.setAttribute('aria-live','polite');
-    cover.innerHTML='<div class="rc322-standby-mark"><span class="rc322-wordmark">SOULCINEMA</span></div>';
+    cover.innerHTML='<div class="rc322-standby-mark"><strong class="rc322-offline-title">SoulCinema Live is currently off air.</strong><p class="rc322-offline-copy">The next SoulCinema live experience will appear here.</p><div class="rc322-offline-actions"><button id="rc322StandbyBtn" type="button">STANDBY</button><button id="rc322ReplayBtn" type="button">REPLAY</button></div></div>';
     wrap.appendChild(cover);
+    cover.querySelector('#rc322StandbyBtn')?.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();});
+    cover.querySelector('#rc322ReplayBtn')?.addEventListener('click',e=>{
+      e.preventDefault();e.stopPropagation();
+      document.getElementById('stateReplay')?.click();
+    });
   }
 
   let timer=0;
