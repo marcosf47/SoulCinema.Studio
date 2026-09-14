@@ -6973,4 +6973,72 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 }
 </style>
 
+
+<!-- RC317 LIVE EXIT HARD RELEASE + PORTAL CLICK RECOVERY -->
+<script id="rc317-live-exit-hard-release">
+(()=>{
+  'use strict';
+  const FEED='https://live.soulcinema.studio/soulcinemad-opus/?controls=true&muted=false&autoplay=true&playsInline=true';
+  const room=document.getElementById('liveCenter');
+  const wrap=document.getElementById('livePlayerWrap');
+  const frame=document.getElementById('rc275LiveFrame');
+  const back=document.getElementById('returnLobby');
+  const oldVideo=document.getElementById('livePlayer');
+  if(!room||!wrap||!frame)return;
+
+  const off=()=>{
+    if(room.classList.contains('active'))return;
+    if(oldVideo){try{oldVideo.pause()}catch(_e){}}
+    frame.style.setProperty('display','none','important');
+    frame.style.setProperty('visibility','hidden','important');
+    frame.style.setProperty('opacity','0','important');
+    frame.style.setProperty('pointer-events','none','important');
+    wrap.style.setProperty('display','none','important');
+    wrap.style.setProperty('visibility','hidden','important');
+    wrap.style.setProperty('opacity','0','important');
+    wrap.style.setProperty('pointer-events','none','important');
+    wrap.classList.remove('rc308-live-ready');
+    if(back){
+      back.style.setProperty('display','none','important');
+      back.style.setProperty('visibility','hidden','important');
+      back.style.setProperty('opacity','0','important');
+      back.style.setProperty('pointer-events','none','important');
+    }
+  };
+
+  const on=()=>{
+    if(!room.classList.contains('active'))return;
+    wrap.style.setProperty('display','block','important');
+    wrap.style.setProperty('visibility','visible','important');
+    wrap.style.setProperty('opacity','1','important');
+    wrap.style.setProperty('pointer-events','auto','important');
+    frame.style.setProperty('display','block','important');
+    frame.style.setProperty('visibility','visible','important');
+    frame.style.setProperty('opacity','1','important');
+    frame.style.setProperty('pointer-events','auto','important');
+    if(frame.getAttribute('src')!==FEED)frame.setAttribute('src',FEED);
+    if(back){
+      back.style.setProperty('display','inline-flex','important');
+      back.style.setProperty('visibility','visible','important');
+      back.style.setProperty('opacity','1','important');
+      back.style.setProperty('pointer-events','auto','important');
+    }
+  };
+
+  const sync=()=>{
+    if(room.classList.contains('active'))on();
+    else off();
+  };
+  new MutationObserver(sync).observe(room,{attributes:true,attributeFilter:['class']});
+  new MutationObserver(sync).observe(document.body,{attributes:true,attributeFilter:['data-live-mode']});
+  document.getElementById('returnLobby')?.addEventListener('click',()=>{
+    requestAnimationFrame(off);
+    setTimeout(off,60);
+    setTimeout(off,500);
+    setTimeout(off,1400);
+  },true);
+  sync();
+})();
+</script>
+
 </body></html>
