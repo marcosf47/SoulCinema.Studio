@@ -7147,4 +7147,98 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 })();
 </script>
 
+
+<!-- RC322 LIVE OFF-AIR STANDBY — HIDE MEDIAMTX STREAM-NOT-FOUND -->
+<style id="rc322-live-off-air-standby-css">
+#rc322LiveStandby{
+  position:absolute;inset:0;z-index:2147483644;
+  display:grid;place-items:center;
+  background:
+    radial-gradient(circle at 50% 44%,rgba(217,183,96,.12),transparent 31%),
+    linear-gradient(145deg,#080704,#010101 72%);
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .45s ease,visibility .45s ease;
+}
+#rc322LiveStandby.rc322-show{opacity:1;visibility:visible}
+#rc322LiveStandby .rc322-standby-mark{text-align:center;padding:28px;text-shadow:0 8px 30px #000}
+#rc322LiveStandby .rc322-standby-line{width:76px;height:1px;margin:0 auto 20px;background:linear-gradient(90deg,transparent,#d9b760,transparent);box-shadow:0 0 20px rgba(217,183,96,.32)}
+#rc322LiveStandby small{display:block;color:#d9b760;font:700 9px/1 Arial,sans-serif;letter-spacing:.34em}
+#rc322LiveStandby strong{display:block;margin:13px 0 9px;color:#fff1c8;font:400 clamp(24px,3vw,42px)/1 Georgia,serif;letter-spacing:.05em}
+#rc322LiveStandby p{margin:0;color:rgba(255,255,255,.58);font:12px/1.6 Arial,sans-serif;letter-spacing:.08em}
+</style>
+<script id="rc322-live-off-air-standby">
+(()=>{
+  'use strict';
+  const STATUS='https://live.soulcinema.studio/soulcinemad-opus/index.m3u8';
+  const FEED='https://live.soulcinema.studio/soulcinemad-opus/?controls=true&muted=false&autoplay=true&playsInline=true';
+  const room=document.getElementById('liveCenter');
+  const wrap=document.getElementById('livePlayerWrap');
+  const frame=document.getElementById('rc275LiveFrame');
+  const state=document.getElementById('liveState');
+  const badge=document.getElementById('publicLiveBadge');
+  if(!room||!wrap||!frame)return;
+
+  let cover=document.getElementById('rc322LiveStandby');
+  if(!cover){
+    cover=document.createElement('div');
+    cover.id='rc322LiveStandby';
+    cover.setAttribute('aria-live','polite');
+    cover.innerHTML='<div class="rc322-standby-mark"><div class="rc322-standby-line"></div><small>SOULCINEMA · OFF AIR</small><strong>Live Experience Paused</strong><p>Stay connected. The next live moment will begin soon.</p></div>';
+    wrap.appendChild(cover);
+  }
+
+  let timer=0;
+  let checking=false;
+
+  const standby=()=>{
+    if(!room.classList.contains('active'))return;
+    cover.classList.add('rc322-show');
+    frame.style.setProperty('visibility','hidden','important');
+    frame.style.setProperty('opacity','0','important');
+    frame.style.setProperty('pointer-events','none','important');
+    if(frame.getAttribute('src')!=='about:blank')frame.setAttribute('src','about:blank');
+    document.body.dataset.liveMode='standby';
+    if(state)state.textContent='SOULCINEMA · OFF AIR';
+    if(badge){badge.style.setProperty('display','none','important');badge.setAttribute('aria-hidden','true');}
+  };
+
+  const live=()=>{
+    if(!room.classList.contains('active'))return;
+    if(frame.getAttribute('src')!==FEED)frame.setAttribute('src',FEED);
+    frame.style.setProperty('display','block','important');
+    frame.style.setProperty('visibility','visible','important');
+    frame.style.setProperty('opacity','1','important');
+    frame.style.setProperty('pointer-events','auto','important');
+    cover.classList.remove('rc322-show');
+    document.body.dataset.liveMode='live';
+    if(state)state.textContent='SOULCINEMA · ON AIR';
+  };
+
+  const check=async()=>{
+    if(checking||!room.classList.contains('active'))return;
+    checking=true;
+    const controller=new AbortController();
+    const timeout=setTimeout(()=>controller.abort(),2200);
+    try{
+      const response=await fetch(STATUS+'?rc322='+Date.now(),{cache:'no-store',signal:controller.signal});
+      response.ok?live():standby();
+    }catch(_e){standby()}
+    finally{clearTimeout(timeout);checking=false}
+  };
+
+  const sync=()=>{
+    clearInterval(timer);
+    if(room.classList.contains('active')){
+      check();
+      timer=setInterval(check,2500);
+    }else{
+      cover.classList.remove('rc322-show');
+    }
+  };
+  new MutationObserver(sync).observe(room,{attributes:true,attributeFilter:['class']});
+  window.addEventListener('pagehide',()=>clearInterval(timer));
+  sync();
+})();
+</script>
+
 </body></html>
