@@ -22,12 +22,12 @@ export async function GET() {
 
     return Response.json(
       { live },
-      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
+      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0', 'Access-Control-Allow-Origin': '*' } }
     );
   } catch {
     return Response.json(
       { live: false },
-      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' } }
+      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0', 'Access-Control-Allow-Origin': '*' } }
     );
   } finally {
     clearTimeout(timeout);
