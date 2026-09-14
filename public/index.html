@@ -5894,7 +5894,7 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
   },{capture:true,passive:true});
   document.addEventListener('play',e=>{
     const m=e.target;
-    if(locked()&&m instanceof HTMLMediaElement&&(((m.closest&&m.closest('#lobby'))||m.id==='ambient')){
+    if(locked()&&m instanceof HTMLMediaElement&&((m.closest&&m.closest('#lobby'))||m.id==='ambient')){
       try{m.pause()}catch(_e){}
     }
   },true);
@@ -6844,6 +6844,56 @@ body[data-live-mode="live"] #liveCenter #publicLiveBadge{display:block!important
   };
   new MutationObserver(start).observe(room,{attributes:true,attributeFilter:['class']});
   start();
+})();
+</script>
+
+
+<!-- RC308 LIVE BLACK START GUARD + VERIFIED MOBILE SYNTAX RECOVERY -->
+<style id="rc308-live-black-start-guard-css">
+#liveCenter #livePlayerWrap{background:#000!important}
+body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-ready) #rc275LiveFrame{opacity:0!important}
+body[data-live-mode="live"] #liveCenter.active #livePlayerWrap.rc308-live-ready #rc275LiveFrame{opacity:1!important;transition:opacity .48s ease!important}
+#liveCenter #livePlayerWrap::after{
+  content:"SOULCINEMA · LIVE";
+  position:absolute;inset:0;z-index:2147483645;
+  display:grid;place-items:center;
+  background:radial-gradient(circle at 50% 48%,rgba(217,183,96,.10),transparent 32%),#000;
+  color:rgba(227,189,89,.74);
+  font:700 9px/1 Arial,sans-serif;
+  letter-spacing:.34em;
+  pointer-events:none;
+  opacity:0;visibility:hidden;
+  transition:opacity .45s ease,visibility .45s ease;
+}
+body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-ready)::after{opacity:1;visibility:visible}
+</style>
+<script id="rc308-live-black-start-guard-js">
+(()=>{
+  'use strict';
+  const room=document.getElementById('liveCenter');
+  const wrap=document.getElementById('livePlayerWrap');
+  const frame=document.getElementById('rc275LiveFrame');
+  if(!room||!wrap||!frame)return;
+  let timer=0;
+  const cover=()=>{
+    clearTimeout(timer);
+    wrap.classList.remove('rc308-live-ready');
+    wrap.setAttribute('aria-busy','true');
+  };
+  const reveal=()=>{
+    clearTimeout(timer);
+    timer=setTimeout(()=>{
+      wrap.classList.add('rc308-live-ready');
+      wrap.setAttribute('aria-busy','false');
+    },2200);
+  };
+  frame.addEventListener('load',reveal);
+  new MutationObserver(()=>{cover();reveal()}).observe(frame,{attributes:true,attributeFilter:['src']});
+  new MutationObserver(()=>{
+    if(room.classList.contains('active')){cover();reveal()}
+    else{clearTimeout(timer);wrap.classList.remove('rc308-live-ready')}
+  }).observe(room,{attributes:true,attributeFilter:['class']});
+  if(room.classList.contains('active')){cover();reveal()}
 })();
 </script>
 
