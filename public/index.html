@@ -7082,4 +7082,29 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 })();
 </script>
 
+
+<!-- RC319 WIDE DESKTOP LIVE FIT — LAPTOP LAYOUT PRESERVED -->
+<style id="rc319-wide-desktop-live-fit">
+@media (min-width:1200px) and (max-height:950px){
+  #liveCenter.active #livePlayerWrap{
+    top:145px!important;
+    left:clamp(52px,5vw,96px)!important;
+    width:min(calc(100vw - 430px),calc((100dvh - 190px)*16/9))!important;
+    max-width:1200px!important;
+    max-height:675px!important;
+    aspect-ratio:16/9!important;
+  }
+  #liveCenter.active #rc307LiveInfo{
+    top:145px!important;
+    right:clamp(52px,5vw,96px)!important;
+    height:min(675px,calc(100dvh - 190px))!important;
+    max-height:675px!important;
+  }
+  #liveCenter.active #returnLobby{
+    right:clamp(52px,5vw,96px)!important;
+    bottom:18px!important;
+  }
+}
+</style>
+
 </body></html>
