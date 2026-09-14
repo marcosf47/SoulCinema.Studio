@@ -7085,7 +7085,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 
 <!-- RC319 WIDE DESKTOP LIVE FIT — LAPTOP LAYOUT PRESERVED -->
 <style id="rc319-wide-desktop-live-fit">
-@media (min-width:1200px) and (max-height:900px){
+@media (min-width:1200px) and (max-height:900px) and (max-resolution:1.1dppx){
   #liveCenter.active #livePlayerWrap{
     top:70px!important;
     left:clamp(52px,5vw,96px)!important;
@@ -7110,7 +7110,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 
 <!-- RC320 SHORT DESKTOP LIVE PANEL + BUTTON ALIGNMENT LOCK -->
 <style id="rc320-short-desktop-live-panel-lock-css">
-@media (min-width:1200px) and (max-height:900px){
+@media (min-width:1200px) and (max-height:900px) and (max-resolution:1.1dppx){
   #liveCenter.active #rc307LiveInfo{
     width:230px!important;
     height:570px!important;
@@ -7128,7 +7128,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
   const panel=document.getElementById('rc307LiveInfo');
   const button=document.getElementById('returnLobby');
   if(!room||!panel||!button)return;
-  const eligible=()=>matchMedia('(min-width:1200px) and (max-height:900px)').matches;
+  const eligible=()=>matchMedia('(min-width:1200px) and (max-height:900px) and (max-resolution:1.1dppx)').matches;
   const place=()=>{
     if(!eligible()||!room.classList.contains('active'))return;
     panel.style.setProperty('top','195px','important');
