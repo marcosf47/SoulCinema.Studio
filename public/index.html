@@ -6959,4 +6959,18 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 })();
 </script>
 
+
+<!-- RC316 DESKTOP LIVE PLAYER DUPLICATE LABEL REMOVAL -->
+<style id="rc316-desktop-live-player-label-removal">
+@media (min-width:861px){
+  #liveCenter #livePlayerWrap::before,
+  #liveCenter.active #livePlayerWrap::before{
+    content:none!important;
+    display:none!important;
+    visibility:hidden!important;
+    opacity:0!important;
+  }
+}
+</style>
+
 </body></html>
