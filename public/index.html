@@ -6928,10 +6928,16 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
   if(!matchMedia('(min-width:861px)').matches)return;
   const room=document.getElementById('liveCenter');
   const button=document.getElementById('returnLobby');
+  const badge=document.getElementById('publicLiveBadge');
   if(!room||!button)return;
   room.appendChild(button);
   const place=()=>{
     if(!room.classList.contains('active'))return;
+    if(badge){
+      badge.style.setProperty('display','none','important');
+      badge.style.setProperty('visibility','hidden','important');
+      badge.style.setProperty('opacity','0','important');
+    }
     button.style.setProperty('display','inline-flex','important');
     button.style.setProperty('position','absolute','important');
     button.style.setProperty('left','auto','important');
