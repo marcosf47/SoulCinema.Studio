@@ -6796,7 +6796,6 @@ body[data-live-mode="live"] #liveCenter #publicLiveBadge{display:block!important
 
   const forceLive=()=>{
     if(!room.classList.contains('active'))return;
-    document.body.dataset.liveMode='live';
     wrap.style.setProperty('display','block','important');
     if(state)state.textContent='SOULCINEMA · ON AIR';
     if(badge){badge.style.setProperty('display','block','important');badge.setAttribute('aria-hidden','false');}
@@ -7203,7 +7202,6 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     frame.style.setProperty('opacity','0','important');
     frame.style.setProperty('pointer-events','none','important');
     if(frame.getAttribute('src')!=='about:blank')frame.setAttribute('src','about:blank');
-    document.body.dataset.liveMode='standby';
     if(state)state.textContent='SOULCINEMA · OFF AIR';
     if(badge){badge.style.setProperty('display','none','important');badge.setAttribute('aria-hidden','true');}
   };
@@ -7220,6 +7218,12 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     if(state)state.textContent='SOULCINEMA · ON AIR';
   };
 
+  frame.addEventListener('load',()=>{
+    if(frame.getAttribute('src')==='about:blank'&&room.classList.contains('active')){
+      setTimeout(standby,0);
+    }
+  },true);
+
   const check=async()=>{
     if(checking||!room.classList.contains('active'))return;
     checking=true;
@@ -7227,7 +7231,9 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     const timeout=setTimeout(()=>controller.abort(),2200);
     try{
       const response=await fetch(STATUS+'?rc322='+Date.now(),{cache:'no-store',signal:controller.signal});
-      response.ok?live():standby();
+      const manifest=await response.text();
+      const hasMedia=response.ok&&manifest.includes('#EXTM3U')&&(manifest.includes('#EXT-X-STREAM-INF')||manifest.includes('#EXTINF')||manifest.includes('#EXT-X-TARGETDURATION'));
+      hasMedia?live():standby();
     }catch(_e){standby()}
     finally{clearTimeout(timeout);checking=false}
   };
