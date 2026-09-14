@@ -7580,4 +7580,68 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 
 
 
+
+<style id="rc340-mobile-gate-owner-css">
+@media(max-width:700px){
+  #lobby.portal-mode .hud{z-index:50!important}
+  #lobby.portal-mode .topbar{
+    z-index:100!important;
+    pointer-events:none!important;
+  }
+  #lobby.portal-mode #back{
+    position:relative!important;
+    z-index:101!important;
+    pointer-events:auto!important;
+    touch-action:manipulation!important;
+  }
+  #lobby.portal-mode #portals{z-index:10!important}
+}
+</style>
+<script id="rc340-mobile-gate-owner">
+(()=> {
+  'use strict';
+  if(!matchMedia('(max-width:700px)').matches)return;
+  const back=document.getElementById('back');
+  if(!back)return;
+  const restore=(media,key)=>{
+    const source=media?.querySelector('source');
+    if(media&&source&&!source.getAttribute('src')&&media.dataset[key]){
+      source.setAttribute('src',media.dataset[key]);
+      try{media.load()}catch(_e){}
+    }
+  };
+  const goGate=(e)=>{
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    try{if(typeof clearTimers==='function')clearTimers()}catch(_e){}
+    try{transitionLocked=false;journeyBusy=false}catch(_e){}
+    document.querySelectorAll('#lobby video,#lobby audio,#ambient').forEach(m=>{try{m.pause()}catch(_e){}});
+    const lobby=document.getElementById('lobby');
+    const portals=document.getElementById('portals');
+    const gate=document.getElementById('gate');
+    lobby?.classList.remove('active','portal-mode');
+    if(portals){
+      portals.classList.remove('show');
+      ['opacity','visibility','pointer-events','transform','z-index'].forEach(p=>portals.style.removeProperty(p));
+    }
+    document.querySelectorAll('.scene.active').forEach(s=>s.classList.remove('active'));
+    gate?.classList.add('active');
+    const fade=document.getElementById('fade');
+    if(fade){fade.classList.remove('on');fade.style.removeProperty('pointer-events')}
+    const journey=document.getElementById('journeyTransition');
+    if(journey){journey.classList.remove('on');journey.setAttribute('aria-hidden','true');journey.style.removeProperty('pointer-events')}
+    const skip=document.getElementById('skip');
+    if(skip)skip.style.removeProperty('display');
+    delete document.body.dataset.mobilePortalLock;
+    document.body.dataset.scene='gate';
+    document.body.dataset.experience='GATE';
+    document.body.classList.remove('gate-lobby-fluid','gate-lobby-soft');
+    restore(document.getElementById('lobbyVideo'),'rc290Src');
+    restore(document.getElementById('ambient'),'rc291Src');
+    window.scrollTo(0,0);
+  };
+  back.addEventListener('pointerup',goGate,{capture:true,passive:false});
+  back.addEventListener('touchend',goGate,{capture:true,passive:false});
+})();
+</script>
 </body></html>
