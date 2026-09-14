@@ -7570,4 +7570,62 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 }
 </style>
 
+
+<style id="rc335-mobile-back-guard">
+@media(max-width:700px){
+  #lobby.portal-mode #back{
+    position:relative!important;
+    z-index:2147483647!important;
+    pointer-events:auto!important;
+    touch-action:manipulation!important;
+  }
+  #fade,#journeyTransition{
+    pointer-events:none!important;
+  }
+}
+</style>
+<script id="rc335-mobile-back-guard">
+(()=> {
+  const ready=(fn)=>document.readyState==='loading'
+    ?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
+  ready(()=>{
+    const isMobile=()=>matchMedia('(max-width:700px)').matches;
+    const resetToGate=()=>{
+      if(!isMobile()) return;
+      try{ if(typeof clearTimers==='function') clearTimers(); }catch(_e){}
+      document.querySelectorAll('video,audio').forEach(m=>{
+        try{m.pause();}catch(_e){}
+        if(m.closest('#lobby')){try{m.currentTime=0;}catch(_e){}}
+      });
+      document.querySelectorAll('.scene.active').forEach(s=>s.classList.remove('active'));
+      document.querySelector('#gate')?.classList.add('active');
+      document.querySelector('#portals')?.classList.remove('show');
+      document.querySelector('#lobby')?.classList.remove('portal-mode');
+      document.querySelector('#fade')?.classList.remove('on');
+      const journey=document.querySelector('#journeyTransition');
+      if(journey){journey.classList.remove('on');journey.setAttribute('aria-hidden','true');}
+      const skip=document.querySelector('#skip');
+      if(skip)skip.style.display='';
+      const body=document.body;
+      if(body){
+        body.dataset.mobilePortalLock='0';
+        body.dataset.scene='gate';
+        body.dataset.experience='gate';
+        body.classList.remove('gate-lobby-fluid','gate-lobby-soft');
+      }
+      window.scrollTo(0,0);
+    };
+    const handle=(e)=>{
+      const back=e.target?.closest?.('#back');
+      if(!back || !isMobile()) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      resetToGate();
+    };
+    document.addEventListener('pointerdown',handle,true);
+    document.addEventListener('touchstart',handle,{capture:true,passive:false});
+    document.addEventListener('click',handle,true);
+  });
+})();
+</script>
 </body></html>
