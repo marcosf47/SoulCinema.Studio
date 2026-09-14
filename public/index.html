@@ -7222,20 +7222,21 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
   const check=async()=>{
     if(checking||!room.classList.contains('active'))return;
     checking=true;
-    const controller=new AbortController();
-    const timeout=setTimeout(()=>controller.abort(),2200);
     try{
       let detected=false;
       for(const endpoint of STATUS_ENDPOINTS){
+        const endpointController=new AbortController();
+        const endpointTimeout=setTimeout(()=>endpointController.abort(),2200);
         try{
-          const response=await fetch(endpoint+(endpoint.includes('?')?'&':'?')+'rc322='+Date.now(),{cache:'no-store',signal:controller.signal});
+          const response=await fetch(endpoint+(endpoint.includes('?')?'&':'?')+'rc322='+Date.now(),{cache:'no-store',signal:endpointController.signal});
           const status=await response.json();
           if(response.ok&&status.live===true){detected=true;break}
         }catch(_endpointError){}
+        finally{clearTimeout(endpointTimeout)}
       }
       detected?live():standby();
     }catch(_e){standby()}
-    finally{clearTimeout(timeout);checking=false}
+    finally{checking=false}
   };
 
   const sync=()=>{
