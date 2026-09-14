@@ -6920,4 +6920,37 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 }
 </style>
 
+
+<!-- RC315 DESKTOP LIVE RETURN BUTTON RIGHT-COLUMN OWNER -->
+<script id="rc315-desktop-live-return-right-owner">
+(()=>{
+  'use strict';
+  if(!matchMedia('(min-width:861px)').matches)return;
+  const room=document.getElementById('liveCenter');
+  const button=document.getElementById('returnLobby');
+  if(!room||!button)return;
+  room.appendChild(button);
+  const place=()=>{
+    if(!room.classList.contains('active'))return;
+    button.style.setProperty('display','inline-flex','important');
+    button.style.setProperty('position','absolute','important');
+    button.style.setProperty('left','auto','important');
+    button.style.setProperty('right','96px','important');
+    button.style.setProperty('top','auto','important');
+    button.style.setProperty('bottom','18px','important');
+    button.style.setProperty('width','270px','important');
+    button.style.setProperty('justify-content','center','important');
+    button.style.setProperty('box-sizing','border-box','important');
+    button.style.setProperty('z-index','180','important');
+    button.style.setProperty('visibility','visible','important');
+    button.style.setProperty('opacity','1','important');
+    button.style.setProperty('pointer-events','auto','important');
+    button.style.setProperty('margin','0','important');
+  };
+  new MutationObserver(place).observe(room,{attributes:true,attributeFilter:['class']});
+  place();
+  [100,500,1200,2200].forEach(ms=>setTimeout(place,ms));
+})();
+</script>
+
 </body></html>
