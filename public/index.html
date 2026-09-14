@@ -7229,7 +7229,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
       let confirmedOffline=false;
       for(const endpoint of STATUS_ENDPOINTS){
         const endpointController=new AbortController();
-        const endpointTimeout=setTimeout(()=>endpointController.abort(),2200);
+        const endpointTimeout=setTimeout(()=>endpointController.abort(),7000);
         try{
           const response=await fetch(endpoint+(endpoint.includes('?')?'&':'?')+'rc322='+Date.now(),{cache:'no-store',signal:endpointController.signal});
           const status=await response.json();
