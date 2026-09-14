@@ -5,7 +5,7 @@ export const revalidate = 0;
 
 export async function GET() {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 2500);
+  const timeout = setTimeout(() => controller.abort(), 6500);
 
   try {
     const response = await fetch(SOURCE + '?status=' + Date.now(), {
