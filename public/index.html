@@ -2624,7 +2624,14 @@ function clearTimers(){timers.forEach(clearTimeout);timers=[]}
 function scene(from,to){if(transitionLocked||from===to)return false;transitionLocked=true;$('#fade').classList.add('on');setTimeout(()=>{from.classList.remove('active');to.classList.add('active');$('#fade').classList.remove('on');transitionCount++;transitionLocked=false;updateRuntimeMonitor()},620);return true}
 let journeyBusy=false;
 function journeyTransition(title,kicker='SOULCINEMA',sub='EVERY HEART HIDES A STORY',action){
- if(journeyBusy)return;journeyBusy=true;const veil=$('#journeyTransition');$('#journeyTitle').textContent=title;$('#journeyKicker').textContent=kicker;$('#journeySub').textContent=sub;veil.classList.add('on');veil.setAttribute('aria-hidden','false');
+ if(journeyBusy){
+   if(!matchMedia('(max-width:700px)').matches)return;
+   const staleVeil=$('#journeyTransition');
+   if(staleVeil){staleVeil.classList.remove('on');staleVeil.setAttribute('aria-hidden','true');staleVeil.style.pointerEvents='none'}
+   journeyBusy=false;
+   transitionLocked=false;
+ }
+ journeyBusy=true;const veil=$('#journeyTransition');$('#journeyTitle').textContent=title;$('#journeyKicker').textContent=kicker;$('#journeySub').textContent=sub;veil.classList.add('on');veil.setAttribute('aria-hidden','false');
  // RC11.7.1: let the luxury title breathe before the destination changes.
  setTimeout(()=>{if(typeof action==='function')action()},460);
  // Hold the destination behind black briefly, then release with a slower cinematic fade.
@@ -7633,7 +7640,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 @media(max-width:700px){
   #lobby.portal-mode #portals.show{
     pointer-events:auto!important;
-    z-index:40!important;
+    z-index:auto!important;
   }
   #lobby.portal-mode #portals.show .portal-shell,
   #lobby.portal-mode #portals.show .portal,
@@ -7662,7 +7669,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
       const f=document.getElementById('fade');
       if(f){f.classList.remove('on');f.style.pointerEvents='none';}
       p.style.pointerEvents='auto';
-      p.style.zIndex='40';
+      p.style.removeProperty('z-index');
       l?.classList.add('active','portal-mode');
       document.body.dataset.scene='lobby';
       document.body.dataset.experience='portal_mode';
