@@ -5320,6 +5320,16 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
     const hardGate=()=>{
       transitionLocked=false;
       journeyBusy=false;
+      /* RC334 MOBILE BACK RESET — release portal lock and clear stale transition state */
+      try{if(typeof clearTimers==='function')clearTimers();}catch(_e){}
+      if(document.body)document.body.dataset.mobilePortalLock='0';
+      if(portals){
+        portals.classList.remove('show');
+        portals.style.removeProperty('opacity');
+        portals.style.removeProperty('visibility');
+        portals.style.removeProperty('pointer-events');
+        portals.style.removeProperty('transform');
+      }
       /* RC261 MASTER MOBILE THE GATE BACK FIX */
       if(matchMedia('(max-width:700px)').matches){
         const lastTimer=setTimeout(()=>{},0);
