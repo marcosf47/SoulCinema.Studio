@@ -21,12 +21,12 @@ export async function GET() {
        manifest.includes('#EXT-X-TARGETDURATION'));
 
     return Response.json(
-      { live },
+      { live, reliable: true },
       { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0', 'Access-Control-Allow-Origin': '*' } }
     );
   } catch {
     return Response.json(
-      { live: false },
+      { live: false, reliable: false },
       { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0', 'Access-Control-Allow-Origin': '*' } }
     );
   } finally {
