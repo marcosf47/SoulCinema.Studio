@@ -7449,4 +7449,12 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 })();
 </script>
 
+<!-- RC329 MOBILE SKIP OVERLAY HIT FIX -->
+<style id="rc329-mobile-skip-overlay-hit-fix">
+@media(max-width:700px){
+  #lobby:not(.portal-mode) #journeyTransition{pointer-events:none!important}
+  #lobby:not(.portal-mode) #skip{pointer-events:auto!important;z-index:2147483647!important}
+}
+</style>
+
 </body></html>
