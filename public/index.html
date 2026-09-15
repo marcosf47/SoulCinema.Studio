@@ -7279,6 +7279,18 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
   #lobby.portal-mode #portals{z-index:10!important;pointer-events:auto!important;touch-action:pan-y!important}
   #lobby.portal-mode #portals .portal-shell,
   #lobby.portal-mode #portals .portal{pointer-events:auto!important}
+  #lobby.active:not(.portal-mode) #skip{
+    position:fixed!important;
+    left:max(24px,env(safe-area-inset-left))!important;
+    right:max(24px,env(safe-area-inset-right))!important;
+    bottom:max(34px,env(safe-area-inset-bottom))!important;
+    width:auto!important;
+    min-width:0!important;
+    z-index:2147483647!important;
+    pointer-events:auto!important;
+    touch-action:manipulation!important;
+    -webkit-tap-highlight-color:transparent!important;
+  }
 }
 </style>
 <script id="rc342-mobile-navigation-owner">
