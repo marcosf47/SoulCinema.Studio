@@ -7411,7 +7411,8 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     const home=replace($id('theaterBackHome'));
     bind(home,()=>{resetLocks();try{backToTheaterHome()}catch(_e){}});
   };
-  window.addEventListener('click',e=>{
+  let lastMobileTap=0;
+  const routeMobileTap=(e)=>{
     if(!mobile())return;
     const hit=e.target?.closest?.('button,[role="button"]');
     if(!hit)return;
@@ -7426,8 +7427,13 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     else if(room)action=()=>openRoom(room);
     if(!action)return;
     e.preventDefault();e.stopImmediatePropagation();
+    const now=performance.now();
+    if(e.type==='click'&&now-lastMobileTap<700)return;
+    lastMobileTap=now;
     action();
-  },true);
+  };
+  window.addEventListener('pointerup',routeMobileTap,true);
+  window.addEventListener('click',routeMobileTap,true);
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',arm,{once:true});else arm();
   window.addEventListener('pageshow',()=>{resetLocks();if($id('gate')?.classList.contains('active'))delete document.body.dataset.mobilePortalLock});
 })();
