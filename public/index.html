@@ -7434,7 +7434,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     if(!action)return;
     e.preventDefault();e.stopImmediatePropagation();
     const now=performance.now();
-    if(e.type==='click'&&now-lastMobileTap<700)return;
+    if(now-lastMobileTap<700)return;
     lastMobileTap=now;
     action();
   };
