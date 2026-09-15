@@ -2315,7 +2315,7 @@ body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 </div><div id="publicLiveBadge" aria-hidden="true">● ON AIR · LIVE</div><div id="liveControls" style="display:flex;gap:10px;flex-wrap:wrap"><button id="stateStandby">STANDBY</button><button id="stateCountdown">COUNTDOWN</button><button id="stateLive">ON AIR</button><button id="stateEnd" style="display:none">END BROADCAST</button><button id="stateReplay">REPLAY</button></div></div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px"><button id="returnLobby" class="ghost">← GRAND LOBBY</button><span id="liveRouteStatus" style="font-size:9px;letter-spacing:.18em;color:rgba(255,255,255,.45)">ROUTE: ONLINE · PLAYER: AWAITING FEED</span></div></div></div></section><div id="fade" class="fade-black"></div>
   <div class="hud">
     <div class="topbar"><button id="back" class="icon-btn">← THE GATE</button><div class="brand">SC · SOULCINEMA</div><div class="status">MASTER LOCK 05 · RC-11.13.25</div></div>
-    <div class="audio"><button id="audioBtn" aria-pressed="false">SOUND OFF</button></div><button id="mobilePortalTop" class="ghost" type="button" onclick="if(window.scMobileGoPortals){window.scMobileGoPortals();}else if(typeof showPortals==='function'){showPortals();}return false;" ontouchend="if(window.scMobileGoPortals){window.scMobileGoPortals();}else if(typeof showPortals==='function'){showPortals();}return false;">PORTALS</button><aside id="runtimeMonitor" class="runtime-monitor" aria-live="polite"><strong>ENGINEERING CORE ONLINE</strong><div class="runtime-grid"><span>Runtime</span><b id="runtimeState" class="runtime-pass">READY</b><span>Scene</span><b id="runtimeScene">GATE</b><span>Previous</span><b id="runtimePrevious">—</b><span>Transitions</span><b id="transitionCount">0</b><span>QA</span><b id="runtimeQa">PENDING</b><span>Stability</span><b id="stabilityScore">PENDING</b></div><button id="runQa" class="qa-btn">RUN CORE QA</button><button id="runStability" class="qa-btn">RUN STABILITY TEST</button><div id="qaReport" class="qa-report"></div></aside>
+    <div class="audio"><button id="audioBtn" aria-pressed="false">SOUND OFF</button></div><aside id="runtimeMonitor" class="runtime-monitor" aria-live="polite"><strong>ENGINEERING CORE ONLINE</strong><div class="runtime-grid"><span>Runtime</span><b id="runtimeState" class="runtime-pass">READY</b><span>Scene</span><b id="runtimeScene">GATE</b><span>Previous</span><b id="runtimePrevious">—</b><span>Transitions</span><b id="transitionCount">0</b><span>QA</span><b id="runtimeQa">PENDING</b><span>Stability</span><b id="stabilityScore">PENDING</b></div><button id="runQa" class="qa-btn">RUN CORE QA</button><button id="runStability" class="qa-btn">RUN STABILITY TEST</button><div id="qaReport" class="qa-report"></div></aside>
     <div id="chapter" class="chapter"><small>ACT I · ARRIVAL</small><h2>The Grand Lobby</h2><p>A living cinematic space. Not a homepage.</p></div>
     <div id="heart" class="heart-focus"><div class="heart-ring"><div class="heart-core">♥</div></div><div class="heart-label"><small>THE LIVING HEART</small><strong>Every Heart Hides a Story.</strong></div></div>
     <article id="premiereCard" class="premiere-card"><small>FEATURED PREMIERE</small><h3>MWEN POUKONT MWEN</h3><p>The first SoulCinema music film. Enter the Screening Theater when the story calls you.</p><button id="featuredTheaterBtn" data-room="Screening Theater" type="button">ENTER THE THEATER</button></article>
@@ -7283,7 +7283,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     position:fixed!important;
     left:max(24px,env(safe-area-inset-left))!important;
     right:max(24px,env(safe-area-inset-right))!important;
-    bottom:max(34px,env(safe-area-inset-bottom))!important;
+    bottom:92px!important;
     width:auto!important;
     min-width:0!important;
     z-index:2147483647!important;
@@ -7291,16 +7291,6 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     touch-action:manipulation!important;
     -webkit-tap-highlight-color:transparent!important;
   }
-  #lobby.active:not(.portal-mode) #mobilePortalTop{
-    display:inline-flex!important;
-    position:fixed!important;
-    left:max(24px,env(safe-area-inset-left))!important;
-    top:calc(max(18px,env(safe-area-inset-top)) + 96px)!important;
-    z-index:2147483647!important;
-    pointer-events:auto!important;
-    touch-action:manipulation!important;
-  }
-  #mobilePortalTop{display:none!important}
 }
 </style>
 <script id="rc342-mobile-navigation-owner">
@@ -7447,7 +7437,6 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     bind(mark(fresh($id('preview'))),goEnter);
     bind(mark(fresh($id('back'))),goGate);
     bind(mark(fresh($id('skip'))),goPortals);
-    bind(mark(fresh($id('mobilePortalTop'))),goPortals);
     document.querySelectorAll('#portals .portal[data-room],#portals .portal[data-mobile-room],#portals .studio-utility-btn[data-room]').forEach(old=>{
       const room=old.dataset.mobileRoom||old.dataset.room,n=mark(fresh(old));
       if(n&&room==='Journal'){
