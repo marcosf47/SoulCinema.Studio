@@ -6803,6 +6803,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 <script id="rc308-live-black-start-guard-js">
 (()=>{
   'use strict';
+  if(matchMedia('(min-width:861px)').matches)return;
   const room=document.getElementById('liveCenter');
   const wrap=document.getElementById('livePlayerWrap');
   const frame=document.getElementById('rc275LiveFrame');
@@ -7196,15 +7197,11 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
   const sync=()=>{
     clearInterval(timer);
     if(room.classList.contains('active')){
-      if(desktop()){
-        live();
-        return;
-      }
       liveSeen=false;
       confirmedMisses=0;
-      standby();
-      setTimeout(check,0);
-      timer=setInterval(check,1000);
+      cover.classList.remove('rc322-show');
+      wrap.classList.remove('rc322-offair-active');
+      live();
     }else{
       cover.classList.remove('rc322-show');
       wrap.classList.remove('rc322-offair-active');
