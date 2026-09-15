@@ -7295,6 +7295,27 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     pointer-events:auto!important;
     touch-action:manipulation!important;
     -webkit-tap-highlight-color:transparent!important;
+    animation:rc372SkipGlow 2.8s ease-in-out infinite!important;
+  }
+  #lobby.active:not(.portal-mode) #skip::after{
+    content:""!important;
+    position:absolute!important;
+    inset:3px!important;
+    border-radius:inherit!important;
+    border:1px solid rgba(255,231,150,.18)!important;
+    box-shadow:0 0 0 rgba(217,183,96,0)!important;
+    pointer-events:none!important;
+    animation:rc372SkipRing 2.8s ease-in-out infinite!important;
+  }
+  @keyframes rc372SkipGlow{
+    0%,100%{box-shadow:0 10px 28px rgba(0,0,0,.34),0 0 0 rgba(217,183,96,0);border-color:rgba(217,183,96,.52)}
+    45%{box-shadow:0 13px 36px rgba(0,0,0,.42),0 0 28px rgba(217,183,96,.34);border-color:rgba(255,226,138,.88)}
+    62%{box-shadow:0 10px 30px rgba(0,0,0,.38),0 0 14px rgba(217,183,96,.18)}
+  }
+  @keyframes rc372SkipRing{
+    0%,100%{opacity:.18;transform:scale(1)}
+    45%{opacity:.72;transform:scale(1.035)}
+    62%{opacity:.32;transform:scale(1.012)}
   }
 }
 </style>
