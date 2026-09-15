@@ -7438,6 +7438,8 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     lastMobileTap=now;
     action();
   };
+  window.addEventListener('pointerdown',routeMobileTap,true);
+  window.addEventListener('mousedown',routeMobileTap,true);
   window.addEventListener('pointerup',routeMobileTap,true);
   window.addEventListener('click',routeMobileTap,true);
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',arm,{once:true});else arm();
