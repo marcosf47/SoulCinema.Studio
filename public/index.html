@@ -7410,10 +7410,21 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     bind(home,()=>{resetLocks();try{backToTheaterHome()}catch(_e){}});
   };
   window.addEventListener('click',e=>{
-    const journal=e.target?.closest?.('#journalPortalBtn');
-    if(!journal)return;
+    if(!mobile())return;
+    const hit=e.target?.closest?.('button,[role="button"]');
+    if(!hit)return;
+    const id=hit.id||'';
+    const room=hit.dataset?.room;
+    const returns=new Set(['theaterReturn','musicReturn','returnLobby','productionReturn','storyReturn','journalReturn','bibleReturn','aboutReturn','contactReturn']);
+    let action=null;
+    if(id==='enter'||id==='preview')action=goEnter;
+    else if(id==='back')action=goGate;
+    else if(id==='skip')action=goPortals;
+    else if(returns.has(id))action=goPortals;
+    else if(room)action=()=>openRoom(room);
+    if(!action)return;
     e.preventDefault();e.stopImmediatePropagation();
-    openRoom('Journal');
+    action();
   },true);
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',arm,{once:true});else arm();
   window.addEventListener('pageshow',()=>{resetLocks();if($id('gate')?.classList.contains('active'))delete document.body.dataset.mobilePortalLock});
