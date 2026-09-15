@@ -7112,6 +7112,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
   const state=document.getElementById('liveState');
   const badge=document.getElementById('publicLiveBadge');
   if(!room||!wrap||!frame)return;
+  const desktop=()=>matchMedia('(min-width:861px)').matches;
 
   let cover=document.getElementById('rc322LiveStandby');
   if(!cover){
@@ -7129,6 +7130,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 
   const standby=()=>{
     if(!room.classList.contains('active'))return;
+    if(desktop()){live();return}
     cover.classList.add('rc322-show');
     wrap.classList.add('rc322-offair-active');
     frame.style.setProperty('visibility','hidden','important');
@@ -7160,6 +7162,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 
   const check=async()=>{
     if(checking||!room.classList.contains('active'))return;
+    if(desktop()){live();return}
     checking=true;
     try{
       let detected=false;
@@ -7193,6 +7196,10 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
   const sync=()=>{
     clearInterval(timer);
     if(room.classList.contains('active')){
+      if(desktop()){
+        live();
+        return;
+      }
       liveSeen=false;
       confirmedMisses=0;
       standby();
