@@ -2644,10 +2644,11 @@ function journeyTransition(title,kicker='SOULCINEMA',sub='EVERY HEART HIDES A ST
  }
  journeyBusy=true;const veil=$('#journeyTransition');$('#journeyTitle').textContent=title;$('#journeyKicker').textContent=kicker;$('#journeySub').textContent=sub;veil.classList.add('on');veil.setAttribute('aria-hidden','false');
  // RC11.7.1: let the luxury title breathe before the destination changes.
- setTimeout(()=>{if(typeof action==='function')action()},460);
+ const jtAction=setTimeout(()=>{if(typeof action==='function')action()},460);
  // Hold the destination behind black briefly, then release with a slower cinematic fade.
- setTimeout(()=>{veil.classList.remove('on');veil.setAttribute('aria-hidden','true')},980);
- setTimeout(()=>{journeyBusy=false},1720);
+ const jtHide=setTimeout(()=>{veil.classList.remove('on');veil.setAttribute('aria-hidden','true')},980);
+ const jtDone=setTimeout(()=>{journeyBusy=false},1720);
+ if(matchMedia('(max-width:700px)').matches)timers.push(jtAction,jtHide,jtDone);
 }
 function setDot(n){dots.forEach((d,i)=>d.classList.toggle('on',i<=n))}
 function sequence(preserveLobbyPlayback=false){if(matchMedia('(max-width:700px)').matches&&(lobby.classList.contains('portal-mode')||portals.classList.contains('show')||document.body?.dataset.mobilePortalLock==='1'))return;clearTimers(); $('#skip').style.display=''; portals.classList.remove('show'); premiere.classList.remove('show'); heart.classList.remove('show'); chapter.innerHTML='<small>ACT I · ARRIVAL</small><h2>The Grand Lobby</h2><p>A living cinematic space. Not a homepage.</p>'; setDot(0); if(!preserveLobbyPlayback){lobbyVideo.currentTime=0;lobbyVideo.play().catch(()=>{});}
@@ -7380,7 +7381,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     try{if(typeof clearTimers==='function')clearTimers()}catch(_e){}
     try{transitionLocked=false;journeyBusy=false}catch(_e){}
     const f=$id('fade');if(f){f.classList.remove('on');f.style.pointerEvents='none'}
-    const j=$id('journeyTransition');if(j){j.classList.remove('on');j.setAttribute('aria-hidden','true');j.style.pointerEvents='none'}
+    const j=$id('journeyTransition');if(j){j.classList.remove('on');j.setAttribute('aria-hidden','true');j.style.pointerEvents='none';j.style.removeProperty('visibility')}
   };
   const stopMedia=(scope=document)=>{
     scope.querySelectorAll?.('video,audio').forEach(m=>{try{m.pause()}catch(_e){}});
@@ -7395,14 +7396,32 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     document.querySelectorAll('.scene.active').forEach(scene=>scene.classList.remove('active'));
     $id(id)?.classList.add('active');
   };
+  const scrubRoomState=()=>{
+    document.querySelectorAll('.scene:not(#lobby):not(#gate)').forEach(room=>{
+      room.classList.remove('active','theater-arriving','music-arriving','production-arriving','story-arriving','journal-arriving','bible-arriving');
+      ['opacity','visibility','pointer-events','transform','z-index'].forEach(k=>room.style.removeProperty(k));
+    });
+    document.querySelectorAll('.story-reveal.open,.production-reveal.open,.journal-reveal.open,.bible-reveal.open,.contact-reveal.open').forEach(overlay=>{
+      overlay.classList.remove('open');
+      overlay.setAttribute('aria-hidden','true');
+      overlay.style.pointerEvents='none';
+    });
+    document.querySelectorAll('.rc375-portal-pressed,.rc-pressed,.rc-hover,.rc-active,.is-current').forEach(el=>{
+      el.classList.remove('rc375-portal-pressed','rc-pressed','rc-hover','rc-active','is-current');
+    });
+    const poster=$id('theaterPoster');if(poster)poster.classList.remove('hidden');
+    const frame=$id('rc275LiveFrame');if(frame)frame.style.pointerEvents='none';
+    const wrap=$id('livePlayerWrap');if(wrap)wrap.style.removeProperty('pointer-events');
+  };
   const cleanPortals=()=>{
     const p=$id('portals'),l=$id('lobby');
     l?.classList.remove('portal-mode');
     if(p){p.classList.remove('show');['opacity','visibility','pointer-events','transform','z-index'].forEach(k=>p.style.removeProperty(k))}
   };
   const goGate=()=>{
-    resetLocks();stopMedia();cleanPortals();onlyScene('gate');restoreMedia();
+    resetLocks();stopMedia();scrubRoomState();cleanPortals();onlyScene('gate');restoreMedia();
     delete document.body.dataset.mobilePortalLock;
+    delete document.body.dataset.rc375RoomOpening;
     document.body.dataset.scene='gate';document.body.dataset.experience='GATE';
     document.body.classList.remove('gate-lobby-fluid','gate-lobby-soft');
     const s=$id('skip');if(s)s.style.removeProperty('display');
@@ -7410,19 +7429,25 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     setTimeout(()=>{try{arm()}catch(_e){}},0);
   };
   const goPortals=()=>{
-    resetLocks();stopMedia();onlyScene('lobby');
+    resetLocks();stopMedia();scrubRoomState();onlyScene('lobby');
     const l=$id('lobby'),p=$id('portals'),s=$id('skip');
     l?.classList.add('portal-mode');
     p?.classList.add('show');
-    if(p){['opacity','visibility','pointer-events','transform','z-index'].forEach(k=>p.style.removeProperty(k))}
+    if(p){
+      ['opacity','visibility','transform','z-index'].forEach(k=>p.style.removeProperty(k));
+      p.style.setProperty('pointer-events','auto','important');
+    }
     if(s)s.style.setProperty('display','none','important');
     document.body.dataset.mobilePortalLock='1';
+    delete document.body.dataset.rc375RoomOpening;
     document.body.dataset.scene='lobby';document.body.dataset.experience='portal_mode';
+    tapStart=null;
+    lastMobileTap=-10000;
     scrollTo(0,0);
     setTimeout(()=>{try{arm()}catch(_e){}},0);
     [80,300,700,1400].forEach(ms=>setTimeout(()=>{
       if(document.body.dataset.experience==='portal_mode'){
-        resetLocks();onlyScene('lobby');
+        resetLocks();scrubRoomState();onlyScene('lobby');
         l?.classList.add('portal-mode');p?.classList.add('show');
         document.body.dataset.scene='lobby';
       }
@@ -7432,6 +7457,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
   const goEnter=()=>{
     resetLocks();cleanPortals();restoreMedia();
     delete document.body.dataset.mobilePortalLock;
+    delete document.body.dataset.rc375RoomOpening;
     document.body.dataset.scene='lobby';document.body.dataset.experience='LOBBY_ACTIVE';
     requestAnimationFrame(()=>{
       try{enter()}catch(_e){try{sequence(true)}catch(_x){}}
@@ -7457,7 +7483,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
       },145);
       return;
     }
-    resetLocks();stopMedia($id('lobby')||document);cleanPortals();
+    resetLocks();stopMedia($id('lobby')||document);scrubRoomState();cleanPortals();
     delete document.body.dataset.rc375RoomOpening;
     delete document.body.dataset.mobilePortalLock;
     const targets={
@@ -7613,6 +7639,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     const now=performance.now();
     if(now-lastMobileTap<250)return;
     lastMobileTap=now;
+    tapStart=null;
     routed.action();
   };
   window.addEventListener('pointerdown',rememberTap,true);
@@ -7626,4 +7653,5 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 </script>
 <!-- RC375 MOBILE PORTAL SCROLL + ROOM HANDOFF SMOOTHNESS -->
 <!-- RC376 MOBILE FULL PORTAL CARD TAP RELIABILITY -->
+<!-- RC377 MOBILE ROOM EXIT PORTAL UNFREEZE OWNER -->
 </body></html>
