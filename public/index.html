@@ -8126,4 +8126,60 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 <!-- RC375 MOBILE PORTAL SCROLL + ROOM HANDOFF SMOOTHNESS -->
 <!-- RC376 MOBILE FULL PORTAL CARD TAP RELIABILITY -->
 <!-- RC377 MOBILE ROOM EXIT PORTAL UNFREEZE OWNER -->
+<style id="rc389-desktop-live-buffer-stability">
+@media(min-width:861px){
+  body[data-live-mode="live"] #liveCenter.active #livePlayerWrap #rc275LiveFrame{
+    opacity:1!important;
+    visibility:visible!important;
+    display:block!important;
+  }
+  body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
+    content:none!important;
+    display:none!important;
+    opacity:0!important;
+    visibility:hidden!important;
+  }
+}
+</style>
+<script id="rc389-desktop-live-buffer-stability">
+(()=> {
+  'use strict';
+  if(!matchMedia('(min-width:861px)').matches)return;
+  const FEED='https://live.soulcinema.studio/soulcinemad-opus/?controls=true&muted=false&autoplay=true&playsInline=true';
+  const room=document.getElementById('liveCenter');
+  const wrap=document.getElementById('livePlayerWrap');
+  const frame=document.getElementById('rc275LiveFrame');
+  if(!room||!wrap||!frame)return;
+
+  const preconnect=()=>{
+    if(document.querySelector('link[data-rc389-live-preconnect]'))return;
+    const link=document.createElement('link');
+    link.rel='preconnect';
+    link.href='https://live.soulcinema.studio';
+    link.crossOrigin='anonymous';
+    link.dataset.rc389LivePreconnect='1';
+    document.head.appendChild(link);
+  };
+
+  const stabilize=()=>{
+    if(!room.classList.contains('active'))return;
+    wrap.classList.add('rc308-live-ready');
+    wrap.setAttribute('aria-busy','false');
+    wrap.classList.remove('rc322-offair-active');
+    frame.style.setProperty('display','block','important');
+    frame.style.setProperty('visibility','visible','important');
+    frame.style.setProperty('opacity','1','important');
+    frame.style.setProperty('pointer-events','auto','important');
+    if(frame.getAttribute('src')!==FEED)frame.setAttribute('src',FEED);
+  };
+
+  preconnect();
+  new MutationObserver(stabilize).observe(room,{attributes:true,attributeFilter:['class']});
+  new MutationObserver(stabilize).observe(frame,{attributes:true,attributeFilter:['src','style','class']});
+  ['pageshow','focus'].forEach(name=>addEventListener(name,stabilize,{passive:true}));
+  stabilize();
+  setTimeout(stabilize,400);
+  setTimeout(stabilize,1500);
+})();
+</script>
 </body></html>
