@@ -7406,6 +7406,146 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 }
 </style>
 
+<!-- RC380 MOBILE LANDSCAPE CLEAN FULL LIVE PLAYER -->
+<style id="rc380-mobile-landscape-clean-live-player">
+@media (orientation:landscape) and (max-width:1000px),
+       (orientation:landscape) and (max-height:760px) and (pointer:coarse){
+  html,body{
+    overflow:hidden!important;
+    background:#000!important;
+  }
+  #liveCenter.active{
+    position:fixed!important;
+    inset:0!important;
+    width:100vw!important;
+    height:100dvh!important;
+    max-width:100vw!important;
+    max-height:100dvh!important;
+    overflow:hidden!important;
+    background:#000!important;
+  }
+  #liveCenter.active > div:first-child,
+  #liveCenter.active > .grain,
+  #liveCenter.active::after,
+  #liveCenter.active .eyebrow,
+  #liveCenter.active h2,
+  #liveCenter.active #liveState,
+  #liveCenter.active #publicLiveBadge,
+  #liveCenter.active #liveControls,
+  #liveCenter.active #liveRouteStatus,
+  #liveCenter.active #returnLobby{
+    display:none!important;
+    visibility:hidden!important;
+    opacity:0!important;
+    pointer-events:none!important;
+  }
+  #liveCenter.active .center{
+    position:fixed!important;
+    inset:0!important;
+    width:100vw!important;
+    height:100dvh!important;
+    max-width:100vw!important;
+    max-height:100dvh!important;
+    padding:0!important;
+    margin:0!important;
+    display:grid!important;
+    place-items:center!important;
+    overflow:hidden!important;
+    background:#000!important;
+    box-sizing:border-box!important;
+  }
+  #liveCenter.active .center > div{
+    width:100vw!important;
+    height:100dvh!important;
+    max-width:100vw!important;
+    max-height:100dvh!important;
+    margin:0!important;
+    padding:0!important;
+    display:grid!important;
+    place-items:center!important;
+    background:#000!important;
+    overflow:hidden!important;
+    box-sizing:border-box!important;
+  }
+  #liveCenter.active .center > div > div:nth-of-type(3){
+    width:100vw!important;
+    height:100dvh!important;
+    max-width:100vw!important;
+    max-height:100dvh!important;
+    margin:0!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:0!important;
+    background:#000!important;
+    box-shadow:none!important;
+    display:grid!important;
+    place-items:center!important;
+    overflow:hidden!important;
+    box-sizing:border-box!important;
+  }
+  #liveCenter.active #liveMain{
+    width:min(100vw,calc(100dvh * 16 / 9))!important;
+    height:min(100dvh,calc(100vw * 9 / 16))!important;
+    max-width:100vw!important;
+    max-height:100dvh!important;
+    aspect-ratio:16/9!important;
+    margin:0 auto!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:0!important;
+    background:#000!important;
+    overflow:hidden!important;
+    box-sizing:border-box!important;
+  }
+  body[data-live-mode="live"] #liveCenter.active #livePlayerWrap,
+  #liveCenter.active #livePlayerWrap{
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
+    position:absolute!important;
+    inset:0!important;
+    width:100%!important;
+    height:100%!important;
+    max-width:100%!important;
+    max-height:100%!important;
+    margin:0!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:0!important;
+    background:#000!important;
+    box-shadow:none!important;
+    overflow:hidden!important;
+    pointer-events:auto!important;
+  }
+  #liveCenter.active #rc275LiveFrame,
+  #liveCenter.active #livePlayer{
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
+    position:absolute!important;
+    inset:0!important;
+    width:100%!important;
+    height:100%!important;
+    max-width:100%!important;
+    max-height:100%!important;
+    margin:0!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:0!important;
+    object-fit:contain!important;
+    background:#000!important;
+    pointer-events:auto!important;
+  }
+  #liveCenter.active #livePlayerWrap::before,
+  #liveCenter.active #livePlayerWrap::after,
+  #liveCenter.active #liveMain::before,
+  #liveCenter.active #liveMain::after{
+    content:none!important;
+    display:none!important;
+  }
+}
+</style>
+
 <!-- RC323 MOBILE FINAL VIEWPORT + TOUCH STABILITY LOCK -->
 <style id="rc323-mobile-final-stability">
 @media (max-width:700px){
