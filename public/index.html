@@ -6759,11 +6759,14 @@ body[data-live-mode="live"] #liveCenter #publicLiveBadge{display:block!important
 
 <!-- RC276 LIVE AUTOPLAY BROADCAST ONLY PLAYER -->
 <style id="rc276-live-autoplay-css">
-#liveCenter #rc275LiveFrame{pointer-events:none!important;}
+@media(max-width:860px){
+  #liveCenter #rc275LiveFrame{pointer-events:none!important;}
+}
 </style>
 <script id="rc276-live-autoplay">
 (()=>{
   'use strict';
+  if(matchMedia('(min-width:861px)').matches)return;
   const room=document.getElementById('liveCenter');
   const frame=document.getElementById('rc275LiveFrame');
   if(!room||!frame)return;
