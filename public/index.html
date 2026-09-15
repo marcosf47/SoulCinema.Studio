@@ -7340,12 +7340,17 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
   const openRoom=(room)=>{
     resetLocks();stopMedia($id('lobby')||document);cleanPortals();
     delete document.body.dataset.mobilePortalLock;
-    if(room==='Journal'){
-      onlyScene('journalRoom');
-      document.body.dataset.scene='journal';
-      document.body.dataset.experience='journal_active';
-      return;
-    }
+    const targets={
+      'Screening Theater':['screeningTheater','theaterReturn','theater'],
+      'Music Room':['musicRoom','musicReturn','music'],
+      'Live Center':['liveCenter','returnLobby','live'],
+      'Production Room':['productionRoom','productionReturn','production'],
+      'Story Room':['storyRoom','storyReturn','story'],
+      'Journal':['journalRoom','journalReturn','journal'],
+      'Visual Bible':['visualBibleRoom','bibleReturn','visual-bible'],
+      'About Us':['aboutRoom','aboutReturn','about'],
+      'Contact':['contactRoom','contactReturn','contact']
+    };
     const routes={
       'Screening Theater':()=>openTheater(),
       'Music Room':()=>openMusic(),
@@ -7356,7 +7361,29 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
       'About Us':()=>openAbout(),
       'Contact':()=>openContact()
     };
-    try{routes[room]?.()}catch(_e){goPortals()}
+    const target=targets[room];
+    if(!target){goPortals();return}
+    try{routes[room]?.()}catch(_e){}
+    onlyScene(target[0]);
+    document.body.dataset.scene=target[2];
+    document.body.dataset.experience=target[2]+'_active';
+    const back=$id(target[1]);
+    if(back){
+      back.style.setProperty('display','inline-flex','important');
+      back.style.setProperty('visibility','visible','important');
+      back.style.setProperty('opacity','1','important');
+      back.style.setProperty('pointer-events','auto','important');
+    }
+    [80,300].forEach(ms=>setTimeout(()=>{
+      if(document.body.dataset.scene===target[2]){
+        onlyScene(target[0]);
+        if(back){
+          back.style.setProperty('visibility','visible','important');
+          back.style.setProperty('opacity','1','important');
+          back.style.setProperty('pointer-events','auto','important');
+        }
+      }
+    },ms));
   };
   const replace=(el)=>{
     if(!el)return null;
