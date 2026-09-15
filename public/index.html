@@ -6784,8 +6784,10 @@ body[data-live-mode="live"] #liveCenter #publicLiveBadge{display:block!important
 <!-- RC308 LIVE BLACK START GUARD + VERIFIED MOBILE SYNTAX RECOVERY -->
 <style id="rc308-live-black-start-guard-css">
 #liveCenter #livePlayerWrap{background:#000!important}
+@media(max-width:860px){
 body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-ready) #rc275LiveFrame{opacity:0!important}
 body[data-live-mode="live"] #liveCenter.active #livePlayerWrap.rc308-live-ready #rc275LiveFrame{opacity:1!important;transition:opacity .48s ease!important}
+}
 #liveCenter #livePlayerWrap::after{
   content:""!important;
   position:absolute;inset:0;z-index:2147483645;
@@ -6798,7 +6800,20 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap.rc308-live-ready 
   opacity:0;visibility:hidden;
   transition:opacity .45s ease,visibility .45s ease;
 }
+@media(max-width:860px){
 body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-ready)::after{opacity:1;visibility:visible}
+}
+@media(min-width:861px){
+body[data-live-mode="live"] #liveCenter.active #livePlayerWrap #rc275LiveFrame{
+  opacity:1!important;
+  visibility:visible!important;
+  display:block!important;
+}
+body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
+  content:none!important;
+  display:none!important;
+}
+}
 </style>
 <script id="rc308-live-black-start-guard-js">
 (()=>{
