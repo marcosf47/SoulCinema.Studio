@@ -7319,6 +7319,34 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     0%,28%,60%,100%{opacity:0;transform:translateX(-12%)}
     18%,42%{opacity:.85;transform:translateX(12%)}
   }
+  #gate.active #enter,
+  #gate.active #preview,
+  #lobby.active:not(.portal-mode) #back,
+  #lobby.active:not(.portal-mode) #audioBtn{
+    animation:rc373SkipBlink 2.45s ease-in-out infinite!important;
+  }
+  #gate.active #preview,
+  #lobby.active:not(.portal-mode) #audioBtn{
+    animation-delay:.42s!important;
+  }
+  #gate.active #enter::after,
+  #gate.active #preview::after,
+  #lobby.active:not(.portal-mode) #back::after,
+  #lobby.active:not(.portal-mode) #audioBtn::after{
+    content:""!important;
+    position:absolute!important;
+    inset:3px!important;
+    border-radius:inherit!important;
+    border:1px solid rgba(255,231,150,.12)!important;
+    background:linear-gradient(90deg,transparent,rgba(255,222,118,.14),transparent)!important;
+    opacity:0!important;
+    pointer-events:none!important;
+    animation:rc373SkipLight 2.45s ease-in-out infinite!important;
+  }
+  #gate.active #preview::after,
+  #lobby.active:not(.portal-mode) #audioBtn::after{
+    animation-delay:.42s!important;
+  }
 }
 </style>
 <script id="rc342-mobile-navigation-owner">
