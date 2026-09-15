@@ -8221,4 +8221,128 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 <!-- RC375 MOBILE PORTAL SCROLL + ROOM HANDOFF SMOOTHNESS -->
 <!-- RC376 MOBILE FULL PORTAL CARD TAP RELIABILITY -->
 <!-- RC377 MOBILE ROOM EXIT PORTAL UNFREEZE OWNER -->
+<style id="rc383-mobile-live-landscape-runtime-lock">
+html body.sc-live-landscape #liveCenter.active{
+  position:fixed!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100dvh!important;
+  margin:0!important;
+  padding:0!important;
+  background:#000!important;
+  overflow:hidden!important;
+  transform:none!important;
+}
+html body.sc-live-landscape #liveCenter.active > div:first-child,
+html body.sc-live-landscape #liveCenter.active > .grain,
+html body.sc-live-landscape #liveCenter.active::after,
+html body.sc-live-landscape #liveCenter.active .eyebrow,
+html body.sc-live-landscape #liveCenter.active h2,
+html body.sc-live-landscape #liveCenter.active #liveState,
+html body.sc-live-landscape #liveCenter.active #publicLiveBadge,
+html body.sc-live-landscape #liveCenter.active #liveControls,
+html body.sc-live-landscape #liveCenter.active #stateLive,
+html body.sc-live-landscape #liveCenter.active #liveRouteStatus,
+html body.sc-live-landscape #liveCenter.active #returnLobby,
+html body.sc-live-landscape #liveCenter.active #rc298LiveFullscreen{
+  display:none!important;
+  visibility:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important;
+}
+html body.sc-live-landscape #liveCenter.active .center,
+html body.sc-live-landscape #liveCenter.active .center > div,
+html body.sc-live-landscape #liveCenter.active .center > div > div:nth-of-type(3){
+  position:fixed!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100dvh!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:#000!important;
+  box-shadow:none!important;
+  overflow:hidden!important;
+  display:block!important;
+  box-sizing:border-box!important;
+}
+html body.sc-live-landscape #liveCenter.active #liveMain{
+  position:fixed!important;
+  left:50%!important;
+  top:50%!important;
+  right:auto!important;
+  bottom:auto!important;
+  width:min(100vw, calc(100dvh * 16 / 9))!important;
+  height:min(100dvh, calc(100vw * 9 / 16))!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-width:none!important;
+  max-height:none!important;
+  aspect-ratio:16/9!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:#000!important;
+  box-shadow:none!important;
+  overflow:hidden!important;
+  transform:translate(-50%,-50%)!important;
+  box-sizing:border-box!important;
+}
+html body.sc-live-landscape #liveCenter.active #livePlayerWrap,
+html body.sc-live-landscape #liveCenter.active #rc275LiveFrame,
+html body.sc-live-landscape #liveCenter.active #livePlayer{
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:#000!important;
+  box-shadow:none!important;
+  object-fit:contain!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+}
+html body.sc-live-landscape #liveCenter.active #livePlayerWrap::before,
+html body.sc-live-landscape #liveCenter.active #livePlayerWrap::after,
+html body.sc-live-landscape #liveCenter.active #liveMain::before,
+html body.sc-live-landscape #liveCenter.active #liveMain::after{
+  content:none!important;
+  display:none!important;
+}
+</style>
+<script id="rc383-mobile-live-landscape-runtime-lock">
+(()=> {
+  'use strict';
+  const live=()=>document.getElementById('liveCenter');
+  const landscape=()=>innerWidth>innerHeight;
+  const active=()=>live()?.classList.contains('active');
+  const sync=()=>{
+    const on=active()&&landscape();
+    document.body.classList.toggle('sc-live-landscape',on);
+    const back=document.getElementById('returnLobby');
+    if(back&&on){
+      back.style.setProperty('display','none','important');
+      back.style.setProperty('visibility','hidden','important');
+      back.style.setProperty('opacity','0','important');
+      back.style.setProperty('pointer-events','none','important');
+    }
+  };
+  new MutationObserver(sync).observe(document.body,{attributes:true,subtree:true,attributeFilter:['class','style','data-live-mode']});
+  ['resize','orientationchange','pageshow'].forEach(name=>addEventListener(name,sync,{passive:true}));
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',sync,{once:true});else sync();
+  setInterval(sync,600);
+})();
+</script>
 </body></html>
