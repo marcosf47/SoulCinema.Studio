@@ -7295,27 +7295,29 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     pointer-events:auto!important;
     touch-action:manipulation!important;
     -webkit-tap-highlight-color:transparent!important;
-    animation:rc372SkipGlow 2.8s ease-in-out infinite!important;
+    animation:rc373SkipBlink 2.15s ease-in-out infinite!important;
   }
   #lobby.active:not(.portal-mode) #skip::after{
     content:""!important;
     position:absolute!important;
     inset:3px!important;
     border-radius:inherit!important;
-    border:1px solid rgba(255,231,150,.18)!important;
-    box-shadow:0 0 0 rgba(217,183,96,0)!important;
+    border:1px solid rgba(255,231,150,.14)!important;
+    background:linear-gradient(90deg,transparent,rgba(255,222,118,.18),transparent)!important;
+    opacity:0!important;
     pointer-events:none!important;
-    animation:rc372SkipRing 2.8s ease-in-out infinite!important;
+    animation:rc373SkipLight 2.15s ease-in-out infinite!important;
   }
-  @keyframes rc372SkipGlow{
-    0%,100%{box-shadow:0 10px 28px rgba(0,0,0,.34),0 0 0 rgba(217,183,96,0);border-color:rgba(217,183,96,.52)}
-    45%{box-shadow:0 13px 36px rgba(0,0,0,.42),0 0 28px rgba(217,183,96,.34);border-color:rgba(255,226,138,.88)}
-    62%{box-shadow:0 10px 30px rgba(0,0,0,.38),0 0 14px rgba(217,183,96,.18)}
+  @keyframes rc373SkipBlink{
+    0%,100%{opacity:.72;border-color:rgba(128,96,36,.42);box-shadow:0 8px 24px rgba(0,0,0,.34),0 0 0 rgba(217,183,96,0);color:rgba(230,200,111,.72)}
+    18%{opacity:1;border-color:rgba(255,226,138,.95);box-shadow:0 12px 36px rgba(0,0,0,.45),0 0 30px rgba(217,183,96,.42);color:#ffe39a}
+    30%{opacity:.58;border-color:rgba(128,96,36,.32);box-shadow:0 8px 22px rgba(0,0,0,.34),0 0 0 rgba(217,183,96,0);color:rgba(230,200,111,.58)}
+    42%{opacity:1;border-color:rgba(255,226,138,.9);box-shadow:0 12px 34px rgba(0,0,0,.42),0 0 24px rgba(217,183,96,.34);color:#ffe39a}
+    70%{opacity:.76;border-color:rgba(217,183,96,.48);box-shadow:0 9px 26px rgba(0,0,0,.36),0 0 8px rgba(217,183,96,.1);color:rgba(230,200,111,.76)}
   }
-  @keyframes rc372SkipRing{
-    0%,100%{opacity:.18;transform:scale(1)}
-    45%{opacity:.72;transform:scale(1.035)}
-    62%{opacity:.32;transform:scale(1.012)}
+  @keyframes rc373SkipLight{
+    0%,28%,60%,100%{opacity:0;transform:translateX(-12%)}
+    18%,42%{opacity:.85;transform:translateX(12%)}
   }
 }
 </style>
