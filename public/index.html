@@ -7443,9 +7443,31 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
   };
   let lastMobileTap=-10000;
   let tapStart=null;
+  const eventPoint=(e)=>{
+    const t=e.changedTouches?.[0]||e.touches?.[0]||e;
+    return {x:t.clientX||0,y:t.clientY||0};
+  };
+  const inBox=(el,p)=>{
+    if(!el)return false;
+    const r=el.getBoundingClientRect();
+    return p.x>=r.left&&p.x<=r.right&&p.y>=r.top&&p.y<=r.bottom;
+  };
   const findAction=(e)=>{
     if(!mobile())return;
-    const hit=e.target?.closest?.('button,[role="button"]');
+    const p=eventPoint(e);
+    let hit=e.target?.closest?.('button,[role="button"]');
+    if(!hit&&document.elementFromPoint){
+      hit=document.elementFromPoint(p.x,p.y)?.closest?.('button,[role="button"]');
+    }
+    if(!hit){
+      const fallback=[
+        ['skip',goPortals],['back',goGate],['enter',goEnter],['preview',goEnter],
+        ['theaterReturn',goPortals],['musicReturn',goPortals],['returnLobby',goPortals],
+        ['productionReturn',goPortals],['storyReturn',goPortals],['journalReturn',goPortals],
+        ['bibleReturn',goPortals],['aboutReturn',goPortals],['contactReturn',goPortals]
+      ].find(([id])=>inBox($id(id),p));
+      if(fallback)return {action:fallback[1],hit:$id(fallback[0])};
+    }
     if(!hit)return;
     const id=hit.id||'';
     const room=hit.dataset?.mobileRoom||hit.dataset?.room;
@@ -7458,10 +7480,6 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     else if(room)action=()=>openRoom(room);
     if(!action)return;
     return {action,hit};
-  };
-  const eventPoint=(e)=>{
-    const t=e.changedTouches?.[0]||e.touches?.[0]||e;
-    return {x:t.clientX||0,y:t.clientY||0};
   };
   const rememberTap=(e)=>{
     const routed=findAction(e);
