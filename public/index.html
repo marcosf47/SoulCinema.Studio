@@ -7321,10 +7321,21 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     scrollTo(0,0);
   };
   const goEnter=()=>{
-    resetLocks();cleanPortals();restoreMedia();onlyScene('gate');
+    resetLocks();cleanPortals();restoreMedia();
     delete document.body.dataset.mobilePortalLock;
-    document.body.dataset.scene='gate';document.body.dataset.experience='GATE';
-    requestAnimationFrame(()=>{try{enter()}catch(_e){onlyScene('lobby');try{sequence(true)}catch(_x){}}});
+    document.body.dataset.scene='lobby';document.body.dataset.experience='LOBBY_ACTIVE';
+    requestAnimationFrame(()=>{
+      try{enter()}catch(_e){try{sequence(true)}catch(_x){}}
+      onlyScene('lobby');
+      document.body.dataset.scene='lobby';
+      document.body.dataset.experience='LOBBY_ACTIVE';
+      [60,240,700].forEach(ms=>setTimeout(()=>{
+        if(document.body.dataset.scene==='lobby'){
+          onlyScene('lobby');
+          resetLocks();
+        }
+      },ms));
+    });
   };
   const openRoom=(room)=>{
     resetLocks();stopMedia($id('lobby')||document);cleanPortals();
