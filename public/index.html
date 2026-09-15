@@ -8138,4 +8138,28 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
 <!-- RC375 MOBILE PORTAL SCROLL + ROOM HANDOFF SMOOTHNESS -->
 <!-- RC376 MOBILE FULL PORTAL CARD TAP RELIABILITY -->
 <!-- RC377 MOBILE ROOM EXIT PORTAL UNFREEZE OWNER -->
+<script id="rc393-desktop-live-src-reset-guard">
+(()=> {
+  'use strict';
+  if(!matchMedia('(min-width:861px)').matches)return;
+  const FEED='https://live.soulcinema.studio/soulcinemad-opus/?controls=true&muted=false&autoplay=true&playsInline=true';
+  const nativeSetAttribute=Element.prototype.setAttribute;
+  if(Element.prototype.__scRc393DesktopLiveGuard)return;
+  Object.defineProperty(Element.prototype,'__scRc393DesktopLiveGuard',{value:true});
+  const liveActive=()=>document.getElementById('liveCenter')?.classList.contains('active');
+  const isLiveFrame=(el)=>el&&el.id==='rc275LiveFrame';
+  const isSrc=(name)=>String(name||'').toLowerCase()==='src';
+  const isLiveUrl=(value)=>String(value||'').includes('live.soulcinema.studio/soulcinemad-opus/');
+  Element.prototype.setAttribute=function(name,value){
+    if(isLiveFrame(this)&&isSrc(name)&&liveActive()){
+      if(value==='about:blank')return;
+      if(isLiveUrl(value)&&value!==FEED){
+        if(this.getAttribute('src')===FEED)return;
+        return nativeSetAttribute.call(this,name,FEED);
+      }
+    }
+    return nativeSetAttribute.call(this,name,value);
+  };
+})();
+</script>
 </body></html>
