@@ -7359,7 +7359,10 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
       const room=old.dataset.room,n=replace(old);bind(n,()=>openRoom(room));
     });
     ['theaterReturn','musicReturn','returnLobby','productionReturn','storyReturn','journalReturn','bibleReturn','aboutReturn','contactReturn']
-      .forEach(id=>bind(replace($id(id)),goPortals));
+      .forEach(id=>{
+        const n=replace($id(id));
+        if(n){['display','visibility','opacity','pointer-events'].forEach(k=>n.style.removeProperty(k));bind(n,goPortals)}
+      });
     const home=replace($id('theaterBackHome'));
     bind(home,()=>{resetLocks();try{backToTheaterHome()}catch(_e){}});
   };
