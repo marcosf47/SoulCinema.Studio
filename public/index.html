@@ -7401,7 +7401,9 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     bind(replace($id('back')),goGate);
     bind(replace($id('skip')),goPortals);
     document.querySelectorAll('#portals .portal[data-room],#portals .studio-utility-btn[data-room]').forEach(old=>{
-      const room=old.dataset.room,n=replace(old);bind(n,()=>openRoom(room));
+      const room=old.dataset.room,n=replace(old);
+      if(n&&room==='Journal')n.id='mobileJournalPortal';
+      bind(n,()=>openRoom(room));
     });
     ['theaterReturn','musicReturn','returnLobby','productionReturn','storyReturn','journalReturn','bibleReturn','aboutReturn','contactReturn']
       .forEach(id=>{
