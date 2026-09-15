@@ -7459,18 +7459,24 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     if(!action)return;
     return {action,hit};
   };
+  const eventPoint=(e)=>{
+    const t=e.changedTouches?.[0]||e.touches?.[0]||e;
+    return {x:t.clientX||0,y:t.clientY||0};
+  };
   const rememberTap=(e)=>{
     const routed=findAction(e);
     if(!routed)return;
-    tapStart={x:e.clientX||0,y:e.clientY||0,t:performance.now(),hit:routed.hit};
+    const p=eventPoint(e);
+    tapStart={x:p.x,y:p.y,t:performance.now(),hit:routed.hit};
   };
   const routeMobileTap=(e)=>{
     const routed=findAction(e);
     if(!routed)return;
-    if(e.type==='pointerup'&&tapStart){
-      const dx=Math.abs((e.clientX||0)-tapStart.x);
-      const dy=Math.abs((e.clientY||0)-tapStart.y);
-      if(dx>14||dy>14)return;
+    if((e.type==='pointerup'||e.type==='touchend')&&tapStart){
+      const p=eventPoint(e);
+      const dx=Math.abs(p.x-tapStart.x);
+      const dy=Math.abs(p.y-tapStart.y);
+      if(dx>18||dy>18)return;
     }
     e.preventDefault();e.stopImmediatePropagation();
     const now=performance.now();
@@ -7479,7 +7485,9 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     routed.action();
   };
   window.addEventListener('pointerdown',rememberTap,true);
+  window.addEventListener('touchstart',rememberTap,{capture:true,passive:true});
   window.addEventListener('pointerup',routeMobileTap,true);
+  window.addEventListener('touchend',routeMobileTap,true);
   window.addEventListener('click',routeMobileTap,true);
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',arm,{once:true});else arm();
   window.addEventListener('pageshow',()=>{resetLocks();if($id('gate')?.classList.contains('active'))delete document.body.dataset.mobilePortalLock});
