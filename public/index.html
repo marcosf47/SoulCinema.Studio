@@ -8345,4 +8345,45 @@ html body.sc-live-landscape #liveCenter.active #liveMain::after{
   setInterval(sync,600);
 })();
 </script>
+<script id="rc384-live-feed-src-stability-lock">
+(()=> {
+  'use strict';
+  const CANONICAL='https://live.soulcinema.studio/soulcinemad-opus/?controls=false&muted=false&autoplay=true&playsInline=true';
+  const BLANK='about:blank';
+  const live=()=>document.getElementById('liveCenter');
+  const frame=()=>document.getElementById('rc275LiveFrame');
+  const active=()=>live()?.classList.contains('active');
+  const isFeed=(value)=>String(value||'').includes('live.soulcinema.studio/soulcinemad-opus/');
+  const originalSetAttribute=Element.prototype.setAttribute;
+
+  if(!Element.prototype.__scRc384LiveSrcLock){
+    Object.defineProperty(Element.prototype,'__scRc384LiveSrcLock',{value:true});
+    Element.prototype.setAttribute=function(name,value){
+      if(this&&this.id==='rc275LiveFrame'&&String(name).toLowerCase()==='src'&&active()&&isFeed(value)&&value!==CANONICAL){
+        return originalSetAttribute.call(this,name,CANONICAL);
+      }
+      return originalSetAttribute.call(this,name,value);
+    };
+  }
+
+  const sync=()=>{
+    const f=frame();
+    if(!f)return;
+    if(active()){
+      if(f.getAttribute('src')!==CANONICAL)originalSetAttribute.call(f,'src',CANONICAL);
+      f.style.setProperty('display','block','important');
+      f.style.setProperty('visibility','visible','important');
+      f.style.setProperty('opacity','1','important');
+    }else if(f.getAttribute('src')&&f.getAttribute('src')!==BLANK){
+      originalSetAttribute.call(f,'src',BLANK);
+    }
+  };
+
+  new MutationObserver(sync).observe(document.body,{attributes:true,subtree:true,attributeFilter:['class','src','data-live-mode']});
+  ['pageshow','resize','orientationchange'].forEach(name=>addEventListener(name,sync,{passive:true}));
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',sync,{once:true});else sync();
+  setTimeout(sync,150);
+  setTimeout(sync,900);
+})();
+</script>
 </body></html>
