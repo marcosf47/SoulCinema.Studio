@@ -2333,7 +2333,7 @@ body[data-live-mode="live"] #liveCenter #publicLiveBadge{
       </div>
     </div></div>
     <div class="progress"><i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
-    <button id="skip" class="skip ghost" type="button" onclick="if(typeof showPortals==='function'){showPortals();}return false;" ontouchend="if(typeof showPortals==='function'){showPortals();}return false;">SKIP TO PORTALS</button><div id="toast" class="toast"></div>
+    <button id="skip" class="skip ghost" type="button" onclick="if(window.scMobileGoPortals){window.scMobileGoPortals();}else if(typeof showPortals==='function'){showPortals();}return false;" ontouchend="if(window.scMobileGoPortals){window.scMobileGoPortals();}else if(typeof showPortals==='function'){showPortals();}return false;">SKIP TO PORTALS</button><div id="toast" class="toast"></div>
   </div>
 </section>
 
@@ -5916,11 +5916,11 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
   };
   window.addEventListener('pointerdown',e=>{
     if(!mobile())return;
-    if(e.target&&e.target.closest&&e.target.closest('#skip'))setLock();
+    if(false&&e.target&&e.target.closest&&e.target.closest('#skip'))setLock();
   },true);
   window.addEventListener('touchstart',e=>{
     if(!mobile())return;
-    if(e.target&&e.target.closest&&e.target.closest('#skip'))setLock();
+    if(false&&e.target&&e.target.closest&&e.target.closest('#skip'))setLock();
   },{capture:true,passive:true});
   document.addEventListener('play',e=>{
     const m=e.target;
@@ -5987,11 +5987,11 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 
   window.addEventListener('pointerdown',e=>{
     if(!mobile())return;
-    if(e.target?.closest?.('#skip'))freeze();
+    if(false&&e.target?.closest?.('#skip'))freeze();
   },true);
   window.addEventListener('touchstart',e=>{
     if(!mobile())return;
-    if(e.target?.closest?.('#skip'))freeze();
+    if(false&&e.target?.closest?.('#skip'))freeze();
   },{capture:true,passive:true});
 
   new MutationObserver(sync).observe(lobby,{attributes:true,attributeFilter:['class']});
@@ -6060,11 +6060,11 @@ html body[data-live-mode="live"] #liveCenter #publicLiveBadge{
 
   window.addEventListener('pointerdown',e=>{
     if(!mobile())return;
-    if(e.target?.closest?.('#skip'))freezeAmbient();
+    if(false&&e.target?.closest?.('#skip'))freezeAmbient();
   },true);
   window.addEventListener('touchstart',e=>{
     if(!mobile())return;
-    if(e.target?.closest?.('#skip'))freezeAmbient();
+    if(false&&e.target?.closest?.('#skip'))freezeAmbient();
   },{capture:true,passive:true});
 
   new MutationObserver(sync).observe(lobby,{attributes:true,attributeFilter:['class']});
@@ -7352,6 +7352,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
       }
     },ms));
   };
+  window.scMobileGoPortals=goPortals;
   const goEnter=()=>{
     resetLocks();cleanPortals();restoreMedia();
     delete document.body.dataset.mobilePortalLock;
