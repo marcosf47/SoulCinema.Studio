@@ -7321,6 +7321,13 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     document.body.dataset.scene='lobby';document.body.dataset.experience='portal_mode';
     scrollTo(0,0);
     setTimeout(()=>{try{arm()}catch(_e){}},0);
+    [80,300,700,1400].forEach(ms=>setTimeout(()=>{
+      if(document.body.dataset.experience==='portal_mode'){
+        resetLocks();onlyScene('lobby');
+        l?.classList.add('portal-mode');p?.classList.add('show');
+        document.body.dataset.scene='lobby';
+      }
+    },ms));
   };
   const goEnter=()=>{
     resetLocks();cleanPortals();restoreMedia();
@@ -7331,7 +7338,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
       onlyScene('lobby');
       document.body.dataset.scene='lobby';
       document.body.dataset.experience='LOBBY_ACTIVE';
-      [60,240,700].forEach(ms=>setTimeout(()=>{
+      [60,240,700,1400].forEach(ms=>setTimeout(()=>{
         if(document.body.dataset.scene==='lobby'){
           onlyScene('lobby');
           resetLocks();
@@ -7376,7 +7383,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
       back.style.setProperty('opacity','1','important');
       back.style.setProperty('pointer-events','auto','important');
     }
-    [80,300].forEach(ms=>setTimeout(()=>{
+    [80,300,700,1400].forEach(ms=>setTimeout(()=>{
       if(document.body.dataset.scene===target[2]){
         onlyScene(target[0]);
         if(back){
