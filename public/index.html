@@ -7402,7 +7402,11 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     bind(replace($id('skip')),goPortals);
     document.querySelectorAll('#portals .portal[data-room],#portals .studio-utility-btn[data-room]').forEach(old=>{
       const room=old.dataset.room,n=replace(old);
-      if(n&&room==='Journal')n.id='mobileJournalPortal';
+      if(n&&room==='Journal'){
+        n.id='mobileJournalPortal';
+        n.dataset.mobileRoom='Journal';
+        delete n.dataset.room;
+      }
       bind(n,()=>openRoom(room));
     });
     ['theaterReturn','musicReturn','returnLobby','productionReturn','storyReturn','journalReturn','bibleReturn','aboutReturn','contactReturn']
@@ -7419,7 +7423,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     const hit=e.target?.closest?.('button,[role="button"]');
     if(!hit)return;
     const id=hit.id||'';
-    const room=hit.dataset?.room;
+    const room=hit.dataset?.mobileRoom||hit.dataset?.room;
     const returns=new Set(['theaterReturn','musicReturn','returnLobby','productionReturn','storyReturn','journalReturn','bibleReturn','aboutReturn','contactReturn']);
     let action=null;
     if(id==='enter'||id==='preview')action=goEnter;
