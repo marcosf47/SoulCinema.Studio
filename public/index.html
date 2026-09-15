@@ -7329,17 +7329,18 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
   const openRoom=(room)=>{
     resetLocks();stopMedia($id('lobby')||document);cleanPortals();
     delete document.body.dataset.mobilePortalLock;
+    if(room==='Journal'){
+      onlyScene('journalRoom');
+      document.body.dataset.scene='journal';
+      document.body.dataset.experience='journal_active';
+      return;
+    }
     const routes={
       'Screening Theater':()=>openTheater(),
       'Music Room':()=>openMusic(),
       'Live Center':()=>openLive(),
       'Production Room':()=>typeof openProductionHard==='function'?openProductionHard():openProduction(),
       'Story Room':()=>openStory(),
-      'Journal':()=>{
-        onlyScene('journalRoom');
-        document.body.dataset.scene='journal';
-        document.body.dataset.experience='journal_active';
-      },
       'Visual Bible':()=>typeof openBibleHard==='function'?openBibleHard():openBible(),
       'About Us':()=>openAbout(),
       'Contact':()=>openContact()
