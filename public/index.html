@@ -7281,10 +7281,11 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
   #lobby.portal-mode #portals .portal{pointer-events:auto!important}
   #lobby.active:not(.portal-mode) #skip{
     position:fixed!important;
-    left:max(34px,env(safe-area-inset-left))!important;
-    right:max(34px,env(safe-area-inset-right))!important;
-    bottom:64px!important;
-    width:auto!important;
+    left:max(24px,env(safe-area-inset-left))!important;
+    right:auto!important;
+    top:calc(max(18px,env(safe-area-inset-top)) + 154px)!important;
+    bottom:auto!important;
+    width:min(310px,calc(100vw - 48px))!important;
     min-width:0!important;
     min-height:54px!important;
     padding:13px 20px!important;
