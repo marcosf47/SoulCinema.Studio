@@ -7319,6 +7319,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     document.body.dataset.mobilePortalLock='1';
     document.body.dataset.scene='lobby';document.body.dataset.experience='portal_mode';
     scrollTo(0,0);
+    setTimeout(()=>{try{arm()}catch(_e){}},0);
   };
   const goEnter=()=>{
     resetLocks();cleanPortals();restoreMedia();
