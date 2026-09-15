@@ -7432,6 +7432,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     else if(returns.has(id))action=goPortals;
     else if(room)action=()=>openRoom(room);
     if(!action)return;
+    document.body.dataset.mobileTap=(room||id||'unknown')+':'+e.type;
     e.preventDefault();e.stopImmediatePropagation();
     const now=performance.now();
     if(now-lastMobileTap<700)return;
