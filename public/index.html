@@ -7749,7 +7749,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
     box-sizing:border-box!important;
   }
 }
-@media(orientation:landscape) and (max-width:1100px){
+@media(orientation:landscape) and (pointer:coarse) and (max-width:1100px){
   body[data-live-mode="live"] #liveCenter.active,
   body[data-live-mode="live"] #liveCenter.active .center,
   body[data-live-mode="live"] #liveCenter.active .center > div,
@@ -7833,7 +7833,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap:not(.rc308-live-r
 }
 </style>
 <style id="rc382-mobile-live-landscape-full-bleed-16x9">
-@media(orientation:landscape){
+@media(orientation:landscape) and (pointer:coarse){
   html body #liveCenter.active,
   html body[data-live-mode="live"] #liveCenter.active{
     position:fixed!important;
@@ -8325,11 +8325,12 @@ html body.sc-live-landscape #liveCenter.active #liveMain::after{
 <script id="rc383-mobile-live-landscape-runtime-lock">
 (()=> {
   'use strict';
+  const mobile=()=>matchMedia('(pointer:coarse)').matches||matchMedia('(max-width:860px)').matches;
   const live=()=>document.getElementById('liveCenter');
   const landscape=()=>innerWidth>innerHeight;
   const active=()=>live()?.classList.contains('active');
   const sync=()=>{
-    const on=active()&&landscape();
+    const on=mobile()&&active()&&landscape();
     document.body.classList.toggle('sc-live-landscape',on);
     const back=document.getElementById('returnLobby');
     if(back&&on){
@@ -8348,6 +8349,8 @@ html body.sc-live-landscape #liveCenter.active #liveMain::after{
 <script id="rc384-live-feed-src-stability-lock">
 (()=> {
   'use strict';
+  const mobile=()=>matchMedia('(pointer:coarse)').matches||matchMedia('(max-width:860px)').matches;
+  if(!mobile())return;
   const CANONICAL='https://live.soulcinema.studio/soulcinemad-opus/?controls=false&muted=false&autoplay=true&playsInline=true';
   const BLANK='about:blank';
   const live=()=>document.getElementById('liveCenter');
