@@ -17,34 +17,25 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - name: Apply RC400 master mobile live fullscreen authority
+      - name: Apply RC401 mobile portal return stabilization
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import re
           p=Path('public/index.html')
           h=p.read_text(encoding='utf-8')
-          # Remove failed fullscreen authorities only; preserve RC395 viewport fallback and all live/navigation engines.
-          for n in (396,397,398,399):
-              h=re.sub(r'<!-- RC%s[^>]*-->\s*<script[^>]*id="rc%s-[^"]*"[^>]*>.*?</script>\s*' % (n,n),'',h,flags=re.S|re.I)
-          marker='<!-- RC400 MASTER MOBILE LIVE FULLSCREEN AUTHORITY -->'
-          patch=marker+'''\n<style id="rc400-master-mobile-live-fullscreen-style">\n@media (pointer:coarse) and (orientation:landscape) and (max-height:700px){\n body.rc400-live-landscape #liveCenter{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;z-index:2147483646!important;background:#000!important;padding:0!important;margin:0!important;}\n body.rc400-live-landscape #liveCenter .center,body.rc400-live-landscape #liveCenter .live-shell,body.rc400-live-landscape #liveCenter .live-main,body.rc400-live-landscape #liveCenter .live-stage{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:#000!important;}\n body.rc400-live-landscape #rc275LiveFrame{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border:0!important;border-radius:0!important;display:block!important;background:#000!important;}\n body.rc400-live-landscape #liveCenter button,body.rc400-live-landscape #liveCenter .room-back,body.rc400-live-landscape #liveCenter .return,body.rc400-live-landscape #liveCenter .live-head,body.rc400-live-landscape #liveCenter .live-footer{display:none!important;}\n}\n</style>\n<script id="rc400-master-mobile-live-fullscreen-authority">\n(()=>{\n const mobile=()=>matchMedia('(pointer:coarse)').matches&&Math.max(screen.width,screen.height)<=1400;\n const live=()=>document.body?.dataset.liveMode==='live'&&document.getElementById('liveCenter')?.classList.contains('active');\n const landscape=()=>matchMedia('(orientation:landscape)').matches;\n const frame=()=>document.getElementById('rc275LiveFrame');\n const prep=()=>{const f=frame();if(!f)return null;f.allowFullscreen=true;f.setAttribute('allowfullscreen','');f.setAttribute('webkitallowfullscreen','');const a=f.getAttribute('allow')||'';if(!/fullscreen/i.test(a))f.setAttribute('allow',(a?a+'; ':'')+'fullscreen *');return f};\n const sync=()=>{if(!mobile())return;const on=live()&&landscape();document.body.classList.toggle('rc400-live-landscape',on);if(!on&&document.fullscreenElement){document.exitFullscreen?.().catch?.(()=>{})}};\n const native=()=>{if(!mobile()||!live())return;const f=prep();if(!f||document.fullscreenElement)return;try{const p=f.requestFullscreen?.({navigationUI:'hide'})||f.webkitRequestFullscreen?.();p?.catch?.(()=>{})}catch(_e){}};\n // Native fullscreen is requested only inside a real user activation; CSS remains the automatic landscape fallback.\n document.addEventListener('pointerup',e=>{if(!mobile()||!live())return;const f=frame();const stage=f?.parentElement;if(e.target===f||stage?.contains?.(e.target)){native()}},{capture:true});\n document.addEventListener('touchend',e=>{if(!mobile()||!live())return;const f=frame();const stage=f?.parentElement;if(e.target===f||stage?.contains?.(e.target)){native()}},{capture:true,passive:true});\n window.addEventListener('orientationchange',sync);screen.orientation?.addEventListener?.('change',sync);window.addEventListener('resize',sync);\n new MutationObserver(sync).observe(document.documentElement,{subtree:true,attributes:true,attributeFilter:['class','data-live-mode']});\n prep();sync();\n})();\n</script>\n'''
+          marker='<!-- RC401 MOBILE PORTAL RETURN STABILIZATION -->'
+          patch=marker+'''\n<style id="rc401-mobile-portal-return-style">\n@media (max-width:860px),(pointer:coarse){\n #lobby #portals{touch-action:pan-y!important;}\n #lobby #portals .portal,#lobby #portals button{touch-action:manipulation!important;}\n}\n</style>\n<script id="rc401-mobile-portal-return-stabilization">\n(()=>{\n const mobile=()=>matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches;\n const lobby=()=>document.getElementById('lobby');\n const portals=()=>document.getElementById('portals');\n let lastRoom=false;\n const isLobby=()=>lobby()?.classList.contains('active');\n const repair=()=>{\n   if(!mobile()||!isLobby())return;\n   const p=portals();if(!p)return;\n   p.style.pointerEvents='auto';\n   p.style.touchAction='pan-y';\n   p.removeAttribute('inert');p.setAttribute('aria-hidden','false');\n   [...p.querySelectorAll('.portal,button,[role="button"]')].forEach(el=>{el.style.pointerEvents='auto';el.removeAttribute('inert');});\n   document.documentElement.style.pointerEvents='';document.body.style.pointerEvents='';\n   document.body.classList.remove('rc400-live-landscape');\n   lastRoom=false;\n };\n const note=()=>{if(!mobile())return;if(!isLobby())lastRoom=true;else if(lastRoom){requestAnimationFrame(()=>requestAnimationFrame(repair));setTimeout(repair,90);setTimeout(repair,260)}};\n new MutationObserver(note).observe(document.body,{subtree:true,attributes:true,attributeFilter:['class','style','aria-hidden','inert']});\n window.addEventListener('pageshow',repair);\n document.addEventListener('pointerup',()=>{if(isLobby())setTimeout(repair,0)},{capture:true});\n document.addEventListener('touchend',()=>{if(isLobby())setTimeout(repair,0)},{capture:true,passive:true});\n note();\n})();\n</script>\n'''
           if marker not in h:
               if '</body>' not in h: raise SystemExit('Missing body anchor')
-              h=h.replace('</body>',patch+'</body>',1)
-          p.write_text(h,encoding='utf-8')
+              p.write_text(h.replace('</body>',patch+'</body>',1),encoding='utf-8')
           PY
-      - name: Verify RC400 master authority
+      - name: Verify RC401 patch
         run: |
-          grep -q 'rc400-master-mobile-live-fullscreen-authority' public/index.html
+          grep -q 'rc401-mobile-portal-return-stabilization' public/index.html
           grep -q 'rc342-mobile-navigation-owner' public/index.html
-          grep -q 'rc395-mobile-landscape-live-fill' public/index.html
-          ! grep -q 'rc396-' public/index.html
-          ! grep -q 'rc397-' public/index.html
-          ! grep -q 'rc398-' public/index.html
-          ! grep -q 'rc399-' public/index.html
-      - name: Commit RC400 source
+          grep -q 'rc400-master-mobile-live-fullscreen-authority' public/index.html
+      - name: Commit RC401 source
         run: |
           git config user.name 'SoulCinema Direct Deploy'
           git config user.email 'actions@users.noreply.github.com'
-          if git diff --quiet -- public/index.html; then echo 'RC400 already applied'; else git add public/index.html && git commit -m 'RC400 master mobile live fullscreen authority' && git push origin HEAD:main; fi
+          if git diff --quiet -- public/index.html; then echo 'RC401 already applied'; else git add public/index.html && git commit -m 'RC401 stabilize mobile portal return navigation' && git push origin HEAD:main; fi
