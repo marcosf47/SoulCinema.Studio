@@ -17,33 +17,28 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - name: Apply RC407 isolated mobile theater landscape player
+      - name: Apply RC408 theater native fullscreen gesture
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import re
           p=Path('public/index.html')
           h=p.read_text(encoding='utf-8')
-          # Remove rejected landscape authorities only. Preserve RC404 premiere/navigation/live engines.
-          h=re.sub(r'<!-- RC406 MASTER MOBILE THEATER LANDSCAPE -->\s*<style id="rc406-master-mobile-theater-landscape">.*?</style>\s*<script id="rc406-master-mobile-theater-landscape-guard">.*?</script>\s*','',h,flags=re.S)
-          h=re.sub(r'<!-- RC405 MOBILE THEATER LANDSCAPE 16X9 -->\s*<style id="rc405-mobile-theater-landscape-16x9">.*?</style>\s*','',h,flags=re.S)
-          marker='<!-- RC407 ISOLATED MOBILE THEATER LANDSCAPE PLAYER -->'
-          patch=marker+'''\n<style id="rc407-isolated-mobile-theater-landscape-player">\n/* Landscape-only isolation: black viewport + the existing theater player frame. */\nbody.rc407-theater-landscape::after{content:"";position:fixed;inset:0;background:#000;z-index:2147483200;pointer-events:none}\nbody.rc407-theater-landscape #screeningTheater{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;overflow:hidden!important;z-index:2147483300!important;background:transparent!important}\nbody.rc407-theater-landscape #screeningTheater>.theater-bg,body.rc407-theater-landscape #screeningTheater>.theater-glow,body.rc407-theater-landscape #screeningTheater>.grain{display:none!important}\nbody.rc407-theater-landscape #screeningTheater>.center{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;padding:0!important;margin:0!important;overflow:hidden!important;display:block!important;background:transparent!important}\nbody.rc407-theater-landscape #screeningTheater .theater-shell{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;min-height:0!important;margin:0!important;padding:0!important;display:block!important;background:transparent!important;border:0!important;box-shadow:none!important;overflow:hidden!important;transform:none!important;filter:none!important;opacity:1!important}\nbody.rc407-theater-landscape #screeningTheater .theater-shell>*:not(.theater-screen-frame){display:none!important;visibility:hidden!important;pointer-events:none!important}\nbody.rc407-theater-landscape #screeningTheater .theater-screen-frame{display:block!important;visibility:visible!important;position:fixed!important;left:0!important;top:0!important;width:100vw!important;height:100dvh!important;min-height:0!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:#000!important;box-shadow:none!important;overflow:hidden!important;z-index:2147483400!important;transform:none!important}\nbody.rc407-theater-landscape #screeningTheater .theater-screen{display:block!important;visibility:visible!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:#000!important;overflow:hidden!important}\nbody.rc407-theater-landscape #screeningTheater #theaterPlayer{display:block!important;visibility:visible!important;opacity:1!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:#000!important;object-fit:contain!important;transform:none!important;filter:none!important;z-index:2!important}\nbody.rc407-theater-landscape #screeningTheater #theaterPoster{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border-radius:0!important;z-index:3!important}\nbody.rc407-theater-landscape #screeningTheater #theaterPoster.hidden{opacity:0!important;visibility:hidden!important;pointer-events:none!important}\nbody.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!important}\n</style>\n<script id="rc407-isolated-mobile-theater-landscape-guard">\n(()=>{\n const isMobileLandscape=()=>matchMedia('(orientation:landscape)').matches&&(matchMedia('(pointer:coarse)').matches||innerWidth<=1100)&&innerWidth<=1100;\n const sync=()=>{\n   const t=document.getElementById('screeningTheater');\n   const on=!!(t&&t.classList.contains('active')&&isMobileLandscape());\n   document.body.classList.toggle('rc407-theater-landscape',on);\n };\n const t=document.getElementById('screeningTheater');\n if(t)new MutationObserver(sync).observe(t,{attributes:true,attributeFilter:['class']});\n addEventListener('orientationchange',()=>{sync();setTimeout(sync,80);setTimeout(sync,300)},{passive:true});\n addEventListener('resize',sync,{passive:true});\n sync();\n})();\n</script>\n'''
+          marker='<!-- RC408 THEATER NATIVE FULLSCREEN GESTURE -->'
+          patch=marker+'''\n<script id="rc408-theater-native-fullscreen-gesture">\n(()=>{\n const mobile=()=>matchMedia('(pointer:coarse)').matches||innerWidth<=1100;\n const landscape=()=>matchMedia('(orientation:landscape)').matches;\n const active=()=>document.getElementById('screeningTheater')?.classList.contains('active');\n const fsEl=()=>document.fullscreenElement||document.webkitFullscreenElement;\n const enter=async()=>{\n   if(!mobile()||!landscape()||!active()||fsEl())return;\n   const v=document.getElementById('theaterPlayer');\n   if(!v)return;\n   try{\n     if(v.requestFullscreen)await v.requestFullscreen({navigationUI:'hide'});\n     else if(v.webkitRequestFullscreen)v.webkitRequestFullscreen();\n     else if(v.webkitEnterFullscreen)v.webkitEnterFullscreen();\n   }catch(_){ }\n };\n // Native fullscreen must run inside a real user gesture. RC407 remains the fallback if browser refuses it.\n document.addEventListener('pointerup',e=>{\n   if(!active()||!landscape())return;\n   if(e.target.closest?.('#screeningTheater .theater-screen-frame,#screeningTheater #theaterPlayer'))enter();\n },true);\n document.addEventListener('touchend',e=>{\n   if(!active()||!landscape())return;\n   if(e.target.closest?.('#screeningTheater .theater-screen-frame,#screeningTheater #theaterPlayer'))enter();\n },{capture:true,passive:true});\n})();\n</script>\n'''
           if marker not in h:
               if '</body>' not in h: raise SystemExit('Missing body anchor')
               h=h.replace('</body>',patch+'</body>',1)
           p.write_text(h,encoding='utf-8')
           PY
-      - name: Verify RC407 isolated state
+      - name: Verify RC408 state
         run: |
+          grep -q 'rc408-theater-native-fullscreen-gesture' public/index.html
           grep -q 'rc407-isolated-mobile-theater-landscape-player' public/index.html
           grep -q 'rc404-mobile-theater-premiere-reveal' public/index.html
           grep -q 'rc342-mobile-navigation-owner' public/index.html
           grep -q 'rc400-master-mobile-live-fullscreen-authority' public/index.html
-          ! grep -q 'rc406-master-mobile-theater-landscape' public/index.html
-          ! grep -q 'rc405-mobile-theater-landscape-16x9' public/index.html
-      - name: Commit RC407 source
+      - name: Commit RC408 source
         run: |
           git config user.name 'SoulCinema Direct Deploy'
           git config user.email 'actions@users.noreply.github.com'
-          if git diff --quiet -- public/index.html; then echo 'RC407 already applied'; else git add public/index.html && git commit -m 'RC407 isolate mobile theater landscape player' && git push origin HEAD:main; fi
+          if git diff --quiet -- public/index.html; then echo 'RC408 already applied'; else git add public/index.html && git commit -m 'RC408 add theater native fullscreen gesture' && git push origin HEAD:main; fi
