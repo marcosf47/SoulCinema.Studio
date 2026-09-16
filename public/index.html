@@ -7969,15 +7969,9 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
     });
   };
   const openRoom=(room,source)=>{
-    if(document.body.dataset.experience==='portal_mode'&&document.body.dataset.rc375RoomOpening!=='1'){
-      document.body.dataset.rc375RoomOpening='1';
+    if(document.body.dataset.experience==='portal_mode'){
       source?.classList?.add('rc375-portal-pressed');
-      setTimeout(()=>{
-        source?.classList?.remove('rc375-portal-pressed');
-        delete document.body.dataset.rc375RoomOpening;
-        openRoom(room);
-      },145);
-      return;
+      requestAnimationFrame(()=>source?.classList?.remove('rc375-portal-pressed'));
     }
     resetLocks();stopMedia($id('lobby')||document);scrubRoomState();cleanPortals();
     delete document.body.dataset.rc375RoomOpening;
@@ -8058,7 +8052,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
         n.dataset.mobileRoom='Journal';
         delete n.dataset.room;
       }
-      bind(n,()=>openRoom(room,n));
+      // RC413C: portal cards are owned only by the exact-target capture router.
     });
     ['theaterReturn','musicReturn','returnLobby','productionReturn','storyReturn','journalReturn','bibleReturn','aboutReturn','contactReturn']
       .forEach(id=>{
@@ -8081,28 +8075,8 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
   };
   const findAction=(e)=>{
     if(!mobile())return;
-    const p=eventPoint(e);
-    let hit=e.target?.closest?.('#portals .portal[data-room],#portals .portal[data-mobile-room],#portals .studio-utility-btn[data-room],button,[role="button"]');
-    if(!hit&&document.elementFromPoint){
-      hit=document.elementFromPoint(p.x,p.y)?.closest?.('#portals .portal[data-room],#portals .portal[data-mobile-room],#portals .studio-utility-btn[data-room],button,[role="button"]');
-    }
-    if(document.body.dataset.experience==='portal_mode'){
-      const portalHit=e.target?.closest?.('#portals .portal[data-room],#portals .portal[data-mobile-room],#portals .studio-utility-btn[data-room]')||
-        document.elementFromPoint?.(p.x,p.y)?.closest?.('#portals .portal[data-room],#portals .portal[data-mobile-room],#portals .studio-utility-btn[data-room]');
-      if(portalHit)hit=portalHit;
-    }
-    if(!hit){
-      const portalFallback=[...document.querySelectorAll('#portals .portal[data-room],#portals .portal[data-mobile-room],#portals .studio-utility-btn[data-room]')]
-        .find(el=>inBox(el,p));
-      if(portalFallback)hit=portalFallback;
-      const fallback=!hit&&[
-        ['skip',goPortals],['back',goGate],['enter',goEnter],['preview',goEnter],
-        ['theaterReturn',goPortals],['musicReturn',goPortals],['returnLobby',goPortals],
-        ['productionReturn',goPortals],['storyReturn',goPortals],['journalReturn',goPortals],
-        ['bibleReturn',goPortals],['aboutReturn',goPortals],['contactReturn',goPortals]
-      ].find(([id])=>inBox($id(id),p));
-      if(fallback)return {action:fallback[1],hit:$id(fallback[0])};
-    }
+    const portalSelector='#portals .portal[data-room],#portals .portal[data-mobile-room],#portals .studio-utility-btn[data-room]';
+    const hit=e.target?.closest?.(portalSelector+',button,[role=button]');
     if(!hit)return;
     const id=hit.id||'';
     const room=hit.dataset?.mobileRoom||hit.dataset?.room;
@@ -8112,7 +8086,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
     else if(id==='back')action=goGate;
     else if(id==='skip')action=goPortals;
     else if(returns.has(id))action=goPortals;
-    else if(room)action=()=>openRoom(room,hit);
+    else if(room&&hit.closest?.('#portals'))action=()=>openRoom(room,hit);
     if(!action)return;
     return {action,hit};
   };
@@ -8129,7 +8103,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
       const p=eventPoint(e);
       const dx=Math.abs(p.x-tapStart.x);
       const dy=Math.abs(p.y-tapStart.y);
-      if(dx>32||dy>32)return;
+      if(dx>32||dy>32||tapStart.hit!==routed.hit){tapStart=null;return;}
     }
     e.preventDefault();e.stopImmediatePropagation();
     const now=performance.now();
@@ -8147,25 +8121,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
   window.addEventListener('pageshow',()=>{resetLocks();if($id('gate')?.classList.contains('active'))delete document.body.dataset.mobilePortalLock});
 })();
 </script>
-<!-- RC412B DIRECT MOBILE PORTAL ROUTER -->
-<style id="rc412b-direct-mobile-portal-router-css">
-@media(max-width:700px){body[data-experience="portal_mode"] #portals,body[data-experience="portal_mode"] #portals .portal,body[data-experience="portal_mode"] #portals .studio-utility-btn{pointer-events:auto!important}}
-</style>
-<script id="rc412b-direct-mobile-portal-router">
-(()=>{
-  if(!matchMedia('(max-width:700px)').matches)return;
-  let down=null,last=0;
-  const selector='#portals .portal[data-room],#portals .portal[data-mobile-room],#portals .studio-utility-btn[data-room]';
-  const roomOf=el=>el?.dataset?.mobileRoom||el?.dataset?.room||'';
-  const route=room=>{
-    if(typeof window.scMobileDirectOpen==='function'){window.scMobileDirectOpen(room);return}
-    const portal=[...document.querySelectorAll(selector)].find(el=>roomOf(el)===room);
-    if(portal){portal.click()}
-  };
-  document.addEventListener('pointerdown',e=>{if(document.body.dataset.experience!=='portal_mode')return;const c=e.target?.closest?.(selector);if(c)down={c,x:e.clientX,y:e.clientY}},true);
-  document.addEventListener('pointerup',e=>{if(document.body.dataset.experience!=='portal_mode'||!down)return;const c=e.target?.closest?.(selector),d=down;down=null;if(!c||c!==d.c||Math.abs(e.clientX-d.x)>24||Math.abs(e.clientY-d.y)>24)return;const now=performance.now();if(now-last<350)return;last=now;e.preventDefault();e.stopImmediatePropagation();const room=roomOf(c);if(typeof openRoom==='function')openRoom(room,c);else route(room)},true);
-})();
-</script>
+<!-- RC413C MOBILE PORTALS SINGLE NAVIGATION AUTHORITY -->
 <!-- RC375 MOBILE PORTAL SCROLL + ROOM HANDOFF SMOOTHNESS -->
 <!-- RC376 MOBILE FULL PORTAL CARD TAP RELIABILITY -->
 <!-- RC377 MOBILE ROOM EXIT PORTAL UNFREEZE OWNER -->
