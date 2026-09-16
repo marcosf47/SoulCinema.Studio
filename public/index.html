@@ -8245,4 +8245,32 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  sync();
 })();
 </script>
+<!-- RC408 THEATER NATIVE FULLSCREEN GESTURE -->
+<script id="rc408-theater-native-fullscreen-gesture">
+(()=>{
+ const mobile=()=>matchMedia('(pointer:coarse)').matches||innerWidth<=1100;
+ const landscape=()=>matchMedia('(orientation:landscape)').matches;
+ const active=()=>document.getElementById('screeningTheater')?.classList.contains('active');
+ const fsEl=()=>document.fullscreenElement||document.webkitFullscreenElement;
+ const enter=async()=>{
+   if(!mobile()||!landscape()||!active()||fsEl())return;
+   const v=document.getElementById('theaterPlayer');
+   if(!v)return;
+   try{
+     if(v.requestFullscreen)await v.requestFullscreen({navigationUI:'hide'});
+     else if(v.webkitRequestFullscreen)v.webkitRequestFullscreen();
+     else if(v.webkitEnterFullscreen)v.webkitEnterFullscreen();
+   }catch(_){ }
+ };
+ // Native fullscreen must run inside a real user gesture. RC407 remains the fallback if browser refuses it.
+ document.addEventListener('pointerup',e=>{
+   if(!active()||!landscape())return;
+   if(e.target.closest?.('#screeningTheater .theater-screen-frame,#screeningTheater #theaterPlayer'))enter();
+ },true);
+ document.addEventListener('touchend',e=>{
+   if(!active()||!landscape())return;
+   if(e.target.closest?.('#screeningTheater .theater-screen-frame,#screeningTheater #theaterPlayer'))enter();
+ },{capture:true,passive:true});
+})();
+</script>
 </body></html>
