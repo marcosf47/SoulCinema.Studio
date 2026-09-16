@@ -8205,4 +8205,22 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
   document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&landscape()&&liveActive())setTimeout(request,80)});
 })();
 </script>
+<!-- RC397 MOBILE LIVE NATIVE IFRAME FULLSCREEN HANDOFF -->
+<script id="rc397-mobile-live-native-iframe-fullscreen">
+(()=>{
+ const mobile=()=>matchMedia('(pointer:coarse)').matches&&Math.max(screen.width,screen.height)<=1400;
+ const landscape=()=>matchMedia('(orientation:landscape)').matches;
+ const active=()=>document.body?.dataset.liveMode==='live'&&document.getElementById('liveCenter')?.classList.contains('active');
+ const frame=()=>document.getElementById('rc275LiveFrame');
+ const prep=()=>{const f=frame();if(!f)return null;f.setAttribute('allowfullscreen','');f.setAttribute('webkitallowfullscreen','');f.setAttribute('allow',(f.getAttribute('allow')||'')+'; fullscreen');return f};
+ const request=async()=>{if(!mobile()||!landscape()||!active()||document.fullscreenElement)return;const f=prep();if(!f)return;try{if(f.requestFullscreen)await f.requestFullscreen({navigationUI:'hide'});else if(f.webkitRequestFullscreen)f.webkitRequestFullscreen();}catch(_e){}};
+ const exit=async()=>{if(landscape())return;try{if(document.fullscreenElement&&document.exitFullscreen)await document.exitFullscreen()}catch(_e){}};
+ const sync=()=>landscape()?request():exit();
+ prep();
+ window.addEventListener('orientationchange',()=>setTimeout(sync,80));
+ screen.orientation?.addEventListener?.('change',()=>setTimeout(sync,80));
+ window.addEventListener('resize',()=>setTimeout(sync,80));
+ ['pointerup','touchend'].forEach(t=>window.addEventListener(t,()=>{if(landscape()&&active())request()},{capture:true,passive:true}));
+})();
+</script>
 </body></html>
