@@ -8242,4 +8242,20 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
  prep();
 })();
 </script>
+<!-- RC399 MOBILE LIVE DIRECT-GESTURE NATIVE FULLSCREEN -->
+<script id="rc399-mobile-live-direct-gesture-native-fullscreen">
+(()=>{
+ const mobile=()=>matchMedia('(pointer:coarse)').matches&&Math.max(screen.width,screen.height)<=1400;
+ const active=()=>document.body?.dataset.liveMode==='live'&&document.getElementById('liveCenter')?.classList.contains('active');
+ const frame=()=>document.getElementById('rc275LiveFrame');
+ const prep=()=>{const f=frame();if(!f)return null;f.allowFullscreen=true;f.setAttribute('allowfullscreen','');f.setAttribute('webkitallowfullscreen','');const a=f.getAttribute('allow')||'';if(!a.includes('fullscreen'))f.setAttribute('allow',(a?a+'; ':'')+'fullscreen *');return f};
+ const enter=()=>{if(!mobile()||!active()||document.fullscreenElement)return false;const f=prep();if(!f)return false;try{if(f.requestFullscreen){f.requestFullscreen({navigationUI:'hide'}).catch(()=>{});return true}if(f.webkitRequestFullscreen){f.webkitRequestFullscreen();return true}}catch(_e){}return false};
+ const direct=(e)=>{if(!mobile()||!active())return;const f=frame();const wrap=document.getElementById('livePlayer')||document.getElementById('livePlayerWrap')||document.getElementById('liveMain');const t=e.target;if(!(t===f||f?.contains?.(t)||wrap?.contains?.(t)))return;enter()};
+ document.addEventListener('pointerup',direct,true);
+ document.addEventListener('touchend',direct,{capture:true,passive:true});
+ const orient=()=>{if(!mobile()||!active())return;if(matchMedia('(orientation:portrait)').matches&&document.fullscreenElement){document.exitFullscreen?.().catch?.(()=>{})}};
+ window.addEventListener('orientationchange',orient);screen.orientation?.addEventListener?.('change',orient);
+ prep();
+})();
+</script>
 </body></html>
