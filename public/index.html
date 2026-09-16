@@ -7930,7 +7930,8 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
     delete document.body.dataset.rc375RoomOpening;
     document.body.dataset.scene='lobby';document.body.dataset.experience='portal_mode';
     tapStart=null;
-    lastMobileTap=-10000;
+    // RC411: keep the return gesture inside the debounce window so its synthetic click cannot hit a portal underneath.
+    lastMobileTap=performance.now();
     scrollTo(0,0);
     setTimeout(()=>{try{arm()}catch(_e){}},0);
     // RC410: one stable portal handoff. Do not repeatedly scrub/rebuild room state after return.
@@ -7944,7 +7945,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
         document.body.dataset.scene='lobby';
         delete document.body.dataset.rc375RoomOpening;
         tapStart=null;
-        lastMobileTap=-10000;
+        lastMobileTap=performance.now();
       }
     });
   };
