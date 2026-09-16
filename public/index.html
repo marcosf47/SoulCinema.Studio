@@ -7933,13 +7933,20 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
     lastMobileTap=-10000;
     scrollTo(0,0);
     setTimeout(()=>{try{arm()}catch(_e){}},0);
-    [80,300,700,1400].forEach(ms=>setTimeout(()=>{
+    // RC410: one stable portal handoff. Do not repeatedly scrub/rebuild room state after return.
+    requestAnimationFrame(()=>{
       if(document.body.dataset.experience==='portal_mode'){
-        resetLocks();scrubRoomState();onlyScene('lobby');
-        l?.classList.add('portal-mode');p?.classList.add('show');
+        resetLocks();
+        onlyScene('lobby');
+        l?.classList.add('portal-mode');
+        p?.classList.add('show');
+        p?.style.setProperty('pointer-events','auto','important');
         document.body.dataset.scene='lobby';
+        delete document.body.dataset.rc375RoomOpening;
+        tapStart=null;
+        lastMobileTap=-10000;
       }
-    },ms));
+    });
   };
   window.scMobileGoPortals=goPortals;
   const goEnter=()=>{
