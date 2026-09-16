@@ -8147,6 +8147,25 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
   window.addEventListener('pageshow',()=>{resetLocks();if($id('gate')?.classList.contains('active'))delete document.body.dataset.mobilePortalLock});
 })();
 </script>
+<!-- RC412B DIRECT MOBILE PORTAL ROUTER -->
+<style id="rc412b-direct-mobile-portal-router-css">
+@media(max-width:700px){body[data-experience="portal_mode"] #portals,body[data-experience="portal_mode"] #portals .portal,body[data-experience="portal_mode"] #portals .studio-utility-btn{pointer-events:auto!important}}
+</style>
+<script id="rc412b-direct-mobile-portal-router">
+(()=>{
+  if(!matchMedia('(max-width:700px)').matches)return;
+  let down=null,last=0;
+  const selector='#portals .portal[data-room],#portals .portal[data-mobile-room],#portals .studio-utility-btn[data-room]';
+  const roomOf=el=>el?.dataset?.mobileRoom||el?.dataset?.room||'';
+  const route=room=>{
+    if(typeof window.scMobileDirectOpen==='function'){window.scMobileDirectOpen(room);return}
+    const portal=[...document.querySelectorAll(selector)].find(el=>roomOf(el)===room);
+    if(portal){portal.click()}
+  };
+  document.addEventListener('pointerdown',e=>{if(document.body.dataset.experience!=='portal_mode')return;const c=e.target?.closest?.(selector);if(c)down={c,x:e.clientX,y:e.clientY}},true);
+  document.addEventListener('pointerup',e=>{if(document.body.dataset.experience!=='portal_mode'||!down)return;const c=e.target?.closest?.(selector),d=down;down=null;if(!c||c!==d.c||Math.abs(e.clientX-d.x)>24||Math.abs(e.clientY-d.y)>24)return;const now=performance.now();if(now-last<350)return;last=now;e.preventDefault();e.stopImmediatePropagation();const room=roomOf(c);if(typeof openRoom==='function')openRoom(room,c);else route(room)},true);
+})();
+</script>
 <!-- RC375 MOBILE PORTAL SCROLL + ROOM HANDOFF SMOOTHNESS -->
 <!-- RC376 MOBILE FULL PORTAL CARD TAP RELIABILITY -->
 <!-- RC377 MOBILE ROOM EXIT PORTAL UNFREEZE OWNER -->
