@@ -17,77 +17,49 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - name: Apply RC412 direct mobile portal routing
+      - name: Apply RC412B direct mobile portal routing
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p=Path('public/index.html')
           h=p.read_text(encoding='utf-8')
           anchor='<!-- RC375 MOBILE PORTAL SCROLL + ROOM HANDOFF SMOOTHNESS -->'
-          if anchor not in h: raise SystemExit('RC375 anchor not found')
-          patch=r'''<!-- RC412 DIRECT MOBILE PORTAL ROUTER -->
-<style id="rc412-direct-mobile-portal-router-css">
-@media(max-width:700px){
-  body[data-experience="portal_mode"] #portals{pointer-events:auto!important;}
-  body[data-experience="portal_mode"] #portals .portal,
-  body[data-experience="portal_mode"] #portals .studio-utility-btn{pointer-events:auto!important;touch-action:pan-y!important;}
-}
-</style>
-<script id="rc412-direct-mobile-portal-router">
-(()=>{
- if(!matchMedia('(max-width:700px)').matches)return;
- let down=null,last=0;
- const cards=()=>[...document.querySelectorAll('#portals .portal[data-room],#portals .portal[data-mobile-room],#portals .studio-utility-btn[data-room]')];
- const roomOf=el=>el?.dataset?.mobileRoom||el?.dataset?.room||'';
- const route=room=>{
-   const map={
-    'Screening Theater':()=>openTheater(),
-    'Music Room':()=>openMusic(),
-    'Live Center':()=>openLive(),
-    'Production Room':()=>typeof openProductionHard==='function'?openProductionHard():openProduction(),
-    'Story Room':()=>openStory(),
-    'Journal':()=>typeof openJournal==='function'?openJournal():null,
-    'Visual Bible':()=>typeof openBibleHard==='function'?openBibleHard():openBible(),
-    'About Us':()=>openAbout(),
-    'Contact':()=>openContact()
-   };
-   const ids={'Screening Theater':'screeningTheater','Music Room':'musicRoom','Live Center':'liveCenter','Production Room':'productionRoom','Story Room':'storyRoom','Journal':'journalRoom','Visual Bible':'visualBibleRoom','About Us':'aboutRoom','Contact':'contactRoom'};
-   const scenes={'Screening Theater':'theater','Music Room':'music','Live Center':'live','Production Room':'production','Story Room':'story','Journal':'journal','Visual Bible':'visual-bible','About Us':'about','Contact':'contact'};
-   const id=ids[room];if(!id||!map[room])return;
-   try{clearTimers?.()}catch(_){};
-   try{transitionLocked=false;journeyBusy=false}catch(_){};
-   document.querySelectorAll('.scene.active').forEach(s=>s.classList.remove('active'));
-   document.getElementById('lobby')?.classList.remove('portal-mode');
-   document.getElementById('portals')?.classList.remove('show');
-   try{map[room]()}catch(_){};
-   document.querySelectorAll('.scene.active').forEach(s=>{if(s.id!==id)s.classList.remove('active')});
-   document.getElementById(id)?.classList.add('active');
-   document.body.dataset.scene=scenes[room];
-   document.body.dataset.experience=scenes[room]+'_active';
- };
- const cardAt=e=>e.target?.closest?.('#portals .portal[data-room],#portals .portal[data-mobile-room],#portals .studio-utility-btn[data-room]');
- document.addEventListener('pointerdown',e=>{if(document.body.dataset.experience!=='portal_mode')return;const c=cardAt(e);if(!c)return;down={c,x:e.clientX,y:e.clientY}},true);
- document.addEventListener('pointerup',e=>{if(document.body.dataset.experience!=='portal_mode'||!down)return;const c=cardAt(e),d=down;down=null;if(!c||c!==d.c||Math.abs(e.clientX-d.x)>24||Math.abs(e.clientY-d.y)>24)return;e.preventDefault();e.stopImmediatePropagation();const now=performance.now();if(now-last<350)return;last=now;route(roomOf(c))},true);
- // Return buttons use the already-established RC342 portal reset, but block the same gesture from falling through to a card.
- const returns=new Set(['theaterReturn','musicReturn','returnLobby','productionReturn','storyReturn','journalReturn','bibleReturn','aboutReturn','contactReturn']);
- document.addEventListener('pointerup',e=>{const b=e.target?.closest?.('button,[role="button"]');if(!b||!returns.has(b.id))return;last=performance.now();down=null},true);
-})();
-</script>
-'''
-          if 'rc412-direct-mobile-portal-router' not in h:
+          if anchor not in h:
+              raise SystemExit('RC375 anchor not found')
+          patch='''<!-- RC412B DIRECT MOBILE PORTAL ROUTER -->
+          <style id="rc412b-direct-mobile-portal-router-css">
+          @media(max-width:700px){body[data-experience="portal_mode"] #portals,body[data-experience="portal_mode"] #portals .portal,body[data-experience="portal_mode"] #portals .studio-utility-btn{pointer-events:auto!important}}
+          </style>
+          <script id="rc412b-direct-mobile-portal-router">
+          (()=>{
+            if(!matchMedia('(max-width:700px)').matches)return;
+            let down=null,last=0;
+            const selector='#portals .portal[data-room],#portals .portal[data-mobile-room],#portals .studio-utility-btn[data-room]';
+            const roomOf=el=>el?.dataset?.mobileRoom||el?.dataset?.room||'';
+            const route=room=>{
+              if(typeof window.scMobileDirectOpen==='function'){window.scMobileDirectOpen(room);return}
+              const portal=[...document.querySelectorAll(selector)].find(el=>roomOf(el)===room);
+              if(portal){portal.click()}
+            };
+            document.addEventListener('pointerdown',e=>{if(document.body.dataset.experience!=='portal_mode')return;const c=e.target?.closest?.(selector);if(c)down={c,x:e.clientX,y:e.clientY}},true);
+            document.addEventListener('pointerup',e=>{if(document.body.dataset.experience!=='portal_mode'||!down)return;const c=e.target?.closest?.(selector),d=down;down=null;if(!c||c!==d.c||Math.abs(e.clientX-d.x)>24||Math.abs(e.clientY-d.y)>24)return;const now=performance.now();if(now-last<350)return;last=now;e.preventDefault();e.stopImmediatePropagation();const room=roomOf(c);if(typeof openRoom==='function')openRoom(room,c);else route(room)},true);
+          })();
+          </script>
+          '''
+          if 'rc412b-direct-mobile-portal-router' not in h:
               h=h.replace(anchor,patch+anchor,1)
           p.write_text(h,encoding='utf-8')
           PY
-      - name: Verify RC412 state
+      - name: Verify RC412B state
         run: |
-          grep -q 'rc412-direct-mobile-portal-router' public/index.html
+          grep -q 'rc412b-direct-mobile-portal-router' public/index.html
           grep -q 'rc407-isolated-mobile-theater-landscape-player' public/index.html
           grep -q 'rc404-mobile-theater-premiere-reveal' public/index.html
           grep -q 'rc342-mobile-navigation-owner' public/index.html
           grep -q 'rc400-master-mobile-live-fullscreen-authority' public/index.html
           ! grep -q 'rc408-theater-native-fullscreen-gesture' public/index.html
-      - name: Commit RC412 source
+      - name: Commit RC412B source
         run: |
           git config user.name 'SoulCinema Direct Deploy'
           git config user.email 'actions@users.noreply.github.com'
-          if git diff --quiet -- public/index.html; then echo 'RC412 already applied'; else git add public/index.html && git commit -m 'RC412 direct mobile portal routing authority' && git push origin HEAD:main; fi
+          if git diff --quiet -- public/index.html; then echo 'RC412B already applied'; else git add public/index.html && git commit -m 'RC412B direct mobile portal routing authority' && git push origin HEAD:main; fi
