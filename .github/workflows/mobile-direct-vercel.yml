@@ -17,28 +17,33 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - name: Apply RC410 mobile return lifecycle stabilization
+      - name: Apply RC411 portal return click-through fix
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p=Path('public/index.html')
           h=p.read_text(encoding='utf-8')
-          old="""    [80,300,700,1400].forEach(ms=>setTimeout(()=>{\n      if(document.body.dataset.experience==='portal_mode'){\n        resetLocks();scrubRoomState();onlyScene('lobby');\n        l?.classList.add('portal-mode');p?.classList.add('show');\n        document.body.dataset.scene='lobby';\n      }\n    },ms));"""
-          new="""    // RC410: one stable portal handoff. Do not repeatedly scrub/rebuild room state after return.\n    requestAnimationFrame(()=>{\n      if(document.body.dataset.experience==='portal_mode'){\n        resetLocks();\n        onlyScene('lobby');\n        l?.classList.add('portal-mode');\n        p?.classList.add('show');\n        p?.style.setProperty('pointer-events','auto','important');\n        document.body.dataset.scene='lobby';\n        delete document.body.dataset.rc375RoomOpening;\n        tapStart=null;\n        lastMobileTap=-10000;\n      }\n    });"""
-          if old not in h: raise SystemExit('RC342 goPortals delayed reset block not found')
+          old="""    tapStart=null;\n    lastMobileTap=-10000;\n    scrollTo(0,0);"""
+          new="""    tapStart=null;\n    // RC411: keep the return gesture inside the debounce window so its synthetic click cannot hit a portal underneath.\n    lastMobileTap=performance.now();\n    scrollTo(0,0);"""
+          if old not in h: raise SystemExit('goPortals tap reset anchor not found')
           h=h.replace(old,new,1)
+          old2="""        tapStart=null;\n        lastMobileTap=-10000;\n      }"""
+          new2="""        tapStart=null;\n        lastMobileTap=performance.now();\n      }"""
+          if old2 not in h: raise SystemExit('RC410 stable handoff tap reset anchor not found')
+          h=h.replace(old2,new2,1)
           p.write_text(h,encoding='utf-8')
           PY
-      - name: Verify RC410 state
+      - name: Verify RC411 state
         run: |
+          grep -q 'RC411: keep the return gesture inside the debounce window' public/index.html
           grep -q 'RC410: one stable portal handoff' public/index.html
           grep -q 'rc407-isolated-mobile-theater-landscape-player' public/index.html
           grep -q 'rc404-mobile-theater-premiere-reveal' public/index.html
           grep -q 'rc342-mobile-navigation-owner' public/index.html
           grep -q 'rc400-master-mobile-live-fullscreen-authority' public/index.html
           ! grep -q 'rc408-theater-native-fullscreen-gesture' public/index.html
-      - name: Commit RC410 source
+      - name: Commit RC411 source
         run: |
           git config user.name 'SoulCinema Direct Deploy'
           git config user.email 'actions@users.noreply.github.com'
-          if git diff --quiet -- public/index.html; then echo 'RC410 already applied'; else git add public/index.html && git commit -m 'RC410 stabilize mobile room return lifecycle' && git push origin HEAD:main; fi
+          if git diff --quiet -- public/index.html; then echo 'RC411 already applied'; else git add public/index.html && git commit -m 'RC411 prevent mobile portal return click-through' && git push origin HEAD:main; fi
