@@ -8214,4 +8214,16 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
  const t=document.getElementById('screeningTheater');if(t)mo.observe(t,{attributes:true,attributeFilter:['class']});
 })();
 </script>
+<!-- RC405 MOBILE THEATER LANDSCAPE 16X9 -->
+<style id="rc405-mobile-theater-landscape-16x9">
+@media (max-width:860px) and (orientation:landscape){
+  #screeningTheater.active{background:#000!important;overflow:hidden!important}
+  #screeningTheater.active>.center{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;padding:0!important;margin:0!important;display:block!important;overflow:hidden!important;background:#000!important;z-index:9998!important}
+  #screeningTheater.active .theater-shell{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;min-height:0!important;max-width:none!important;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;background:#000!important;box-shadow:none!important;display:block!important;overflow:hidden!important}
+  #screeningTheater.active .theater-head,#screeningTheater.active .theater-collections,#screeningTheater.active .theater-footer{display:none!important}
+  #screeningTheater.active .theater-screen-frame,#screeningTheater.active .theater-screen{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;aspect-ratio:auto!important;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;background:#000!important;box-shadow:none!important;overflow:hidden!important}
+  #screeningTheater.active #theaterPlayer{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:contain!important;background:#000!important;border-radius:0!important}
+  #screeningTheater.active #theaterPoster{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border-radius:0!important}
+}
+</style>
 </body></html>
