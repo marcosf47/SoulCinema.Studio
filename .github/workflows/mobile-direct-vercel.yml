@@ -17,30 +17,27 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - name: Apply RC404 mobile premiere reveal
+      - name: Apply RC405 mobile theater landscape 16x9
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import re
           p=Path('public/index.html')
           h=p.read_text(encoding='utf-8')
-          h=re.sub(r'<!-- RC403 MOBILE THEATER PREMIERE LIFECYCLE RESTORE -->.*?<script id="rc403-mobile-theater-premiere-lifecycle-restore">.*?</script>\s*','',h,flags=re.S)
-          marker='<!-- RC404 MOBILE THEATER PREMIERE REVEAL -->'
-          patch=marker+'''\n<script id="rc404-mobile-theater-premiere-reveal">\n(()=>{\n const mobile=()=>matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches;\n const opening='https://tfamln4qsost6j00.public.blob.vercel-storage.com/featured-premiere.mp4';\n const start=()=>{\n   if(!mobile())return;\n   const theater=document.getElementById('screeningTheater'),v=document.getElementById('theaterPlayer'),poster=document.getElementById('theaterPoster');\n   if(!theater?.classList.contains('active')||!v)return;\n   try{theaterHandoffBusy=false;theaterStage='opening'}catch(_){}\n   try{v.pause()}catch(_){};v.classList.remove('theater-handoff','theater-portal-push','theater-feature-enter');\n   v.dataset.scStage='opening';if((v.currentSrc||v.src||'')!==opening){v.src=opening;try{v.load()}catch(_){}}\n   try{v.currentTime=0}catch(_){};v.muted=false;v.playsInline=true;v.setAttribute('playsinline','');\n   const reveal=()=>{poster?.classList.add('hidden');v.removeEventListener('playing',reveal)};v.addEventListener('playing',reveal);\n   const play=()=>{const p=v.play();if(p?.catch)p.catch(()=>{v.muted=true;const q=v.play();q?.catch?.(()=>{})})};\n   if(v.readyState>=2)play();else{v.addEventListener('canplay',play,{once:true});setTimeout(play,180)}\n };\n document.addEventListener('click',e=>{if(!mobile())return;const portal=e.target.closest?.('#portals .portal[data-room="Screening Theater"],#portals .portal[data-mobile-room="Screening Theater"]');if(portal){setTimeout(start,80);setTimeout(start,260)}},true);\n const mo=new MutationObserver(()=>{if(mobile()&&document.getElementById('screeningTheater')?.classList.contains('active'))setTimeout(start,0)});\n const t=document.getElementById('screeningTheater');if(t)mo.observe(t,{attributes:true,attributeFilter:['class']});\n})();\n</script>\n'''
+          marker='<!-- RC405 MOBILE THEATER LANDSCAPE 16X9 -->'
+          patch=marker+'''\n<style id="rc405-mobile-theater-landscape-16x9">\n@media (max-width:860px) and (orientation:landscape){\n  #screeningTheater.active{background:#000!important;overflow:hidden!important}\n  #screeningTheater.active>.center{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;padding:0!important;margin:0!important;display:block!important;overflow:hidden!important;background:#000!important;z-index:9998!important}\n  #screeningTheater.active .theater-shell{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;min-height:0!important;max-width:none!important;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;background:#000!important;box-shadow:none!important;display:block!important;overflow:hidden!important}\n  #screeningTheater.active .theater-head,#screeningTheater.active .theater-collections,#screeningTheater.active .theater-footer{display:none!important}\n  #screeningTheater.active .theater-screen-frame,#screeningTheater.active .theater-screen{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;aspect-ratio:auto!important;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;background:#000!important;box-shadow:none!important;overflow:hidden!important}\n  #screeningTheater.active #theaterPlayer{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:contain!important;background:#000!important;border-radius:0!important}\n  #screeningTheater.active #theaterPoster{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border-radius:0!important}\n}\n</style>\n'''
           if marker not in h:
               if '</body>' not in h: raise SystemExit('Missing body anchor')
               h=h.replace('</body>',patch+'</body>',1)
           p.write_text(h,encoding='utf-8')
           PY
-      - name: Verify RC404 surgical state
+      - name: Verify RC405 surgical state
         run: |
+          grep -q 'rc405-mobile-theater-landscape-16x9' public/index.html
           grep -q 'rc404-mobile-theater-premiere-reveal' public/index.html
           grep -q 'rc342-mobile-navigation-owner' public/index.html
-          grep -q 'featured-premiere.mp4' public/index.html
-          grep -q 'mwen-poukont-mwen-film.mp4' public/index.html
-          ! grep -q 'rc403-mobile-theater-premiere-lifecycle-restore' public/index.html
-      - name: Commit RC404 source
+          grep -q 'rc400-master-mobile-live-fullscreen-authority' public/index.html
+      - name: Commit RC405 source
         run: |
           git config user.name 'SoulCinema Direct Deploy'
           git config user.email 'actions@users.noreply.github.com'
-          if git diff --quiet -- public/index.html; then echo 'RC404 already applied'; else git add public/index.html && git commit -m 'RC404 restore mobile premiere reveal and autoplay' && git push origin HEAD:main; fi
+          if git diff --quiet -- public/index.html; then echo 'RC405 already applied'; else git add public/index.html && git commit -m 'RC405 polish mobile theater landscape 16x9' && git push origin HEAD:main; fi
