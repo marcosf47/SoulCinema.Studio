@@ -8214,35 +8214,34 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
  const t=document.getElementById('screeningTheater');if(t)mo.observe(t,{attributes:true,attributeFilter:['class']});
 })();
 </script>
-<!-- RC406 MASTER MOBILE THEATER LANDSCAPE -->
-<style id="rc406-master-mobile-theater-landscape">
-/* One landscape authority. Portrait, desktop, RC404 premiere engine and Live Center are untouched. */
-@media (orientation:landscape) and (pointer:coarse) and (max-width:1100px){
-  html:has(#screeningTheater.active),body:has(#screeningTheater.active){overflow:hidden!important;background:#000!important}
-  #screeningTheater.active{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;overflow:hidden!important;background:#000!important;z-index:2147483000!important}
-  #screeningTheater.active>.theater-bg,#screeningTheater.active>.theater-glow,#screeningTheater.active>.grain{display:none!important}
-  #screeningTheater.active>.center{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;padding:0!important;margin:0!important;overflow:hidden!important;display:block!important;background:#000!important;text-align:left!important}
-  #screeningTheater.active .theater-shell{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;min-height:0!important;margin:0!important;padding:0!important;display:block!important;overflow:hidden!important;background:#000!important;border:0!important;border-radius:0!important;box-shadow:none!important;transform:none!important;filter:none!important;opacity:1!important}
-  #screeningTheater.active .theater-head,#screeningTheater.active .theater-footer,#screeningTheater.active .theater-collection,#screeningTheater.active .theater-collections,#screeningTheater.active [data-theater-collection],#screeningTheater.active .theater-library,#screeningTheater.active .theater-grid{display:none!important;visibility:hidden!important;pointer-events:none!important}
-  #screeningTheater.active .theater-screen-frame{position:fixed!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;width:min(100vw,calc(100dvh * 16 / 9))!important;height:min(100dvh,calc(100vw * 9 / 16))!important;max-width:100vw!important;max-height:100dvh!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:#000!important;box-shadow:none!important;overflow:hidden!important;z-index:2147483100!important}
-  #screeningTheater.active .theater-screen{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:#000!important;overflow:hidden!important;display:block!important}
-  #screeningTheater.active #theaterPlayer{display:block!important;visibility:visible!important;opacity:1!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:#000!important;object-fit:contain!important;transform:none!important;filter:none!important;z-index:2!important}
-  #screeningTheater.active #theaterPoster{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border-radius:0!important;z-index:3!important}
-  #screeningTheater.active #theaterPoster.hidden{visibility:hidden!important;opacity:0!important;pointer-events:none!important}
-  #screeningTheater.active #theaterStatus{z-index:4!important}
-}
+<!-- RC407 ISOLATED MOBILE THEATER LANDSCAPE PLAYER -->
+<style id="rc407-isolated-mobile-theater-landscape-player">
+/* Landscape-only isolation: black viewport + the existing theater player frame. */
+body.rc407-theater-landscape::after{content:"";position:fixed;inset:0;background:#000;z-index:2147483200;pointer-events:none}
+body.rc407-theater-landscape #screeningTheater{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;overflow:hidden!important;z-index:2147483300!important;background:transparent!important}
+body.rc407-theater-landscape #screeningTheater>.theater-bg,body.rc407-theater-landscape #screeningTheater>.theater-glow,body.rc407-theater-landscape #screeningTheater>.grain{display:none!important}
+body.rc407-theater-landscape #screeningTheater>.center{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;padding:0!important;margin:0!important;overflow:hidden!important;display:block!important;background:transparent!important}
+body.rc407-theater-landscape #screeningTheater .theater-shell{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;min-height:0!important;margin:0!important;padding:0!important;display:block!important;background:transparent!important;border:0!important;box-shadow:none!important;overflow:hidden!important;transform:none!important;filter:none!important;opacity:1!important}
+body.rc407-theater-landscape #screeningTheater .theater-shell>*:not(.theater-screen-frame){display:none!important;visibility:hidden!important;pointer-events:none!important}
+body.rc407-theater-landscape #screeningTheater .theater-screen-frame{display:block!important;visibility:visible!important;position:fixed!important;left:0!important;top:0!important;width:100vw!important;height:100dvh!important;min-height:0!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:#000!important;box-shadow:none!important;overflow:hidden!important;z-index:2147483400!important;transform:none!important}
+body.rc407-theater-landscape #screeningTheater .theater-screen{display:block!important;visibility:visible!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:#000!important;overflow:hidden!important}
+body.rc407-theater-landscape #screeningTheater #theaterPlayer{display:block!important;visibility:visible!important;opacity:1!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:#000!important;object-fit:contain!important;transform:none!important;filter:none!important;z-index:2!important}
+body.rc407-theater-landscape #screeningTheater #theaterPoster{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border-radius:0!important;z-index:3!important}
+body.rc407-theater-landscape #screeningTheater #theaterPoster.hidden{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!important}
 </style>
-<script id="rc406-master-mobile-theater-landscape-guard">
+<script id="rc407-isolated-mobile-theater-landscape-guard">
 (()=>{
- const coarse=()=>matchMedia('(pointer:coarse)').matches;
- const landscape=()=>matchMedia('(orientation:landscape)').matches&&innerWidth<=1100&&coarse();
+ const isMobileLandscape=()=>matchMedia('(orientation:landscape)').matches&&(matchMedia('(pointer:coarse)').matches||innerWidth<=1100)&&innerWidth<=1100;
  const sync=()=>{
    const t=document.getElementById('screeningTheater');
-   document.body.classList.toggle('rc406-theater-landscape',!!(t?.classList.contains('active')&&landscape()));
+   const on=!!(t&&t.classList.contains('active')&&isMobileLandscape());
+   document.body.classList.toggle('rc407-theater-landscape',on);
  };
- addEventListener('orientationchange',()=>setTimeout(sync,80),{passive:true});
+ const t=document.getElementById('screeningTheater');
+ if(t)new MutationObserver(sync).observe(t,{attributes:true,attributeFilter:['class']});
+ addEventListener('orientationchange',()=>{sync();setTimeout(sync,80);setTimeout(sync,300)},{passive:true});
  addEventListener('resize',sync,{passive:true});
- new MutationObserver(sync).observe(document.getElementById('screeningTheater')||document.body,{attributes:true,attributeFilter:['class']});
  sync();
 })();
 </script>
