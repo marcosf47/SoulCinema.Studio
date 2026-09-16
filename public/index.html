@@ -8225,4 +8225,20 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
  note();
 })();
 </script>
+<!-- RC402 MOBILE THEATER LIFECYCLE RESET -->
+<script id="rc402-mobile-theater-lifecycle-reset">
+(()=>{
+ const mobile=()=>matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches;
+ const theater=()=>document.getElementById('screeningTheater');
+ const lobby=()=>document.getElementById('lobby');
+ const player=()=>document.getElementById('theaterPlayer');
+ let wasTheater=false;
+ const cleanPlayer=()=>{const v=player();if(!v)return;try{v.pause()}catch(_){};try{v.currentTime=0}catch(_){};v.removeAttribute('data-transitioning');v.style.pointerEvents='';v.style.opacity='';};
+ const revivePlayer=()=>{const v=player();if(!v)return;v.style.pointerEvents='auto';v.removeAttribute('inert');try{v.load()}catch(_){};requestAnimationFrame(()=>{try{const p=v.play();p?.catch?.(()=>{})}catch(_){}})};
+ const reviveLobby=()=>{if(!lobby()?.classList.contains('active'))return;const p=document.getElementById('portals');if(p){p.style.pointerEvents='auto';p.removeAttribute('inert');p.setAttribute('aria-hidden','false');[...p.querySelectorAll('.portal,button,[role="button"]')].forEach(el=>{el.style.pointerEvents='auto';el.removeAttribute('inert')})}document.body.style.pointerEvents='';document.documentElement.style.pointerEvents='';};
+ const sync=()=>{if(!mobile())return;const now=theater()?.classList.contains('active');if(now&&!wasTheater){wasTheater=true;requestAnimationFrame(()=>requestAnimationFrame(revivePlayer));setTimeout(revivePlayer,120)}else if(!now&&wasTheater){wasTheater=false;cleanPlayer();requestAnimationFrame(()=>requestAnimationFrame(reviveLobby));setTimeout(reviveLobby,100);setTimeout(reviveLobby,280)}};
+ new MutationObserver(sync).observe(document.body,{subtree:true,attributes:true,attributeFilter:['class','style','aria-hidden','inert']});
+ window.addEventListener('pageshow',sync);sync();
+})();
+</script>
 </body></html>
