@@ -17,28 +17,25 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - name: Apply RC408 theater native fullscreen gesture
+      - name: Apply RC409 preserve RC407 and remove RC408
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import re
           p=Path('public/index.html')
           h=p.read_text(encoding='utf-8')
-          marker='<!-- RC408 THEATER NATIVE FULLSCREEN GESTURE -->'
-          patch=marker+'''\n<script id="rc408-theater-native-fullscreen-gesture">\n(()=>{\n const mobile=()=>matchMedia('(pointer:coarse)').matches||innerWidth<=1100;\n const landscape=()=>matchMedia('(orientation:landscape)').matches;\n const active=()=>document.getElementById('screeningTheater')?.classList.contains('active');\n const fsEl=()=>document.fullscreenElement||document.webkitFullscreenElement;\n const enter=async()=>{\n   if(!mobile()||!landscape()||!active()||fsEl())return;\n   const v=document.getElementById('theaterPlayer');\n   if(!v)return;\n   try{\n     if(v.requestFullscreen)await v.requestFullscreen({navigationUI:'hide'});\n     else if(v.webkitRequestFullscreen)v.webkitRequestFullscreen();\n     else if(v.webkitEnterFullscreen)v.webkitEnterFullscreen();\n   }catch(_){ }\n };\n // Native fullscreen must run inside a real user gesture. RC407 remains the fallback if browser refuses it.\n document.addEventListener('pointerup',e=>{\n   if(!active()||!landscape())return;\n   if(e.target.closest?.('#screeningTheater .theater-screen-frame,#screeningTheater #theaterPlayer'))enter();\n },true);\n document.addEventListener('touchend',e=>{\n   if(!active()||!landscape())return;\n   if(e.target.closest?.('#screeningTheater .theater-screen-frame,#screeningTheater #theaterPlayer'))enter();\n },{capture:true,passive:true});\n})();\n</script>\n'''
-          if marker not in h:
-              if '</body>' not in h: raise SystemExit('Missing body anchor')
-              h=h.replace('</body>',patch+'</body>',1)
+          h=re.sub(r'<!-- RC408 THEATER NATIVE FULLSCREEN GESTURE -->\s*<script id="rc408-theater-native-fullscreen-gesture">.*?</script>\s*','',h,flags=re.S)
           p.write_text(h,encoding='utf-8')
           PY
-      - name: Verify RC408 state
+      - name: Verify RC409 locked baseline
         run: |
-          grep -q 'rc408-theater-native-fullscreen-gesture' public/index.html
           grep -q 'rc407-isolated-mobile-theater-landscape-player' public/index.html
           grep -q 'rc404-mobile-theater-premiere-reveal' public/index.html
           grep -q 'rc342-mobile-navigation-owner' public/index.html
           grep -q 'rc400-master-mobile-live-fullscreen-authority' public/index.html
-      - name: Commit RC408 source
+          ! grep -q 'rc408-theater-native-fullscreen-gesture' public/index.html
+      - name: Commit RC409 source
         run: |
           git config user.name 'SoulCinema Direct Deploy'
           git config user.email 'actions@users.noreply.github.com'
-          if git diff --quiet -- public/index.html; then echo 'RC408 already applied'; else git add public/index.html && git commit -m 'RC408 add theater native fullscreen gesture' && git push origin HEAD:main; fi
+          if git diff --quiet -- public/index.html; then echo 'RC409 already applied'; else git add public/index.html && git commit -m 'RC409 lock RC407 landscape and remove RC408' && git push origin HEAD:main; fi
