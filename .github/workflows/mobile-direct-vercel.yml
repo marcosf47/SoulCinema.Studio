@@ -17,29 +17,26 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - name: Apply RC413 single mobile portal authority
+      - name: Apply RC413B mobile portal reconstruction
         run: |
           python3 - <<'PY'
           from pathlib import Path
           import re
           p=Path('public/index.html')
           h=p.read_text(encoding='utf-8')
-          # Remove failed RC412B additive router.
           h=re.sub(r'<!-- RC412B DIRECT MOBILE PORTAL ROUTER -->.*?</script>\s*','',h,flags=re.S)
-          # RC413: portal cards are owned ONLY by the RC342 global router; no duplicate click binding.
-          old="""      bind(n,()=>openRoom(room,n));"""
+          old='      bind(n,()=>openRoom(room,n));'
           if old not in h:
-              raise SystemExit('RC342 portal bind not found')
-          h=h.replace(old,"""      // RC413: no per-card click listener. The exact-target global router is the single mobile authority.""",1)
-          # Remove elementFromPoint and geometric portal fallback ambiguity by replacing findAction.
+              raise SystemExit('portal bind not found')
+          h=h.replace(old,'      // RC413B single authority: portal cards are routed only by RC342 capture router.',1)
           start=h.find('  const findAction=(e)=>{')
           end=h.find('  const rememberTap=(e)=>{',start)
           if start<0 or end<0:
-              raise SystemExit('RC342 findAction block not found')
-          new_find=r'''  const findAction=(e)=>{
+              raise SystemExit('findAction block not found')
+          new_find="""  const findAction=(e)=>{
     if(!mobile())return;
     const portalSelector='#portals .portal[data-room],#portals .portal[data-mobile-room],#portals .studio-utility-btn[data-room]';
-    const hit=e.target?.closest?.(portalSelector+',button,[role="button"]');
+    const hit=e.target?.closest?.(portalSelector+',button,[role=button]');
     if(!hit)return;
     const id=hit.id||'';
     const room=hit.dataset?.mobileRoom||hit.dataset?.room;
@@ -53,9 +50,8 @@ jobs:
     if(!action)return;
     return {action,hit};
   };
-'''
+"""
           h=h[:start]+new_find+h[end:]
-          # Require the pointer/touch gesture to finish on the exact same control it started on.
           needle="""    if((e.type==='pointerup'||e.type==='touchend')&&tapStart){
       const p=eventPoint(e);
       const dx=Math.abs(p.x-tapStart.x);
@@ -69,9 +65,8 @@ jobs:
       if(dx>32||dy>32||tapStart.hit!==routed.hit){tapStart=null;return;}
     }"""
           if needle not in h:
-              raise SystemExit('RC342 routeMobileTap gesture block not found')
+              raise SystemExit('gesture block not found')
           h=h.replace(needle,repl,1)
-          # Remove the 145ms recursive portal-opening handoff. One tap opens one exact room immediately.
           old_open="""    if(document.body.dataset.experience==='portal_mode'&&document.body.dataset.rc375RoomOpening!=='1'){
       document.body.dataset.rc375RoomOpening='1';
       source?.classList?.add('rc375-portal-pressed');
@@ -87,29 +82,28 @@ jobs:
       requestAnimationFrame(()=>source?.classList?.remove('rc375-portal-pressed'));
     }"""
           if old_open not in h:
-              raise SystemExit('RC342 delayed openRoom handoff not found')
+              raise SystemExit('delayed openRoom block not found')
           h=h.replace(old_open,new_open,1)
-          # Mark reconstruction for verification.
-          marker='<!-- RC413 MOBILE PORTALS SINGLE NAVIGATION AUTHORITY -->\n'
           anchor='<!-- RC375 MOBILE PORTAL SCROLL + ROOM HANDOFF SMOOTHNESS -->'
+          marker='<!-- RC413B MOBILE PORTALS SINGLE NAVIGATION AUTHORITY -->\n'
           if anchor not in h:
               raise SystemExit('RC375 anchor not found')
           if marker.strip() not in h:
               h=h.replace(anchor,marker+anchor,1)
           p.write_text(h,encoding='utf-8')
           PY
-      - name: Verify RC413 state
+      - name: Verify RC413B
         run: |
-          grep -q 'RC413 MOBILE PORTALS SINGLE NAVIGATION AUTHORITY' public/index.html
-          grep -q 'RC413: no per-card click listener' public/index.html
-          ! grep -q 'rc412b-direct-mobile-portal-router' public/index.html
+          grep -q 'RC413B MOBILE PORTALS SINGLE NAVIGATION AUTHORITY' public/index.html
+          grep -q 'RC413B single authority' public/index.html
           grep -q 'tapStart.hit!==routed.hit' public/index.html
-          grep -q 'rc407-isolated-mobile-theater-landscape-player' public/index.html
+          ! grep -q 'rc412b-direct-mobile-portal-router' public/index.html
           grep -q 'rc404-mobile-theater-premiere-reveal' public/index.html
+          grep -q 'rc407-isolated-mobile-theater-landscape-player' public/index.html
           grep -q 'rc400-master-mobile-live-fullscreen-authority' public/index.html
           ! grep -q 'rc408-theater-native-fullscreen-gesture' public/index.html
-      - name: Commit RC413 source
+      - name: Commit RC413B source
         run: |
           git config user.name 'SoulCinema Direct Deploy'
           git config user.email 'actions@users.noreply.github.com'
-          if git diff --quiet -- public/index.html; then echo 'RC413 already applied'; else git add public/index.html && git commit -m 'RC413 single mobile portal navigation authority' && git push origin HEAD:main; fi
+          if git diff --quiet -- public/index.html; then echo 'RC413B already applied'; else git add public/index.html && git commit -m 'RC413B single mobile portal navigation authority' && git push origin HEAD:main; fi
