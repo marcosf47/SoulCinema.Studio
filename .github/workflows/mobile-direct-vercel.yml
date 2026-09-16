@@ -17,25 +17,25 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - name: Apply RC397 mobile live native iframe fullscreen handoff
+      - name: Apply RC398 mobile live fullscreen gesture arm
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p=Path('public/index.html')
           h=p.read_text(encoding='utf-8')
-          m='<!-- RC397 MOBILE LIVE NATIVE IFRAME FULLSCREEN HANDOFF -->'
-          patch=m+'''\n<script id="rc397-mobile-live-native-iframe-fullscreen">\n(()=>{\n const mobile=()=>matchMedia('(pointer:coarse)').matches&&Math.max(screen.width,screen.height)<=1400;\n const landscape=()=>matchMedia('(orientation:landscape)').matches;\n const active=()=>document.body?.dataset.liveMode==='live'&&document.getElementById('liveCenter')?.classList.contains('active');\n const frame=()=>document.getElementById('rc275LiveFrame');\n const prep=()=>{const f=frame();if(!f)return null;f.setAttribute('allowfullscreen','');f.setAttribute('webkitallowfullscreen','');f.setAttribute('allow',(f.getAttribute('allow')||'')+'; fullscreen');return f};\n const request=async()=>{if(!mobile()||!landscape()||!active()||document.fullscreenElement)return;const f=prep();if(!f)return;try{if(f.requestFullscreen)await f.requestFullscreen({navigationUI:'hide'});else if(f.webkitRequestFullscreen)f.webkitRequestFullscreen();}catch(_e){}};\n const exit=async()=>{if(landscape())return;try{if(document.fullscreenElement&&document.exitFullscreen)await document.exitFullscreen()}catch(_e){}};\n const sync=()=>landscape()?request():exit();\n prep();\n window.addEventListener('orientationchange',()=>setTimeout(sync,80));\n screen.orientation?.addEventListener?.('change',()=>setTimeout(sync,80));\n window.addEventListener('resize',()=>setTimeout(sync,80));\n ['pointerup','touchend'].forEach(t=>window.addEventListener(t,()=>{if(landscape()&&active())request()},{capture:true,passive:true}));\n})();\n</script>\n'''
+          m='<!-- RC398 MOBILE LIVE FULLSCREEN GESTURE ARM -->'
+          patch=m+'''\n<script id="rc398-mobile-live-fullscreen-gesture-arm">\n(()=>{\n const mobile=()=>matchMedia('(pointer:coarse)').matches&&Math.max(screen.width,screen.height)<=1400;\n const active=()=>document.body?.dataset.liveMode==='live'&&document.getElementById('liveCenter')?.classList.contains('active');\n const frame=()=>document.getElementById('rc275LiveFrame');\n let armed=false;\n const prep=()=>{const f=frame();if(!f)return null;f.setAttribute('allowfullscreen','');f.setAttribute('webkitallowfullscreen','');const a=f.getAttribute('allow')||'';if(!/(^|;)\\s*fullscreen\\s*(;|$)/i.test(a))f.setAttribute('allow',(a?a+'; ':'')+'fullscreen');return f};\n const enter=()=>{if(!mobile()||!active())return;const f=prep();if(!f)return;try{const p=f.requestFullscreen?.({navigationUI:'hide'})||f.webkitRequestFullscreen?.();if(p?.catch)p.catch(()=>{})}catch(_e){}};\n const armFromGesture=(e)=>{if(!mobile())return;const live=document.getElementById('liveCenter');if(!live?.classList.contains('active'))return;armed=true;if(matchMedia('(orientation:landscape)').matches)enter()};\n document.addEventListener('pointerup',armFromGesture,true);\n document.addEventListener('touchend',armFromGesture,{capture:true,passive:true});\n const orient=()=>{if(!mobile()||!active())return;if(matchMedia('(orientation:landscape)').matches&&armed){enter()}else if(matchMedia('(orientation:portrait)').matches&&document.fullscreenElement){document.exitFullscreen?.().catch?.(()=>{})}};\n window.addEventListener('orientationchange',orient);\n screen.orientation?.addEventListener?.('change',orient);\n window.addEventListener('resize',orient);\n prep();\n})();\n</script>\n'''
           if m not in h:
               if '</body>' not in h: raise SystemExit('Missing body anchor')
               p.write_text(h.replace('</body>',patch+'</body>',1),encoding='utf-8')
           PY
-      - name: Verify RC397 patch
+      - name: Verify RC398 patch
         run: |
+          grep -q 'rc398-mobile-live-fullscreen-gesture-arm' public/index.html
           grep -q 'rc397-mobile-live-native-iframe-fullscreen' public/index.html
-          grep -q 'rc396-mobile-live-auto-landscape-fullscreen' public/index.html
           grep -q 'rc342-mobile-navigation-owner' public/index.html
-      - name: Commit RC397 source
+      - name: Commit RC398 source
         run: |
           git config user.name 'SoulCinema Direct Deploy'
           git config user.email 'actions@users.noreply.github.com'
-          if git diff --quiet -- public/index.html; then echo 'RC397 already applied'; else git add public/index.html && git commit -m 'RC397 mobile live native iframe fullscreen handoff' && git push origin HEAD:main; fi
+          if git diff --quiet -- public/index.html; then echo 'RC398 already applied'; else git add public/index.html && git commit -m 'RC398 mobile live fullscreen gesture arm' && git push origin HEAD:main; fi
