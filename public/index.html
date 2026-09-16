@@ -8192,35 +8192,26 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
  prep();sync();
 })();
 </script>
-<!-- RC403 MOBILE THEATER PREMIERE LIFECYCLE RESTORE -->
-<script id="rc403-mobile-theater-premiere-lifecycle-restore">
+<!-- RC404 MOBILE THEATER PREMIERE REVEAL -->
+<script id="rc404-mobile-theater-premiere-reveal">
 (()=>{
  const mobile=()=>matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches;
- const resetOpening=()=>{
+ const opening='https://tfamln4qsost6j00.public.blob.vercel-storage.com/featured-premiere.mp4';
+ const start=()=>{
    if(!mobile())return;
-   const v=document.getElementById('theaterPlayer'),poster=document.getElementById('theaterPoster');
-   if(!v)return;
-   try{v.pause()}catch(_){};
-   try{theaterHandoffBusy=false;theaterStage='opening'}catch(_){};
-   v.classList.remove('theater-handoff','theater-portal-push','theater-feature-enter');
-   if(poster)poster.classList.remove('hidden');
-   try{primeTheaterOpening()}catch(_){
-     v.src='https://tfamln4qsost6j00.public.blob.vercel-storage.com/featured-premiere.mp4';
-     v.dataset.scStage='opening';v.preload='auto';try{v.load()}catch(__){};try{v.currentTime=0}catch(__){}
-   }
-   const title=document.getElementById('theaterCurrentTitle'),status=document.getElementById('theaterStatus');
-   if(title)title.textContent='MWEN POUKONT MWEN';if(status)status.textContent='PREMIERE READY';
+   const theater=document.getElementById('screeningTheater'),v=document.getElementById('theaterPlayer'),poster=document.getElementById('theaterPoster');
+   if(!theater?.classList.contains('active')||!v)return;
+   try{theaterHandoffBusy=false;theaterStage='opening'}catch(_){}
+   try{v.pause()}catch(_){};v.classList.remove('theater-handoff','theater-portal-push','theater-feature-enter');
+   v.dataset.scStage='opening';if((v.currentSrc||v.src||'')!==opening){v.src=opening;try{v.load()}catch(_){}}
+   try{v.currentTime=0}catch(_){};v.muted=false;v.playsInline=true;v.setAttribute('playsinline','');
+   const reveal=()=>{poster?.classList.add('hidden');v.removeEventListener('playing',reveal)};v.addEventListener('playing',reveal);
+   const play=()=>{const p=v.play();if(p?.catch)p.catch(()=>{v.muted=true;const q=v.play();q?.catch?.(()=>{})})};
+   if(v.readyState>=2)play();else{v.addEventListener('canplay',play,{once:true});setTimeout(play,180)}
  };
- document.addEventListener('pointerdown',e=>{
-   if(!mobile())return;
-   const portal=e.target.closest?.('#portals .portal[data-room="Screening Theater"],#portals .portal[data-mobile-room="Screening Theater"]');
-   if(portal)resetOpening();
- },true);
- document.addEventListener('click',e=>{
-   if(!mobile())return;
-   if(e.target.closest?.('#theaterReturn'))setTimeout(resetOpening,0);
- },true);
- window.addEventListener('pageshow',()=>{if(document.getElementById('lobby')?.classList.contains('active'))resetOpening()});
+ document.addEventListener('click',e=>{if(!mobile())return;const portal=e.target.closest?.('#portals .portal[data-room="Screening Theater"],#portals .portal[data-mobile-room="Screening Theater"]');if(portal){setTimeout(start,80);setTimeout(start,260)}},true);
+ const mo=new MutationObserver(()=>{if(mobile()&&document.getElementById('screeningTheater')?.classList.contains('active'))setTimeout(start,0)});
+ const t=document.getElementById('screeningTheater');if(t)mo.observe(t,{attributes:true,attributeFilter:['class']});
 })();
 </script>
 </body></html>
