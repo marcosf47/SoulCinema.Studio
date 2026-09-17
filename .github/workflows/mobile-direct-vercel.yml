@@ -18,9 +18,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - name: Apply RC426
-        run: python3 .github/scripts/rc426.py
-      - name: Verify RC426
-        run: grep -q 'RC426 RESTORE LOCKED MOBILE LIVE FULLSCREEN' public/index.html && grep -q 'rc426-live-fullscreen' public/index.html && grep -q 'rc400-master-mobile-live-fullscreen-authority' public/index.html && grep -q 'RC425 MOBILE THEATER STAGE GUARD' public/index.html && grep -q 'RC424 DISTINCT FEATURE FILM HANDOFF' public/index.html && grep -q 'RC418 THEATER FULLSCREEN EXIT ISOLATION' public/index.html && grep -q "liveRoom?.contains(fs)" public/index.html && grep -q 'RC417 NATIVE THEATER FULLSCREEN ONLY' public/index.html && grep -q 'RC414 MOBILE CINEMATIC PORTALS REBUILD' public/index.html
+      - name: Apply RC427
+        run: python3 .github/scripts/rc427.py
+      - name: Verify RC427
+        run: grep -q 'RC427 NATIVE LIVE FULLSCREEN ON ENTRY' public/index.html && grep -q 'rc427-native-live-fullscreen-on-entry' public/index.html && grep -q 'RC426 RESTORE LOCKED MOBILE LIVE FULLSCREEN' public/index.html && grep -q 'rc400-master-mobile-live-fullscreen-authority' public/index.html && grep -q 'RC425 MOBILE THEATER STAGE GUARD' public/index.html && grep -q 'RC424 DISTINCT FEATURE FILM HANDOFF' public/index.html && grep -q 'RC418 THEATER FULLSCREEN EXIT ISOLATION' public/index.html && grep -q "liveRoom?.contains(fs)" public/index.html && grep -q 'RC417 NATIVE THEATER FULLSCREEN ONLY' public/index.html && grep -q 'RC414 MOBILE CINEMATIC PORTALS REBUILD' public/index.html
       - name: Commit source
-        run: git config user.name 'SoulCinema Direct Deploy' && git config user.email 'actions@users.noreply.github.com' && git add public/index.html && git commit -m 'RC426 restore locked mobile Live Center fullscreen' && git push origin HEAD:main
+        run: git config user.name 'SoulCinema Direct Deploy' && git config user.email 'actions@users.noreply.github.com' && git add public/index.html && git commit -m 'RC427 native Live fullscreen on room entry' && git push origin HEAD:main
