@@ -8174,37 +8174,35 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
   };
 })();
 </script>
-<!-- RC400 MASTER MOBILE LIVE FULLSCREEN AUTHORITY -->
-<style id="rc400-master-mobile-live-fullscreen-style">
-@media (pointer:coarse) and (orientation:landscape) and (max-height:700px){
- body.rc400-live-landscape #liveCenter{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;z-index:2147483646!important;background:#000!important;padding:0!important;margin:0!important;}
- body.rc400-live-landscape #liveCenter .center,body.rc400-live-landscape #liveCenter .live-shell,body.rc400-live-landscape #liveCenter .live-main,body.rc400-live-landscape #liveCenter .live-stage{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:#000!important;}
- body.rc400-live-landscape #rc275LiveFrame{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border:0!important;border-radius:0!important;display:block!important;background:#000!important;}
- body.rc400-live-landscape #liveCenter button,body.rc400-live-landscape #liveCenter .room-back,body.rc400-live-landscape #liveCenter .return,body.rc400-live-landscape #liveCenter .live-head,body.rc400-live-landscape #liveCenter .live-footer{display:none!important;}
-}
-</style>
-<script id="rc400-master-mobile-live-fullscreen-authority">
+<!-- RC437 MOBILE LIVE NATIVE FULLSCREEN AUTHORITY -->
+<script id="rc437-mobile-live-native-fullscreen-authority">
 (()=>{
- const mobile=()=>matchMedia('(pointer:coarse)').matches&&Math.max(screen.width,screen.height)<=1400;
- const live=()=>{const r=document.getElementById('liveCenter');return !!(r?.classList.contains('active')&&document.getElementById('rc275LiveFrame'))};
- const landscape=()=>matchMedia('(orientation:landscape)').matches;
+ if(!matchMedia('(pointer:coarse)').matches)return;
+ const live=()=>document.getElementById('liveCenter')?.classList.contains('active');
  const frame=()=>document.getElementById('rc275LiveFrame');
- const prep=()=>{const f=frame();if(!f)return null;f.allowFullscreen=true;f.setAttribute('allowfullscreen','');f.setAttribute('webkitallowfullscreen','');const a=f.getAttribute('allow')||'';if(!/fullscreen/i.test(a))f.setAttribute('allow',(a?a+'; ':'')+'fullscreen *');return f};
- const sync=()=>{if(!mobile())return;const on=live()&&landscape();document.body.classList.toggle('rc400-live-landscape',on);const fs=document.fullscreenElement||document.webkitFullscreenElement;const liveRoom=document.getElementById('liveCenter');if(!on&&fs&&liveRoom?.contains(fs)){document.exitFullscreen?.().catch?.(()=>{})}};
- const native=()=>{if(!mobile()||!live())return;const f=prep();if(!f||document.fullscreenElement)return;try{const p=f.requestFullscreen?.({navigationUI:'hide'})||f.webkitRequestFullscreen?.();p?.catch?.(()=>{})}catch(_e){}};
- // Native fullscreen is requested only inside a real user activation; CSS remains the automatic landscape fallback.
- document.addEventListener('pointerup',e=>{if(!mobile()||!live())return;const f=frame();const stage=f?.parentElement;if(e.target===f||stage?.contains?.(e.target)){native()}},{capture:true});
- document.addEventListener('touchend',e=>{if(!mobile()||!live())return;const f=frame();const stage=f?.parentElement;if(e.target===f||stage?.contains?.(e.target)){native()}},{capture:true,passive:true});
- window.addEventListener('orientationchange',sync);screen.orientation?.addEventListener?.('change',sync);window.addEventListener('resize',sync);
- new MutationObserver(sync).observe(document.documentElement,{subtree:true,attributes:true,attributeFilter:['class','data-live-mode']});
- prep();sync();
+ const authorize=()=>{
+  const f=frame();if(!f)return null;
+  f.allowFullscreen=true;
+  f.setAttribute('allowfullscreen','');
+  f.setAttribute('webkitallowfullscreen','');
+  f.setAttribute('allow','autoplay; fullscreen; picture-in-picture');
+  return f;
+ };
+ const sync=()=>{
+  if(!live())return;
+  authorize();
+  // Native player fullscreen is the only true fullscreen authority.
+  // Browser policy requires a user activation for entering fullscreen;
+  // orientation events alone cannot legally force it.
+ };
+ const host=document.getElementById('liveCenter')||document.body;
+ new MutationObserver(sync).observe(host,{subtree:true,childList:true,attributes:true,attributeFilter:['class']});
+ window.addEventListener('orientationchange',sync,{passive:true});
+ screen.orientation?.addEventListener?.('change',sync);
+ window.addEventListener('resize',sync,{passive:true});
+ authorize();sync();
 })();
 </script>
-
-
-
-
-<!-- RC436 MOBILE LIVE LANDSCAPE AUTHORITY TRIGGER REPAIR -->
 <!-- RC433 NATIVE MOBILE LIVE FULLSCREEN ONLY -->
 <script id="rc433-native-mobile-live-fullscreen-only">
 (()=>{
