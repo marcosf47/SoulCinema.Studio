@@ -18,9 +18,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - name: Apply RC425
-        run: python3 .github/scripts/rc425.py
-      - name: Verify RC425
-        run: grep -q 'RC425 MOBILE THEATER STAGE GUARD' public/index.html && grep -q "if(theaterStage==='film'||v.dataset.scStage==='film')return" public/index.html && grep -q 'RC424 DISTINCT FEATURE FILM HANDOFF' public/index.html && grep -q "THEATER_OPENING_SRC='https://tfamln4qsost6j00.public.blob.vercel-storage.com/featured-premiere.mp4'" public/index.html && grep -q "THEATER_FILM_SRC='https://tfamln4qsost6j00.public.blob.vercel-storage.com/mwen-poukont-mwen-film.mp4'" public/index.html && ! grep -q 'sc-featured-film-prewarm' public/index.html && grep -q 'RC423 CLEAN THEATER HANDOFF REVEAL' public/index.html && grep -q 'RC421 THEATER HANDOFF VISUAL MASK' public/index.html && grep -q 'RC418 THEATER FULLSCREEN EXIT ISOLATION' public/index.html && grep -q "liveRoom?.contains(fs)" public/index.html && grep -q 'RC417 NATIVE THEATER FULLSCREEN ONLY' public/index.html && grep -q 'RC414 MOBILE CINEMATIC PORTALS REBUILD' public/index.html && grep -q 'rc404-mobile-theater-premiere-reveal' public/index.html && grep -q 'rc407-isolated-mobile-theater-landscape-player' public/index.html && grep -q 'rc400-master-mobile-live-fullscreen-authority' public/index.html
+      - name: Apply RC426
+        run: python3 .github/scripts/rc426.py
+      - name: Verify RC426
+        run: grep -q 'RC426 RESTORE LOCKED MOBILE LIVE FULLSCREEN' public/index.html && grep -q 'rc426-live-fullscreen' public/index.html && grep -q 'rc400-master-mobile-live-fullscreen-authority' public/index.html && grep -q 'RC425 MOBILE THEATER STAGE GUARD' public/index.html && grep -q 'RC424 DISTINCT FEATURE FILM HANDOFF' public/index.html && grep -q 'RC418 THEATER FULLSCREEN EXIT ISOLATION' public/index.html && grep -q "liveRoom?.contains(fs)" public/index.html && grep -q 'RC417 NATIVE THEATER FULLSCREEN ONLY' public/index.html && grep -q 'RC414 MOBILE CINEMATIC PORTALS REBUILD' public/index.html
       - name: Commit source
-        run: git config user.name 'SoulCinema Direct Deploy' && git config user.email 'actions@users.noreply.github.com' && git add public/index.html && git commit -m 'RC425 stop mobile opening reset after handoff' && git push origin HEAD:main
+        run: git config user.name 'SoulCinema Direct Deploy' && git config user.email 'actions@users.noreply.github.com' && git add public/index.html && git commit -m 'RC426 restore locked mobile Live Center fullscreen' && git push origin HEAD:main
