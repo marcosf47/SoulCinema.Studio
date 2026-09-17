@@ -18,9 +18,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - name: Apply RC415
-        run: python3 .github/scripts/rc415.py
-      - name: Verify RC415
-        run: grep -q 'RC415 MOBILE THEATER FULLSCREEN STABILITY' public/index.html && grep -q 'RC414 MOBILE CINEMATIC PORTALS REBUILD' public/index.html && grep -q 'rc404-mobile-theater-premiere-reveal' public/index.html && grep -q 'rc407-isolated-mobile-theater-landscape-player' public/index.html && grep -q 'rc400-master-mobile-live-fullscreen-authority' public/index.html && ! grep -q 'rc408-theater-native-fullscreen-gesture' public/index.html
+      - name: Apply RC416
+        run: python3 .github/scripts/rc416.py
+      - name: Verify RC416
+        run: grep -q 'RC416 DIRECT MOBILE THEATER FULLSCREEN' public/index.html && grep -q 'RC415 MOBILE THEATER FULLSCREEN STABILITY' public/index.html && grep -q 'RC414 MOBILE CINEMATIC PORTALS REBUILD' public/index.html && grep -q 'rc404-mobile-theater-premiere-reveal' public/index.html && grep -q 'rc407-isolated-mobile-theater-landscape-player' public/index.html && grep -q 'rc400-master-mobile-live-fullscreen-authority' public/index.html && ! grep -q 'rc408-theater-native-fullscreen-gesture' public/index.html
       - name: Commit source
-        run: git config user.name 'SoulCinema Direct Deploy' && git config user.email 'actions@users.noreply.github.com' && git add public/index.html && git commit -m 'RC415 mobile theater fullscreen stability' && git push origin HEAD:main
+        run: git config user.name 'SoulCinema Direct Deploy' && git config user.email 'actions@users.noreply.github.com' && git add public/index.html && git commit -m 'RC416 direct mobile theater fullscreen gesture' && git push origin HEAD:main
