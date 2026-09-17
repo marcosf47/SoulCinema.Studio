@@ -8212,14 +8212,8 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
  #liveCenter:fullscreen #rc275LiveFrame,#liveCenter:-webkit-full-screen #rc275LiveFrame{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border:0!important;border-radius:0!important;background:#000!important}
 }
 </style>
-<!-- RC444 MOBILE LIVE LANDSCAPE ONE-TOUCH FULLSCREEN GATE -->
-<style id="rc444-mobile-live-landscape-one-touch-style">
-@media (pointer:coarse) and (orientation:landscape){
- #rc444LiveFsGate{position:fixed;inset:0;z-index:2147483647;background:transparent;border:0;padding:0;margin:0;display:none;touch-action:manipulation}
- body.rc444-live-fs-armed #rc444LiveFsGate{display:block}
-}
-</style>
-<script id="rc444-mobile-live-landscape-one-touch-fullscreen-gate">
+<!-- RC443 MOBILE LIVE LANDSCAPE TAP TRUE FULLSCREEN -->
+<script id="rc443-mobile-live-landscape-tap-true-fullscreen">
 (()=>{
  if(!matchMedia('(pointer:coarse)').matches)return;
  const room=()=>document.getElementById('liveCenter');
@@ -8227,44 +8221,35 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
  const fs=()=>document.fullscreenElement||document.webkitFullscreenElement;
  const landscape=()=>matchMedia('(orientation:landscape)').matches;
  let armed=false;
+ const card=e=>!!e.target?.closest?.('#rc414MobilePortals [data-rc414-room="Live Center"],#portals .portal[data-room="Live Center"],#portals .portal[data-mobile-room="Live Center"]');
  const authorize=()=>{const f=document.getElementById('rc275LiveFrame');if(f){f.allowFullscreen=true;f.setAttribute('allowfullscreen','');f.setAttribute('webkitallowfullscreen','');f.setAttribute('allow','autoplay; fullscreen; picture-in-picture')}};
- const gate=document.createElement('button');
- gate.id='rc444LiveFsGate';gate.type='button';gate.setAttribute('aria-label','Enter Live fullscreen');
- document.body.appendChild(gate);
- const sync=()=>{
-  authorize();
-  const on=armed&&live()&&landscape()&&!fs();
-  document.body.classList.toggle('rc444-live-fs-armed',on);
-  if(!live()){armed=false;document.body.classList.remove('rc444-live-fs-armed')}
- };
- const arm=e=>{
-  if(!e.target?.closest?.('#rc414MobilePortals [data-rc414-room="Live Center"],#portals .portal[data-room="Live Center"],#portals .portal[data-mobile-room="Live Center"]'))return;
-  armed=true;authorize();setTimeout(sync,0);setTimeout(sync,180);
- };
- document.addEventListener('click',arm,true);
+ document.addEventListener('click',e=>{if(card(e)){authorize();armed=true}},true);
  const enter=e=>{
-  e.preventDefault();e.stopPropagation();
   if(!armed||!live()||!landscape()||fs())return;
   const r=room();if(!r)return;
+  // Parent Live chrome is the gesture target; iframe keeps its own native fullscreen button as fallback.
+  if(e.target?.closest?.('#returnLobby,.room-back,[data-back-to-lobby]'))return;
   try{
    const p=r.requestFullscreen?.({navigationUI:'hide'})||r.webkitRequestFullscreen?.();
-   if(p?.then)p.then(()=>{armed=false;sync()}).catch(()=>sync());
-   else{armed=false;sync()}
-  }catch(_){sync()}
+   if(p?.then)p.then(()=>{armed=false}).catch(()=>{});
+  }catch(_){}
  };
- gate.addEventListener('pointerup',enter,true);
- gate.addEventListener('click',enter,true);
- const clean=()=>{
-  armed=false;document.body.classList.remove('rc444-live-fs-armed','rc400-live-landscape');
+ document.addEventListener('pointerup',enter,true);
+ document.addEventListener('touchend',enter,{capture:true,passive:true});
+ document.addEventListener('click',enter,true);
+ const cleanup=()=>{
+  armed=false;
+  try{screen.orientation?.unlock?.()}catch(_){}
+  document.body.classList.remove('rc400-live-landscape');
   delete document.body.dataset.rc400LiveLandscape;
  };
- document.addEventListener('click',e=>{if(e.target?.closest?.('#liveCenter #returnLobby,#liveCenter .room-back,#liveCenter [data-back-to-lobby]'))clean()},true);
- new MutationObserver(sync).observe(document.body,{subtree:true,attributes:true,attributeFilter:['class','data-experience']});
- addEventListener('orientationchange',()=>setTimeout(sync,80),{passive:true});
- screen.orientation?.addEventListener?.('change',()=>setTimeout(sync,80));
- addEventListener('resize',sync,{passive:true});
- document.addEventListener('fullscreenchange',sync);
- sync();
+ document.addEventListener('click',e=>{
+  if(!e.target?.closest?.('#liveCenter #returnLobby,#liveCenter .room-back,#liveCenter [data-back-to-lobby]'))return;
+  const current=fs(),r=room();
+  if(current&&(current===r||r?.contains(current))){try{const p=document.exitFullscreen?.()||document.webkitExitFullscreen?.();p?.catch?.(()=>{})}catch(_){}}
+  cleanup();
+ },true);
+ new MutationObserver(()=>{if(document.body.dataset.experience==='portal_mode')cleanup()}).observe(document.body,{attributes:true,attributeFilter:['data-experience']});
 })();
 </script>
 <!-- RC433 NATIVE MOBILE LIVE FULLSCREEN ONLY -->
