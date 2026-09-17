@@ -2786,7 +2786,7 @@ function playTheater(){
  v.muted=false;const play=v.play();if(play&&play.catch)play.catch(()=>{v.muted=true;v.play().catch(()=>{})});
  $('#theaterStatus').textContent='● PREMIERE OPENING'
 }
-function handoffToFeature(){const v=$('#theaterPlayer');if(!v||theaterHandoffBusy)return;theaterHandoffBusy=true;$('#theaterStatus').textContent='ENTERING THE STORY';v.classList.remove('theater-handoff','theater-portal-push','theater-feature-enter');loadTheaterStage('film',true);void v.offsetWidth;v.classList.add('theater-feature-enter');$('#theaterStatus').textContent='● NOW PLAYING · MWEN POUKONT MWEN';setTimeout(()=>v.classList.remove('theater-feature-enter'),900);theaterHandoffBusy=false}
+function handoffToFeature(){const v=$('#theaterPlayer');if(!v||theaterHandoffBusy)return;theaterHandoffBusy=true;$('#theaterStatus').textContent='ENTERING THE STORY';screeningTheater.classList.add('rc421-handoff-mask');v.pause();v.classList.remove('theater-handoff','theater-portal-push','theater-feature-enter');theaterStage='film';v.dataset.scStage='film';v.removeAttribute('src');v.src=THEATER_FILM_SRC;v.preload='auto';v.load();const reveal=()=>{const show=()=>{screeningTheater.classList.remove('rc421-handoff-mask');v.classList.add('theater-feature-enter');setTimeout(()=>v.classList.remove('theater-feature-enter'),900)};if(typeof v.requestVideoFrameCallback==='function'){v.requestVideoFrameCallback(()=>v.requestVideoFrameCallback(show))}else{requestAnimationFrame(()=>requestAnimationFrame(show))}};v.addEventListener('playing',reveal,{once:true});v.muted=false;const q=v.play();if(q&&q.catch)q.catch(()=>{v.muted=true;v.play().catch(()=>{})});$('#theaterStatus').textContent='● NOW PLAYING · MWEN POUKONT MWEN';setTimeout(()=>{theaterHandoffBusy=false},1200)}
 function returnFromTheater(){const v=$('#theaterPlayer');if(v)v.pause();journeyTransition('THE GRAND LOBBY','RETURNING','CHOOSE YOUR NEXT CHAPTER',()=>{/* RC281 SCREENING THEATER RETURN — SINGLE CINEMATIC HANDOFF */SceneManager.goTo('lobby');screeningTheater.classList.remove('active');lobby.classList.add('active');transitionCount++;updateRuntimeMonitor();setTimeout(showPortals,420)})}
 function backToTheaterHome(){
  const v=$('#theaterPlayer'),p=$('#theaterPoster');if(!v)return;
@@ -4502,34 +4502,7 @@ html.rc103-portal-cursor,html.rc103-portal-cursor *{cursor:pointer!important}
 </script>
 
 
-<script id="sc-featured-film-prewarm">
-(()=>{
-  let filmWarmer=null;
-  function warmFeaturedFilm(){
-    if(filmWarmer || typeof THEATER_FILM_SRC==='undefined' || !THEATER_FILM_SRC) return;
-    const v=document.createElement('video');
-    v.preload='auto';
-    v.muted=true;
-    v.playsInline=true;
-    v.setAttribute('playsinline','');
-    v.setAttribute('aria-hidden','true');
-    v.style.cssText='position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;opacity:0;pointer-events:none';
-    document.body.appendChild(v);
-    v.src=THEATER_FILM_SRC;
-    try{v.load()}catch(e){}
-    filmWarmer=v;
-  }
-  const theaterPlay=document.getElementById('theaterPlay');
-  if(theaterPlay) theaterPlay.addEventListener('click',warmFeaturedFilm,{once:true,capture:true});
-  const theater=document.getElementById('screeningTheater');
-  if(theater && 'MutationObserver' in window){
-    const mo=new MutationObserver(()=>{
-      if(theater.classList.contains('active')){warmFeaturedFilm();mo.disconnect()}
-    });
-    mo.observe(theater,{attributes:true,attributeFilter:['class']});
-  }
-})();
-</script>
+
 
 
 <style id="rc174-mobile-luxury-release">
@@ -8325,4 +8298,5 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
 })();
 </script>
 <!-- RC423 CLEAN THEATER HANDOFF REVEAL -->
+<!-- RC424 DISTINCT FEATURE FILM HANDOFF -->
 </body></html>
