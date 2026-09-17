@@ -8212,37 +8212,37 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
  #liveCenter:fullscreen #rc275LiveFrame,#liveCenter:-webkit-full-screen #rc275LiveFrame{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border:0!important;border-radius:0!important;background:#000!important}
 }
 </style>
-<!-- RC442 SINGLE MOBILE LIVE LANDSCAPE AUTHORITY -->
-<script id="rc442-single-mobile-live-landscape-authority">
+<!-- RC443 MOBILE LIVE LANDSCAPE TAP TRUE FULLSCREEN -->
+<script id="rc443-mobile-live-landscape-tap-true-fullscreen">
 (()=>{
  if(!matchMedia('(pointer:coarse)').matches)return;
  const room=()=>document.getElementById('liveCenter');
  const live=()=>room()?.classList.contains('active');
  const fs=()=>document.fullscreenElement||document.webkitFullscreenElement;
  const landscape=()=>matchMedia('(orientation:landscape)').matches;
+ let armed=false;
  const card=e=>!!e.target?.closest?.('#rc414MobilePortals [data-rc414-room="Live Center"],#portals .portal[data-room="Live Center"],#portals .portal[data-mobile-room="Live Center"]');
- let armed=false, enteredPortrait=false;
- const authorize=()=>{const f=document.getElementById('rc275LiveFrame');if(!f)return;f.allowFullscreen=true;f.setAttribute('allowfullscreen','');f.setAttribute('webkitallowfullscreen','');f.setAttribute('allow','autoplay; fullscreen; picture-in-picture')};
- const arm=e=>{if(!card(e))return;authorize();armed=true;enteredPortrait=!landscape()};
- document.addEventListener('click',arm,true);
- const tryLandscape=()=>{
-  if(!armed||!enteredPortrait||!live()||!landscape()||fs())return;
+ const authorize=()=>{const f=document.getElementById('rc275LiveFrame');if(f){f.allowFullscreen=true;f.setAttribute('allowfullscreen','');f.setAttribute('webkitallowfullscreen','');f.setAttribute('allow','autoplay; fullscreen; picture-in-picture')}};
+ document.addEventListener('click',e=>{if(card(e)){authorize();armed=true}},true);
+ const enter=e=>{
+  if(!armed||!live()||!landscape()||fs())return;
   const r=room();if(!r)return;
+  // Parent Live chrome is the gesture target; iframe keeps its own native fullscreen button as fallback.
+  if(e.target?.closest?.('#returnLobby,.room-back,[data-back-to-lobby]'))return;
   try{
    const p=r.requestFullscreen?.({navigationUI:'hide'})||r.webkitRequestFullscreen?.();
-   if(p?.then)p.then(()=>{armed=false;screen.orientation?.lock?.('landscape').catch?.(()=>{})}).catch(()=>{});
+   if(p?.then)p.then(()=>{armed=false}).catch(()=>{});
   }catch(_){}
  };
- window.addEventListener('orientationchange',()=>setTimeout(tryLandscape,80),{passive:true});
- screen.orientation?.addEventListener?.('change',()=>setTimeout(tryLandscape,40));
- window.addEventListener('resize',()=>{if(landscape())setTimeout(tryLandscape,0)},{passive:true});
+ document.addEventListener('pointerup',enter,true);
+ document.addEventListener('touchend',enter,{capture:true,passive:true});
+ document.addEventListener('click',enter,true);
  const cleanup=()=>{
-  armed=false;enteredPortrait=false;
+  armed=false;
   try{screen.orientation?.unlock?.()}catch(_){}
   document.body.classList.remove('rc400-live-landscape');
   delete document.body.dataset.rc400LiveLandscape;
  };
- // Cleanup before the existing Back handler changes scenes; do not stop propagation.
  document.addEventListener('click',e=>{
   if(!e.target?.closest?.('#liveCenter #returnLobby,#liveCenter .room-back,#liveCenter [data-back-to-lobby]'))return;
   const current=fs(),r=room();
@@ -8250,8 +8250,6 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
   cleanup();
  },true);
  new MutationObserver(()=>{if(document.body.dataset.experience==='portal_mode')cleanup()}).observe(document.body,{attributes:true,attributeFilter:['data-experience']});
- document.addEventListener('fullscreenchange',()=>{if(!fs())try{screen.orientation?.unlock?.()}catch(_){}});
- document.addEventListener('webkitfullscreenchange',()=>{if(!fs())try{screen.orientation?.unlock?.()}catch(_){}});
 })();
 </script>
 <!-- RC433 NATIVE MOBILE LIVE FULLSCREEN ONLY -->
