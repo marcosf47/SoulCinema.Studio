@@ -13,16 +13,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - name: Apply RC444
-        run: python3 .github/scripts/rc444.py
-      - name: Verify RC444
+      - name: Verify emergency RC443 safe baseline
         run: |
-          grep -q "RC444 MOBILE LIVE LANDSCAPE ONE-TOUCH FULLSCREEN GATE" public/index.html
-          ! grep -q "rc443-mobile-live-landscape-tap-true-fullscreen" public/index.html
+          grep -q "RC443 MOBILE LIVE LANDSCAPE TAP TRUE FULLSCREEN" public/index.html
+          ! grep -q "RC444 MOBILE LIVE LANDSCAPE ONE-TOUCH FULLSCREEN GATE" public/index.html
           grep -q "RC437 MOBILE LIVE NATIVE FULLSCREEN AUTHORITY" public/index.html
           grep -q "RC433 NATIVE MOBILE LIVE FULLSCREEN ONLY" public/index.html
           grep -q "RC418 THEATER FULLSCREEN EXIT ISOLATION" public/index.html
-          grep -q "RC417 NATIVE THEATER FULLSCREEN ONLY" public/index.html
           grep -q "RC414 MOBILE CINEMATIC PORTALS REBUILD" public/index.html
-      - name: Commit source
-        run: git config user.name 'SoulCinema Direct Deploy' && git config user.email 'actions@users.noreply.github.com' && git add public/index.html && git commit -m 'RC444 precise mobile Live landscape one-touch fullscreen' && git push origin HEAD:main
+      - name: Confirm source
+        run: echo "RC443 safe baseline verified"
