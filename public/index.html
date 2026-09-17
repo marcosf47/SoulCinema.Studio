@@ -8203,27 +8203,35 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
  authorize();sync();
 })();
 </script>
-<!-- RC438 MOBILE LIVE FULLSCREEN HOLD GUARD -->
-<script id="rc438-mobile-live-fullscreen-hold-guard">
+<!-- RC439 MOBILE LIVE ENTRY TRUE FULLSCREEN LOCK -->
+<style id="rc439-mobile-live-entry-true-fullscreen-style">
+@media (pointer:coarse){
+ #liveCenter:fullscreen,#liveCenter:-webkit-full-screen{background:#000!important;padding:0!important;margin:0!important;width:100vw!important;height:100vh!important;overflow:hidden!important}
+ #liveCenter:fullscreen .live-head,#liveCenter:fullscreen .live-footer,#liveCenter:fullscreen .room-back,#liveCenter:fullscreen #returnLobby,#liveCenter:-webkit-full-screen .live-head,#liveCenter:-webkit-full-screen .live-footer,#liveCenter:-webkit-full-screen .room-back,#liveCenter:-webkit-full-screen #returnLobby{display:none!important}
+ #liveCenter:fullscreen .center,#liveCenter:fullscreen .live-shell,#liveCenter:fullscreen .live-main,#liveCenter:fullscreen .live-stage,#liveCenter:-webkit-full-screen .center,#liveCenter:-webkit-full-screen .live-shell,#liveCenter:-webkit-full-screen .live-main,#liveCenter:-webkit-full-screen .live-stage{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:#000!important}
+ #liveCenter:fullscreen #rc275LiveFrame,#liveCenter:-webkit-full-screen #rc275LiveFrame{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border:0!important;border-radius:0!important;background:#000!important}
+}
+</style>
+<script id="rc439-mobile-live-entry-true-fullscreen-lock">
 (()=>{
  if(!matchMedia('(pointer:coarse)').matches)return;
- const live=()=>document.getElementById('liveCenter')?.classList.contains('active');
- const landscape=()=>matchMedia('(orientation:landscape)').matches;
- const frame=()=>document.getElementById('rc275LiveFrame');
- const fs=()=>document.fullscreenElement||document.webkitFullscreenElement;
- const prep=()=>{const f=frame();if(!f)return null;f.allowFullscreen=true;f.setAttribute('allowfullscreen','');f.setAttribute('webkitallowfullscreen','');f.setAttribute('allow','autoplay; fullscreen; picture-in-picture');return f};
- const hold=()=>{
-  if(!live()||!landscape())return;
-  const f=prep();if(!f||fs())return;
-  // Re-entry can only succeed while the browser still exposes user activation.
-  if(navigator.userActivation?.isActive){try{const p=f.requestFullscreen?.({navigationUI:'hide'})||f.webkitRequestFullscreen?.();p?.catch?.(()=>{})}catch(_){}}
+ const isLiveCard=e=>!!e.target?.closest?.('#rc414MobilePortals [data-rc414-room="Live Center"],#portals .portal[data-room="Live Center"],#portals .portal[data-mobile-room="Live Center"]');
+ const room=()=>document.getElementById('liveCenter');
+ const enter=e=>{
+  if(!isLiveCard(e)||document.fullscreenElement||document.webkitFullscreenElement)return;
+  const r=room();if(!r)return;
+  try{
+   const p=r.requestFullscreen?.({navigationUI:'hide'})||r.webkitRequestFullscreen?.();
+   if(p?.then)p.then(()=>screen.orientation?.lock?.('landscape')).catch(()=>{});
+  }catch(_){}
  };
- document.addEventListener('fullscreenchange',hold,true);
- document.addEventListener('webkitfullscreenchange',hold,true);
- document.addEventListener('pointerup',hold,true);
- document.addEventListener('touchend',hold,{capture:true,passive:true});
- window.addEventListener('orientationchange',hold,{passive:true});
- screen.orientation?.addEventListener?.('change',hold);
+ // Capture phase: runs inside the exact portal tap before RC414 defers room opening.
+ document.addEventListener('click',enter,true);
+ document.addEventListener('pointerup',enter,true);
+ document.addEventListener('touchend',enter,{capture:true,passive:true});
+ const unlock=()=>{const f=document.fullscreenElement||document.webkitFullscreenElement;if(!f)try{screen.orientation?.unlock?.()}catch(_){}};
+ document.addEventListener('fullscreenchange',unlock,true);
+ document.addEventListener('webkitfullscreenchange',unlock,true);
 })();
 </script>
 <!-- RC433 NATIVE MOBILE LIVE FULLSCREEN ONLY -->
