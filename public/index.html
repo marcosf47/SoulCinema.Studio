@@ -8375,4 +8375,18 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
 
 
 <!-- RC428 EXACT RC400 LIVE FULLSCREEN RESTORE -->
+
+<!-- RC445 MOBILE MUSIC ROOM SCROLL POLISH ONLY -->
+<style id="rc445-mobile-music-room-scroll-polish-only">
+@media (max-width:700px) and (pointer:coarse){
+  #musicRoom.scene.active>.center{
+    -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior-y:contain!important;
+    touch-action:pan-y!important;
+    scroll-behavior:smooth!important;
+    scroll-snap-type:none!important;
+  }
+  #musicRoom.scene.active>.center *{scroll-snap-align:none!important}
+}
+</style>
 </body></html>
