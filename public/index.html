@@ -8186,7 +8186,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
 <script id="rc400-master-mobile-live-fullscreen-authority">
 (()=>{
  const mobile=()=>matchMedia('(pointer:coarse)').matches&&Math.max(screen.width,screen.height)<=1400;
- const live=()=>document.body?.dataset.liveMode==='live'&&document.getElementById('liveCenter')?.classList.contains('active');
+ const live=()=>{const r=document.getElementById('liveCenter');return !!(r?.classList.contains('active')&&document.getElementById('rc275LiveFrame'))};
  const landscape=()=>matchMedia('(orientation:landscape)').matches;
  const frame=()=>document.getElementById('rc275LiveFrame');
  const prep=()=>{const f=frame();if(!f)return null;f.allowFullscreen=true;f.setAttribute('allowfullscreen','');f.setAttribute('webkitallowfullscreen','');const a=f.getAttribute('allow')||'';if(!/fullscreen/i.test(a))f.setAttribute('allow',(a?a+'; ':'')+'fullscreen *');return f};
@@ -8204,6 +8204,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
 
 
 
+<!-- RC436 MOBILE LIVE LANDSCAPE AUTHORITY TRIGGER REPAIR -->
 <!-- RC433 NATIVE MOBILE LIVE FULLSCREEN ONLY -->
 <script id="rc433-native-mobile-live-fullscreen-only">
 (()=>{
