@@ -8217,7 +8217,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
  const landscape=()=>matchMedia('(orientation:landscape)').matches;
  const frame=()=>document.getElementById('rc275LiveFrame');
  const prep=()=>{const f=frame();if(!f)return null;f.allowFullscreen=true;f.setAttribute('allowfullscreen','');f.setAttribute('webkitallowfullscreen','');const a=f.getAttribute('allow')||'';if(!/fullscreen/i.test(a))f.setAttribute('allow',(a?a+'; ':'')+'fullscreen *');return f};
- const sync=()=>{if(!mobile())return;const on=live()&&landscape();document.body.classList.toggle('rc400-live-landscape',on);if(!on&&document.fullscreenElement){document.exitFullscreen?.().catch?.(()=>{})}};
+ const sync=()=>{if(!mobile())return;const on=live()&&landscape();document.body.classList.toggle('rc400-live-landscape',on);const fs=document.fullscreenElement||document.webkitFullscreenElement;const liveRoom=document.getElementById('liveCenter');if(!on&&fs&&liveRoom?.contains(fs)){document.exitFullscreen?.().catch?.(()=>{})}};
  const native=()=>{if(!mobile()||!live())return;const f=prep();if(!f||document.fullscreenElement)return;try{const p=f.requestFullscreen?.({navigationUI:'hide'})||f.webkitRequestFullscreen?.();p?.catch?.(()=>{})}catch(_e){}};
  // Native fullscreen is requested only inside a real user activation; CSS remains the automatic landscape fallback.
  document.addEventListener('pointerup',e=>{if(!mobile()||!live())return;const f=frame();const stage=f?.parentElement;if(e.target===f||stage?.contains?.(e.target)){native()}},{capture:true});
@@ -8292,4 +8292,5 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  v.setAttribute('webkit-playsinline','');
 })();
 </script>
+<!-- RC418 THEATER FULLSCREEN EXIT ISOLATION -->
 </body></html>
