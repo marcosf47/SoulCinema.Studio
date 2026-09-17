@@ -8234,40 +8234,41 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
  document.addEventListener('webkitfullscreenchange',unlock,true);
 })();
 </script>
-<!-- RC440 MOBILE LIVE FULLSCREEN REENTRY REARM -->
-<script id="rc440-mobile-live-fullscreen-reentry-rearm">
+<!-- RC441 MOBILE LIVE LANDSCAPE GATE + LOBBY CLEANUP -->
+<script id="rc441-mobile-live-landscape-gate-lobby-cleanup">
 (()=>{
  if(!matchMedia('(pointer:coarse)').matches)return;
- const selector='#rc414MobilePortals [data-rc414-room="Live Center"],#portals .portal[data-room="Live Center"],#portals .portal[data-mobile-room="Live Center"]';
- const room=()=>document.getElementById('liveCenter');
- let armed=true;
+ const live=()=>document.getElementById('liveCenter')?.classList.contains('active');
+ const landscape=()=>matchMedia('(orientation:landscape)').matches;
  const fs=()=>document.fullscreenElement||document.webkitFullscreenElement;
- const enter=e=>{
-  if(!armed||!e.target?.closest?.(selector)||fs())return;
+ const room=()=>document.getElementById('liveCenter');
+ let armed=false;
+ const liveCard=e=>!!e.target?.closest?.('#rc414MobilePortals [data-rc414-room="Live Center"],#portals .portal[data-room="Live Center"],#portals .portal[data-mobile-room="Live Center"]');
+ const prep=()=>{const f=document.getElementById('rc275LiveFrame');if(f){f.allowFullscreen=true;f.setAttribute('allowfullscreen','');f.setAttribute('webkitallowfullscreen','');f.setAttribute('allow','autoplay; fullscreen; picture-in-picture')}return f};
+ const enter=()=>{
+  if(!armed||!live()||!landscape()||fs())return;
   const r=room();if(!r)return;
+  // Orientation event itself may not carry activation; consume it only when browser permits.
+  try{const p=r.requestFullscreen?.({navigationUI:'hide'})||r.webkitRequestFullscreen?.();if(p?.then)p.then(()=>{armed=false;screen.orientation?.lock?.('landscape').catch?.(()=>{})}).catch(()=>{})}catch(_){}
+ };
+ // Entering Live in portrait only arms the next landscape transition; never fullscreen on entry.
+ document.addEventListener('pointerup',e=>{if(liveCard(e)){armed=true;prep()}},true);
+ document.addEventListener('touchend',e=>{if(liveCard(e)){armed=true;prep()}},{capture:true,passive:true});
+ document.addEventListener('click',e=>{if(liveCard(e)){armed=true;prep()}},true);
+ window.addEventListener('orientationchange',()=>queueMicrotask(enter),{passive:true});
+ screen.orientation?.addEventListener?.('change',()=>queueMicrotask(enter));
+ window.addEventListener('resize',()=>{if(landscape())queueMicrotask(enter)},{passive:true});
+ const cleanup=()=>{
   armed=false;
-  try{
-   const p=r.requestFullscreen?.({navigationUI:'hide'})||r.webkitRequestFullscreen?.();
-   if(p?.then)p.then(()=>screen.orientation?.lock?.('landscape')).catch(()=>{armed=true});
-  }catch(_){armed=true}
+  const current=fs();const r=room();
+  if(current&&(current===r||r?.contains(current))){try{(document.exitFullscreen?.()||document.webkitExitFullscreen?.())?.catch?.(()=>{})}catch(_){}}
+  try{screen.orientation?.unlock?.()}catch(_){}
+  document.body.classList.remove('rc400-live-landscape');
  };
- const rearm=()=>{
-  if(!fs()){
-   armed=true;
-   try{screen.orientation?.unlock?.()}catch(_){}
-  }
- };
- // Exact user gesture on every Live Center entry. Rearm whenever Live fullscreen exits.
- document.addEventListener('pointerup',enter,true);
- document.addEventListener('touchend',enter,{capture:true,passive:true});
- document.addEventListener('click',enter,true);
- document.addEventListener('fullscreenchange',rearm,true);
- document.addEventListener('webkitfullscreenchange',rearm,true);
- const back=document.getElementById('returnLobby');
- back?.addEventListener('click',()=>{armed=true},true);
- new MutationObserver(()=>{
-  if(document.body.dataset.experience==='portal_mode')armed=true;
- }).observe(document.body,{attributes:true,attributeFilter:['data-experience']});
+ // Back to Grand Lobby must leave no fullscreen/orientation state behind.
+ document.addEventListener('click',e=>{if(e.target?.closest?.('#liveCenter #returnLobby,#liveCenter .room-back,#liveCenter [data-back-to-lobby]'))cleanup()},true);
+ document.addEventListener('fullscreenchange',()=>{if(!fs()&&!live())cleanup()},true);
+ document.addEventListener('webkitfullscreenchange',()=>{if(!fs()&&!live())cleanup()},true);
 })();
 </script>
 <!-- RC433 NATIVE MOBILE LIVE FULLSCREEN ONLY -->
