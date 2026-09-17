@@ -8209,7 +8209,7 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
    if(!mobile())return;
    const theater=document.getElementById('screeningTheater'),v=document.getElementById('theaterPlayer'),poster=document.getElementById('theaterPoster');
    if(!theater?.classList.contains('active')||!v)return;
-   try{theaterHandoffBusy=false;theaterStage='opening'}catch(_){}
+   try{if(theaterStage==='film'||v.dataset.scStage==='film')return;theaterHandoffBusy=false;theaterStage='opening'}catch(_){}
    try{v.pause()}catch(_){};v.classList.remove('theater-handoff','theater-portal-push','theater-feature-enter');
    v.dataset.scStage='opening';if((v.currentSrc||v.src||'')!==opening){v.src=opening;try{v.load()}catch(_){}}
    try{v.currentTime=0}catch(_){};v.muted=false;v.playsInline=true;v.setAttribute('playsinline','');
@@ -8299,4 +8299,5 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
 </script>
 <!-- RC423 CLEAN THEATER HANDOFF REVEAL -->
 <!-- RC424 DISTINCT FEATURE FILM HANDOFF -->
+<!-- RC425 MOBILE THEATER STAGE GUARD -->
 </body></html>
