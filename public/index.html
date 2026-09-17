@@ -8376,8 +8376,8 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
 
 <!-- RC428 EXACT RC400 LIVE FULLSCREEN RESTORE -->
 
-<!-- RC445 MOBILE MUSIC ROOM SCROLL POLISH ONLY -->
-<style id="rc445-mobile-music-room-scroll-polish-only">
+<!-- RC446 MOBILE MUSIC ROOM FULL-SURFACE SCROLL POLISH ONLY -->
+<style id="rc446-mobile-music-room-full-surface-scroll-polish-only">
 @media (max-width:700px) and (pointer:coarse){
   #musicRoom.scene.active>.center{
     -webkit-overflow-scrolling:touch!important;
@@ -8387,6 +8387,15 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
     scroll-snap-type:none!important;
   }
   #musicRoom.scene.active>.center *{scroll-snap-align:none!important}
+  #musicRoom.scene.active .music-shell,
+  #musicRoom.scene.active .music-main,
+  #musicRoom.scene.active .music-art,
+  #musicRoom.scene.active .music-console,
+  #musicRoom.scene.active .music-panel,
+  #musicRoom.scene.active .music-cover,
+  #musicRoom.scene.active .now-playing{
+    touch-action:pan-y!important;
+  }
 }
 </style>
 </body></html>
