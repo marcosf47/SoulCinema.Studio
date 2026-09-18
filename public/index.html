@@ -8622,4 +8622,79 @@ mp.addEventListener('play',sync);mp.addEventListener('pause',sync);quiet(mp);
  },true);
 })();
 </script>
+<!-- RC470 MOBILE THEATER COLLECTION SOURCE LOCK -->
+<script id="rc470-mobile-theater-collection-source-lock">
+(()=>{
+ const theater=document.getElementById('screeningTheater');
+ const player=document.getElementById('theaterPlayer');
+ const poster=document.getElementById('theaterPoster');
+ if(!theater||!player)return;
+ let lockedSrc='',lockedTitle='',lockUntil=0,restoring=false;
+ const setText=(id,text)=>{const el=document.getElementById(id);if(el)el.textContent=text};
+ const isActive=()=>theater.classList.contains('active');
+ const current=()=>String(player.currentSrc||player.src||'');
+ const start=()=>{
+   if(!lockedSrc||!isActive())return;
+   if(current()!==lockedSrc)return;
+   const p=player.play();
+   if(p?.then)p.then(()=>setText('theaterStatus','● NOW PLAYING · '+lockedTitle)).catch(()=>{
+     player.muted=true;
+     player.play().then(()=>setText('theaterStatus','● NOW PLAYING · '+lockedTitle)).catch(()=>setText('theaterStatus','PRESS PLAY · '+lockedTitle));
+   });
+ };
+ const restore=()=>{
+   if(restoring||!lockedSrc||!isActive()||Date.now()>lockUntil)return;
+   if(current()===lockedSrc)return;
+   restoring=true;
+   try{player.pause()}catch(_){}
+   player.removeAttribute('src');
+   player.dataset.scStage='collection';
+   player.preload='auto';
+   player.controls=true;
+   player.playsInline=true;
+   player.setAttribute('playsinline','');
+   player.muted=false;
+   player.volume=1;
+   player.src=lockedSrc;
+   try{player.load()}catch(_){}
+   setTimeout(()=>{restoring=false;start()},90);
+ };
+ const playCard=card=>{
+   if(!card||card.id==='kidsAnimationCollectionCard')return false;
+   const src=card.dataset.contentSrc;
+   if(!src)return false;
+   lockedSrc=src;
+   lockedTitle=card.dataset.contentTitle||card.querySelector('strong')?.textContent?.trim()||'SOULCINEMA COLLECTION';
+   lockUntil=Date.now()+6000;
+   try{theaterHandoffBusy=false;theaterStage='collection'}catch(_){}
+   theater.classList.remove('kids-film-active','rc421-handoff-mask');
+   document.querySelectorAll('#screeningTheater .collection-card').forEach(c=>{
+     c.classList.toggle('is-current',c===card);
+     c.setAttribute('aria-pressed',c===card?'true':'false');
+   });
+   if(poster)poster.classList.add('hidden');
+   setText('theaterCurrentTitle',lockedTitle);
+   setText('theaterStatus','LOADING · '+lockedTitle);
+   restore();
+   setTimeout(restore,0);
+   setTimeout(restore,80);
+   setTimeout(restore,240);
+   return true;
+ };
+ ['pointerdown','touchend','click'].forEach(type=>{
+   document.addEventListener(type,e=>{
+     const card=e.target?.closest?.('#screeningTheater .collection-card[data-content-src]');
+     if(!card||!isActive()||card.id==='kidsAnimationCollectionCard')return;
+     e.preventDefault();
+     e.stopPropagation();
+     e.stopImmediatePropagation();
+     playCard(card);
+   },{capture:true,passive:false});
+ });
+ player.addEventListener('loadstart',restore,true);
+ player.addEventListener('loadeddata',start,true);
+ player.addEventListener('canplay',start,true);
+ new MutationObserver(restore).observe(player,{attributes:true,attributeFilter:['src']});
+})();
+</script>
 </body></html>
