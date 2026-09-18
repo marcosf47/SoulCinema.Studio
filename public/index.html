@@ -8844,4 +8844,25 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  isolate();
 })();
 </script>
+
+<!-- RC461 MOBILE MUSIC PLAY DIRECT AUTHORITY -->
+<script id="rc461-mobile-music-play-direct-authority">
+(()=>{
+ if(!matchMedia('(max-width:700px) and (pointer:coarse)').matches)return;
+ const room=document.getElementById('musicRoom'),p=document.getElementById('musicPlayer'),b=document.getElementById('r455Play'),s=document.getElementById('r455Sound');
+ if(!room||!p||!b)return;
+ const sync=()=>{b.textContent=p.paused?'▶ PLAY':'❚❚ PAUSE'};
+ b.onclick=null;
+ b.addEventListener('click',e=>{
+   if(!room.classList.contains('active'))return;
+   e.preventDefault();
+   if(p.paused){
+     p.muted=false;p.volume=1;
+     const q=p.play();
+     if(q?.then)q.then(()=>{sync();if(s)s.textContent='SOUND ON'}).catch(()=>sync());
+   }else{p.pause();sync()}
+ },false);
+ p.addEventListener('play',sync);p.addEventListener('pause',sync);p.addEventListener('ended',sync);
+})();
+</script>
 </body></html>
