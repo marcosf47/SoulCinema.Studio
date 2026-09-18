@@ -8443,6 +8443,49 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
 })();
 </script>
 
+<!-- RC485 MOBILE MUSIC ROOM HARD MEDIA FIREWALL + NATIVE SCROLL -->
+<style id="rc485-mobile-music-scroll">
+@media(max-width:860px), (pointer:coarse){
+ #musicRoom.active{touch-action:pan-y!important;overscroll-behavior-y:contain!important}
+ #musicRoom.active .center{scroll-behavior:auto!important;touch-action:pan-y!important;overscroll-behavior-y:contain!important;-webkit-overflow-scrolling:touch!important}
+ #rc483MobileMusicRoom{touch-action:pan-y!important}
+}
+</style>
+<script id="rc485-mobile-music-media-firewall">
+(()=>{
+ if(!(matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches))return;
+ const room=()=>document.getElementById('musicRoom');
+ const owner=()=>document.getElementById('r483Audio');
+ const active=()=>!!room()?.classList.contains('active');
+ const nativePlay=HTMLMediaElement.prototype.play;
+ if(!HTMLMediaElement.prototype.__rc485MusicFirewall){
+   Object.defineProperty(HTMLMediaElement.prototype,'__rc485MusicFirewall',{value:true});
+   HTMLMediaElement.prototype.play=function(){
+     if(active() && this!==owner()){
+       try{this.pause()}catch(_){}
+       return Promise.resolve();
+     }
+     return nativePlay.apply(this,arguments);
+   };
+ }
+ const silence=()=>{
+   if(!active())return;
+   const keep=owner();
+   document.querySelectorAll('video,audio').forEach(m=>{
+     if(m===keep)return;
+     try{m.pause()}catch(_){}
+     try{m.currentTime=0}catch(_){}
+     m.muted=true;
+   });
+   document.querySelectorAll('#discoveryPlayer iframe,#scv2Frame').forEach(f=>{try{f.src='about:blank'}catch(_){}});
+ };
+ const host=room(); if(!host)return;
+ new MutationObserver(()=>{if(active())silence()}).observe(host,{attributes:true,attributeFilter:['class']});
+ ['pointerdown','touchstart','click'].forEach(t=>host.addEventListener(t,()=>{if(active())silence()},true));
+ silence();
+})();
+</script>
+
 <!-- RC464 MOBILE TYPOGRAPHY READABILITY POLISH -->
 <style id="rc464-mobile-typography-readability-polish">
 @media(max-width:700px) and (pointer:coarse){
