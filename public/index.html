@@ -8557,10 +8557,11 @@ mp.addEventListener('play',sync);mp.addEventListener('pause',sync);quiet(mp);
  scenes.forEach(s=>new MutationObserver(sync).observe(s,{attributes:true,attributeFilter:['class']}));
 })();
 </script>
-<!-- RC468 MOBILE THEATER COLLECTION SOURCE AUTHORITY -->
-<script id="rc468-mobile-theater-collection-source-authority">
+<!-- RC469 MOBILE THEATER COLLECTION SOURCE AUTHORITY / FOLD WIDTH -->
+<script id="rc469-mobile-theater-collection-source-authority">
 (()=>{
- if(!matchMedia('(max-width:700px) and (pointer:coarse)').matches)return;
+ const mobile=()=>matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches;
+ if(!mobile())return;
  const theater=document.getElementById('screeningTheater');
  const player=document.getElementById('theaterPlayer');
  const poster=document.getElementById('theaterPoster');
