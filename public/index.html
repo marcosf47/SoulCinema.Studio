@@ -8422,4 +8422,41 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  room.addEventListener('click',silenceForeignMedia,true);
 })();
 </script>
+
+<!-- RC449 MOBILE MUSIC DISCOVERY COMPACT PLAYER + SAFE RETURN ONLY -->
+<style id="rc449-mobile-music-discovery-compact-player-safe-return-style">
+@media(max-width:700px) and (pointer:coarse){
+ #musicRoom #musicDiscovery #discoveryPlayer.active{
+  position:absolute!important;right:10px!important;top:10px!important;
+  width:132px!important;height:82px!important;min-height:82px!important;max-width:132px!important;max-height:82px!important;
+  border-radius:9px!important;overflow:hidden!important;z-index:4!important;
+ }
+ #musicRoom #musicDiscovery #discoveryPlayer iframe{
+  width:132px!important;height:82px!important;min-height:82px!important;max-height:82px!important;
+ }
+ #musicRoom #musicDiscovery .discovery-workspace:has(#discoveryPlayer.active) #discoveryResults{
+  padding-right:142px!important;
+ }
+}
+</style>
+<script id="rc449-mobile-music-safe-return-only">
+(()=>{
+ if(!matchMedia('(max-width:700px) and (pointer:coarse)').matches)return;
+ const room=document.getElementById('musicRoom'),back=document.getElementById('musicReturn');
+ if(!room||!back)return;
+ const stopAll=()=>{
+  document.querySelectorAll('video,audio').forEach(m=>{try{m.pause()}catch(_e){}});
+  try{const w=window.SC?.Widget?.(document.getElementById('scv2Frame'));w?.pause?.()}catch(_e){}
+  const dp=document.getElementById('discoveryPlayer');
+  if(dp){dp.classList.remove('active');dp.innerHTML=''}
+ };
+ back.addEventListener('pointerdown',stopAll,true);
+ back.addEventListener('touchstart',stopAll,{capture:true,passive:true});
+ back.addEventListener('click',e=>{
+  stopAll();
+  e.preventDefault();e.stopImmediatePropagation();
+  try{window.scMobileGoPortals?.()}catch(_e){}
+ },true);
+})();
+</script>
 </body></html>
