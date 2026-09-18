@@ -8547,4 +8547,27 @@ mp.addEventListener('play',sync);mp.addEventListener('pause',sync);quiet(mp);
  prune();
 })();
 </script>
+
+<!-- RC464 MOBILE TYPOGRAPHY READABILITY POLISH -->
+<style id="rc464-mobile-typography-readability-polish">
+@media(max-width:700px) and (pointer:coarse){
+  /* Global mobile readability: typography only; no geometry/media/navigation changes */
+  .scene h1{font-size:clamp(32px,9vw,52px)!important;line-height:1.02!important}
+  .scene h2{font-size:clamp(25px,7vw,38px)!important;line-height:1.08!important}
+  .scene h3{font-size:clamp(20px,5.6vw,30px)!important;line-height:1.12!important}
+  .scene p,.scene .sub,.scene .subtitle,.scene .desc,.scene .description{font-size:max(16px,4.15vw)!important;line-height:1.48!important}
+  .scene button,.scene .btn,.scene [role="button"]{font-size:max(14px,3.7vw)!important;line-height:1.2!important}
+  .scene .eyebrow,.scene .kicker,.scene .label,.scene .meta,.scene small{font-size:max(12px,3.15vw)!important;line-height:1.35!important;letter-spacing:.12em!important}
+  /* Rebuilt Music Room: raise small labels/tabs without disturbing its approved composition */
+  #rc455MusicRoom .r455-brand-sub{font-size:12px!important}
+  #rc455MusicRoom .r455-badge{font-size:11px!important}
+  #rc455MusicRoom .r455-sub{font-size:16px!important}
+  #rc455MusicRoom .r455-time{font-size:15px!important}
+  #rc455MusicRoom .r455-controls button{font-size:14px!important}
+  #rc455MusicRoom .r455-tabs button{font-size:11px!important;letter-spacing:.05em!important;line-height:1.15!important}
+  #rc455MusicRoom .r455-tabs button[data-r455="discovery"]{font-size:10.5px!important}
+  #rc455MusicRoom .r455-panel p{font-size:16px!important;line-height:1.5!important}
+  #rc455MusicRoom .r455-discovery-kicker{font-size:11px!important}
+}
+</style>
 </body></html>
