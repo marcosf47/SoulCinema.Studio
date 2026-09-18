@@ -8716,4 +8716,38 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  document.getElementById('r455Back').onclick=e=>{e.preventDefault();document.querySelectorAll('video,audio').forEach(m=>{try{m.pause()}catch(_){}});try{window.scMobileGoPortals?.()}catch(_){}};
 })();
 </script>
+
+<!-- RC456 MOBILE MUSIC ROOM POSTER + DISCOVERY ENGINE SURGERY -->
+<style id="rc456-mobile-music-room-poster-discovery-surgery">
+@media(max-width:700px) and (pointer:coarse){
+ #rc455MusicRoom .r455-cover{background-image:url('https://tfamln4qsost6j00.public.blob.vercel-storage.com/mwen-poukont-mwen.png')!important;background-size:cover!important;background-position:center!important}
+ #rc455MusicRoom .r455-tabs{grid-template-columns:repeat(4,minmax(0,1fr))!important;width:100%!important;overflow:hidden!important}
+ #rc455MusicRoom .r455-tabs button{min-width:0!important;width:100%!important;padding:5px 2px!important;font-size:7px!important;letter-spacing:.04em!important;white-space:normal!important;line-height:1.15!important}
+ #rc455MusicRoom .r455-tabs button[data-r455="discovery"]{font-size:6.5px!important}
+ #rc455MusicRoom #r455Results{display:grid!important;gap:8px!important;overflow-x:hidden!important}
+ #rc455MusicRoom #r455Results .scv2-result{display:grid!important;grid-template-columns:52px minmax(0,1fr) 68px!important;gap:9px!important;align-items:center!important;width:100%!important;min-height:70px!important;height:auto!important;padding:8px!important;overflow:hidden!important;border:1px solid rgba(222,184,83,.18)!important;border-radius:14px!important;background:#080603!important}
+ #rc455MusicRoom #r455Results .scv2-art{width:50px!important;height:50px!important;object-fit:cover!important;border-radius:9px!important}
+ #rc455MusicRoom #r455Results .scv2-meta{min-width:0!important;overflow:hidden!important}
+ #rc455MusicRoom #r455Results .scv2-title{display:block!important;max-width:100%!important;font:400 13px/1.12 Georgia,serif!important;white-space:normal!important;overflow-wrap:anywhere!important}
+ #rc455MusicRoom #r455Results .scv2-artist{font-size:8px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+ #rc455MusicRoom #r455Results .scv2-listen{width:64px!important;min-width:64px!important;height:36px!important;margin:0!important}
+ #rc455MusicRoom #r455Player{width:100%!important;margin:9px 0 0!important;overflow:hidden!important;border-radius:12px!important}
+ #rc455MusicRoom #r455Player iframe{width:100%!important;height:82px!important;max-height:82px!important;border:0!important}
+}
+</style>
+<script id="rc456-mobile-music-search-gesture-silence">
+(()=>{
+ if(!matchMedia('(max-width:700px) and (pointer:coarse)').matches)return;
+ const input=document.getElementById('r455Input'),p=document.getElementById('musicPlayer');
+ if(!input)return;
+ const silence=()=>{
+  document.querySelectorAll('video,audio').forEach(m=>{try{m.pause()}catch(_){}});
+  try{window.SC?.Widget?.(document.getElementById('scv2Frame'))?.pause?.()}catch(_){}
+  try{window.SC?.Widget?.(document.getElementById('r455ScFrame'))?.pause?.()}catch(_){}
+ };
+ ['pointerdown','touchstart','focus','click','keydown','input'].forEach(t=>input.addEventListener(t,silence,{capture:true,passive:t==='touchstart'}));
+ const search=document.getElementById('r455Search');
+ search?.addEventListener('pointerdown',silence,true);search?.addEventListener('click',silence,true);
+})();
+</script>
 </body></html>
