@@ -8460,18 +8460,16 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
 })();
 </script>
 
-<!-- RC450 MOBILE MUSIC SEARCH INPUT HARD AUDIO GUARD ONLY -->
-<script id="rc450-mobile-music-search-input-hard-audio-guard-only">
+<!-- RC451 MOBILE MUSIC SEARCH INPUT TOTAL SILENCE GUARD ONLY -->
+<script id="rc451-mobile-music-search-input-total-silence-guard-only">
 (()=>{
  if(!matchMedia('(max-width:700px) and (pointer:coarse)').matches)return;
  const room=document.getElementById('musicRoom'),input=document.getElementById('discoveryInput');
  if(!room||!input)return;
  const guard=()=>{
   if(!room.classList.contains('active'))return;
-  document.querySelectorAll('video,audio').forEach(m=>{
-   if(m.id==='musicPlayer')return;
-   try{m.pause()}catch(_e){}
-  });
+  document.querySelectorAll('video,audio').forEach(m=>{try{m.pause()}catch(_e){}});
+  try{window.SC?.Widget?.(document.getElementById('scv2Frame'))?.pause?.()}catch(_e){}
  };
  ['pointerdown','touchstart','focus','click','input','keydown'].forEach(type=>{
   input.addEventListener(type,guard,{capture:true,passive:type==='touchstart'});
