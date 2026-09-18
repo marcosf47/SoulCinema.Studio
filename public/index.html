@@ -8812,4 +8812,33 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  quarantine();
 })();
 </script>
+
+<!-- RC459 MOBILE MUSIC ROOM HARD EVENT FIREWALL -->
+<script id="rc459-mobile-music-room-hard-event-firewall">
+(()=>{
+ if(!matchMedia('(max-width:700px) and (pointer:coarse)').matches)return;
+ const room=document.getElementById('musicRoom'),root=document.getElementById('rc455MusicRoom');
+ if(!room||!root)return;
+ const legacy=document.querySelector('#musicRoom>.center');
+ if(legacy){legacy.setAttribute('inert','');legacy.style.pointerEvents='none';}
+ const stopForeign=()=>{
+   if(!room.classList.contains('active'))return;
+   const theater=document.getElementById('screeningTheater');
+   theater?.querySelectorAll('video,audio').forEach(m=>{try{m.pause()}catch(_){}});
+ };
+ // Capture at window before document/body legacy gesture delegates can see Music Room input.
+ ['pointerdown','pointerup','touchstart','touchend','mousedown','mouseup'].forEach(type=>{
+   window.addEventListener(type,e=>{
+     if(!room.classList.contains('active')||!root.contains(e.target))return;
+     stopForeign();
+     e.stopImmediatePropagation();
+     // Re-dispatch a clean click only to the rebuilt Music Room target on release.
+     if(type==='pointerup' && e.target instanceof Element){
+       const t=e.target.closest('button,input');
+       if(t&&t.tagName==='BUTTON') queueMicrotask(()=>t.click());
+     }
+   },true);
+ });
+})();
+</script>
 </body></html>
