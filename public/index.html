@@ -8472,6 +8472,7 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
    sync();
  };
  const silenceMusicButton=e=>{
+   if(e.target.closest?.('#rc480MobileMusicRoom'))return;
    const btn=e.target.closest?.('button,a,[role="button"]');
    if(!btn||!room.contains(btn))return;
    if(btn.id==='musicPlay'||btn.id==='musicRestart')return;
