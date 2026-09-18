@@ -8411,8 +8411,8 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  sync();
 })();
 </script>
-<!-- RC477 MOBILE MUSIC ROOM LIBRARY/DISCOVERY SILENCE -->
-<script id="rc477-mobile-music-library-discovery-silence">
+<!-- RC478 MOBILE MUSIC ROOM BUTTON SILENCE AUTHORITY -->
+<script id="rc478-mobile-music-button-silence-authority">
 (()=>{
  const mobile=()=>matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches;
  if(!mobile())return;
@@ -8460,6 +8460,16 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
    else sync();
  };
  const stopMusic=()=>{try{player.pause()}catch(_){} sync()};
+ const silenceMusicButton=e=>{
+   const btn=e.target.closest?.('button,a,[role="button"]');
+   if(!btn||!room.contains(btn))return;
+   if(btn.id==='musicPlay'||btn.id==='musicRestart')return;
+   stopMusic();
+   quietOthers();
+ };
+ ['pointerdown','touchstart','click'].forEach(type=>{
+   room.addEventListener(type,silenceMusicButton,{capture:true,passive:type!=='click'});
+ });
  const bindButton=(id,fn)=>{
    const el=$(id);
    if(!el)return;
@@ -8470,9 +8480,10 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  bindButton('musicRestart',()=>{quietOthers();forceMusicSource();player.currentTime=0;playMusic()});
  bindButton('musicSound',()=>{forceMusicSource();player.muted=!player.muted;sync()});
  document.querySelectorAll('#musicRoom .music-tab').forEach(tab=>{
+   ['pointerdown','touchstart'].forEach(type=>tab.addEventListener(type,()=>{stopMusic();quietOthers()},{capture:true,passive:true}));
    tab.addEventListener('click',e=>{
      e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
-     if(tab.dataset.tab==='library'||tab.dataset.tab==='discovery')stopMusic();
+     stopMusic();
      if(typeof setMusicTab==='function')setMusicTab(tab.dataset.tab);
      quietOthers();
    },true);
