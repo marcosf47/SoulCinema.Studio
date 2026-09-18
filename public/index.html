@@ -8681,7 +8681,7 @@ mp.addEventListener('play',sync);mp.addEventListener('pause',sync);quiet(mp);
    setTimeout(restore,240);
    return true;
  };
- ['pointerdown','touchend','click'].forEach(type=>{
+ ['click'].forEach(type=>{
    document.addEventListener(type,e=>{
      const card=e.target?.closest?.('#screeningTheater .collection-card[data-content-src]');
      if(!card||!isActive()||card.id==='kidsAnimationCollectionCard')return;
@@ -8697,15 +8697,38 @@ mp.addEventListener('play',sync);mp.addEventListener('pause',sync);quiet(mp);
  new MutationObserver(restore).observe(player,{attributes:true,attributeFilter:['src']});
 })();
 </script>
-<!-- RC471 DIRECT THEATER COLLECTION BUTTON AUTHORITY -->
-<script id="rc471-direct-theater-collection-button-authority">
+<!-- RC472 DIRECT THEATER COLLECTION BUTTON AUTHORITY / SCROLL GUARD -->
+<script id="rc472-direct-theater-collection-button-authority-scroll-guard">
 (()=>{
  const theater=document.getElementById('screeningTheater');
  const player=document.getElementById('theaterPlayer');
  const poster=document.getElementById('theaterPoster');
  if(!theater||!player)return;
  const setText=(id,text)=>{const el=document.getElementById(id);if(el)el.textContent=text};
+ let tapStart=null,scrolling=false,lastScroll=0;
+ const point=e=>{
+   const t=e?.changedTouches?.[0]||e?.touches?.[0]||e;
+   return {x:t?.clientX||0,y:t?.clientY||0};
+ };
+ document.addEventListener('touchstart',e=>{
+   const card=e.target?.closest?.('#screeningTheater .collection-card[data-content-src]');
+   if(!card)return;
+   tapStart=point(e);
+   scrolling=false;
+ },{capture:true,passive:true});
+ document.addEventListener('touchmove',e=>{
+   if(!tapStart)return;
+   const p=point(e);
+   if(Math.abs(p.x-tapStart.x)>8||Math.abs(p.y-tapStart.y)>8){
+     scrolling=true;
+     lastScroll=Date.now();
+   }
+ },{capture:true,passive:true});
+ document.addEventListener('touchend',()=>{
+   setTimeout(()=>{tapStart=null;scrolling=false},120);
+ },{capture:true,passive:true});
  window.scPlayTheaterCollection=(card,event)=>{
+   if(scrolling||Date.now()-lastScroll<220)return false;
    if(event){event.preventDefault();event.stopPropagation();event.stopImmediatePropagation?.()}
    if(!card||card.id==='kidsAnimationCollectionCard')return false;
    const src=card.dataset.contentSrc;
