@@ -8489,72 +8489,6 @@ mp.addEventListener('play',sync);mp.addEventListener('pause',sync);quiet(mp);
 })();
 </script>
 
-<!-- RC463 MOBILE RELEASE MEDIA OWNERSHIP -->
-<script id="rc463-mobile-release-media-ownership">
-(()=>{
- if(!matchMedia('(max-width:700px) and (pointer:coarse)').matches)return;
- const $=id=>document.getElementById(id);
- const scenes=()=>[...document.querySelectorAll('.scene')];
- const activeScene=()=>{
-   const map={theater:'screeningTheater',music:'musicRoom',live:'liveCenter',production:'productionRoom',story:'storyRoom',journal:'journalRoom',bible:'visualBibleRoom',about:'aboutRoom',contact:'contactRoom',lobby:'lobby',gate:'gate'};
-   const byScene=$(map[document.body.dataset.scene]);
-   if(byScene?.classList.contains('active'))return byScene;
-   const exp=(document.body.dataset.experience||'').replace('_active','');
-   const byExp=$(map[exp]);
-   if(byExp?.classList.contains('active'))return byExp;
-   return scenes().filter(s=>s.classList.contains('active')).at(-1)||null;
- };
- const pause=m=>{try{m.pause()}catch(_){}};
- const prune=()=>{
-   const owner=activeScene();
-   document.querySelectorAll('video,audio').forEach(m=>{
-     if(!owner||!owner.contains(m))pause(m);
-   });
- };
- const after=()=>{queueMicrotask(prune);setTimeout(prune,0);setTimeout(prune,80)};
- // One global rule: inactive rooms never own audio/video.
- ['click','pointerup','touchend'].forEach(t=>document.addEventListener(t,after,false));
- const mo=new MutationObserver(after);
- scenes().forEach(s=>mo.observe(s,{attributes:true,attributeFilter:['class','style']}));
- const room=$('musicRoom'),root=$('rc455MusicRoom'),mp=$('musicPlayer');
- if(!room||!root||!mp){prune();return}
- const sync=()=>{const b=$('r455Play');if(b)b.textContent=mp.paused?'▶ PLAY':'❚❚ PAUSE'};
- // Release controller owns rebuilt Music Room controls before legacy delegates.
- root.addEventListener('click',e=>{
-   const b=e.target.closest('button'); if(!b)return;
-   if(b.id==='r455Play'){
-     e.preventDefault();e.stopImmediatePropagation();prune();
-     if(mp.paused){mp.muted=false;mp.volume=1;mp.play().then(sync).catch(sync)}
-     else{mp.pause();sync()}
-     return;
-   }
-   if(b.id==='r455Restart'){
-     e.preventDefault();e.stopImmediatePropagation();prune();mp.currentTime=0;mp.muted=false;mp.volume=1;mp.play().then(sync).catch(sync);return;
-   }
-   if(b.id==='r455Sound'){
-     e.preventDefault();e.stopImmediatePropagation();mp.muted=!mp.muted;b.textContent=mp.muted?'SOUND OFF':'SOUND ON';return;
-   }
-   if(b.matches('[data-r455]')){
-     e.preventDefault();e.stopImmediatePropagation();pause(mp);prune();
-     root.querySelectorAll('[data-r455]').forEach(x=>x.classList.toggle('active',x===b));
-     root.querySelectorAll('[data-r455-panel]').forEach(x=>x.classList.toggle('active',x.dataset.r455Panel===b.dataset.r455));
-     return;
-   }
-   if(b.id==='r455Back'){
-     e.preventDefault();e.stopImmediatePropagation();
-     document.querySelectorAll('video,audio').forEach(pause);
-     const old=$('musicReturn'); if(old)old.click(); else window.scMobileGoPortals?.();
-     after();return;
-   }
- },true);
- const input=$('r455Input');
- if(input){
-   ['focus','pointerdown','input'].forEach(t=>input.addEventListener(t,()=>{pause(mp);after()},true));
- }
- mp.addEventListener('play',()=>{prune();sync()});mp.addEventListener('pause',sync);mp.addEventListener('ended',sync);
- prune();
-})();
-</script>
 
 <!-- RC464 MOBILE TYPOGRAPHY READABILITY POLISH -->
 <style id="rc464-mobile-typography-readability-polish">
@@ -8602,4 +8536,25 @@ mp.addEventListener('play',sync);mp.addEventListener('pause',sync);quiet(mp);
   }
 }
 </style>
+
+<!-- RC467 MOBILE THEATER PLAYBACK RESTORE / TYPOGRAPHY PRESERVED -->
+<script id="rc467-mobile-theater-playback-restore">
+(()=>{
+ if(!matchMedia('(max-width:700px) and (pointer:coarse)').matches)return;
+ // RC463 global media governor removed: it was racing the proven Theater handlers.
+ // Keep cross-room cleanup only when a room actually changes, never on Theater content clicks.
+ const scenes=[...document.querySelectorAll('.scene')];
+ const pauseOutside=owner=>{
+   document.querySelectorAll('video,audio').forEach(m=>{
+     if(owner&&owner.contains(m))return;
+     try{m.pause()}catch(_){}
+   });
+ };
+ const sync=()=>{
+   const owner=scenes.filter(s=>s.classList.contains('active')).at(-1);
+   if(owner)pauseOutside(owner);
+ };
+ scenes.forEach(s=>new MutationObserver(sync).observe(s,{attributes:true,attributeFilter:['class']}));
+})();
+</script>
 </body></html>
