@@ -8511,4 +8511,57 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  own(sound,()=>{p.muted=!p.muted;sound.textContent=p.muted?'SOUND OFF':'SOUND ON'});
 })();
 </script>
+
+<!-- RC453 MOBILE MUSIC ROOM SIGNATURE REBUILD — CSS ONLY -->
+<style id="rc453-mobile-music-room-signature-rebuild">
+@media(max-width:700px) and (pointer:coarse){
+ body[data-experience="music_active"] #musicRoom{background:#030302!important}
+ #musicRoom>.music-bg{background:radial-gradient(circle at 76% 5%,rgba(217,183,96,.12),transparent 25%),linear-gradient(180deg,#090806,#020202 38%,#000)!important}
+ #musicRoom>.center{padding:18px 14px 30px!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important}
+ #musicRoom .music-shell{width:100%!important;max-width:none!important;margin:0!important;padding:14px!important;border:1px solid rgba(217,183,96,.28)!important;border-radius:24px!important;background:linear-gradient(180deg,rgba(17,14,8,.96),rgba(3,3,2,.98))!important;box-shadow:0 22px 70px rgba(0,0,0,.58),inset 0 0 50px rgba(217,183,96,.025)!important}
+ #musicRoom .music-head{display:block!important;text-align:center!important;padding:10px 6px 18px!important;margin:0 0 14px!important;border-bottom:1px solid rgba(217,183,96,.18)!important}
+ #musicRoom .music-head .eyebrow{font-size:9px!important;letter-spacing:.34em!important;color:rgba(245,224,166,.68)!important}
+ #musicRoom .music-head h2{font-size:43px!important;line-height:.96!important;letter-spacing:.05em!important;margin:9px 0 0!important;background:linear-gradient(#fff0bd,#d9b760 60%,#8e6825);-webkit-background-clip:text;background-clip:text;color:transparent!important}
+ #musicRoom .music-meta{display:none!important}
+ #musicRoom .music-main{display:block!important}
+ #musicRoom .music-art{margin:0 0 14px!important}
+ #musicRoom .music-cover{min-height:0!important;aspect-ratio:4/5!important;border-radius:20px!important;border:1px solid rgba(217,183,96,.28)!important;overflow:hidden!important;box-shadow:0 18px 45px rgba(0,0,0,.48)!important}
+ #musicRoom .music-cover-copy{display:none!important}
+ #musicRoom .music-console{display:block!important;padding:0!important;background:transparent!important;border:0!important}
+ #musicRoom .now-playing{text-align:center!important;padding:15px 10px!important;margin-bottom:12px!important;border:1px solid rgba(217,183,96,.20)!important;border-radius:18px!important;background:rgba(7,6,4,.78)!important}
+ #musicRoom .now-playing small{font-size:9px!important;letter-spacing:.28em!important;color:#d9b760!important}
+ #musicRoom .now-playing h3{font-size:24px!important;margin:7px 0 4px!important}
+ #musicRoom .now-playing p{font-size:8px!important;letter-spacing:.14em!important;opacity:.55!important}
+ #musicRoom .music-player{padding:12px!important;margin-bottom:12px!important;border:1px solid rgba(217,183,96,.20)!important;border-radius:18px!important;background:rgba(5,5,4,.86)!important}
+ #musicRoom .music-time{padding:0 4px 8px!important}
+ #musicRoom .music-actions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:9px!important}
+ #musicRoom #musicPlay{grid-column:1/-1!important}
+ #musicRoom .music-actions button{min-height:48px!important;border-radius:999px!important;font-size:11px!important;letter-spacing:.14em!important}
+ #musicRoom .music-tabbar{display:grid!important;grid-template-columns:1fr 1fr!important;gap:9px!important;padding:0!important;margin:0 0 10px!important}
+ #musicRoom .music-tab{min-height:48px!important;border-radius:999px!important;font-size:10px!important;letter-spacing:.12em!important}
+ #musicRoom .music-panel{border:1px solid rgba(217,183,96,.18)!important;border-radius:18px!important;padding:14px!important;background:rgba(5,4,3,.84)!important;overflow:hidden!important}
+ #musicRoom #musicDiscovery.active{height:auto!important;min-height:0!important;max-height:none!important;padding:14px!important}
+ #musicRoom #musicDiscovery .discovery-shell{display:block!important}
+ #musicRoom #musicDiscovery .discovery-kicker{text-align:center!important;font-size:8px!important;letter-spacing:.26em!important}
+ #musicRoom #musicDiscovery .discovery-title{text-align:center!important;font-size:25px!important;margin:7px 0!important}
+ #musicRoom #musicDiscovery .discovery-copy{text-align:center!important;font-size:12px!important;line-height:1.45!important;margin:0 auto 12px!important}
+ #musicRoom #musicDiscovery .discovery-mode{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;margin-bottom:10px!important}
+ #musicRoom #musicDiscovery .discovery-search{display:grid!important;grid-template-columns:minmax(0,1fr) 104px!important;gap:8px!important}
+ #musicRoom #musicDiscovery #discoveryInput,#musicRoom #musicDiscovery #discoveryOpen,#musicRoom #musicDiscovery .discovery-mode button{min-height:44px!important;border-radius:999px!important}
+ #musicRoom #musicDiscovery .discovery-status{text-align:center!important;padding:9px 4px!important;font-size:8px!important;letter-spacing:.16em!important}
+ #musicRoom #musicDiscovery .discovery-workspace{display:flex!important;flex-direction:column!important;height:auto!important;min-height:0!important;max-height:none!important;gap:8px!important}
+ #musicRoom #musicDiscovery #discoveryResults{order:1!important;width:100%!important;height:auto!important;min-height:0!important;max-height:250px!important;padding:0!important;overflow-y:auto!important}
+ #musicRoom #musicDiscovery #discoveryPlayer.active{order:2!important;position:relative!important;inset:auto!important;width:100%!important;max-width:100%!important;height:92px!important;min-height:92px!important;max-height:92px!important;margin:4px 0 0!important;border-radius:14px!important}
+ #musicRoom #musicDiscovery #discoveryPlayer iframe{width:100%!important;height:92px!important;min-height:92px!important;max-height:92px!important}
+ #musicRoom #musicDiscovery .scv2-result{grid-template-columns:52px minmax(0,1fr) 86px!important;min-height:72px!important;height:auto!important;padding:9px!important;gap:9px!important;border-radius:14px!important}
+ #musicRoom #musicDiscovery .scv2-art{width:52px!important;height:52px!important;border-radius:10px!important}
+ #musicRoom #musicDiscovery .scv2-title{font-size:14px!important;line-height:1.12!important}
+ #musicRoom #musicDiscovery .scv2-artist{font-size:9px!important}
+ #musicRoom #musicDiscovery .scv2-listen{width:86px!important;min-width:86px!important;min-height:40px!important;border-radius:999px!important;font-size:9px!important}
+ #musicRoom #musicDiscovery .discovery-foot{height:auto!important;min-height:0!important;margin-top:10px!important;font-size:7px!important}
+ #musicRoom .music-footer{display:block!important;padding:14px 0 0!important;margin-top:14px!important;border-top:1px solid rgba(217,183,96,.15)!important}
+ #musicRoom #musicReturn{display:flex!important;width:100%!important;min-height:54px!important;align-items:center!important;justify-content:center!important;border-radius:999px!important;font-size:11px!important;letter-spacing:.20em!important}
+ #musicRoom .music-signature,#musicRoom .music-footer-note{display:none!important}
+}
+</style>
 </body></html>
