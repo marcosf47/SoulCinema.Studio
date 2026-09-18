@@ -8786,4 +8786,30 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  },true);
 })();
 </script>
+
+<!-- RC458 MOBILE MUSIC ROOM QUARANTINE FROM LEGACY MEDIA -->
+<script id="rc458-mobile-music-room-quarantine-from-legacy-media">
+(()=>{
+ if(!matchMedia('(max-width:700px) and (pointer:coarse)').matches)return;
+ const root=document.getElementById('rc455MusicRoom'),room=document.getElementById('musicRoom'),mp=document.getElementById('musicPlayer');
+ if(!root||!room)return;
+ const quarantine=()=>{
+  if(!room.classList.contains('active'))return;
+  document.querySelectorAll('video').forEach(v=>{try{v.pause();v.muted=true}catch(_){}});
+  document.querySelectorAll('audio').forEach(a=>{if(a!==mp)try{a.pause();a.muted=true}catch(_){}});
+ };
+ // Stop legacy/global gesture handlers before a Music Room gesture can reach them.
+ ['pointerdown','pointerup','touchstart','touchend','click'].forEach(type=>{
+   root.addEventListener(type,e=>{
+     if(!room.classList.contains('active'))return;
+     quarantine();
+     // Keep event inside the rebuilt Music Room; its own target handlers still run.
+     e.stopPropagation();
+   },true);
+ });
+ new MutationObserver(()=>{if(room.classList.contains('active'))quarantine()})
+   .observe(room,{attributes:true,attributeFilter:['class']});
+ quarantine();
+})();
+</script>
 </body></html>
