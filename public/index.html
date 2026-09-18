@@ -8557,4 +8557,68 @@ mp.addEventListener('play',sync);mp.addEventListener('pause',sync);quiet(mp);
  scenes.forEach(s=>new MutationObserver(sync).observe(s,{attributes:true,attributeFilter:['class']}));
 })();
 </script>
+<!-- RC468 MOBILE THEATER COLLECTION SOURCE AUTHORITY -->
+<script id="rc468-mobile-theater-collection-source-authority">
+(()=>{
+ if(!matchMedia('(max-width:700px) and (pointer:coarse)').matches)return;
+ const theater=document.getElementById('screeningTheater');
+ const player=document.getElementById('theaterPlayer');
+ const poster=document.getElementById('theaterPoster');
+ if(!theater||!player)return;
+ const setText=(id,text)=>{const el=document.getElementById(id);if(el)el.textContent=text};
+ const playCard=card=>{
+   const src=card.dataset.contentSrc;
+   if(!src||card.id==='kidsAnimationCollectionCard')return false;
+   document.querySelectorAll('#screeningTheater .collection-card').forEach(c=>{
+     c.classList.toggle('is-current',c===card);
+     c.setAttribute('aria-pressed',c===card?'true':'false');
+   });
+   const title=card.dataset.contentTitle||card.querySelector('strong')?.textContent?.trim()||'SOULCINEMA COLLECTION';
+   try{theaterHandoffBusy=false;theaterStage='collection'}catch(_){}
+   theater.classList.remove('kids-film-active','rc421-handoff-mask');
+   try{player.pause()}catch(_){}
+   player.classList.remove('theater-handoff','theater-portal-push','theater-feature-enter');
+   if(poster)poster.classList.add('hidden');
+   player.removeAttribute('src');
+   player.dataset.scStage='collection';
+   player.preload='auto';
+   player.controls=true;
+   player.playsInline=true;
+   player.setAttribute('playsinline','');
+   player.muted=false;
+   player.volume=1;
+   player.src=src;
+   try{player.load()}catch(_){}
+   setText('theaterCurrentTitle',title);
+   setText('theaterStatus','LOADING · '+title);
+   let started=false;
+   const start=()=>{
+     if(started||player.readyState<2)return;
+     started=true;
+     player.removeEventListener('loadeddata',start);
+     player.removeEventListener('canplay',start);
+     if((player.currentSrc||player.src||'')!==src)return;
+     const p=player.play();
+     if(p?.then)p.then(()=>setText('theaterStatus','● NOW PLAYING · '+title)).catch(()=>{
+       player.muted=true;
+       player.play().then(()=>setText('theaterStatus','● NOW PLAYING · '+title)).catch(()=>setText('theaterStatus','PRESS PLAY · '+title));
+     });
+   };
+   player.addEventListener('loadeddata',start);
+   player.addEventListener('canplay',start);
+   setTimeout(start,60);
+   setTimeout(start,240);
+   return true;
+ };
+ document.addEventListener('click',e=>{
+   const card=e.target?.closest?.('#screeningTheater .collection-card[data-content-src]');
+   if(!card||!theater.classList.contains('active'))return;
+   if(card.id==='kidsAnimationCollectionCard')return;
+   e.preventDefault();
+   e.stopPropagation();
+   e.stopImmediatePropagation();
+   playCard(card);
+ },true);
+})();
+</script>
 </body></html>
