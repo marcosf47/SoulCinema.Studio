@@ -2579,10 +2579,10 @@ body[data-live-mode="live"] #liveCenter #publicLiveBadge{
       </div>
     </div></div>
     <div class="collection-strip" aria-label="SoulCinema Content Collection">
-      <button class="collection-card" data-content-src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/collection-nature-01.mp4" data-content-title="NATURE EXPERIENCE 01" type="button" onclick="return window.scPlayTheaterCollection?.(this,event)"><small>CINEMATIC · NATURE</small><strong>Nature Experience 01</strong></button>
-      <button class="collection-card" data-content-src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/collection-family-01.mp4" data-content-title="FAMILY EXPERIENCE 01" type="button" onclick="return window.scPlayTheaterCollection?.(this,event)"><small>KIDS & FAMILY</small><strong>Family Experience 01</strong></button>
+      <button class="collection-card" data-content-src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/collection-nature-01.mp4" data-content-title="NATURE EXPERIENCE 01" type="button"><small>CINEMATIC · NATURE</small><strong>Nature Experience 01</strong></button>
+      <button class="collection-card" data-content-src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/collection-family-01.mp4" data-content-title="FAMILY EXPERIENCE 01" type="button"><small>KIDS & FAMILY</small><strong>Family Experience 01</strong></button>
       <button id="kidsAnimationCollectionCard" class="collection-card" data-content-src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/collection-family-02.mp4" data-content-title="ANIMATED EXPERIENCE 02" type="button"><small>KIDS · ANIMATION</small><strong>5 FILMS · OPEN COLLECTION</strong></button>
-      <button class="collection-card room307-card" data-content-src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/room-307-episode-01-the-envelope.mp4" data-content-title="ROOM 307 · EPISODE 01 — THE ENVELOPE" type="button" onclick="return window.scPlayTheaterCollection?.(this,event)"><small>SOULCINEMA ORIGINAL SERIES · EPISODE 01</small><strong>Room 307 · The Envelope</strong></button>
+      <button class="collection-card room307-card" data-content-src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/room-307-episode-01-the-envelope.mp4" data-content-title="ROOM 307 · EPISODE 01 — THE ENVELOPE" type="button"><small>SOULCINEMA ORIGINAL SERIES · EPISODE 01</small><strong>Room 307 · The Envelope</strong></button>
     </div>
     <footer class="theater-footer"><div class="theater-nav-left"><button id="theaterReturn" class="ghost return">← GRAND LOBBY</button><button id="theaterBackHome" class="ghost">← BACK TO THEATER</button></div><div class="theater-titleline"><small>SOULCINEMA COLLECTION</small><strong id="theaterCurrentTitle">MWEN POUKONT MWEN</strong></div><div class="theater-actions"><button id="theaterSound" class="ghost">SOUND ON</button></div></footer>
   </div></div>
@@ -8272,28 +8272,6 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
  // Native iframe/player fullscreen control is the sole Live fullscreen button.
 })();
 </script>
-<!-- RC404 MOBILE THEATER PREMIERE REVEAL -->
-<script id="rc404-mobile-theater-premiere-reveal">
-(()=>{
- const mobile=()=>matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches;
- const opening='https://tfamln4qsost6j00.public.blob.vercel-storage.com/featured-premiere.mp4';
- const start=()=>{
-   if(!mobile())return;
-   const theater=document.getElementById('screeningTheater'),v=document.getElementById('theaterPlayer'),poster=document.getElementById('theaterPoster');
-   if(!theater?.classList.contains('active')||!v)return;
-   try{if(theaterStage==='film'||v.dataset.scStage==='film')return;theaterHandoffBusy=false;theaterStage='opening'}catch(_){}
-   try{v.pause()}catch(_){};v.classList.remove('theater-handoff','theater-portal-push','theater-feature-enter');
-   v.dataset.scStage='opening';if((v.currentSrc||v.src||'')!==opening){v.src=opening;try{v.load()}catch(_){}}
-   try{v.currentTime=0}catch(_){};v.muted=false;v.playsInline=true;v.setAttribute('playsinline','');
-   const reveal=()=>{poster?.classList.add('hidden');v.removeEventListener('playing',reveal)};v.addEventListener('playing',reveal);
-   const play=()=>{const p=v.play();if(p?.catch)p.catch(()=>{v.muted=true;const q=v.play();q?.catch?.(()=>{})})};
-   if(v.readyState>=2)play();else{v.addEventListener('canplay',play,{once:true});setTimeout(play,180)}
- };
- document.addEventListener('click',e=>{if(!mobile())return;const portal=e.target.closest?.('#portals .portal[data-room="Screening Theater"],#portals .portal[data-mobile-room="Screening Theater"]');if(portal){setTimeout(start,80);setTimeout(start,260)}},true);
- const mo=new MutationObserver(()=>{if(mobile()&&document.getElementById('screeningTheater')?.classList.contains('active'))setTimeout(start,0)});
- const t=document.getElementById('screeningTheater');if(t)mo.observe(t,{attributes:true,attributeFilter:['class']});
-})();
-</script>
 <!-- RC407 ISOLATED MOBILE THEATER LANDSCAPE PLAYER -->
 <style id="rc407-isolated-mobile-theater-landscape-player">
 /* Landscape-only isolation: black viewport + the existing theater player frame. */
@@ -8557,8 +8535,8 @@ mp.addEventListener('play',sync);mp.addEventListener('pause',sync);quiet(mp);
  scenes.forEach(s=>new MutationObserver(sync).observe(s,{attributes:true,attributeFilter:['class']}));
 })();
 </script>
-<!-- RC469 MOBILE THEATER COLLECTION SOURCE AUTHORITY / FOLD WIDTH -->
-<script id="rc469-mobile-theater-collection-source-authority">
+<!-- RC474 MOBILE THEATER CLEAN MIRROR FROM DESKTOP LOCK -->
+<script id="rc474-mobile-theater-clean-mirror">
 (()=>{
  const mobile=()=>matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches;
  if(!mobile())return;
@@ -8567,204 +8545,91 @@ mp.addEventListener('play',sync);mp.addEventListener('pause',sync);quiet(mp);
  const poster=document.getElementById('theaterPoster');
  if(!theater||!player)return;
  const setText=(id,text)=>{const el=document.getElementById(id);if(el)el.textContent=text};
- const playCard=card=>{
-   const src=card.dataset.contentSrc;
-   if(!src||card.id==='kidsAnimationCollectionCard')return false;
-   document.querySelectorAll('#screeningTheater .collection-card').forEach(c=>{
-     c.classList.toggle('is-current',c===card);
-     c.setAttribute('aria-pressed',c===card?'true':'false');
-   });
-   const title=card.dataset.contentTitle||card.querySelector('strong')?.textContent?.trim()||'SOULCINEMA COLLECTION';
-   try{theaterHandoffBusy=false;theaterStage='collection'}catch(_){}
-   theater.classList.remove('kids-film-active','rc421-handoff-mask');
+ const cleanPlayer=()=>{
    try{player.pause()}catch(_){}
    player.classList.remove('theater-handoff','theater-portal-push','theater-feature-enter');
-   if(poster)poster.classList.add('hidden');
+   theater.classList.remove('rc421-handoff-mask','kids-film-active');
+   player.querySelectorAll('source').forEach(source=>source.remove());
    player.removeAttribute('src');
-   player.dataset.scStage='collection';
-   player.preload='auto';
    player.controls=true;
+   player.preload='auto';
    player.playsInline=true;
    player.setAttribute('playsinline','');
    player.muted=false;
    player.volume=1;
+ };
+ const loadAndPlay=(src,title,stage)=>{
+   if(!src)return false;
+   try{theaterHandoffBusy=false;theaterStage=stage||'collection'}catch(_){}
+   cleanPlayer();
+   if(poster)poster.classList.add('hidden');
+   player.dataset.scStage=stage||'collection';
    player.src=src;
    try{player.load()}catch(_){}
    setText('theaterCurrentTitle',title);
    setText('theaterStatus','LOADING · '+title);
    let started=false;
    const start=()=>{
-     if(started||player.readyState<2)return;
+     if(started||!theater.classList.contains('active')||player.readyState<2)return;
+     if((player.currentSrc||player.src||'')!==src)return;
      started=true;
      player.removeEventListener('loadeddata',start);
      player.removeEventListener('canplay',start);
-     if((player.currentSrc||player.src||'')!==src)return;
-     const p=player.play();
-     if(p?.then)p.then(()=>setText('theaterStatus','● NOW PLAYING · '+title)).catch(()=>{
-       player.muted=true;
-       player.play().then(()=>setText('theaterStatus','● NOW PLAYING · '+title)).catch(()=>setText('theaterStatus','PRESS PLAY · '+title));
-     });
+     const play=player.play();
+     if(play?.then){
+       play.then(()=>setText('theaterStatus','● NOW PLAYING · '+title)).catch(()=>{
+         player.muted=true;
+         player.play().then(()=>setText('theaterStatus','● NOW PLAYING · '+title)).catch(()=>setText('theaterStatus','PRESS PLAY · '+title));
+       });
+     }
    };
    player.addEventListener('loadeddata',start);
    player.addEventListener('canplay',start);
-   setTimeout(start,60);
-   setTimeout(start,240);
-   return true;
+   setTimeout(start,80);
+   setTimeout(start,260);
+   return false;
  };
- document.addEventListener('click',e=>{
-   const card=e.target?.closest?.('#screeningTheater .collection-card[data-content-src]');
+ const selectCollection=card=>{
+   if(!card||card.id==='kidsAnimationCollectionCard')return false;
+   const src=card.dataset.contentSrc;
+   const title=card.dataset.contentTitle||card.querySelector('strong')?.textContent?.trim()||'SOULCINEMA COLLECTION';
+   document.querySelectorAll('#screeningTheater .collection-card').forEach(c=>{
+     c.classList.toggle('is-current',c===card);
+     c.setAttribute('aria-pressed',c===card?'true':'false');
+   });
+   return loadAndPlay(src,title,'collection');
+ };
+ let tapStart=null,dragging=false;
+ const point=e=>{const t=e.changedTouches?.[0]||e.touches?.[0]||e;return {x:t?.clientX||0,y:t?.clientY||0}};
+ theater.addEventListener('touchstart',e=>{if(!e.target.closest?.('.collection-card'))return;tapStart=point(e);dragging=false},{capture:true,passive:true});
+ theater.addEventListener('touchmove',e=>{if(!tapStart)return;const p=point(e);if(Math.abs(p.x-tapStart.x)>10||Math.abs(p.y-tapStart.y)>10)dragging=true},{capture:true,passive:true});
+ theater.addEventListener('click',e=>{
+   const card=e.target.closest?.('.collection-card[data-content-src]');
    if(!card||!theater.classList.contains('active'))return;
+   if(dragging){dragging=false;tapStart=null;return;}
    if(card.id==='kidsAnimationCollectionCard')return;
    e.preventDefault();
    e.stopPropagation();
    e.stopImmediatePropagation();
-   playCard(card);
+   selectCollection(card);
+   tapStart=null;
  },true);
-})();
-</script>
-<!-- RC470 MOBILE THEATER COLLECTION SOURCE LOCK -->
-<script id="rc470-mobile-theater-collection-source-lock">
-(()=>{
- const theater=document.getElementById('screeningTheater');
- const player=document.getElementById('theaterPlayer');
- const poster=document.getElementById('theaterPoster');
- if(!theater||!player)return;
- let lockedSrc='',lockedTitle='',lockUntil=0,restoring=false;
- const setText=(id,text)=>{const el=document.getElementById(id);if(el)el.textContent=text};
- const isActive=()=>theater.classList.contains('active');
- const current=()=>String(player.currentSrc||player.src||'');
- const start=()=>{
-   if(!lockedSrc||!isActive())return;
-   if(current()!==lockedSrc)return;
-   const p=player.play();
-   if(p?.then)p.then(()=>setText('theaterStatus','● NOW PLAYING · '+lockedTitle)).catch(()=>{
-     player.muted=true;
-     player.play().then(()=>setText('theaterStatus','● NOW PLAYING · '+lockedTitle)).catch(()=>setText('theaterStatus','PRESS PLAY · '+lockedTitle));
-   });
- };
- const restore=()=>{
-   if(restoring||!lockedSrc||!isActive()||Date.now()>lockUntil)return;
-   if(current()===lockedSrc)return;
-   restoring=true;
-   try{player.pause()}catch(_){}
-   player.removeAttribute('src');
-   player.dataset.scStage='collection';
-   player.preload='auto';
-   player.controls=true;
-   player.playsInline=true;
-   player.setAttribute('playsinline','');
-   player.muted=false;
-   player.volume=1;
-   player.src=lockedSrc;
-   try{player.load()}catch(_){}
-   setTimeout(()=>{restoring=false;start()},90);
- };
- const playCard=card=>{
-   if(!card||card.id==='kidsAnimationCollectionCard')return false;
-   const src=card.dataset.contentSrc;
-   if(!src)return false;
-   lockedSrc=src;
-   lockedTitle=card.dataset.contentTitle||card.querySelector('strong')?.textContent?.trim()||'SOULCINEMA COLLECTION';
-   lockUntil=Date.now()+6000;
-   try{theaterHandoffBusy=false;theaterStage='collection'}catch(_){}
-   theater.classList.remove('kids-film-active','rc421-handoff-mask');
-   document.querySelectorAll('#screeningTheater .collection-card').forEach(c=>{
-     c.classList.toggle('is-current',c===card);
-     c.setAttribute('aria-pressed',c===card?'true':'false');
-   });
-   if(poster)poster.classList.add('hidden');
-   setText('theaterCurrentTitle',lockedTitle);
-   setText('theaterStatus','LOADING · '+lockedTitle);
-   restore();
-   setTimeout(restore,0);
-   setTimeout(restore,80);
-   setTimeout(restore,240);
-   return true;
- };
- // RC473: do not capture collection clicks here. Direct button authority below owns taps,
- // so scrolling can stay calm and selected videos can mount on the Theater screen.
- player.addEventListener('loadstart',restore,true);
- player.addEventListener('loadeddata',start,true);
- player.addEventListener('canplay',start,true);
- new MutationObserver(restore).observe(player,{attributes:true,attributeFilter:['src']});
-})();
-</script>
-<!-- RC473 DIRECT THEATER COLLECTION BUTTON AUTHORITY / SCROLL GUARD -->
-<script id="rc473-direct-theater-collection-button-authority-scroll-guard">
-(()=>{
- const theater=document.getElementById('screeningTheater');
- const player=document.getElementById('theaterPlayer');
- const poster=document.getElementById('theaterPoster');
- if(!theater||!player)return;
- const setText=(id,text)=>{const el=document.getElementById(id);if(el)el.textContent=text};
- let tapStart=null,scrolling=false,lastScroll=0;
- const point=e=>{
-   const t=e?.changedTouches?.[0]||e?.touches?.[0]||e;
-   return {x:t?.clientX||0,y:t?.clientY||0};
- };
- document.addEventListener('touchstart',e=>{
-   const card=e.target?.closest?.('#screeningTheater .collection-card[data-content-src]');
-   if(!card)return;
-   tapStart=point(e);
-   scrolling=false;
- },{capture:true,passive:true});
- document.addEventListener('touchmove',e=>{
-   if(!tapStart)return;
-   const p=point(e);
-   if(Math.abs(p.x-tapStart.x)>8||Math.abs(p.y-tapStart.y)>8){
-     scrolling=true;
-     lastScroll=Date.now();
-   }
- },{capture:true,passive:true});
- document.addEventListener('touchend',()=>{
-   setTimeout(()=>{tapStart=null;scrolling=false},120);
- },{capture:true,passive:true});
- window.scPlayTheaterCollection=(card,event)=>{
-   if(scrolling||Date.now()-lastScroll<220)return false;
-   if(event){event.preventDefault();event.stopPropagation();event.stopImmediatePropagation?.()}
-   if(!card||card.id==='kidsAnimationCollectionCard')return false;
-   const src=card.dataset.contentSrc;
-   if(!src)return false;
-   const title=card.dataset.contentTitle||card.querySelector('strong')?.textContent?.trim()||'SOULCINEMA COLLECTION';
-   try{theaterHandoffBusy=false;theaterStage='collection'}catch(_){}
-   theater.classList.remove('kids-film-active','rc421-handoff-mask');
-   document.querySelectorAll('#screeningTheater .collection-card').forEach(c=>{
-     c.classList.toggle('is-current',c===card);
-     c.setAttribute('aria-pressed',c===card?'true':'false');
-   });
-   try{player.pause()}catch(_){}
-   player.classList.remove('theater-handoff','theater-portal-push','theater-feature-enter');
-   if(poster)poster.classList.add('hidden');
-   player.removeAttribute('src');
-   player.querySelectorAll('source').forEach(source=>source.remove());
-   player.dataset.scStage='collection';
-   player.preload='auto';
-   player.controls=true;
-   player.playsInline=true;
-   player.setAttribute('playsinline','');
-   player.muted=false;
-   player.volume=1;
-   player.src=src;
-   try{player.load()}catch(_){}
-   setText('theaterCurrentTitle',title);
-   setText('theaterStatus','LOADING · '+title);
-   const start=()=>{
-     if((player.currentSrc||player.src||'')!==src||player.readyState<2)return;
-     player.removeEventListener('loadeddata',start);
-     player.removeEventListener('canplay',start);
-     const p=player.play();
-     if(p?.then)p.then(()=>setText('theaterStatus','● NOW PLAYING · '+title)).catch(()=>{
-       player.muted=true;
-       player.play().then(()=>setText('theaterStatus','● NOW PLAYING · '+title)).catch(()=>setText('theaterStatus','PRESS PLAY · '+title));
-     });
-   };
-   player.addEventListener('loadeddata',start);
-   player.addEventListener('canplay',start);
-   setTimeout(start,50);
-   setTimeout(start,180);
-   setTimeout(start,420);
-   return false;
- };
+ const opening='https://tfamln4qsost6j00.public.blob.vercel-storage.com/featured-premiere.mp4';
+ document.addEventListener('click',e=>{
+   const portal=e.target.closest?.('#portals .portal[data-room="Screening Theater"],#portals .portal[data-mobile-room="Screening Theater"],#rc414MobilePortals [data-rc414-room="Screening Theater"]');
+   if(!portal)return;
+   setTimeout(()=>{
+     if(!theater.classList.contains('active'))return;
+     document.querySelectorAll('#screeningTheater .collection-card').forEach(c=>{c.classList.remove('is-current');c.setAttribute('aria-pressed','false')});
+     if(poster)poster.classList.remove('hidden');
+     setText('theaterCurrentTitle','MWEN POUKONT MWEN');
+     setText('theaterStatus','PREMIERE READY');
+     cleanPlayer();
+     player.dataset.scStage='opening';
+     player.src=opening;
+     try{player.load()}catch(_){}
+   },420);
+ },true);
 })();
 </script>
 </body></html>
