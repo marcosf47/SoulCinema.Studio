@@ -8399,23 +8399,27 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
 }
 </style>
 
-<!-- RC447 MOBILE MUSIC DISCOVERY FOCUS AUDIO ISOLATION ONLY -->
-<script id="rc447-mobile-music-discovery-focus-audio-isolation-only">
+
+<!-- RC448 MOBILE MUSIC ROOM AUDIO ISOLATION ONLY -->
+<script id="rc448-mobile-music-room-audio-isolation-only">
 (()=>{
  if(!matchMedia('(max-width:700px) and (pointer:coarse)').matches)return;
- const input=document.getElementById('discoveryInput');
  const room=document.getElementById('musicRoom');
- if(!input||!room)return;
- const isolate=()=>{
+ if(!room)return;
+ const silenceForeignMedia=()=>{
   if(!room.classList.contains('active'))return;
   document.querySelectorAll('video,audio').forEach(media=>{
-   if(media.id==='musicPlayer'||room.contains(media))return;
+   if(room.contains(media))return;
    try{media.pause()}catch(_e){}
   });
  };
- input.addEventListener('focus',isolate,{passive:true});
- input.addEventListener('pointerdown',isolate,{passive:true});
- input.addEventListener('touchstart',isolate,{passive:true});
+ // Kill any stale Theater/Lobby/Live media the instant Music Room becomes active.
+ new MutationObserver(()=>{if(room.classList.contains('active'))silenceForeignMedia()})
+   .observe(room,{attributes:true,attributeFilter:['class']});
+ // Keep every Music Room control isolated from stale media without changing its own action.
+ room.addEventListener('pointerdown',silenceForeignMedia,{capture:true,passive:true});
+ room.addEventListener('touchstart',silenceForeignMedia,{capture:true,passive:true});
+ room.addEventListener('click',silenceForeignMedia,true);
 })();
 </script>
 </body></html>
