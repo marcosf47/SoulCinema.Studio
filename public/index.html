@@ -8486,6 +8486,63 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
 })();
 </script>
 
+<!-- RC486 STANDALONE MOBILE MUSIC ROOM / NO LEGACY DOM -->
+<style id="rc486-standalone-mobile-music-style">
+#rc486Music{display:none}
+@media(max-width:860px), (pointer:coarse){
+ body.rc486-music-open{overflow:hidden!important}
+ body.rc486-music-open #musicRoom{visibility:hidden!important;pointer-events:none!important}
+ #rc486Music{position:fixed;inset:0;z-index:2147483646;display:none;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;touch-action:pan-y!important;overscroll-behavior-y:contain;background:radial-gradient(circle at 70% 0,rgba(217,183,96,.10),transparent 30%),#030302;color:#f7e8bb;padding:16px 12px calc(28px + env(safe-area-inset-bottom))}
+ body.rc486-music-open #rc486Music{display:block!important}
+ #rc486Music .m486{max-width:720px;margin:auto;display:grid;gap:16px;border:1px solid rgba(217,183,96,.28);border-radius:22px;padding:16px 12px;background:linear-gradient(145deg,#100d07,#020202)}
+ #rc486Music header{border-bottom:1px solid rgba(217,183,96,.2);padding-bottom:14px}.m486-k{font:700 12px Arial;letter-spacing:.2em;color:#d9b760}
+ #rc486Music h2{font:400 clamp(45px,12vw,62px)/.95 Georgia,serif;letter-spacing:.05em;margin:8px 0 0}
+ #rc486Music img{display:block;width:100%;height:auto;aspect-ratio:1/1;object-fit:cover;border:1px solid rgba(217,183,96,.32);border-radius:18px}
+ #rc486Music .now{text-align:center}.now small{letter-spacing:.2em;color:#d9b760}.now h3{font:400 clamp(31px,8vw,44px)/1 Georgia,serif;margin:10px 0}.now p{font:16px Georgia,serif;color:#aaa}
+ #rc486Music .player,.m486-panel{border:1px solid rgba(217,183,96,.2);border-radius:18px;padding:16px;background:#030302}
+ #rc486Music .time{display:flex;justify-content:space-between;color:#999;margin-bottom:12px}
+ #rc486Music .controls,.m486-tabs{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+ #rc486Music button{min-height:58px;border:1px solid rgba(217,183,96,.42);border-radius:999px;background:linear-gradient(180deg,#151107,#050403);color:#efd06f;font:700 14px Arial;letter-spacing:.13em}
+ #rc486Music #m486Sound,#m486Back{grid-column:1/-1}.m486-tabs button.active{background:linear-gradient(#efd47a,#cda548);color:#080808}
+ #rc486Music .m486-panel{display:none;text-align:center}.m486-panel.active{display:block}.m486-panel h4{font:400 30px Georgia,serif;margin:4px 0 12px}.m486-panel p{font:17px/1.5 Georgia,serif;color:#bbb}
+}
+</style>
+<div id="rc486Music" aria-label="SoulCinema Music Room">
+ <main class="m486">
+  <header><div class="m486-k">SC · OFFICIAL LISTENING CHAMBER</div><h2>MUSIC ROOM</h2></header>
+  <img src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/mwen-poukont-mwen.png" alt="MWEN POUKONT MWEN">
+  <section class="now"><small>NOW PLAYING · TRACK 01</small><h3>MWEN POUKONT MWEN</h3><p>SOULCINEMA ORIGINAL · OFFICIAL RELEASE</p></section>
+  <section class="player"><audio id="m486Audio" preload="metadata" src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/mwen-poukont-mwen.mp3"></audio><div class="time"><span id="m486Cur">0:00</span><span id="m486Dur">3:28</span></div><div class="controls"><button id="m486Play">▶ PLAY</button><button id="m486Restart">RESTART</button><button id="m486Sound">SOUND ON</button></div></section>
+  <nav class="m486-tabs"><button data-m486="info" class="active">TRACK INFO</button><button data-m486="credits">CREDITS</button><button data-m486="library">LIBRARY</button><button data-m486="discovery">DISCOVERY</button></nav>
+  <section class="m486-panel active" data-m486-panel="info"><h4>MWEN POUKONT MWEN</h4><p>Official SoulCinema music single.</p></section>
+  <section class="m486-panel" data-m486-panel="credits"><h4>CREDITS</h4><p>SOULCINEMA ORIGINAL · MWEN POUKONT MWEN</p></section>
+  <section class="m486-panel" data-m486-panel="library"><h4>LIBRARY</h4><p>MWEN POUKONT MWEN · TRACK 01</p></section>
+  <section class="m486-panel" data-m486-panel="discovery"><h4>DISCOVERY</h4><p>SoulCinema Music Discovery.</p></section>
+  <button id="m486Back">← GRAND LOBBY</button>
+ </main>
+</div>
+<script id="rc486-standalone-mobile-music-controller">
+(()=>{
+ if(!(matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches))return;
+ const root=document.getElementById('rc486Music'),a=document.getElementById('m486Audio');if(!root||!a)return;
+ const fmt=n=>!isFinite(n)?'--:--':Math.floor(n/60)+':'+String(Math.floor(n%60)).padStart(2,'0');
+ const q=s=>root.querySelector(s);
+ const sync=()=>{q('#m486Play').textContent=a.paused?'▶ PLAY':'❚❚ PAUSE';q('#m486Sound').textContent=a.muted?'SOUND OFF':'SOUND ON';q('#m486Cur').textContent=fmt(a.currentTime);if(isFinite(a.duration))q('#m486Dur').textContent=fmt(a.duration)};
+ const kill=()=>document.querySelectorAll('video,audio').forEach(m=>{if(m!==a){try{m.pause()}catch(_){};m.muted=true}});
+ const open=()=>{kill();document.body.classList.add('rc486-music-open');root.scrollTop=0;sync()};
+ const close=()=>{a.pause();document.body.classList.remove('rc486-music-open');sync()};
+ q('#m486Play').onclick=e=>{e.stopPropagation();kill();if(a.paused){a.muted=false;a.volume=1;a.play().then(sync).catch(sync)}else{a.pause();sync()}};
+ q('#m486Restart').onclick=e=>{e.stopPropagation();kill();a.currentTime=0;a.muted=false;a.play().then(sync).catch(sync)};
+ q('#m486Sound').onclick=e=>{e.stopPropagation();a.muted=!a.muted;sync()};
+ root.querySelectorAll('[data-m486]').forEach(b=>b.onclick=e=>{e.stopPropagation();const n=b.dataset.m486;root.querySelectorAll('[data-m486]').forEach(x=>x.classList.toggle('active',x===b));root.querySelectorAll('[data-m486-panel]').forEach(x=>x.classList.toggle('active',x.dataset.m486Panel===n))});
+ q('#m486Back').onclick=e=>{e.stopPropagation();close();try{window.scRc414OpenRoom?document.body.dataset.experience='portal_mode':null}catch(_){};try{document.getElementById('musicReturn')?.click()}catch(_){}};
+ const mo=new MutationObserver(()=>{const legacy=document.getElementById('musicRoom');if(legacy?.classList.contains('active'))open();else if(document.body.dataset.experience==='portal_mode')close()});
+ const legacy=document.getElementById('musicRoom');if(legacy)mo.observe(legacy,{attributes:true,attributeFilter:['class']});
+ new MutationObserver(()=>{if(document.body.dataset.experience==='portal_mode')close()}).observe(document.body,{attributes:true,attributeFilter:['data-experience']});
+ a.addEventListener('play',()=>{kill();sync()});a.addEventListener('pause',sync);a.addEventListener('timeupdate',sync);a.addEventListener('loadedmetadata',sync);sync();
+})();
+</script>
+
 <!-- RC464 MOBILE TYPOGRAPHY READABILITY POLISH -->
 <style id="rc464-mobile-typography-readability-polish">
 @media(max-width:700px) and (pointer:coarse){
