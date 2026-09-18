@@ -8681,24 +8681,16 @@ mp.addEventListener('play',sync);mp.addEventListener('pause',sync);quiet(mp);
    setTimeout(restore,240);
    return true;
  };
- ['click'].forEach(type=>{
-   document.addEventListener(type,e=>{
-     const card=e.target?.closest?.('#screeningTheater .collection-card[data-content-src]');
-     if(!card||!isActive()||card.id==='kidsAnimationCollectionCard')return;
-     e.preventDefault();
-     e.stopPropagation();
-     e.stopImmediatePropagation();
-     playCard(card);
-   },{capture:true,passive:false});
- });
+ // RC473: do not capture collection clicks here. Direct button authority below owns taps,
+ // so scrolling can stay calm and selected videos can mount on the Theater screen.
  player.addEventListener('loadstart',restore,true);
  player.addEventListener('loadeddata',start,true);
  player.addEventListener('canplay',start,true);
  new MutationObserver(restore).observe(player,{attributes:true,attributeFilter:['src']});
 })();
 </script>
-<!-- RC472 DIRECT THEATER COLLECTION BUTTON AUTHORITY / SCROLL GUARD -->
-<script id="rc472-direct-theater-collection-button-authority-scroll-guard">
+<!-- RC473 DIRECT THEATER COLLECTION BUTTON AUTHORITY / SCROLL GUARD -->
+<script id="rc473-direct-theater-collection-button-authority-scroll-guard">
 (()=>{
  const theater=document.getElementById('screeningTheater');
  const player=document.getElementById('theaterPlayer');
