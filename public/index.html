@@ -2579,10 +2579,10 @@ body[data-live-mode="live"] #liveCenter #publicLiveBadge{
       </div>
     </div></div>
     <div class="collection-strip" aria-label="SoulCinema Content Collection">
-      <button class="collection-card" data-content-src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/collection-nature-01.mp4" data-content-title="NATURE EXPERIENCE 01" type="button"><small>CINEMATIC · NATURE</small><strong>Nature Experience 01</strong></button>
-      <button class="collection-card" data-content-src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/collection-family-01.mp4" data-content-title="FAMILY EXPERIENCE 01" type="button"><small>KIDS & FAMILY</small><strong>Family Experience 01</strong></button>
+      <button class="collection-card" data-content-src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/collection-nature-01.mp4" data-content-title="NATURE EXPERIENCE 01" type="button" onclick="return window.scPlayTheaterCollection?.(this,event)"><small>CINEMATIC · NATURE</small><strong>Nature Experience 01</strong></button>
+      <button class="collection-card" data-content-src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/collection-family-01.mp4" data-content-title="FAMILY EXPERIENCE 01" type="button" onclick="return window.scPlayTheaterCollection?.(this,event)"><small>KIDS & FAMILY</small><strong>Family Experience 01</strong></button>
       <button id="kidsAnimationCollectionCard" class="collection-card" data-content-src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/collection-family-02.mp4" data-content-title="ANIMATED EXPERIENCE 02" type="button"><small>KIDS · ANIMATION</small><strong>5 FILMS · OPEN COLLECTION</strong></button>
-      <button class="collection-card room307-card" data-content-src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/room-307-episode-01-the-envelope.mp4" data-content-title="ROOM 307 · EPISODE 01 — THE ENVELOPE" type="button"><small>SOULCINEMA ORIGINAL SERIES · EPISODE 01</small><strong>Room 307 · The Envelope</strong></button>
+      <button class="collection-card room307-card" data-content-src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/room-307-episode-01-the-envelope.mp4" data-content-title="ROOM 307 · EPISODE 01 — THE ENVELOPE" type="button" onclick="return window.scPlayTheaterCollection?.(this,event)"><small>SOULCINEMA ORIGINAL SERIES · EPISODE 01</small><strong>Room 307 · The Envelope</strong></button>
     </div>
     <footer class="theater-footer"><div class="theater-nav-left"><button id="theaterReturn" class="ghost return">← GRAND LOBBY</button><button id="theaterBackHome" class="ghost">← BACK TO THEATER</button></div><div class="theater-titleline"><small>SOULCINEMA COLLECTION</small><strong id="theaterCurrentTitle">MWEN POUKONT MWEN</strong></div><div class="theater-actions"><button id="theaterSound" class="ghost">SOUND ON</button></div></footer>
   </div></div>
@@ -8695,6 +8695,61 @@ mp.addEventListener('play',sync);mp.addEventListener('pause',sync);quiet(mp);
  player.addEventListener('loadeddata',start,true);
  player.addEventListener('canplay',start,true);
  new MutationObserver(restore).observe(player,{attributes:true,attributeFilter:['src']});
+})();
+</script>
+<!-- RC471 DIRECT THEATER COLLECTION BUTTON AUTHORITY -->
+<script id="rc471-direct-theater-collection-button-authority">
+(()=>{
+ const theater=document.getElementById('screeningTheater');
+ const player=document.getElementById('theaterPlayer');
+ const poster=document.getElementById('theaterPoster');
+ if(!theater||!player)return;
+ const setText=(id,text)=>{const el=document.getElementById(id);if(el)el.textContent=text};
+ window.scPlayTheaterCollection=(card,event)=>{
+   if(event){event.preventDefault();event.stopPropagation();event.stopImmediatePropagation?.()}
+   if(!card||card.id==='kidsAnimationCollectionCard')return false;
+   const src=card.dataset.contentSrc;
+   if(!src)return false;
+   const title=card.dataset.contentTitle||card.querySelector('strong')?.textContent?.trim()||'SOULCINEMA COLLECTION';
+   try{theaterHandoffBusy=false;theaterStage='collection'}catch(_){}
+   theater.classList.remove('kids-film-active','rc421-handoff-mask');
+   document.querySelectorAll('#screeningTheater .collection-card').forEach(c=>{
+     c.classList.toggle('is-current',c===card);
+     c.setAttribute('aria-pressed',c===card?'true':'false');
+   });
+   try{player.pause()}catch(_){}
+   player.classList.remove('theater-handoff','theater-portal-push','theater-feature-enter');
+   if(poster)poster.classList.add('hidden');
+   player.removeAttribute('src');
+   player.querySelectorAll('source').forEach(source=>source.remove());
+   player.dataset.scStage='collection';
+   player.preload='auto';
+   player.controls=true;
+   player.playsInline=true;
+   player.setAttribute('playsinline','');
+   player.muted=false;
+   player.volume=1;
+   player.src=src;
+   try{player.load()}catch(_){}
+   setText('theaterCurrentTitle',title);
+   setText('theaterStatus','LOADING · '+title);
+   const start=()=>{
+     if((player.currentSrc||player.src||'')!==src||player.readyState<2)return;
+     player.removeEventListener('loadeddata',start);
+     player.removeEventListener('canplay',start);
+     const p=player.play();
+     if(p?.then)p.then(()=>setText('theaterStatus','● NOW PLAYING · '+title)).catch(()=>{
+       player.muted=true;
+       player.play().then(()=>setText('theaterStatus','● NOW PLAYING · '+title)).catch(()=>setText('theaterStatus','PRESS PLAY · '+title));
+     });
+   };
+   player.addEventListener('loadeddata',start);
+   player.addEventListener('canplay',start);
+   setTimeout(start,50);
+   setTimeout(start,180);
+   setTimeout(start,420);
+   return false;
+ };
 })();
 </script>
 </body></html>
