@@ -8524,6 +8524,130 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
 })();
 </script>
 
+<!-- RC480 MOBILE MUSIC ROOM DESKTOP-LOCK MIRROR / CLEAN ENGINE -->
+<style id="rc480-mobile-music-desktop-lock-mirror-style">
+@media(max-width:860px), (pointer:coarse){
+  #musicRoom .music-shell{display:none!important}
+  #rc480MobileMusicRoom{display:grid!important}
+}
+#rc480MobileMusicRoom{display:none}
+@media(max-width:860px), (pointer:coarse){
+  #rc480MobileMusicRoom{
+    width:calc(100vw - 16px)!important;
+    max-width:720px!important;
+    min-height:calc(100dvh - 20px)!important;
+    margin:auto!important;
+    padding:16px 12px calc(18px + env(safe-area-inset-bottom))!important;
+    border:1px solid rgba(217,183,96,.22);
+    border-radius:22px;
+    background:linear-gradient(145deg,rgba(17,14,8,.88),rgba(2,2,2,.95));
+    box-shadow:0 28px 90px rgba(0,0,0,.62),inset 0 1px 0 rgba(255,239,185,.04);
+    gap:14px;
+    color:var(--ivory);
+  }
+  #rc480MobileMusicRoom .r480-head{border-bottom:1px solid rgba(217,183,96,.15);padding-bottom:13px;text-align:left}
+  #rc480MobileMusicRoom .r480-eyebrow{font-size:12px;letter-spacing:.18em;color:#d9b760;font-weight:700}
+  #rc480MobileMusicRoom h2{margin:8px 0 0;font:400 clamp(44px,12vw,60px)/.95 Georgia,serif;color:#fff1c8;letter-spacing:.05em}
+  #rc480MobileMusicRoom .r480-cover{
+    min-height:260px;border:1px solid rgba(217,183,96,.18);border-radius:18px;
+    display:grid;place-items:end center;padding:20px;text-align:center;
+    background:radial-gradient(circle at 48% 22%,rgba(217,183,96,.18),transparent 34%),linear-gradient(145deg,rgba(32,25,11,.72),rgba(0,0,0,.88));
+  }
+  #rc480MobileMusicRoom .r480-cover small,#rc480MobileMusicRoom .r480-now small{font-size:12px;letter-spacing:.2em;color:#d9b760}
+  #rc480MobileMusicRoom .r480-cover h3,#rc480MobileMusicRoom .r480-now h3{margin:10px 0 8px;font:400 clamp(34px,9.5vw,48px)/1.02 Georgia,serif;color:#fff3d4}
+  #rc480MobileMusicRoom .r480-cover p,#rc480MobileMusicRoom .r480-now p,#rc480MobileMusicRoom .r480-panel p,#rc480MobileMusicRoom .r480-panel li{font:400 16px/1.5 Georgia,serif;color:rgba(255,255,255,.68)}
+  #rc480MobileMusicRoom .r480-player{padding:16px 14px;border:1px solid rgba(217,183,96,.22);border-radius:18px;background:rgba(0,0,0,.42)}
+  #rc480MobileMusicRoom .r480-time{display:flex;justify-content:space-between;margin-bottom:12px;font-size:14px;letter-spacing:.12em;color:rgba(255,255,255,.55)}
+  #rc480MobileMusicRoom .r480-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  #rc480MobileMusicRoom .r480-actions button,#rc480MobileMusicRoom .r480-tabs button,#rc480MobileMusicRoom .r480-return{width:100%;min-height:54px;font-size:14px;letter-spacing:.14em}
+  #rc480MobileMusicRoom #r480Sound{grid-column:1/-1}
+  #rc480MobileMusicRoom .r480-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  #rc480MobileMusicRoom .r480-tabs button.is-active{background:linear-gradient(180deg,#efd47a,#cfa84d);color:#090909;border-color:#f3d77e}
+  #rc480MobileMusicRoom .r480-panel{display:none;border:1px solid rgba(217,183,96,.14);border-radius:16px;padding:18px;background:rgba(0,0,0,.28);text-align:center}
+  #rc480MobileMusicRoom .r480-panel.active{display:block}
+  #rc480MobileMusicRoom .r480-panel h4{margin:0 0 12px;font:400 28px/1.05 Georgia,serif;color:#fff1c8}
+  #rc480MobileMusicRoom .r480-panel ul{margin:0;padding-left:18px;text-align:left}
+  #rc480MobileMusicRoom .r480-library-track{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.08);text-align:left}
+  #rc480MobileMusicRoom .r480-library-track strong{font:400 16px Georgia,serif;color:#fff0c8}
+  #rc480MobileMusicRoom .r480-library-track span{font-size:11px;letter-spacing:.14em;color:#d9b760}
+  #rc480MobileMusicRoom .r480-discovery input{width:100%;min-height:52px;border:1px solid rgba(217,183,96,.22);border-radius:999px;background:#050505;color:#fff4d7;padding:0 18px;font-size:16px;margin:8px 0 10px}
+  #rc480MobileMusicRoom .r480-discovery button{width:100%;min-height:52px}
+}
+</style>
+<script id="rc480-mobile-music-desktop-lock-mirror">
+(()=>{
+ const mobile=()=>matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches;
+ if(!mobile())return;
+ const room=document.getElementById('musicRoom');
+ const center=room?.querySelector('.center');
+ if(!room||!center||document.getElementById('rc480MobileMusicRoom'))return;
+ const MUSIC_SRC='https://tfamln4qsost6j00.public.blob.vercel-storage.com/mwen-poukont-mwen.mp3';
+ const fmt=n=>!isFinite(n)?'--:--':Math.floor(n/60)+':'+String(Math.floor(n%60)).padStart(2,'0');
+ const shell=document.createElement('div');
+ shell.id='rc480MobileMusicRoom';
+ shell.innerHTML=`
+  <header class="r480-head"><div class="r480-eyebrow">SC · PRIVATE LISTENING CHAMBER</div><h2>MUSIC ROOM</h2></header>
+  <section class="r480-cover"><div><small>NOW PLAYING</small><h3>MWEN POUKONT MWEN</h3><p>Original SoulCinema soundtrack · Featured release</p></div></section>
+  <section class="r480-now"><small>NOW PLAYING · TRACK 01</small><h3>MWEN POUKONT MWEN</h3><p>SOULCINEMA ORIGINAL · PRIVATE LISTENING EDITION</p></section>
+  <section class="r480-player">
+    <audio id="r480Audio" preload="metadata" src="${MUSIC_SRC}"></audio>
+    <div class="r480-time"><span id="r480Current">00:00</span><span id="r480Duration">3:28</span></div>
+    <div class="r480-actions"><button id="r480Play" type="button">▶ PLAY</button><button id="r480Restart" class="ghost" type="button">RESTART</button><button id="r480Sound" class="ghost" type="button">SOUND ON</button></div>
+  </section>
+  <nav class="r480-tabs" aria-label="Music sections">
+    <button class="is-active" type="button" data-r480-tab="info">TRACK INFO</button>
+    <button type="button" data-r480-tab="credits">CREDITS</button>
+    <button type="button" data-r480-tab="library">LIBRARY</button>
+    <button type="button" data-r480-tab="discovery">DISCOVERY</button>
+  </nav>
+  <section class="r480-panel active" data-r480-panel="info"><h4>MWEN POUKONT MWEN</h4><p>Lyrics presentation reserved for the official SoulCinema master text. The listening chamber is ready for the final synchronized lyric copy without changing the room architecture.</p></section>
+  <section class="r480-panel" data-r480-panel="credits"><h4>Credits</h4><ul><li>SoulCinema Original</li><li>Featured music film: MWEN POUKONT MWEN</li><li>Presented inside the SoulCinema Studio experience</li></ul></section>
+  <section class="r480-panel" data-r480-panel="library"><h4>SoulCinema Library</h4><div class="r480-library-track"><strong>MWEN POUKONT MWEN</strong><span>NOW PLAYING</span></div><div class="r480-library-track"><strong>ALBUM</strong><span>COMING SOON</span></div></section>
+  <section class="r480-panel r480-discovery" data-r480-panel="discovery"><h4>SoulCinema Music Discovery</h4><p>Search stays isolated from SoulCinema media. No hidden audio starts from this panel.</p><input id="r480DiscoveryInput" type="search" autocomplete="off" placeholder="Search artist or track"><button id="r480DiscoveryOpen" type="button">SEARCH</button><p id="r480DiscoveryStatus">DISCOVERY ENGINE · SEARCH READY</p></section>
+  <button id="r480Return" class="ghost r480-return" type="button">← GRAND LOBBY</button>`;
+ center.appendChild(shell);
+ const audio=shell.querySelector('#r480Audio'), play=shell.querySelector('#r480Play'), restart=shell.querySelector('#r480Restart'), sound=shell.querySelector('#r480Sound');
+ const current=shell.querySelector('#r480Current'), duration=shell.querySelector('#r480Duration');
+ const stopAll=()=>{
+   document.querySelectorAll('video,audio').forEach(media=>{
+     if(media===audio)return;
+     try{media.pause()}catch(_){}
+     if(media.id==='theaterPlayer'||media.id==='kidsWarmupPlayer'){try{media.removeAttribute('src');media.load()}catch(_){}}
+   });
+   try{window.SC?.Widget?.(document.getElementById('scv2Frame'))?.pause?.()}catch(_){}
+   try{window.SC?.Widget?.(document.getElementById('r455ScFrame'))?.pause?.()}catch(_){}
+ };
+ const stopTrack=()=>{try{audio.pause()}catch(_){} sync(); stopAll()};
+ const sync=()=>{
+   play.textContent=audio.paused?'▶ PLAY':'❚❚ PAUSE';
+   sound.textContent=audio.muted?'SOUND OFF':'SOUND ON';
+   current.textContent=fmt(audio.currentTime);
+   if(isFinite(audio.duration))duration.textContent=fmt(audio.duration);
+ };
+ play.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();stopAll();if(audio.paused){audio.muted=false;audio.volume=1;audio.play().then(sync).catch(sync)}else stopTrack()},true);
+ restart.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();stopAll();audio.currentTime=0;audio.muted=false;audio.volume=1;audio.play().then(sync).catch(sync)},true);
+ sound.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();audio.muted=!audio.muted;sync()},true);
+ shell.querySelectorAll('[data-r480-tab]').forEach(tab=>tab.addEventListener('click',e=>{
+   e.preventDefault();e.stopPropagation();stopTrack();
+   const name=tab.dataset.r480Tab;
+   shell.querySelectorAll('[data-r480-tab]').forEach(btn=>btn.classList.toggle('is-active',btn===tab));
+   shell.querySelectorAll('[data-r480-panel]').forEach(panel=>panel.classList.toggle('active',panel.dataset.r480Panel===name));
+ },true));
+ shell.querySelector('#r480DiscoveryOpen').addEventListener('click',e=>{
+   e.preventDefault();e.stopPropagation();stopTrack();
+   shell.querySelector('#r480DiscoveryStatus').textContent='DISCOVERY ISOLATED · NO SOULCINEMA AUDIO RUNNING';
+ },true);
+ shell.querySelector('#r480DiscoveryInput').addEventListener('focus',stopTrack,true);
+ shell.querySelector('#r480Return').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();stopTrack();if(typeof returnFromMusic==='function')returnFromMusic()},true);
+ audio.addEventListener('play',()=>{stopAll();sync()});
+ audio.addEventListener('pause',sync);
+ audio.addEventListener('timeupdate',sync);
+ audio.addEventListener('loadedmetadata',sync);
+ new MutationObserver(()=>{if(room.classList.contains('active')){stopAll();sync()}else stopTrack()}).observe(room,{attributes:true,attributeFilter:['class']});
+ sync();
+})();
+</script>
+
 <!-- RC464 MOBILE TYPOGRAPHY READABILITY POLISH -->
 <style id="rc464-mobile-typography-readability-polish">
 @media(max-width:700px) and (pointer:coarse){
