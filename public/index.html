@@ -8654,4 +8654,66 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  #musicRoom #musicReturn{background:linear-gradient(180deg,rgba(83,58,16,.38),rgba(12,9,4,.92))!important;border:1px solid rgba(235,198,91,.52)!important;color:#f0cf74!important;box-shadow:0 12px 30px rgba(0,0,0,.38),inset 0 0 25px rgba(217,183,96,.06)!important}
 }
 </style>
+
+<!-- RC455 MOBILE MUSIC ROOM CLEAN DOM REBUILD -->
+<style id="rc455-mobile-music-room-clean-dom-rebuild-style">
+@media(max-width:700px) and (pointer:coarse){
+ #musicRoom>.music-bg,#musicRoom>.music-glow,#musicRoom>.grain,#musicRoom>.center{display:none!important}
+ #rc455MusicRoom{display:none}
+ #musicRoom.active #rc455MusicRoom{display:block!important;position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;background:radial-gradient(circle at 75% 8%,rgba(177,116,24,.16),transparent 27%),linear-gradient(#070603,#020201);color:#f8f1df;padding:16px 14px 28px;z-index:5}
+ .r455-wrap{max-width:620px;margin:auto}
+ .r455-brand{text-align:center;padding:18px 8px 15px;border-bottom:1px solid rgba(222,184,83,.22)}
+ .r455-brand b{display:block;font:400 31px/1 Georgia,serif;letter-spacing:.09em;color:#e7c86f}.r455-brand span{font:700 8px/1 sans-serif;letter-spacing:.32em;color:rgba(255,255,255,.58)}
+ .r455-hero{margin-top:14px;display:grid;grid-template-columns:112px 1fr;gap:15px;align-items:center;padding:14px;border:1px solid rgba(222,184,83,.25);border-radius:20px;background:rgba(8,6,3,.78)}
+ .r455-cover{aspect-ratio:1;border-radius:14px;background-image:url('https://tfamln4qsost6j00.public.blob.vercel-storage.com/mwen-poukont-mwen-cover.png'),linear-gradient(135deg,#231707,#050403);background-size:cover;background-position:center;border:1px solid rgba(222,184,83,.35)}
+ .r455-now small{display:inline-flex;border:1px solid rgba(222,184,83,.4);border-radius:99px;padding:6px 9px;color:#e3c267;font:700 7px sans-serif;letter-spacing:.17em}.r455-now h2{font:400 24px/1.04 Georgia,serif;margin:10px 0 4px}.r455-now p{margin:0;color:rgba(255,255,255,.55);font-size:10px}
+ .r455-time{display:flex;justify-content:space-between;margin:12px 3px 6px;color:rgba(255,255,255,.55);font:10px monospace}
+ .r455-controls{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:7px}.r455-controls button,.r455-tabs button,.r455-search button,.r455-mode button,.r455-back{border:1px solid rgba(222,184,83,.3);background:linear-gradient(180deg,rgba(52,37,12,.42),rgba(4,4,3,.94));color:#efd176;border-radius:999px;min-height:48px;font:700 9px sans-serif;letter-spacing:.12em}
+ .r455-tabs{display:grid;grid-template-columns:1fr 1fr 1fr 1.15fr;gap:6px;margin:14px 0}.r455-tabs button.active{background:linear-gradient(135deg,#d5a73e,#f1d87c);color:#171005}
+ .r455-panel{display:none;border:1px solid rgba(222,184,83,.20);border-radius:20px;padding:16px;background:rgba(5,4,2,.82)}.r455-panel.active{display:block}
+ .r455-panel h3{font:400 25px Georgia,serif;text-align:center;margin:2px 0 10px;color:#f2dda1}.r455-panel p,.r455-panel li{color:rgba(255,255,255,.67);font-size:12px;line-height:1.55}
+ .r455-discovery-head{text-align:center}.r455-discovery-head small{font:700 7px sans-serif;letter-spacing:.24em;color:#d9b760}.r455-discovery-head h3{font-size:28px;margin:8px 0}.r455-discovery-head p{margin:0 auto 13px;max-width:90%}
+ .r455-search{display:grid;grid-template-columns:1fr 92px;gap:7px}.r455-search input{min-width:0;min-height:48px;border:1px solid rgba(222,184,83,.3);border-radius:999px;background:#030302;color:white;padding:0 15px;font-size:12px}
+ .r455-mode{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:8px 0}
+ #r455Status{font:700 7px sans-serif;letter-spacing:.14em;color:#d9b760;padding:6px 2px}
+ #r455Results{display:grid;gap:8px;max-height:300px;overflow-y:auto}
+ .r455-result{display:grid;grid-template-columns:48px 1fr 66px;gap:9px;align-items:center;padding:8px;border:1px solid rgba(222,184,83,.18);border-radius:14px;background:#080603}.r455-result img{width:48px;height:48px;object-fit:cover;border-radius:9px}.r455-result strong{font:400 13px Georgia,serif}.r455-result span{display:block;font-size:8px;color:rgba(255,255,255,.5);margin-top:3px}.r455-result button{min-height:34px;border:1px solid rgba(222,184,83,.32);border-radius:99px;background:transparent;color:#e6c668;font-size:8px}
+ #r455Player{margin-top:8px}#r455Player iframe{display:block;width:100%;height:82px;border:0;border-radius:10px}
+ .r455-back{display:block;width:100%;margin-top:16px;min-height:58px;font-size:11px}
+}
+@media(min-width:701px){#rc455MusicRoom{display:none!important}}
+</style>
+<script id="rc455-mobile-music-room-clean-dom-rebuild">
+(()=>{
+ if(!matchMedia('(max-width:700px) and (pointer:coarse)').matches)return;
+ const host=document.getElementById('musicRoom'); if(!host||document.getElementById('rc455MusicRoom'))return;
+ host.insertAdjacentHTML('beforeend',`<div id="rc455MusicRoom"><div class="r455-wrap">
+ <header class="r455-brand"><b>SOULCINEMA</b><span>MUSIC ROOM</span></header>
+ <section class="r455-hero"><div class="r455-cover"></div><div class="r455-now"><small>NOW PLAYING</small><h2>MWEN POUKONT MWEN</h2><p>SoulCinema Original</p></div></section>
+ <div class="r455-time"><span id="r455Current">00:00</span><span id="r455Duration">--:--</span></div>
+ <div class="r455-controls"><button id="r455Play">▶ PLAY</button><button id="r455Restart">RESTART</button><button id="r455Sound">SOUND ON</button></div>
+ <nav class="r455-tabs"><button data-r455="info" class="active">TRACK INFO</button><button data-r455="credits">CREDITS</button><button data-r455="library">LIBRARY</button><button data-r455="discovery">DISCOVERY</button></nav>
+ <section class="r455-panel active" data-r455-panel="info"><h3>MWEN POUKONT MWEN</h3><p>SoulCinema Original · Private Listening Edition. Every heart hides a story.</p></section>
+ <section class="r455-panel" data-r455-panel="credits"><h3>Credits</h3><ul><li>SoulCinema Original</li><li>Featured music film: MWEN POUKONT MWEN</li><li>Presented inside SoulCinema Studio</li></ul></section>
+ <section class="r455-panel" data-r455-panel="library"><h3>SoulCinema Library</h3><p><b>MWEN POUKONT MWEN</b><br>Now Playing</p><p><b>ALBUM</b><br>Coming Soon</p></section>
+ <section class="r455-panel" data-r455-panel="discovery"><div class="r455-discovery-head"><small>SOULCINEMA MUSIC DISCOVERY</small><h3>Discover New Music</h3><p>Search artists and tracks through SoulCinema, or open a public SoundCloud link.</p></div><div class="r455-search"><input id="r455Input" placeholder="Search artist or track"><button id="r455Search">SEARCH</button></div><div class="r455-mode"><button id="r455Link">OPEN LINK</button><button id="r455Auto">AUTO PLAY OFF</button></div><div id="r455Status">DISCOVERY ENGINE · SEARCH READY</div><div id="r455Results"></div><div id="r455Player"></div></section>
+ <button id="r455Back" class="r455-back">← GRAND LOBBY</button></div></div>`);
+ const p=document.getElementById('musicPlayer'),play=document.getElementById('r455Play'),snd=document.getElementById('r455Sound');
+ const silence=()=>document.querySelectorAll('video,audio').forEach(m=>{if(m!==p)try{m.pause()}catch(_){}});
+ play.onclick=()=>{silence();if(p.paused){p.muted=false;p.play().catch(()=>{});play.textContent='❚❚ PAUSE';snd.textContent='SOUND ON'}else{p.pause();play.textContent='▶ PLAY'}};
+ document.getElementById('r455Restart').onclick=()=>{silence();p.currentTime=0;p.muted=false;p.play().catch(()=>{});play.textContent='❚❚ PAUSE';snd.textContent='SOUND ON'};
+ snd.onclick=()=>{p.muted=!p.muted;snd.textContent=p.muted?'SOUND OFF':'SOUND ON'};
+ const fmt=n=>{if(!isFinite(n))return'--:--';return Math.floor(n/60)+':'+String(Math.floor(n%60)).padStart(2,'0')};
+ p.addEventListener('timeupdate',()=>document.getElementById('r455Current').textContent=fmt(p.currentTime));p.addEventListener('loadedmetadata',()=>document.getElementById('r455Duration').textContent=fmt(p.duration));
+ document.querySelectorAll('[data-r455]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-r455]').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('[data-r455-panel]').forEach(x=>x.classList.toggle('active',x.dataset.r455Panel===b.dataset.r455))});
+ const oldInput=document.getElementById('discoveryInput'),oldSearch=document.getElementById('discoveryOpen'),oldLink=document.getElementById('discoveryLinkMode'),oldAuto=document.getElementById('discoveryAutoPlay'),oldStatus=document.getElementById('discoveryStatus'),oldResults=document.getElementById('discoveryResults'),oldPlayer=document.getElementById('discoveryPlayer');
+ const input=document.getElementById('r455Input'),status=document.getElementById('r455Status'),results=document.getElementById('r455Results'),player=document.getElementById('r455Player');
+ const sync=()=>{status.textContent=oldStatus?.textContent||'';results.innerHTML=oldResults?.innerHTML||'';player.innerHTML='';const f=oldPlayer?.querySelector('iframe');if(f){const nf=f.cloneNode(true);nf.id='r455ScFrame';player.appendChild(nf)}};
+ document.getElementById('r455Search').onclick=()=>{silence();if(oldInput&&oldSearch){oldInput.value=input.value;oldSearch.click();setTimeout(sync,700);setTimeout(sync,1600)}};
+ input.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();document.getElementById('r455Search').click()}};
+ document.getElementById('r455Link').onclick=()=>oldLink?.click();document.getElementById('r455Auto').onclick=()=>{oldAuto?.click();document.getElementById('r455Auto').textContent=oldAuto?.textContent||'AUTO PLAY'};
+ results.addEventListener('click',e=>{const i=[...results.querySelectorAll('.scv2-listen')].indexOf(e.target.closest('.scv2-listen'));if(i<0)return;e.preventDefault();oldResults?.querySelectorAll('.scv2-listen')?.[i]?.click();setTimeout(sync,300)},true);
+ document.getElementById('r455Back').onclick=e=>{e.preventDefault();document.querySelectorAll('video,audio').forEach(m=>{try{m.pause()}catch(_){}});try{window.scMobileGoPortals?.()}catch(_){}};
+})();
+</script>
 </body></html>
