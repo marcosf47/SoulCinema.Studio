@@ -8813,32 +8813,35 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
 })();
 </script>
 
-<!-- RC459 MOBILE MUSIC ROOM HARD EVENT FIREWALL -->
-<script id="rc459-mobile-music-room-hard-event-firewall">
+
+<!-- RC460 MOBILE MUSIC ROOM THEATER LAYER ISOLATION -->
+<style id="rc460-mobile-music-room-theater-layer-isolation">
+@media(max-width:700px) and (pointer:coarse){
+ body[data-experience="music_active"] #screeningTheater,
+ body[data-experience="music_active"] #kidsAnimationFolder,
+ body[data-experience="music_active"] #kidsAutoCurtain{
+   pointer-events:none!important;
+   visibility:hidden!important;
+ }
+ body[data-experience="music_active"] #rc455MusicRoom{
+   pointer-events:auto!important;
+   visibility:visible!important;
+   z-index:2147483000!important;
+ }
+}
+</style>
+<script id="rc460-mobile-music-room-theater-layer-isolation">
 (()=>{
  if(!matchMedia('(max-width:700px) and (pointer:coarse)').matches)return;
- const room=document.getElementById('musicRoom'),root=document.getElementById('rc455MusicRoom');
- if(!room||!root)return;
- const legacy=document.querySelector('#musicRoom>.center');
- if(legacy){legacy.setAttribute('inert','');legacy.style.pointerEvents='none';}
- const stopForeign=()=>{
+ const room=document.getElementById('musicRoom'),theater=document.getElementById('screeningTheater');
+ if(!room||!theater)return;
+ const isolate=()=>{
    if(!room.classList.contains('active'))return;
-   const theater=document.getElementById('screeningTheater');
-   theater?.querySelectorAll('video,audio').forEach(m=>{try{m.pause()}catch(_){}});
+   theater.querySelectorAll('video,audio').forEach(m=>{try{m.pause()}catch(_){}});
+   const warm=document.getElementById('kidsWarmupPlayer');if(warm)try{warm.pause()}catch(_){}
  };
- // Capture at window before document/body legacy gesture delegates can see Music Room input.
- ['pointerdown','pointerup','touchstart','touchend','mousedown','mouseup'].forEach(type=>{
-   window.addEventListener(type,e=>{
-     if(!room.classList.contains('active')||!root.contains(e.target))return;
-     stopForeign();
-     e.stopImmediatePropagation();
-     // Re-dispatch a clean click only to the rebuilt Music Room target on release.
-     if(type==='pointerup' && e.target instanceof Element){
-       const t=e.target.closest('button,input');
-       if(t&&t.tagName==='BUTTON') queueMicrotask(()=>t.click());
-     }
-   },true);
- });
+ new MutationObserver(isolate).observe(room,{attributes:true,attributeFilter:['class']});
+ isolate();
 })();
 </script>
 </body></html>
