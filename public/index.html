@@ -8411,8 +8411,8 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  sync();
 })();
 </script>
-<!-- RC476 MOBILE MUSIC ROOM AUDIO AUTHORITY -->
-<script id="rc476-mobile-music-audio-authority">
+<!-- RC477 MOBILE MUSIC ROOM LIBRARY/DISCOVERY SILENCE -->
+<script id="rc477-mobile-music-library-discovery-silence">
 (()=>{
  const mobile=()=>matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches;
  if(!mobile())return;
@@ -8470,7 +8470,17 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  bindButton('musicRestart',()=>{quietOthers();forceMusicSource();player.currentTime=0;playMusic()});
  bindButton('musicSound',()=>{forceMusicSource();player.muted=!player.muted;sync()});
  document.querySelectorAll('#musicRoom .music-tab').forEach(tab=>{
-   tab.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();if(typeof setMusicTab==='function')setMusicTab(tab.dataset.tab);quietOthers()},true);
+   tab.addEventListener('click',e=>{
+     e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
+     if(tab.dataset.tab==='library'||tab.dataset.tab==='discovery')stopMusic();
+     if(typeof setMusicTab==='function')setMusicTab(tab.dataset.tab);
+     quietOthers();
+   },true);
+ });
+ ['musicLibrary','musicDiscovery'].forEach(id=>{
+   const panel=$(id);
+   if(!panel)return;
+   ['pointerdown','touchstart','focusin'].forEach(type=>panel.addEventListener(type,()=>{stopMusic();quietOthers()},{capture:true,passive:type==='touchstart'}));
  });
  ['focus','input','keydown','pointerdown','click'].forEach(type=>$('discoveryInput')?.addEventListener(type,()=>{stopMusic();quietOthers()},{capture:true,passive:type==='pointerdown'}));
  $('discoveryOpen')?.addEventListener('click',()=>{stopMusic();quietOthers()},true);
