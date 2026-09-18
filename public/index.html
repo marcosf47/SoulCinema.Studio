@@ -8411,6 +8411,84 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  sync();
 })();
 </script>
+<!-- RC476 MOBILE MUSIC ROOM AUDIO AUTHORITY -->
+<script id="rc476-mobile-music-audio-authority">
+(()=>{
+ const mobile=()=>matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches;
+ if(!mobile())return;
+ const room=document.getElementById('musicRoom');
+ const player=document.getElementById('musicPlayer');
+ if(!room||!player)return;
+ const MUSIC_SRC='https://tfamln4qsost6j00.public.blob.vercel-storage.com/mwen-poukont-mwen.mp3';
+ const $=id=>document.getElementById(id);
+ const fmt=n=>!isFinite(n)?'--:--':Math.floor(n/60)+':'+String(Math.floor(n%60)).padStart(2,'0');
+ const sync=()=>{
+   const play=$('musicPlay'),sound=$('musicSound'),cur=$('musicCurrent'),dur=$('musicDuration');
+   if(play)play.textContent=player.paused?'▶ PLAY':'❚❚ PAUSE';
+   if(sound)sound.textContent=player.muted?'SOUND OFF':'SOUND ON';
+   if(cur)cur.textContent=fmt(player.currentTime);
+   if(dur)dur.textContent=fmt(player.duration);
+ };
+ const forceMusicSource=()=>{
+   const src=player.currentSrc||player.src||player.querySelector('source')?.src||'';
+   if(src!==MUSIC_SRC){
+     try{player.pause()}catch(_){}
+     player.querySelectorAll('source').forEach(source=>source.remove());
+     player.src=MUSIC_SRC;
+     player.preload='auto';
+     try{player.load()}catch(_){}
+   }
+ };
+ const quietOthers=()=>{
+   document.querySelectorAll('video,audio').forEach(media=>{
+     if(media===player)return;
+     try{media.pause()}catch(_){}
+     if(media.id==='theaterPlayer'||media.id==='kidsWarmupPlayer'){
+       try{media.removeAttribute('src');media.load()}catch(_){}
+     }
+   });
+   try{window.SC?.Widget?.(document.getElementById('scv2Frame'))?.pause?.()}catch(_){}
+   try{window.SC?.Widget?.(document.getElementById('r455ScFrame'))?.pause?.()}catch(_){}
+ };
+ const playMusic=()=>{
+   quietOthers();
+   forceMusicSource();
+   player.muted=false;
+   player.volume=1;
+   const p=player.play();
+   if(p?.then)p.then(sync).catch(sync);
+   else sync();
+ };
+ const stopMusic=()=>{try{player.pause()}catch(_){} sync()};
+ const bindButton=(id,fn)=>{
+   const el=$(id);
+   if(!el)return;
+   el.onclick=e=>{e.preventDefault();e.stopPropagation();fn(e);return false};
+   el.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();fn(e)},true);
+ };
+ bindButton('musicPlay',()=>player.paused?playMusic():stopMusic());
+ bindButton('musicRestart',()=>{quietOthers();forceMusicSource();player.currentTime=0;playMusic()});
+ bindButton('musicSound',()=>{forceMusicSource();player.muted=!player.muted;sync()});
+ document.querySelectorAll('#musicRoom .music-tab').forEach(tab=>{
+   tab.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();if(typeof setMusicTab==='function')setMusicTab(tab.dataset.tab);quietOthers()},true);
+ });
+ ['focus','input','keydown','pointerdown','click'].forEach(type=>$('discoveryInput')?.addEventListener(type,()=>{stopMusic();quietOthers()},{capture:true,passive:type==='pointerdown'}));
+ $('discoveryOpen')?.addEventListener('click',()=>{stopMusic();quietOthers()},true);
+ $('discoveryResults')?.addEventListener('click',e=>{if(e.target.closest?.('.scv2-listen')){stopMusic();quietOthers()}},true);
+ $('musicReturn')?.addEventListener('click',()=>{stopMusic();quietOthers()},true);
+ player.addEventListener('play',()=>{quietOthers();sync()});
+ player.addEventListener('pause',sync);
+ player.addEventListener('timeupdate',sync);
+ player.addEventListener('loadedmetadata',sync);
+ new MutationObserver(()=>{
+   if(!room.classList.contains('active'))return;
+   forceMusicSource();
+   quietOthers();
+   sync();
+ }).observe(room,{attributes:true,attributeFilter:['class']});
+ if(room.classList.contains('active')){forceMusicSource();quietOthers();sync()}
+})();
+</script>
 
 <!-- RC464 MOBILE TYPOGRAPHY READABILITY POLISH -->
 <style id="rc464-mobile-typography-readability-polish">
