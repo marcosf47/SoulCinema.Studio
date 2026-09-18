@@ -8039,6 +8039,8 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
   };
   const findAction=(e)=>{
     if(!mobile())return;
+    // RC487: standalone Music Room owns every gesture inside its isolated root.
+    if(e.target?.closest?.('#rc486Music'))return;
     const portalSelector='#portals .portal[data-room],#portals .portal[data-mobile-room],#portals .studio-utility-btn[data-room]';
     const hit=e.target?.closest?.(portalSelector+',button,[role=button]');
     if(!hit)return;
