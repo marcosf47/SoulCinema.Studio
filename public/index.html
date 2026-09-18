@@ -8476,4 +8476,39 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  });
 })();
 </script>
+
+<!-- RC452 MOBILE MUSIC ROOM CONTROL AUTHORITY + DISCOVERY PLAYER ORDER -->
+<style id="rc452-mobile-music-room-discovery-player-order">
+@media(max-width:700px) and (pointer:coarse){
+ #musicRoom #musicDiscovery .discovery-workspace{display:block!important;height:auto!important;min-height:0!important;max-height:none!important}
+ #musicRoom #musicDiscovery #discoveryResults{padding-right:0!important;width:100%!important}
+ #musicRoom #musicDiscovery #discoveryPlayer.active{
+  position:relative!important;right:auto!important;top:auto!important;
+  width:118px!important;height:74px!important;min-height:74px!important;max-width:118px!important;max-height:74px!important;
+  margin:8px 8px 8px auto!important;z-index:2!important;
+ }
+ #musicRoom #musicDiscovery #discoveryPlayer iframe{width:118px!important;height:74px!important;min-height:74px!important;max-height:74px!important}
+}
+</style>
+<script id="rc452-mobile-music-room-control-authority">
+(()=>{
+ if(!matchMedia('(max-width:700px) and (pointer:coarse)').matches)return;
+ const room=document.getElementById('musicRoom'),p=document.getElementById('musicPlayer');
+ const play=document.getElementById('musicPlay'),restart=document.getElementById('musicRestart'),sound=document.getElementById('musicSound');
+ if(!room||!p||!play||!restart||!sound)return;
+ const silenceForeign=()=>{
+  document.querySelectorAll('video,audio').forEach(m=>{if(m!==p)try{m.pause()}catch(_e){}});
+  try{window.SC?.Widget?.(document.getElementById('scv2Frame'))?.pause?.()}catch(_e){}
+ };
+ const own=(el,fn)=>{
+  el.addEventListener('click',e=>{if(!room.classList.contains('active'))return;e.preventDefault();e.stopImmediatePropagation();silenceForeign();fn()},true);
+ };
+ own(play,()=>{
+  if(p.paused){p.muted=false;const q=p.play();q?.catch?.(()=>{});play.textContent='❚❚ PAUSE';sound.textContent='SOUND ON'}
+  else{p.pause();play.textContent='▶ PLAY'}
+ });
+ own(restart,()=>{p.currentTime=0;p.muted=false;const q=p.play();q?.catch?.(()=>{});play.textContent='❚❚ PAUSE';sound.textContent='SOUND ON'});
+ own(sound,()=>{p.muted=!p.muted;sound.textContent=p.muted?'SOUND OFF':'SOUND ON'});
+})();
+</script>
 </body></html>
