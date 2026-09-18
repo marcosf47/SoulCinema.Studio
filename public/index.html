@@ -8411,8 +8411,8 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  sync();
 })();
 </script>
-<!-- RC478 MOBILE MUSIC ROOM BUTTON SILENCE AUTHORITY -->
-<script id="rc478-mobile-music-button-silence-authority">
+<!-- RC479 MOBILE MUSIC ROOM HARD BUTTON SILENCE AUTHORITY -->
+<script id="rc479-mobile-music-hard-button-silence-authority">
 (()=>{
  const mobile=()=>matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches;
  if(!mobile())return;
@@ -8460,12 +8460,24 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
    else sync();
  };
  const stopMusic=()=>{try{player.pause()}catch(_){} sync()};
+ const hardStop=()=>{
+   document.querySelectorAll('video,audio').forEach(media=>{
+     try{media.pause()}catch(_){}
+     if(media!==player&&(media.id==='theaterPlayer'||media.id==='kidsWarmupPlayer')){
+       try{media.removeAttribute('src');media.load()}catch(_){}
+     }
+   });
+   try{window.SC?.Widget?.(document.getElementById('scv2Frame'))?.pause?.()}catch(_){}
+   try{window.SC?.Widget?.(document.getElementById('r455ScFrame'))?.pause?.()}catch(_){}
+   sync();
+ };
  const silenceMusicButton=e=>{
    const btn=e.target.closest?.('button,a,[role="button"]');
    if(!btn||!room.contains(btn))return;
    if(btn.id==='musicPlay'||btn.id==='musicRestart')return;
-   stopMusic();
-   quietOthers();
+   hardStop();
+   setTimeout(hardStop,0);
+   setTimeout(hardStop,120);
  };
  ['pointerdown','touchstart','click'].forEach(type=>{
    room.addEventListener(type,silenceMusicButton,{capture:true,passive:type!=='click'});
@@ -8478,25 +8490,26 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  };
  bindButton('musicPlay',()=>player.paused?playMusic():stopMusic());
  bindButton('musicRestart',()=>{quietOthers();forceMusicSource();player.currentTime=0;playMusic()});
- bindButton('musicSound',()=>{forceMusicSource();player.muted=!player.muted;sync()});
+ bindButton('musicSound',()=>{player.muted=!player.muted;hardStop()});
  document.querySelectorAll('#musicRoom .music-tab').forEach(tab=>{
-   ['pointerdown','touchstart'].forEach(type=>tab.addEventListener(type,()=>{stopMusic();quietOthers()},{capture:true,passive:true}));
+   tab.onclick=null;
+   ['pointerdown','touchstart'].forEach(type=>tab.addEventListener(type,()=>{hardStop()},{capture:true,passive:true}));
    tab.addEventListener('click',e=>{
      e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
-     stopMusic();
+     hardStop();
      if(typeof setMusicTab==='function')setMusicTab(tab.dataset.tab);
-     quietOthers();
+     hardStop();
    },true);
  });
  ['musicLibrary','musicDiscovery'].forEach(id=>{
    const panel=$(id);
    if(!panel)return;
-   ['pointerdown','touchstart','focusin'].forEach(type=>panel.addEventListener(type,()=>{stopMusic();quietOthers()},{capture:true,passive:type==='touchstart'}));
+   ['pointerdown','touchstart','focusin'].forEach(type=>panel.addEventListener(type,()=>{hardStop();setTimeout(hardStop,80)},{capture:true,passive:type==='touchstart'}));
  });
- ['focus','input','keydown','pointerdown','click'].forEach(type=>$('discoveryInput')?.addEventListener(type,()=>{stopMusic();quietOthers()},{capture:true,passive:type==='pointerdown'}));
- $('discoveryOpen')?.addEventListener('click',()=>{stopMusic();quietOthers()},true);
- $('discoveryResults')?.addEventListener('click',e=>{if(e.target.closest?.('.scv2-listen')){stopMusic();quietOthers()}},true);
- $('musicReturn')?.addEventListener('click',()=>{stopMusic();quietOthers()},true);
+ ['focus','input','keydown','pointerdown','click'].forEach(type=>$('discoveryInput')?.addEventListener(type,()=>{hardStop();setTimeout(hardStop,80)},{capture:true,passive:type==='pointerdown'}));
+ $('discoveryOpen')?.addEventListener('click',()=>{hardStop();setTimeout(hardStop,80)},true);
+ $('discoveryResults')?.addEventListener('click',e=>{if(e.target.closest?.('.scv2-listen')){hardStop();setTimeout(hardStop,80)}},true);
+ $('musicReturn')?.addEventListener('click',()=>{hardStop()},true);
  player.addEventListener('play',()=>{quietOthers();sync()});
  player.addEventListener('pause',sync);
  player.addEventListener('timeupdate',sync);
