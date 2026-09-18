@@ -8750,4 +8750,40 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  search?.addEventListener('pointerdown',silence,true);search?.addEventListener('click',silence,true);
 })();
 </script>
+
+<!-- RC457 MOBILE MUSIC ROOM INPUT AUTHORITY / AUDIO ROUTING -->
+<script id="rc457-mobile-music-room-input-authority-audio-routing">
+(()=>{
+ if(!matchMedia('(max-width:700px) and (pointer:coarse)').matches)return;
+ const root=document.getElementById('rc455MusicRoom'); if(!root)return;
+ const mp=document.getElementById('musicPlayer');
+ const hardStop=()=>{
+   document.querySelectorAll('video,audio').forEach(m=>{if(m!==mp||!m.closest?.('#rc455MusicRoom'))try{m.pause()}catch(_){}});
+   try{mp?.pause()}catch(_){}
+   ['scv2Frame','r455ScFrame'].forEach(id=>{try{window.SC?.Widget?.(document.getElementById(id))?.pause?.()}catch(_){}});
+ };
+ const back=()=>{
+   hardStop();
+   const old=document.getElementById('musicReturn');
+   if(old){try{old.click();return}catch(_){}}
+   try{window.scMobileGoPortals?.()}catch(_){}
+ };
+ const tab=e=>{
+   const b=e.target.closest('[data-r455]');if(!b)return false;
+   e.preventDefault();e.stopImmediatePropagation();hardStop();
+   root.querySelectorAll('[data-r455]').forEach(x=>x.classList.toggle('active',x===b));
+   root.querySelectorAll('[data-r455-panel]').forEach(x=>x.classList.toggle('active',x.dataset.r455Panel===b.dataset.r455));
+   return true;
+ };
+ root.addEventListener('pointerup',e=>{
+   if(e.target.closest('#r455Back')){e.preventDefault();e.stopImmediatePropagation();back();return}
+   if(e.target.closest('[data-r455]')){tab(e);return}
+   if(e.target.closest('#r455Input,#r455Search,#r455Link,#r455Auto'))hardStop();
+ },true);
+ root.addEventListener('click',e=>{
+   if(e.target.closest('#r455Back')){e.preventDefault();e.stopImmediatePropagation();back();return}
+   if(e.target.closest('[data-r455]')){tab(e);return}
+ },true);
+})();
+</script>
 </body></html>
