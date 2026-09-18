@@ -8545,6 +8545,34 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
 })();
 </script>
 
+<!-- RC488 STANDALONE MUSIC DIRECT GESTURE AUTHORITY -->
+<script id="rc488-standalone-music-direct-gesture-authority">
+(()=>{
+ if(!(matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches))return;
+ const root=document.getElementById('rc486Music'),a=document.getElementById('m486Audio');if(!root||!a)return;
+ const fmt=n=>!isFinite(n)?'--:--':Math.floor(n/60)+':'+String(Math.floor(n%60)).padStart(2,'0');
+ const sync=()=>{const p=document.getElementById('m486Play'),s=document.getElementById('m486Sound'),c=document.getElementById('m486Cur'),d=document.getElementById('m486Dur');if(p)p.textContent=a.paused?'▶ PLAY':'❚❚ PAUSE';if(s)s.textContent=a.muted?'SOUND OFF':'SOUND ON';if(c)c.textContent=fmt(a.currentTime);if(d&&isFinite(a.duration))d.textContent=fmt(a.duration)};
+ const kill=()=>document.querySelectorAll('video,audio').forEach(m=>{if(m!==a){try{m.pause()}catch(_){}}});
+ const act=(el)=>{
+  if(el.id==='m486Play'){kill();if(a.paused){a.muted=false;a.volume=1;a.play().then(sync).catch(sync)}else{a.pause();sync()}return}
+  if(el.id==='m486Restart'){kill();a.currentTime=0;a.muted=false;a.play().then(sync).catch(sync);return}
+  if(el.id==='m486Sound'){a.muted=!a.muted;sync();return}
+  if(el.dataset.m486){const n=el.dataset.m486;root.querySelectorAll('[data-m486]').forEach(x=>x.classList.toggle('active',x===el));root.querySelectorAll('[data-m486-panel]').forEach(x=>x.classList.toggle('active',x.dataset.m486Panel===n));return}
+  if(el.id==='m486Back'){a.pause();document.body.classList.remove('rc486-music-open');try{document.getElementById('musicReturn')?.click()}catch(_){}}
+ };
+ let last=0;
+ const direct=e=>{
+  if(!document.body.classList.contains('rc486-music-open'))return;
+  const el=e.target?.closest?.('#m486Play,#m486Restart,#m486Sound,#m486Back,[data-m486]');if(!el||!root.contains(el))return;
+  if(e.cancelable)e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
+  const now=performance.now();if(now-last<260)return;last=now;act(el);
+ };
+ window.addEventListener('pointerdown',direct,true);
+ window.addEventListener('touchstart',direct,{capture:true,passive:false});
+ sync();
+})();
+</script>
+
 <!-- RC464 MOBILE TYPOGRAPHY READABILITY POLISH -->
 <style id="rc464-mobile-typography-readability-polish">
 @media(max-width:700px) and (pointer:coarse){
