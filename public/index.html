@@ -8495,7 +8495,15 @@ mp.addEventListener('play',sync);mp.addEventListener('pause',sync);quiet(mp);
  if(!matchMedia('(max-width:700px) and (pointer:coarse)').matches)return;
  const $=id=>document.getElementById(id);
  const scenes=()=>[...document.querySelectorAll('.scene')];
- const activeScene=()=>scenes().find(s=>s.classList.contains('active')&&getComputedStyle(s).display!=='none')||null;
+ const activeScene=()=>{
+   const map={theater:'screeningTheater',music:'musicRoom',live:'liveCenter',production:'productionRoom',story:'storyRoom',journal:'journalRoom',bible:'visualBibleRoom',about:'aboutRoom',contact:'contactRoom',lobby:'lobby',gate:'gate'};
+   const byScene=$(map[document.body.dataset.scene]);
+   if(byScene?.classList.contains('active'))return byScene;
+   const exp=(document.body.dataset.experience||'').replace('_active','');
+   const byExp=$(map[exp]);
+   if(byExp?.classList.contains('active'))return byExp;
+   return scenes().filter(s=>s.classList.contains('active')).at(-1)||null;
+ };
  const pause=m=>{try{m.pause()}catch(_){}};
  const prune=()=>{
    const owner=activeScene();
