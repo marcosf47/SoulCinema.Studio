@@ -8417,6 +8417,32 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
 })();
 </script>
 
+<!-- RC484 MOBILE MUSIC ROOM ABSOLUTE EVENT + MEDIA ISOLATION -->
+<style id="rc484-mobile-music-isolation-style">
+@media(max-width:860px), (pointer:coarse){
+ #musicRoom .music-bg,#musicRoom .music-glow,#musicRoom .grain{pointer-events:none!important}
+ #rc483MobileMusicRoom{position:relative;z-index:2147483000;pointer-events:auto!important}
+ #rc483MobileMusicRoom .r483-poster{background:url('https://tfamln4qsost6j00.public.blob.vercel-storage.com/mwen-poukont-mwen.png') center/cover no-repeat!important}
+}
+</style>
+<script id="rc484-mobile-music-absolute-isolation">
+(()=>{
+ if(!(matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches))return;
+ const room=document.getElementById('musicRoom'),shell=document.getElementById('rc483MobileMusicRoom'),audio=document.getElementById('r483Audio');
+ if(!room||!shell||!audio)return;
+ const old=document.getElementById('musicPlayer'); if(old){try{old.pause()}catch(_){} old.muted=true;old.removeAttribute('autoplay');}
+ const stopForeign=()=>{document.querySelectorAll('video,audio').forEach(m=>{if(m!==audio){try{m.pause()}catch(_){} }});try{window.SC?.Widget?.(document.getElementById('scv2Frame'))?.pause?.()}catch(_){}};
+ ['pointerdown','pointerup','touchstart','touchend','click'].forEach(type=>shell.addEventListener(type,e=>{
+   const control=e.target.closest?.('button,input,a,[role="button"]'); if(!control)return;
+   e.stopPropagation();
+   if(type==='click')e.stopImmediatePropagation();
+ },true));
+ room.addEventListener('click',e=>{if(shell.contains(e.target))return;stopForeign()},true);
+ new MutationObserver(()=>{if(room.classList.contains('active')){try{old?.pause()}catch(_){} stopForeign()}}).observe(room,{attributes:true,attributeFilter:['class']});
+ stopForeign();
+})();
+</script>
+
 <!-- RC464 MOBILE TYPOGRAPHY READABILITY POLISH -->
 <style id="rc464-mobile-typography-readability-polish">
 @media(max-width:700px) and (pointer:coarse){
