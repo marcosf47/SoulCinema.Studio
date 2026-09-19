@@ -7972,6 +7972,13 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
     };
     const target=targets[room];
     if(!target){goPortals();return}
+    // RC499: mobile Music Room bypasses the legacy #musicRoom controller completely.
+    if(room==='Music Room'&&typeof window.scOpenMobileMusic==='function'){
+      document.body.dataset.scene='music';
+      document.body.dataset.experience='music_active';
+      window.scOpenMobileMusic();
+      return;
+    }
     try{routes[room]?.()}catch(_e){}
     onlyScene(target[0]);
     document.body.dataset.scene=target[2];
@@ -8401,6 +8408,7 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  const kill=()=>document.querySelectorAll('video,audio').forEach(m=>{if(m!==a){try{m.pause()}catch(_){};m.muted=true}});
  const open=()=>{kill();document.body.classList.add('rc486-music-open');root.scrollTop=0;sync()};
  const close=()=>{a.pause();document.body.classList.remove('rc486-music-open');sync()};
+ window.scOpenMobileMusic=open;
  q('#m486Play').onclick=e=>{e.stopPropagation();kill();if(a.paused){a.muted=false;a.volume=1;a.play().then(sync).catch(sync)}else{a.pause();sync()}};
  q('#m486Restart').onclick=e=>{e.stopPropagation();kill();a.currentTime=0;a.muted=false;a.play().then(sync).catch(sync)};
  q('#m486Sound').onclick=e=>{e.stopPropagation();a.muted=!a.muted;sync()};
@@ -8418,7 +8426,7 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  da.onclick=e=>{e.preventDefault();e.stopPropagation();dauto=!dauto;da.textContent=dauto?'AUTO PLAY ON':'AUTO PLAY OFF';da.setAttribute('aria-pressed',dauto?'true':'false');dstatus(dauto?'AUTO PLAY ON · SELECT LISTEN':'AUTO PLAY OFF')};di.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();ds.click()}};
 
  
- q('#m486Back').onclick=e=>{e.stopPropagation();close();try{window.scRc414OpenRoom?document.body.dataset.experience='portal_mode':null}catch(_){};try{document.getElementById('musicReturn')?.click()}catch(_){}};
+ q('#m486Back').onclick=e=>{e.preventDefault();e.stopPropagation();close();if(typeof window.scMobileGoPortals==='function')window.scMobileGoPortals();};
  const mo=new MutationObserver(()=>{const legacy=document.getElementById('musicRoom');if(legacy?.classList.contains('active'))open();else if(document.body.dataset.experience==='portal_mode')close()});
  const legacy=document.getElementById('musicRoom');if(legacy)mo.observe(legacy,{attributes:true,attributeFilter:['class']});
  new MutationObserver(()=>{if(document.body.dataset.experience==='portal_mode')close()}).observe(document.body,{attributes:true,attributeFilter:['data-experience']});
