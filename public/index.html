@@ -8526,6 +8526,52 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
 }
 </style>
 
+<!-- RC503 MOBILE LUXURY FINISHING PASS -->
+<style id="rc503-mobile-luxury-finish">
+@media(max-width:860px), (pointer:coarse){
+  :root{--rc503-gold:#e5c568;--rc503-warm:#fff0c2;--rc503-deep:#020201}
+  #rc414MobilePortals{
+    background:
+      radial-gradient(circle at 76% 4%,rgba(229,197,104,.18),transparent 27%),
+      radial-gradient(circle at 12% 48%,rgba(123,82,24,.10),transparent 34%),
+      linear-gradient(180deg,#0c0a06 0%,#030302 42%,#000 100%)!important
+  }
+  #rc414MobilePortals .rc414-card{
+    border-color:rgba(229,197,104,.40)!important;
+    box-shadow:0 18px 46px rgba(0,0,0,.56),inset 0 1px 0 rgba(255,240,194,.09),0 0 24px rgba(229,197,104,.035)!important
+  }
+  #rc414MobilePortals .rc414-arrow{
+    color:var(--rc503-warm)!important;border-color:rgba(229,197,104,.72)!important;
+    box-shadow:0 0 24px rgba(229,197,104,.16),inset 0 0 12px rgba(229,197,104,.05)!important
+  }
+  #rc486Music{
+    background:
+      radial-gradient(circle at 76% 0,rgba(229,197,104,.15),transparent 30%),
+      radial-gradient(circle at 8% 55%,rgba(112,74,20,.08),transparent 32%),
+      #020201!important
+  }
+  #rc486Music .m486{
+    border-color:rgba(229,197,104,.38)!important;
+    box-shadow:0 24px 70px rgba(0,0,0,.68),inset 0 1px 0 rgba(255,241,198,.08)!important
+  }
+  #rc486Music button{
+    border-color:rgba(229,197,104,.56)!important;
+    color:#f3d77e!important;
+    box-shadow:inset 0 1px 0 rgba(255,241,198,.07),0 8px 24px rgba(0,0,0,.34)!important
+  }
+  #rc486Music button:active{box-shadow:inset 0 0 18px rgba(229,197,104,.11)!important}
+  #screeningTheater .theater-shell,#liveCenter .live-shell,
+  #productionRoom .production-shell,#storyRoom .story-shell,#journalRoom .journal-shell,
+  #visualBibleRoom .bible-shell,#aboutRoom .about-shell,#contactRoom .contact-shell{
+    filter:saturate(1.04) contrast(1.025)
+  }
+  #screeningTheater button,#liveCenter button,#productionRoom button,#storyRoom button,
+  #journalRoom button,#visualBibleRoom button,#aboutRoom button,#contactRoom button{
+    text-shadow:0 0 18px rgba(229,197,104,.10)
+  }
+}
+</style>
+
 <!-- RC467 MOBILE THEATER PLAYBACK RESTORE / TYPOGRAPHY PRESERVED -->
 <script id="rc467-mobile-theater-playback-restore">
 (()=>{
