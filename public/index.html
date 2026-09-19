@@ -8383,7 +8383,7 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
   <img src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/mwen-poukont-mwen.png" alt="MWEN POUKONT MWEN">
   <section class="now"><small>NOW PLAYING · TRACK 01</small><h3>MWEN POUKONT MWEN</h3><p>SOULCINEMA ORIGINAL · OFFICIAL RELEASE</p></section>
   <section class="player"><audio id="m486Audio" preload="metadata" src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/mwen-poukont-mwen.mp3"></audio><div class="time"><span id="m486Cur">0:00</span><span id="m486Dur">3:28</span></div><div class="controls"><button id="m486Play">▶ PLAY</button><button id="m486Restart">RESTART</button><button id="m486Sound">SOUND ON</button></div></section>
-  <nav class="m486-tabs"><button data-m486="info" class="active">TRACK INFO</button><button data-m486="credits">CREDITS</button><button data-m486="library">LIBRARY</button><button data-m486="discovery">DISCOVERY</button></nav>
+  <nav class="m486-tabs"><button id="m486Info" data-m486="info" class="active">TRACK INFO</button><button id="m486Credits" data-m486="credits">CREDITS</button><button id="m486Library" data-m486="library">LIBRARY</button><button id="m486Discovery" data-m486="discovery">DISCOVERY</button></nav>
   <section class="m486-panel active" data-m486-panel="info"><h4>MWEN POUKONT MWEN</h4><p>Official SoulCinema music single.</p></section>
   <section class="m486-panel" data-m486-panel="credits"><h4>CREDITS</h4><p>SOULCINEMA ORIGINAL · MWEN POUKONT MWEN</p></section>
   <section class="m486-panel" data-m486-panel="library"><h4>LIBRARY</h4><p>MWEN POUKONT MWEN · TRACK 01</p></section>
@@ -8404,7 +8404,8 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  q('#m486Play').onclick=e=>{e.stopPropagation();kill();if(a.paused){a.muted=false;a.volume=1;a.play().then(sync).catch(sync)}else{a.pause();sync()}};
  q('#m486Restart').onclick=e=>{e.stopPropagation();kill();a.currentTime=0;a.muted=false;a.play().then(sync).catch(sync)};
  q('#m486Sound').onclick=e=>{e.stopPropagation();a.muted=!a.muted;sync()};
- root.querySelectorAll('[data-m486]').forEach(b=>b.onclick=e=>{e.stopPropagation();const n=b.dataset.m486;root.querySelectorAll('[data-m486]').forEach(x=>x.classList.toggle('active',x===b));root.querySelectorAll('[data-m486-panel]').forEach(x=>x.classList.toggle('active',x.dataset.m486Panel===n))});
+ const openTab=(id,n)=>{const b=q(id);if(!b)return;b.onclick=e=>{e.preventDefault();e.stopPropagation();root.querySelectorAll('.m486-tabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');root.querySelectorAll('[data-m486-panel]').forEach(x=>x.classList.toggle('active',x.dataset.m486Panel===n));};};
+ openTab('#m486Info','info');openTab('#m486Credits','credits');openTab('#m486Library','library');openTab('#m486Discovery','discovery');
  q('#m486Back').onclick=e=>{e.stopPropagation();close();try{window.scRc414OpenRoom?document.body.dataset.experience='portal_mode':null}catch(_){};try{document.getElementById('musicReturn')?.click()}catch(_){}};
  const mo=new MutationObserver(()=>{const legacy=document.getElementById('musicRoom');if(legacy?.classList.contains('active'))open();else if(document.body.dataset.experience==='portal_mode')close()});
  const legacy=document.getElementById('musicRoom');if(legacy)mo.observe(legacy,{attributes:true,attributeFilter:['class']});
