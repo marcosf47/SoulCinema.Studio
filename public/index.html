@@ -7995,6 +7995,11 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
       try{routes[room]?.()}catch(_e){}
     }
     onlyScene(target[0]);
+    // RC519: every mobile room opens at its own top, never at the scroll
+    // position inherited from Portals or the previous room.
+    const roomEl=$id(target[0]);
+    try{roomEl?.scrollTo?.({top:0,left:0,behavior:'auto'})}catch(_e){if(roomEl)roomEl.scrollTop=0}
+    try{roomEl?.querySelector?.('.center')?.scrollTo?.({top:0,left:0,behavior:'auto'})}catch(_e){}
     document.body.dataset.scene=target[2];
     document.body.dataset.experience=target[2]+'_active';
     const back=$id(target[1]);
