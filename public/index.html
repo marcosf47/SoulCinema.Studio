@@ -8335,7 +8335,7 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  };
  const t=document.getElementById('screeningTheater');
  if(t)new MutationObserver(sync).observe(t,{attributes:true,attributeFilter:['class']});
- addEventListener('orientationchange',()=>{sync();setTimeout(sync,80);setTimeout(sync,300)},{passive:true});
+ addEventListener('orientationchange',sync,{passive:true});
  addEventListener('resize',sync,{passive:true});
  sync();
 })();
