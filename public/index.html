@@ -7989,7 +7989,12 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
       window.scOpenMobileMusic();
       return;
     }
-    try{routes[room]?.()}catch(_e){}
+    // RC517: mobile navigation is the sole scene-transition owner.
+    // Theater/Live keep their dedicated media-entry controllers; utility rooms
+    // enter directly so legacy journey veils/timers cannot race the mobile owner.
+    if(room==='Screening Theater'||room==='Live Center'){
+      try{routes[room]?.()}catch(_e){}
+    }
     onlyScene(target[0]);
     document.body.dataset.scene=target[2];
     document.body.dataset.experience=target[2]+'_active';
