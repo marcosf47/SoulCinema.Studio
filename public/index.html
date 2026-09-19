@@ -8632,6 +8632,29 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
 })();
 </script>
 
+<!-- RC513 MOBILE DISCOVERY SEARCH TIMEOUT GUARD -->
+<script id="rc513-mobile-discovery-search-timeout-guard">
+(()=>{
+ if(!(matchMedia('(pointer:coarse)').matches||innerWidth<=860))return;
+ const input=document.getElementById('m486DiscoveryInput');
+ const search=document.getElementById('m486DiscoverySearch');
+ if(!input||!search)return;
+ // Network search must never leave the Music Room feeling frozen.
+ // Existing RC486 search remains authoritative; this guard only restores
+ // interaction if a remote request stalls beyond the release budget.
+ search.addEventListener('click',()=>{
+   const stamp=Date.now();search.dataset.rc513Stamp=String(stamp);
+   search.disabled=false;
+   setTimeout(()=>{
+     if(search.dataset.rc513Stamp!==String(stamp))return;
+     search.disabled=false;
+     search.style.removeProperty('pointer-events');
+     search.removeAttribute('aria-busy');
+   },12000);
+ },true);
+})();
+</script>
+
 <!-- RC503 MOBILE LUXURY FINISHING PASS -->
 <style id="rc503-mobile-luxury-finish">
 @media(max-width:860px), (pointer:coarse){
