@@ -8492,6 +8492,40 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
 }
 </style>
 
+<!-- RC502 MOBILE READABILITY PASS / SPECIAL ACTION TEXT -->
+<style id="rc502-mobile-readability-pass">
+@media(max-width:860px), (pointer:coarse){
+  /* Mobile-only readability: raise small copy without changing desktop/laptop. */
+  #rc414MobilePortals .rc414-kicker{font-size:10px!important;line-height:1.55!important}
+  #rc414MobilePortals .rc414-copy small{font-size:9px!important;line-height:1.25!important}
+  #rc414MobilePortals .rc414-copy span{font-size:12px!important;line-height:1.5!important}
+  #rc414MobilePortals .rc414-foot{font-size:11px!important;line-height:1.5!important}
+
+  #rc486Music .m486-k,#rc486Music .now small{font-size:13px!important;line-height:1.35!important}
+  #rc486Music .now p,#rc486Music .m486-panel p{font-size:18px!important;line-height:1.5!important}
+  #rc486Music button,#rc486Music .m495-actions button,#rc486Music .m495-result button{
+    font-size:16px!important;line-height:1.2!important;font-weight:800!important;letter-spacing:.10em!important
+  }
+  #rc486Music #m486Play,#rc486Music #m486Restart,#rc486Music #m486Sound,
+  #rc486Music #m486DiscoveryDirect,#rc486Music #m486DiscoveryBack,#rc486Music #m486Back{
+    font-size:17px!important
+  }
+  #rc486Music #m495Status{font-size:13px!important;line-height:1.45!important}
+  #rc486Music #m495Input{font-size:16px!important}
+
+  #screeningTheater button,#screeningTheater .theater-status,#screeningTheater .theater-meta,
+  #liveCenter button,#productionRoom button,#storyRoom button,#journalRoom button,
+  #visualBibleRoom button,#aboutRoom button,#contactRoom button{
+    font-size:max(16px,1em)!important
+  }
+  #screeningTheater #theaterBackHome,#screeningTheater #theaterSound,#screeningTheater #theaterReturn,
+  #liveCenter #returnLobby,#productionRoom #productionReturn,#storyRoom #storyReturn,
+  #journalRoom #journalReturn,#visualBibleRoom #bibleReturn,#aboutRoom #aboutReturn,#contactRoom #contactReturn{
+    font-size:18px!important;font-weight:800!important;letter-spacing:.10em!important
+  }
+}
+</style>
+
 <!-- RC467 MOBILE THEATER PLAYBACK RESTORE / TYPOGRAPHY PRESERVED -->
 <script id="rc467-mobile-theater-playback-restore">
 (()=>{
