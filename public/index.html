@@ -2767,11 +2767,13 @@ function openTheater(){
  if(p)p.classList.remove('hidden');
  $('#theaterCurrentTitle').textContent='MWEN POUKONT MWEN';$('#theaterStatus').textContent='PREMIERE READY';
  screeningTheater.classList.add('theater-arriving');
- journeyTransition('SCREENING THEATER','FEATURED PREMIERE','MWEN POUKONT MWEN',()=>{
+ const enterTheater=()=>{
   SceneManager.goTo('theater');scene(lobby,screeningTheater);
   setTimeout(()=>screeningTheater.classList.remove('theater-arriving'),120);
   requestAnimationFrame(()=>setTimeout(primeTheaterOpening,0));
- })
+ };
+ if(matchMedia('(max-width:700px)').matches)enterTheater();
+ else journeyTransition('SCREENING THEATER','FEATURED PREMIERE','MWEN POUKONT MWEN',enterTheater)
 }
 const THEATER_OPENING_SRC='https://tfamln4qsost6j00.public.blob.vercel-storage.com/featured-premiere.mp4';
 const THEATER_FILM_SRC='https://tfamln4qsost6j00.public.blob.vercel-storage.com/mwen-poukont-mwen-film.mp4';
@@ -2851,7 +2853,9 @@ function openLive(){
    },1800);
  };
  if(!lobbyEl||!liveEl)return;
- if(typeof journeyTransition==='function')journeyTransition('LIVE CENTER','ENTERING ROOM','BROADCAST EXPERIENCE',enter);else enter();
+ if(matchMedia('(max-width:700px)').matches)enter();
+ else if(typeof journeyTransition==='function')journeyTransition('LIVE CENTER','ENTERING ROOM','BROADCAST EXPERIENCE',enter);
+ else enter();
 }
 let liveCountdownTimer=null;let postLiveTimer=null;
 // RC11 LIVE PLAYER INTEGRATION — local/private rehearsal feed.
