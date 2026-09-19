@@ -8568,6 +8568,36 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
 }
 </style>
 
+<!-- RC510 MOBILE FINAL INTERACTION + SCROLL STABILITY -->
+<style id="rc510-mobile-final-interaction-stability">
+@media(max-width:860px), (pointer:coarse){
+ #rc414MobilePortals,#rc486Music,
+ #screeningTheater.active .center,#liveCenter.active .center,#productionRoom.active .center,
+ #storyRoom.active .center,#journalRoom.active .center,#visualBibleRoom.active .center,
+ #aboutRoom.active .center,#contactRoom.active .center{
+   -webkit-overflow-scrolling:touch!important;
+   overscroll-behavior-y:contain!important;
+   touch-action:pan-y!important;
+ }
+ #rc414MobilePortals button,#rc486Music button,
+ .scene.active button,.scene.active a,.scene.active [role="button"]{
+   min-height:44px;
+   -webkit-tap-highlight-color:transparent!important;
+ }
+}
+</style>
+<script id="rc510-mobile-final-interaction-stability-js">
+(()=>{
+ if(!(matchMedia('(pointer:coarse)').matches||innerWidth<=860))return;
+ let x=0,y=0,moved=false;
+ const pt=e=>{const t=e.touches?.[0]||e.changedTouches?.[0]||e;return{x:t.clientX||0,y:t.clientY||0}};
+ addEventListener('touchstart',e=>{const p=pt(e);x=p.x;y=p.y;moved=false},{capture:true,passive:true});
+ addEventListener('touchmove',e=>{const p=pt(e);if(Math.abs(p.x-x)>10||Math.abs(p.y-y)>10)moved=true},{capture:true,passive:true});
+ addEventListener('touchend',()=>{requestAnimationFrame(()=>{moved=false})},{capture:true,passive:true});
+ window.scMobileGestureMoved=()=>moved;
+})();
+</script>
+
 <!-- RC503 MOBILE LUXURY FINISHING PASS -->
 <style id="rc503-mobile-luxury-finish">
 @media(max-width:860px), (pointer:coarse){
