@@ -8785,7 +8785,11 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
    if(!src)return false;
    try{theaterHandoffBusy=false;theaterStage=stage||'collection'}catch(_){}
    cleanPlayer();
-   if(poster)poster.classList.add('hidden');
+   // RC521: keep the cinematic frame covered while the next collection film
+   // is loading; reveal only when a real video frame is ready to play.
+   if(poster)poster.classList.remove('hidden');
+   player.style.opacity='0';
+   player.style.visibility='hidden';
    player.dataset.scStage=stage||'collection';
    player.src=src;
    try{player.load()}catch(_){}
@@ -8798,6 +8802,13 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
      started=true;
      player.removeEventListener('loadeddata',start);
      player.removeEventListener('canplay',start);
+     const reveal=()=>{
+       player.style.removeProperty('opacity');
+       player.style.removeProperty('visibility');
+       if(poster)poster.classList.add('hidden');
+     };
+     if('requestVideoFrameCallback' in player)player.requestVideoFrameCallback(()=>reveal());
+     else requestAnimationFrame(()=>requestAnimationFrame(reveal));
      const play=player.play();
      if(play?.then){
        play.then(()=>setText('theaterStatus','● NOW PLAYING · '+title)).catch(()=>{
