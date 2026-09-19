@@ -8427,8 +8427,8 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
 
  
  q('#m486Back').onclick=e=>{e.preventDefault();e.stopPropagation();close();if(typeof window.scMobileGoPortals==='function')window.scMobileGoPortals();};
- const mo=new MutationObserver(()=>{const legacy=document.getElementById('musicRoom');if(legacy?.classList.contains('active'))open();else if(document.body.dataset.experience==='portal_mode')close()});
- const legacy=document.getElementById('musicRoom');if(legacy)mo.observe(legacy,{attributes:true,attributeFilter:['class']});
+ // RC500: RC486 is opened only by the mobile portal authority (RC499).
+ // Do not observe or react to legacy #musicRoom state; that reintroduced double ownership.
  new MutationObserver(()=>{if(document.body.dataset.experience==='portal_mode')close()}).observe(document.body,{attributes:true,attributeFilter:['data-experience']});
  a.addEventListener('play',()=>{kill();sync()});a.addEventListener('pause',sync);a.addEventListener('timeupdate',sync);a.addEventListener('loadedmetadata',sync);sync();
 })();
