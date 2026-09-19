@@ -8595,6 +8595,28 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  scenes.forEach(s=>new MutationObserver(sync).observe(s,{attributes:true,attributeFilter:['class']}));
 })();
 </script>
+<!-- RC505 MOBILE THEATER FIRST-FRAME REVEAL -->
+<style id="rc505-mobile-theater-first-frame">
+@media(max-width:860px), (pointer:coarse){
+ #screeningTheater.rc505-frame-wait #theaterPlayer{opacity:0!important;visibility:hidden!important}
+ #screeningTheater.rc505-frame-wait #theaterPoster{opacity:1!important;visibility:visible!important;pointer-events:none!important}
+ #screeningTheater #theaterPlayer{transition:opacity .28s ease!important}
+}
+</style>
+<script id="rc505-mobile-theater-first-frame">
+(()=>{
+ if(!(matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches))return;
+ const room=document.getElementById('screeningTheater'),v=document.getElementById('theaterPlayer'),p=document.getElementById('theaterPoster');
+ if(!room||!v)return;
+ let token=0;
+ const wait=()=>{token++;room.classList.add('rc505-frame-wait');if(p)p.classList.remove('hidden')};
+ const reveal=()=>{const t=token;const done=()=>{if(t!==token)return;requestAnimationFrame(()=>requestAnimationFrame(()=>{if(t!==token)return;room.classList.remove('rc505-frame-wait');if(p)p.classList.add('hidden')}))};if(typeof v.requestVideoFrameCallback==='function')v.requestVideoFrameCallback(done);else done()};
+ v.addEventListener('loadstart',wait,true);
+ v.addEventListener('playing',reveal,true);
+ v.addEventListener('error',()=>{token++;room.classList.remove('rc505-frame-wait')},true);
+})();
+</script>
+
 <!-- RC474 MOBILE THEATER CLEAN MIRROR FROM DESKTOP LOCK -->
 <script id="rc474-mobile-theater-clean-mirror">
 (()=>{
@@ -8678,7 +8700,7 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  document.addEventListener('click',e=>{
    const portal=e.target.closest?.('#portals .portal[data-room="Screening Theater"],#portals .portal[data-mobile-room="Screening Theater"],#rc414MobilePortals [data-rc414-room="Screening Theater"]');
    if(!portal)return;
-   setTimeout(()=>{
+   requestAnimationFrame(()=>requestAnimationFrame(()=>{
      if(!theater.classList.contains('active'))return;
      document.querySelectorAll('#screeningTheater .collection-card').forEach(c=>{c.classList.remove('is-current');c.setAttribute('aria-pressed','false')});
      if(poster)poster.classList.remove('hidden');
@@ -8688,7 +8710,7 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
      player.dataset.scStage='opening';
      player.src=opening;
      try{player.load()}catch(_){}
-   },420);
+   }));
  },true);
 })();
 </script>
