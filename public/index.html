@@ -8409,7 +8409,7 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  const sync=()=>{q('#m486Play').textContent=a.paused?'▶ PLAY':'❚❚ PAUSE';q('#m486Sound').textContent=a.muted?'SOUND OFF':'SOUND ON';q('#m486Cur').textContent=fmt(a.currentTime);if(isFinite(a.duration))q('#m486Dur').textContent=fmt(a.duration)};
  const kill=()=>document.querySelectorAll('video,audio').forEach(m=>{if(m!==a){try{m.pause()}catch(_){};m.muted=true}});
  const open=()=>{kill();document.body.classList.add('rc486-music-open');root.scrollTop=0;sync()};
- const close=()=>{a.pause();document.body.classList.remove('rc486-music-open');sync()};
+ const close=()=>{a.pause();try{stopDiscovery(true)}catch(_){};document.body.classList.remove('rc486-music-open');sync()};
  window.scOpenMobileMusic=open;
  q('#m486Play').onclick=e=>{e.stopPropagation();stopDiscovery(false);kill();if(a.paused){a.muted=false;a.volume=1;a.play().then(sync).catch(sync)}else{a.pause();sync()}};
  q('#m486Restart').onclick=e=>{e.stopPropagation();stopDiscovery(false);kill();a.currentTime=0;a.muted=false;a.play().then(sync).catch(sync)};
