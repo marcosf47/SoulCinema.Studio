@@ -7937,12 +7937,11 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
       onlyScene('lobby');
       document.body.dataset.scene='lobby';
       document.body.dataset.experience='LOBBY_ACTIVE';
-      [60,240,700,1400].forEach(ms=>setTimeout(()=>{
-        if(document.body.dataset.scene==='lobby'){
-          onlyScene('lobby');
-          resetLocks();
-        }
-      },ms));
+      // RC518: one deterministic mobile lobby handoff; no delayed re-scrubs
+      // that can interrupt playback/touch state after the lobby is already active.
+      requestAnimationFrame(()=>{
+        if(document.body.dataset.scene==='lobby')onlyScene('lobby');
+      });
     });
   };
   const openRoom=(room,source)=>{
