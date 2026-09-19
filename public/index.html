@@ -8598,6 +8598,35 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
 })();
 </script>
 
+<!-- RC511 MOBILE MEDIA OWNERSHIP FIREWALL -->
+<script id="rc511-mobile-media-ownership-firewall">
+(()=>{
+ if(!(matchMedia('(pointer:coarse)').matches||innerWidth<=860))return;
+ const stop=(el,reset=false)=>{try{el.pause?.()}catch(_){}if(reset){try{el.currentTime=0}catch(_){}}};
+ const sweep=()=>{
+  const musicOpen=document.body.classList.contains('rc486-music-open');
+  const theater=document.getElementById('screeningTheater')?.classList.contains('active');
+  const live=document.getElementById('liveCenter')?.classList.contains('active');
+  document.querySelectorAll('audio,video').forEach(el=>{
+   if(el.id==='gateVideo'&&document.getElementById('gate')?.classList.contains('active'))return;
+   if(el.id==='lobbyVideo'&&document.getElementById('lobby')?.classList.contains('active'))return;
+   if(el.id==='ambient'&&document.getElementById('lobby')?.classList.contains('active'))return;
+   if(el.id==='m486Audio'&&musicOpen)return;
+   if((el.id==='theaterPlayer'||el.id==='kidsWarmupPlayer')&&theater)return;
+   if(el.id==='livePlayer'&&live)return;
+   stop(el);
+  });
+  if(!musicOpen){
+   const p=document.getElementById('m486DiscoveryPlayer');
+   if(p?.querySelector('iframe'))p.innerHTML='';
+  }
+ };
+ new MutationObserver(sweep).observe(document.body,{attributes:true,attributeFilter:['class','data-scene','data-experience']});
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)sweep()});
+ window.addEventListener('pageshow',sweep);
+})();
+</script>
+
 <!-- RC503 MOBILE LUXURY FINISHING PASS -->
 <style id="rc503-mobile-luxury-finish">
 @media(max-width:860px), (pointer:coarse){
