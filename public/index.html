@@ -7891,6 +7891,8 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
     document.body.classList.remove('gate-lobby-fluid','gate-lobby-soft');
     const s=$id('skip');if(s)s.style.removeProperty('display');
     scrollTo(0,0);
+    try{p?.scrollTo?.({top:0,left:0,behavior:'auto'})}catch(_e){if(p)p.scrollTop=0}
+    try{l?.querySelector?.('.center')?.scrollTo?.({top:0,left:0,behavior:'auto'})}catch(_e){}
     setTimeout(()=>{try{arm()}catch(_e){}},0);
   };
   const goPortals=()=>{
