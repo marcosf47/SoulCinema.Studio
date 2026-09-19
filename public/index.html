@@ -7946,7 +7946,12 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
       source?.classList?.add('rc375-portal-pressed');
       requestAnimationFrame(()=>source?.classList?.remove('rc375-portal-pressed'));
     }
-    resetLocks();stopMedia($id('lobby')||document);scrubRoomState();cleanPortals();
+    resetLocks();
+    // RC512: a room handoff is a hard media boundary. Pause every HTML MP4/audio
+    // before the destination route gets permission to start its own media.
+    stopMedia(document);
+    try{document.getElementById('m486DiscoveryPlayer')?.replaceChildren()}catch(_e){}
+    scrubRoomState();cleanPortals();
     delete document.body.dataset.rc375RoomOpening;
     delete document.body.dataset.mobilePortalLock;
     const targets={
