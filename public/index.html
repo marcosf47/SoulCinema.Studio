@@ -8530,6 +8530,23 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
 }
 </style>
 
+<!-- RC508 MOBILE ANYWHERE PAN SCROLL -->
+<style id="rc508-mobile-anywhere-pan-scroll">
+@media(max-width:860px), (pointer:coarse){
+ #rc414MobilePortals,#rc486Music,
+ #screeningTheater,#liveCenter,#productionRoom,#storyRoom,#journalRoom,#visualBibleRoom,#aboutRoom,#contactRoom,
+ #screeningTheater .center,#liveCenter .center,#productionRoom .center,#storyRoom .center,#journalRoom .center,#visualBibleRoom .center,#aboutRoom .center,#contactRoom .center{
+   touch-action:pan-y!important;
+   -webkit-overflow-scrolling:touch!important;
+   overscroll-behavior-y:contain;
+ }
+ #rc414MobilePortals button,#rc486Music button,
+ #screeningTheater button,#liveCenter button,#productionRoom button,#storyRoom button,#journalRoom button,#visualBibleRoom button,#aboutRoom button,#contactRoom button{
+   touch-action:pan-y!important;
+ }
+}
+</style>
+
 <!-- RC503 MOBILE LUXURY FINISHING PASS -->
 <style id="rc503-mobile-luxury-finish">
 @media(max-width:860px), (pointer:coarse){
