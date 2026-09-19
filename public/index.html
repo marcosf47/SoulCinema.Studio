@@ -8435,25 +8435,6 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
 }
 </style>
 
-<!-- RC496 MOBILE LEGACY MUSIC UI HARD ISOLATION -->
-<style id="rc496-mobile-legacy-music-ui-hard-isolation">
-@media(max-width:860px), (pointer:coarse){
- body.rc486-music-open #musicRoom,
- body.rc486-music-open #musicDiscovery,
- body.rc486-music-open #rc455MusicRoom{display:none!important;visibility:hidden!important;pointer-events:none!important}
- body.rc486-music-open #rc486Music{display:block!important;visibility:visible!important;pointer-events:auto!important}
-}
-</style>
-<script id="rc496-mobile-legacy-music-ui-hard-isolation-js">
-(()=>{
- if(!(matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches))return;
- const root=document.getElementById('rc486Music'),legacy=document.getElementById('musicRoom');if(!root||!legacy)return;
- const enforce=()=>{if(legacy.classList.contains('active')){document.body.classList.add('rc486-music-open');const d=document.getElementById('musicDiscovery');if(d)d.classList.remove('active');root.style.removeProperty('display');}};
- new MutationObserver(enforce).observe(legacy,{attributes:true,subtree:true,attributeFilter:['class','style']});
- enforce();
-})();
-</script>
-
 <!-- RC464 MOBILE TYPOGRAPHY READABILITY POLISH -->
 <style id="rc464-mobile-typography-readability-polish">
 @media(max-width:700px) and (pointer:coarse){
