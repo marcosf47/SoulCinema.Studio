@@ -8720,24 +8720,43 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
 }
 </style>
 
-<!-- RC467 MOBILE THEATER PLAYBACK RESTORE / TYPOGRAPHY PRESERVED -->
-<script id="rc467-mobile-theater-playback-restore">
+<!-- RC522 MOBILE SINGLE MEDIA OWNER / NAVIGATION CLEANUP -->
+<script id="rc522-mobile-single-media-owner">
 (()=>{
- if(!matchMedia('(max-width:700px) and (pointer:coarse)').matches)return;
- // RC463 global media governor removed: it was racing the proven Theater handlers.
- // Keep cross-room cleanup only when a room actually changes, never on Theater content clicks.
+ if(!(matchMedia('(pointer:coarse)').matches||innerWidth<=860))return;
  const scenes=[...document.querySelectorAll('.scene')];
- const pauseOutside=owner=>{
-   document.querySelectorAll('video,audio').forEach(m=>{
-     if(owner&&owner.contains(m))return;
-     try{m.pause()}catch(_){}
-   });
+ const safePause=m=>{try{m.pause?.()}catch(_){}};
+ const activeScene=()=>scenes.filter(s=>s.classList.contains('active')).at(-1)||null;
+ const musicOpen=()=>document.body.classList.contains('rc486-music-open');
+ const owns=(m,owner)=>{
+   if(m.id==='m486Audio')return musicOpen();
+   if(m.id==='ambient')return owner?.id==='lobby';
+   return !!(owner&&owner.contains(m));
  };
- const sync=()=>{
-   const owner=scenes.filter(s=>s.classList.contains('active')).at(-1);
-   if(owner)pauseOutside(owner);
+ const cleanup=()=>{
+   const owner=activeScene();
+   document.querySelectorAll('video,audio').forEach(m=>{if(!owns(m,owner))safePause(m)});
+   if(!musicOpen()){
+     const p=document.getElementById('m486DiscoveryPlayer');
+     if(p?.querySelector('iframe'))p.innerHTML='';
+   }
  };
- scenes.forEach(s=>new MutationObserver(sync).observe(s,{attributes:true,attributeFilter:['class']}));
+ let queued=false;
+ const queueCleanup=()=>{
+   if(queued)return;queued=true;
+   requestAnimationFrame(()=>{queued=false;cleanup()});
+ };
+ scenes.forEach(s=>new MutationObserver(queueCleanup).observe(s,{attributes:true,attributeFilter:['class']}));
+ new MutationObserver(queueCleanup).observe(document.body,{attributes:true,attributeFilter:['class','data-scene','data-experience']});
+ document.addEventListener('click',e=>{
+   if(!e.target.closest?.('button,a,[role="button"],.portal,.collection-card'))return;
+   setTimeout(queueCleanup,0);
+ },true);
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)cleanup()});
+ window.addEventListener('pagehide',cleanup);
+ window.addEventListener('pageshow',queueCleanup);
+ window.scMobileMediaCleanup=cleanup;
+ queueCleanup();
 })();
 </script>
 <!-- RC505 MOBILE THEATER FIRST-FRAME REVEAL -->
