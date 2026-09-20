@@ -9,6 +9,16 @@
 .hero .primary{min-height:60px;padding:17px 27px;font-size:13px;letter-spacing:.14em;box-shadow:0 0 0 1px #ffe8a533,0 12px 34px #d9b76030}
 .nav{height:78px;left:10px;right:10px;border-radius:26px}.nav button{min-width:68px;min-height:62px;font-size:11px;font-weight:700;letter-spacing:.09em}.nav button b{font-size:25px;margin-bottom:5px}.spacer{height:102px}
 }
+/* EP LUXURY NAV + PORTAL LABEL PASS */
+@media (max-width:700px){
+.card small{font-size:11px!important;font-weight:700;line-height:1.35;letter-spacing:.24em;color:#d8c487!important;text-shadow:0 1px 10px #000}
+.nav{height:82px!important;border:1px solid #d8b85c70!important;background:linear-gradient(180deg,#171208f5,#080705f8 58%,#030303fa)!important;box-shadow:inset 0 1px 0 #ffe9a51f,inset 0 -1px 0 #000,0 -10px 38px #000b,0 8px 35px #000!important}
+.nav:before{content:"";position:absolute;left:8%;right:8%;top:0;height:1px;background:linear-gradient(90deg,transparent,#f4d98199,transparent)}
+.nav button{position:relative;min-width:72px!important;color:#aaa18c!important;font-size:11px!important;font-weight:800!important;letter-spacing:.11em!important;text-shadow:0 1px 10px #000}
+.nav button b{display:grid!important;place-items:center;width:38px;height:34px;margin:0 auto 5px!important;border-radius:12px;color:#e5c769!important;font-size:24px!important;filter:drop-shadow(0 2px 8px #d9b76030)}
+.nav button.active{color:#ffe59a!important}.nav button.active b{background:radial-gradient(circle,#d9b76025,transparent 70%);color:#ffe08a!important;filter:drop-shadow(0 0 9px #d9b76075)}
+.nav button.active:after{content:"";position:absolute;left:25%;right:25%;bottom:-5px;height:2px;border-radius:99px;background:linear-gradient(90deg,transparent,#e7c86b,transparent);box-shadow:0 0 10px #d9b760}
+}
 </style></head><body><div class="drawer" id="drawer"><aside class="drawerPanel"><div class="drawerLogo">SOULCINEMA<small>STUDIO</small></div><button data-go="home"><b>⌂</b> GRAND LOBBY</button><button data-go="music"><b>♫</b> MUSIC ROOM</button><button data-go="theater"><b>▣</b> SCREENING THEATER</button><button data-go="live"><b>◉</b> LIVE CENTER</button><button data-go="production"><b>◇</b> PRODUCTION ROOM</button><button data-go="story"><b>♡</b> STORY ROOM</button><button data-go="journal"><b>◷</b> JOURNAL</button><button data-go="bible"><b>✦</b> VISUAL BIBLE</button><button data-go="about"><b>i</b> ABOUT</button><button data-go="contact"><b>+</b> CONTACT</button><div class="drawerQuote">“EVERY HEART<br>HIDES A STORY.”</div></aside></div><main class="app">
 <header class="top"><button class="icon" id="menuBtn">☰</button><div class="brand">SOULCINEMA<small>STUDIO</small></div><button class="icon" id="homeBtn">⌂</button></header>
 <section class="view active" id="gate"><div class="hero" style="min-height:calc(100svh - 92px)"><video id="v2Gate" muted playsinline preload="metadata"><source src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/the-gate.mp4"></video><div class="shade"></div><div class="heroCopy" style="text-align:center"><div class="eyebrow">SOULCINEMA · STUDIO</div><h1 style="font-size:clamp(42px,13vw,68px)">Every Heart<br>Hides a Story.</h1><p style="margin:0 auto 20px">Enter a cinematic universe where music, motion and human stories live together.</p><button class="primary" data-go="home">ENTER THE STUDIO</button></div></div></section>
