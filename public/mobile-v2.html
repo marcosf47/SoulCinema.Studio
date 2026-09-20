@@ -76,7 +76,10 @@ document.addEventListener("click",e=>{const g=e.target.closest("[data-go]");if(g
 document.getElementById("homeBtn").onclick=()=>go("home");const drawer=document.getElementById("drawer");document.getElementById("menuBtn").onclick=()=>drawer.classList.add("open");drawer.addEventListener("click",e=>{if(e.target===drawer)drawer.classList.remove("open")});
 const list=document.getElementById("filmList");let theaterIndex=-1,theaterSeq=false;
 function playFilm(i,sequence=false){const f=films[i];if(!f)return;theaterIndex=i;theaterSeq=sequence;hardStop(theater);theater.src=f[2];theater.load();theater.play().catch(()=>{});scrollTo({top:0,behavior:"smooth"})}
-theater.addEventListener("ended",()=>{if(theaterSeq&&theaterIndex===0&&document.getElementById("theater").classList.contains("active"))playFilm(1,false)});
+let handoffArmed=false;
+function handoffToFilm(){if(handoffArmed||!theaterSeq||theaterIndex!==0||!document.getElementById("theater").classList.contains("active"))return;handoffArmed=true;theaterSeq=false;theaterIndex=1;theater.src=films[1][2];theater.load();theater.play().catch(()=>{});setTimeout(()=>handoffArmed=false,500)}
+theater.addEventListener("timeupdate",()=>{if(theaterSeq&&theaterIndex===0&&Number.isFinite(theater.duration)&&theater.duration-theater.currentTime<=.18)handoffToFilm()});
+theater.addEventListener("ended",handoffToFilm);
 films.forEach(([k,t,s],i)=>{const b=document.createElement("button");b.className="item";b.innerHTML="<small>"+k+"</small><strong>"+t+"</strong>";b.onclick=()=>playFilm(i,i===0);list.appendChild(b)});
 function syncCinemaLandscape(){const id=document.querySelector(".view.active")?.id;document.body.classList.toggle("v2-cinema-landscape",matchMedia("(orientation:landscape)").matches&&(id==="theater"||id==="live"))} addEventListener("orientationchange",()=>setTimeout(syncCinemaLandscape,80));addEventListener("resize",syncCinemaLandscape);document.addEventListener("visibilitychange",()=>{if(document.hidden)hardStop()});window.addEventListener("pagehide",()=>hardStop());window.addEventListener("beforeunload",()=>hardStop());window.addEventListener("popstate",()=>go(location.hash.slice(1)||"home"));
 go(location.hash.slice(1)&&document.getElementById(location.hash.slice(1))?location.hash.slice(1):"gate");
