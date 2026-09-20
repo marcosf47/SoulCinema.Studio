@@ -42,11 +42,11 @@ const films=[
 ["SOULCINEMA KIDS","THE LITTLE FIREFLY WHO LOST HIS LIGHT","https://tfamln4qsost6j00.public.blob.vercel-storage.com/THE%20LITTLE%20FIREFLY%20WHO%20LOST%20HIS%20LIGHT.mp4"],
 ["SOULCINEMA KIDS","YOUNG LEARNERS","https://tfamln4qsost6j00.public.blob.vercel-storage.com/YOUNG%20LEARNERS.mp4"]];
 const views=[...document.querySelectorAll(".view")], theater=document.getElementById("v2Theater"), music=document.getElementById("v2Music"), lobby=document.getElementById("v2Lobby");
-function hardStop(except){document.querySelectorAll("audio,video").forEach(m=>{if(m===except)return;try{m.pause()}catch(e){} if(m!==lobby){try{m.currentTime=0}catch(e){}}});}
-function go(id){hardStop();views.forEach(v=>v.classList.toggle("active",v.id===id));scrollTo({top:0,behavior:"instant"});history.replaceState(null,"","#"+id);if(id==="home"){lobby.muted=true;lobby.play().catch(()=>{})}}
+function hardStop(except){document.querySelectorAll("audio,video").forEach(m=>{if(m===except)return;try{m.pause()}catch(e){} try{m.removeAttribute("autoplay")}catch(e){} if(m!==lobby){try{m.currentTime=0}catch(e){} if(m===theater){try{m.removeAttribute("src");m.querySelectorAll("source").forEach(s=>s.removeAttribute("src"));m.load()}catch(e){}}}});}
+function go(id){hardStop();views.forEach(v=>v.classList.toggle("active",v.id===id));window.scrollTo(0,0);history.replaceState(null,"","#"+id);if(id==="home"){lobby.muted=true;lobby.loop=true;lobby.play().catch(()=>{})}}
 document.addEventListener("click",e=>{const g=e.target.closest("[data-go]");if(g)go(g.dataset.go)});
 document.getElementById("homeBtn").onclick=()=>go("home");document.getElementById("menuBtn").onclick=()=>go("home");
 const list=document.getElementById("filmList");films.forEach(([k,t,s])=>{const b=document.createElement("button");b.className="item";b.innerHTML="<small>"+k+"</small><strong>"+t+"</strong>";b.onclick=()=>{hardStop(theater);theater.src=s;theater.load();theater.play().catch(()=>{});scrollTo({top:0,behavior:"smooth"})};list.appendChild(b)});
-document.addEventListener("visibilitychange",()=>{if(document.hidden)hardStop()});window.addEventListener("pagehide",()=>hardStop());
+document.addEventListener("visibilitychange",()=>{if(document.hidden)hardStop()});window.addEventListener("pagehide",()=>hardStop());window.addEventListener("beforeunload",()=>hardStop());window.addEventListener("popstate",()=>go(location.hash.slice(1)||"home"));
 go(location.hash.slice(1)&&document.getElementById(location.hash.slice(1))?location.hash.slice(1):"home");
 </script></body></html>
