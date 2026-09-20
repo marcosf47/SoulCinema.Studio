@@ -16,7 +16,7 @@
 <html lang="en">
 <head>
 <!-- MOBILE V2 ROUTER -->
-<script>(function(){var ua=navigator.userAgent||"";var coarse=matchMedia("(pointer:coarse)").matches;var narrow=Math.min(screen.width||innerWidth,innerWidth)<=700;if(coarse&&narrow&&!location.pathname.includes("mobile-v2.html")){location.replace("/mobile-v2.html"+(location.hash||""));}})();</script>
+<script>(function(){var ua=navigator.userAgent||"";var mobileUA=/Android|iPhone|iPod|Mobile/i.test(ua);var coarse=matchMedia("(pointer:coarse)").matches;var shortSide=Math.min(screen.width||innerWidth,screen.height||innerHeight)<=700;if((mobileUA||(coarse&&shortSide))&&!location.pathname.includes("mobile-v2.html")){location.replace("/mobile-v2.html"+(location.hash||""));}})();</script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>SoulCinema Studio — Every Heart Hides a Story</title>
