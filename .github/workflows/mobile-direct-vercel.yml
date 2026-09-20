@@ -2,9 +2,6 @@ name: SoulCinema Direct Vercel
 on:
   push:
     branches: [main]
-    paths:
-      - 'public/**'
-      - '.github/workflows/mobile-direct-vercel.yml'
   workflow_dispatch:
 permissions:
   contents: write
