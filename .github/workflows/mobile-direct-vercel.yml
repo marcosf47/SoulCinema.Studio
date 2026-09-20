@@ -2,7 +2,7 @@ name: SoulCinema Direct Vercel
 on:
   push:
     branches: [main]
-    paths: [.github/workflows/mobile-direct-vercel.yml]
+    paths: [public/index.html, .github/workflows/mobile-direct-vercel.yml]
   workflow_dispatch:
 permissions:
   contents: write
@@ -22,4 +22,4 @@ jobs:
           grep -q "RC418 THEATER FULLSCREEN EXIT ISOLATION" public/index.html
           grep -q "RC414 MOBILE CINEMATIC PORTALS REBUILD" public/index.html
       - name: Confirm source
-        run: echo "RC443 safe baseline verified"
+        run: echo "SoulCinema production source verified for direct Vercel deployment"
