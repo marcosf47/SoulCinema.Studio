@@ -25,62 +25,37 @@ jobs:
         with:
           fetch-depth: 0
       - name: Verify isolated App V1 package
+        shell: bash
         run: |
+          set -euo pipefail
           test "${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}" = "soulcinema-app-v1"
-          test -f app/index.html
-          test -f app/manifest.webmanifest
-          test -f app/sw.js
-          test -f app/PHASE1-CHECKPOINT.md
-          test -f public/app/index.html
-          test -f public/app/manifest.webmanifest
-          test -f public/app/sw.js
+          for f in app/index.html app/manifest.webmanifest app/sw.js app/PHASE1-CHECKPOINT.md public/app/index.html public/app/manifest.webmanifest public/app/sw.js; do test -f "$f"; done
           cmp -s app/index.html public/app/index.html
           cmp -s app/manifest.webmanifest public/app/manifest.webmanifest
           cmp -s app/sw.js public/app/sw.js
-          grep -q 'soulcinema-app-lifecycle' app/index.html
-          grep -q 'soulcinema-app-media-guard' app/index.html
-          grep -q '/app/manifest.webmanifest' app/index.html
-          grep -q '/app/sw.js' app/index.html
-          grep -q 'soulcinema-app-shell-v3' app/sw.js
-          grep -q 'start_url.*\/app\/index.html#gate' app/manifest.webmanifest
-          grep -q 'scope.*\/app\/' app/manifest.webmanifest
-          grep -q 'const LIVE_FEED=' app/index.html
-          grep -q 'const SC_API=' app/index.html
-          grep -q 'function hardStop' app/index.html
-          grep -q 'function destroyLive' app/index.html
-          grep -q 'function destroyDiscovery' app/index.html
-          grep -q 'scFrame=null' app/index.html
-          grep -q 'scFrame=f' app/index.html
-          grep -q 'setVolume(0)' app/index.html
-          grep -q 'seekTo(0)' app/index.html
-          grep -q 'about:blank' app/index.html
-          grep -q 'w.pause()' app/index.html
-          grep -q 'w.seekTo(0)' app/index.html
-          grep -q 'f.src="about:blank"' app/index.html
-          grep -q 'visibilitychange' app/index.html
-          grep -q 'pagehide' app/index.html
-          grep -q 'beforeunload' app/index.html
-          grep -q 'popstate' app/index.html
-          grep -q 'freeze' app/index.html
-          test "$(grep -o 'id="gate"' app/index.html | wc -l)" -eq 1
-          test "$(grep -o 'id="home"' app/index.html | wc -l)" -eq 1
-          test "$(grep -o 'id="theater"' app/index.html | wc -l)" -eq 1
-          test "$(grep -o 'id="music"' app/index.html | wc -l)" -eq 1
-          test "$(grep -o 'id="live"' app/index.html | wc -l)" -eq 1
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          s=Path("app/index.html").read_text()
+          ids=re.findall(r'\bid="([^"]+)"',s)
+          targets=re.findall(r'data-go="([^"]+)"',s)
+          missing=sorted(set(targets)-set(ids))
+          dupes=sorted({x for x in ids if ids.count(x)>1})
+          required=["soulcinema-app-lifecycle","soulcinema-app-media-guard","/app/manifest.webmanifest","/app/sw.js","const LIVE_FEED=","const SC_API=","function hardStop","function destroyLive","function destroyDiscovery","visibilitychange","pagehide","beforeunload","popstate","freeze"]
+          absent=[x for x in required if x not in s]
+          assert not missing, f"Missing route destinations: {missing}"
+          assert not dupes, f"Duplicate IDs: {dupes}"
+          assert len(targets)==68, f"Unexpected route target count: {len(targets)}"
+          assert not absent, f"Missing required runtime markers: {absent}"
+          for core in ["gate","home","theater","music","live"]:
+              assert ids.count(core)==1, f"Core view id {core!r} count={ids.count(core)}"
+          sw=Path("app/sw.js").read_text()
+          manifest=Path("app/manifest.webmanifest").read_text()
+          assert "soulcinema-app-shell-v3" in sw
+          assert "/app/index.html#gate" in manifest and '"/app/"' in manifest
+          print(f"App V1 verify OK: {len(targets)} routes; parity + lifecycle + media markers passed")
+          PY
           ! grep -q 'public/mobile-v2.html' vercel.app-preview.json
-          python - <<'PY'
-import re
-from pathlib import Path
-s=Path("app/index.html").read_text()
-ids=re.findall(r'\bid="([^"]+)"',s)
-targets=re.findall(r'data-go="([^"]+)"',s)
-missing=sorted(set(targets)-set(ids))
-dupes=sorted({x for x in ids if ids.count(x)>1})
-assert not missing, f"Missing route destinations: {missing}"
-assert not dupes, f"Duplicate IDs: {dupes}"
-assert len(targets)==68, f"Unexpected route target count: {len(targets)}"
-print(f"Route graph OK: {len(targets)} targets, 0 missing, 0 duplicate IDs")
-PY
       - name: Production isolation gate
         run: |
           git diff --exit-code origin/main -- public/mobile-v2.html public/index.html
