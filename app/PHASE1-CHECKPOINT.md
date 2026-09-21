@@ -98,3 +98,15 @@ Pass rule: every step must pass in one consolidated session before Phase 1 can b
 - Remaining acceptance gate: one consolidated real-device pass by E.P.
 
 C.D. may now issue the single TEST checkpoint. Phase 1 remains UNLOCKED until that device pass succeeds.
+
+
+## Music teardown defect closure
+- E.P. real-device observation: SoundCloud Search/Discovery audio continued after leaving Music.
+- Root cause isolated to the SoundCloud iframe owner, which was outside the audio/video-only hardStop path.
+- App V1 fix now pauses and seeks the SoundCloud widget to 0, blanks/removes its iframe, clears the end watcher, and resets the Discovery owner on room exit.
+- Source/runtime App V1 copies match after the fix.
+- GitHub App V1 Preview Verify run #26: SUCCESS.
+- Both Vercel deployment status checks after the fix: SUCCESS.
+- Production main/mobile-v2 remained untouched.
+
+Acceptance status: internal closure complete; consolidated real-device pass remains the final lock gate.
