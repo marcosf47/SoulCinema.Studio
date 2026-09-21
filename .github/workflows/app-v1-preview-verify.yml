@@ -6,6 +6,7 @@ on:
       - "app/**"
       - "public/app/**"
       - "vercel.app-preview.json"
+      - ".github/workflows/app-v1-preview-verify.yml"
   pull_request:
     branches: [main]
     paths:
