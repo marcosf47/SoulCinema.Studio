@@ -41,6 +41,23 @@ jobs:
           grep -q '/app/manifest.webmanifest' app/index.html
           grep -q '/app/sw.js' app/index.html
           grep -q 'soulcinema-app-shell-v3' app/sw.js
+          grep -q 'start_url.*\/app\/index.html#gate' app/manifest.webmanifest
+          grep -q 'scope.*\/app\/' app/manifest.webmanifest
+          grep -q 'const LIVE_FEED=' app/index.html
+          grep -q 'const SC_API=' app/index.html
+          grep -q 'function hardStop' app/index.html
+          grep -q 'function destroyLive' app/index.html
+          grep -q 'function destroyDiscovery' app/index.html
+          grep -q 'visibilitychange' app/index.html
+          grep -q 'pagehide' app/index.html
+          grep -q 'beforeunload' app/index.html
+          grep -q 'popstate' app/index.html
+          grep -q 'freeze' app/index.html
+          test "$(grep -o 'id="gate"' app/index.html | wc -l)" -eq 1
+          test "$(grep -o 'id="home"' app/index.html | wc -l)" -eq 1
+          test "$(grep -o 'id="theater"' app/index.html | wc -l)" -eq 1
+          test "$(grep -o 'id="music"' app/index.html | wc -l)" -eq 1
+          test "$(grep -o 'id="live"' app/index.html | wc -l)" -eq 1
           ! grep -q 'public/mobile-v2.html' vercel.app-preview.json
       - name: Production isolation gate
         run: |
