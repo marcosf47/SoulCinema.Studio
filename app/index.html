@@ -56,7 +56,13 @@
 html,body{overscroll-behavior:none}
 body{padding-top:var(--app-safe-top);padding-bottom:var(--app-safe-bottom)}
 .nav{padding-bottom:calc(8px + var(--app-safe-bottom))}
-</style></head><body><div class="drawer" id="drawer"><aside class="drawerPanel"><div class="drawerLogo">SOULCINEMA<small>STUDIO</small></div><button data-go="home"><b>⌂</b> GRAND LOBBY</button><button data-go="music"><b>♫</b> MUSIC ROOM</button><button data-go="theater"><b>▣</b> SCREENING THEATER</button><button data-go="live"><b>◉</b> LIVE CENTER</button><button data-go="production"><b>◇</b> PRODUCTION ROOM</button><button data-go="story"><b>♡</b> STORY ROOM</button><button data-go="journal"><b>◷</b> JOURNAL</button><button data-go="bible"><b>✦</b> VISUAL BIBLE</button><button data-go="about"><b>i</b> ABOUT</button><button data-go="contact"><b>+</b> CONTACT</button><div class="drawerQuote">“EVERY HEART<br>HIDES A STORY.”</div></aside></div><main class="app">
+</style><meta name="theme-color" content="#050505">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SoulCinema">
+<link rel="manifest" href="/app/manifest.webmanifest">
+</head><body><div class="drawer" id="drawer"><aside class="drawerPanel"><div class="drawerLogo">SOULCINEMA<small>STUDIO</small></div><button data-go="home"><b>⌂</b> GRAND LOBBY</button><button data-go="music"><b>♫</b> MUSIC ROOM</button><button data-go="theater"><b>▣</b> SCREENING THEATER</button><button data-go="live"><b>◉</b> LIVE CENTER</button><button data-go="production"><b>◇</b> PRODUCTION ROOM</button><button data-go="story"><b>♡</b> STORY ROOM</button><button data-go="journal"><b>◷</b> JOURNAL</button><button data-go="bible"><b>✦</b> VISUAL BIBLE</button><button data-go="about"><b>i</b> ABOUT</button><button data-go="contact"><b>+</b> CONTACT</button><div class="drawerQuote">“EVERY HEART<br>HIDES A STORY.”</div></aside></div><main class="app">
 <header class="top"><button class="icon" id="menuBtn">☰</button><div class="brand">SOULCINEMA<small>STUDIO</small></div><button class="icon" id="homeBtn">⌂</button></header>
 <section class="view active" id="gate"><div class="hero" style="min-height:calc(100svh - 92px)"><video id="v2Gate" muted playsinline preload="metadata"><source src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/the-gate.mp4"></video><div class="shade"></div><div class="heroCopy" style="text-align:center"><div class="eyebrow">SOULCINEMA · STUDIO</div><h1 style="font-size:clamp(42px,13vw,68px)">Every Heart<br>Hides a Story.</h1><p style="margin:0 auto 20px">Enter a cinematic universe where music, motion and human stories live together.</p><button class="primary" data-go="home">ENTER THE STUDIO</button></div></div></section>
 <section class="view" id="home">
