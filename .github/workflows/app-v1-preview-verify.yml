@@ -4,6 +4,7 @@ on:
     branches: [soulcinema-app-v1]
     paths:
       - "app/**"
+      - "public/app/**"
       - "vercel.app-preview.json"
   workflow_dispatch:
 permissions:
@@ -20,6 +21,12 @@ jobs:
           test -f app/manifest.webmanifest
           test -f app/sw.js
           test -f app/PHASE1-CHECKPOINT.md
+          test -f public/app/index.html
+          test -f public/app/manifest.webmanifest
+          test -f public/app/sw.js
+          cmp -s app/index.html public/app/index.html
+          cmp -s app/manifest.webmanifest public/app/manifest.webmanifest
+          cmp -s app/sw.js public/app/sw.js
           grep -q 'soulcinema-app-lifecycle' app/index.html
           grep -q 'soulcinema-app-media-guard' app/index.html
           grep -q '/app/manifest.webmanifest' app/index.html
