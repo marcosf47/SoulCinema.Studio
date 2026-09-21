@@ -67,6 +67,19 @@ jobs:
           test "$(grep -o 'id="music"' app/index.html | wc -l)" -eq 1
           test "$(grep -o 'id="live"' app/index.html | wc -l)" -eq 1
           ! grep -q 'public/mobile-v2.html' vercel.app-preview.json
+          python - <<'PY'
+import re
+from pathlib import Path
+s=Path("app/index.html").read_text()
+ids=re.findall(r'\bid="([^"]+)"',s)
+targets=re.findall(r'data-go="([^"]+)"',s)
+missing=sorted(set(targets)-set(ids))
+dupes=sorted({x for x in ids if ids.count(x)>1})
+assert not missing, f"Missing route destinations: {missing}"
+assert not dupes, f"Duplicate IDs: {dupes}"
+assert len(targets)==68, f"Unexpected route target count: {len(targets)}"
+print(f"Route graph OK: {len(targets)} targets, 0 missing, 0 duplicate IDs")
+PY
       - name: Production isolation gate
         run: |
           git diff --exit-code origin/main -- public/mobile-v2.html public/index.html
