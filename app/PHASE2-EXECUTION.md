@@ -39,3 +39,14 @@ No micro-test requests.
 - Both Vercel deployment statuses passed after the Android packaging CI gate.
 - Production `main`, `public/index.html`, and `public/mobile-v2.html` remain outside the App V1 packaging work.
 - Native Android project generation and signed Play release remain separate release-build gates; do not claim an AAB exists until that build is actually generated.
+
+
+## Play Store release line
+- Android native generation and debug Gradle build: PASS.
+- Release AAB Gradle build: PASS.
+- CI artifact publication: PASS; release AAB artifact produced.
+- Play package identity: `studio.soulcinema.app`.
+- Initial Play release metadata: versionCode `1`, versionName `1.0.0`.
+- Secure signing path is wired to GitHub Secrets; no private signing material is stored in the repository.
+- Release artifact integrity gate verifies the AAB exists, is non-empty, and records SHA-256 before upload.
+- Remaining external release gates: actual upload signing credentials / Play App Signing enrollment, Play Console app record and required listing/policy declarations, then internal-track validation and production submission.
