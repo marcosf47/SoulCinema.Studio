@@ -1,7 +1,7 @@
 # SOULCINEMA APP — PHASE 1 INTERNAL CHECKPOINT
 
 Branch: soulcinema-app-v1
-Status: ISOLATED PREVIEW IDENTIFIED — REAL-DEVICE VALIDATION REMAINS
+Status: PHASE 1 VALIDATED — E.P. CONSOLIDATED DEVICE PASS COMPLETE
 
 ## Verified structurally
 - Isolated app shell exists at app/index.html.
@@ -110,3 +110,15 @@ C.D. may now issue the single TEST checkpoint. Phase 1 remains UNLOCKED until th
 - Production main/mobile-v2 remained untouched.
 
 Acceptance status: internal closure complete; consolidated real-device pass remains the final lock gate.
+
+
+## Phase 1 acceptance — 2026-09-21
+- E.P. completed the consolidated App V1 Preview test and reported that all tests passed.
+- Gate / Enter Experience / Screening Theater render path passed after the App-only landscape guard correction.
+- Music/Discovery teardown, room navigation, media isolation, re-entry and consolidated navigation checks passed in the E.P. session.
+- E.P. separately verified the production Mobile V2 experience remained intact after the App-only correction.
+- App source/runtime landscape correction is isolated to soulcinema-app-v1; production main remains untouched.
+- Phase 1 acceptance gate is COMPLETE.
+- Draft PR remains UNMERGED. Do not merge to main without explicit E.P. authorization.
+
+**PHASE 1: VALIDATED / LOCKED BASELINE FOR FORWARD APP WORK.**
