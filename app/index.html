@@ -127,6 +127,13 @@ window.addEventListener("hashchange",()=>{const id=location.hash.slice(1);if(val
 document.addEventListener("click",e=>{const target=e.target.closest("[data-go]");if(target&&valid(target.dataset.go))requestAnimationFrame(()=>{try{window.SC_APP.lastRoute=target.dataset.go}catch(_){}})});
 })();
 </script>
+<script id="soulcinema-app-media-guard">
+(()=>{let epoch=0;const bump=()=>++epoch;window.SC_APP=window.SC_APP||{};window.SC_APP.mediaEpoch=()=>epoch;
+document.addEventListener("click",e=>{if(e.target.closest("[data-go]"))bump()},{capture:true});
+document.addEventListener("visibilitychange",()=>{if(document.hidden)bump()});
+window.addEventListener("pagehide",bump);
+})();
+</script>
 <script id="soulcinema-app-lifecycle">
 (()=>{const stop=()=>{try{hardStop()}catch(e){}try{destroyLive()}catch(e){}try{destroyDiscovery()}catch(e){}};document.addEventListener("freeze",stop);window.addEventListener("pageshow",()=>{try{syncCinemaLandscape()}catch(e){}});})();
 </script></body></html>
