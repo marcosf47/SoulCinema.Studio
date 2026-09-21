@@ -6,12 +6,19 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "app:sync": "npx cap sync android",
+    "app:open": "npx cap open android",
+    "app:build": "npm run app:sync && cd android && ./gradlew bundleRelease"
   },
   "dependencies": {
     "next": "16.2.10",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "@capacitor/core": "^8.0.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@capacitor/cli": "^8.0.0",
+    "@capacitor/android": "^8.0.0"
+  }
 }
