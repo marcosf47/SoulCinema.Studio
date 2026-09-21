@@ -7,5 +7,14 @@
   "display": "standalone",
   "background_color": "#050505",
   "theme_color": "#050505",
-  "orientation": "any"
+  "orientation": "any",
+  "id": "/app/",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": [
+    "entertainment",
+    "music",
+    "video"
+  ],
+  "prefer_related_applications": false
 }
