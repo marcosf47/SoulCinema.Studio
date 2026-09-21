@@ -29,3 +29,13 @@ Harden the validated Mobile V2-based App shell for installable mobile-app behavi
 ## Workflow
 Build → internal/static verification → Preview/CI verification → single E.P. device checkpoint.
 No micro-test requests.
+
+
+## Android / Play packaging checkpoint
+- Capacitor packaging identity: `studio.soulcinema.app` / `SoulCinema`.
+- Web runtime source for native packaging: `public/app`.
+- Android packaging commands are defined in `package.json`.
+- CI now gates Capacitor identity, required dependencies, runtime path and packaging scripts.
+- Both Vercel deployment statuses passed after the Android packaging CI gate.
+- Production `main`, `public/index.html`, and `public/mobile-v2.html` remain outside the App V1 packaging work.
+- Native Android project generation and signed Play release remain separate release-build gates; do not claim an AAB exists until that build is actually generated.
