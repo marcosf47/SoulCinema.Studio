@@ -1,0 +1,36 @@
+name: SoulCinema Android App V1 Build
+"on":
+  workflow_dispatch:
+  push:
+    branches: [soulcinema-app-v1]
+    paths:
+      - "app/**"
+      - "public/app/**"
+      - "package.json"
+      - "package-lock.json"
+      - "capacitor.config.json"
+      - ".github/workflows/android-app-v1-build.yml"
+permissions:
+  contents: read
+jobs:
+  android-debug-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Install dependencies
+        run: npm ci
+      - name: Generate and sync isolated Android project
+        run: |
+          npx cap add android
+          npx cap sync android
+      - name: Build Android debug package
+        working-directory: android
+        run: ./gradlew assembleDebug
