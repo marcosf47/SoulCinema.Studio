@@ -59,3 +59,14 @@ Do not call Phase 1 100/100 or LOCKED until real-device validation passes.
 
 ## Next gate
 Perform the real-device validation matrix above against the isolated Preview. Production main remains untouched.
+
+
+## Final internal gate
+- Route graph re-audited: 68/68 data-go targets resolve, 0 missing destinations, 0 duplicate IDs.
+- Core rooms re-audited: Gate, Home, Theater, Music, Live, Production, Story, Journal, Visual Bible, About, Contact all present.
+- Media ownership re-audited: route hardStop, Music teardown, Live mount/teardown all present.
+- Lifecycle re-audited: visibilitychange, pagehide, beforeunload, popstate and freeze guards all present.
+- Source/runtime parity re-audited: index, manifest and service worker match exactly.
+- Automated verifier and both Vercel deployment checks are green on the hardened App V1 branch.
+
+Internal/static validation is complete. Phase 1 remains UNLOCKED until the single consolidated real-device validation pass succeeds.
