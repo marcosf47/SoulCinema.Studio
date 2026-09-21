@@ -1,7 +1,7 @@
 # SOULCINEMA APP — PHASE 1 INTERNAL CHECKPOINT
 
 Branch: soulcinema-app-v1
-Status: INTERNAL PASS COMPLETE — REAL DEVICE VALIDATION NOT YET PERFORMED
+Status: PRE-DEVICE BUILD COMPLETE — READY FOR ISOLATED PREVIEW DEPLOYMENT
 
 ## Verified structurally
 - Isolated app shell exists at app/index.html.
@@ -35,3 +35,15 @@ Status: INTERNAL PASS COMPLETE — REAL DEVICE VALIDATION NOT YET PERFORMED
 
 ## Lock rule
 Do not call Phase 1 100/100 or LOCKED until real-device validation passes.
+
+## Packaging verification
+- Install manifest linked from app shell.
+- Standalone/mobile app metadata present.
+- Service worker registered only for /app/ scope.
+- Service worker cache restricted to same-origin /app assets.
+- External media, SoundCloud and Live are not intercepted by the app cache.
+- Navigation uses network-first behavior with app-shell fallback.
+- Dedicated preview routing configuration exists separately from production config.
+
+## Next gate
+Create an isolated preview deployment from soulcinema-app-v1, then perform the real-device validation matrix above. Production main remains untouched.
