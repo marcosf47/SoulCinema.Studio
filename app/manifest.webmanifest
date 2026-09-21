@@ -1,0 +1,11 @@
+{
+  "name": "SOULCINEMA.STUDIO",
+  "short_name": "SoulCinema",
+  "description": "Every Heart Hides a Story.",
+  "start_url": "/app/#gate",
+  "scope": "/app/",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "orientation": "any"
+}
