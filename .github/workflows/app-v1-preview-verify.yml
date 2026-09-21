@@ -59,6 +59,22 @@ jobs:
           print(f"App V1 verify OK: {len(targets)} routes; parity + lifecycle + media markers passed")
           PY
           ! grep -q 'public/mobile-v2.html' vercel.app-preview.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          pkg=json.loads(Path("package.json").read_text())
+          cap=json.loads(Path("capacitor.config.json").read_text())
+          assert cap["appId"]=="studio.soulcinema.app"
+          assert cap["appName"]=="SoulCinema"
+          assert cap["webDir"]=="public/app"
+          for dep in ["@capacitor/core"]:
+              assert dep in pkg.get("dependencies",{}), dep
+          for dep in ["@capacitor/cli","@capacitor/android"]:
+              assert dep in pkg.get("devDependencies",{}), dep
+          for script in ["app:sync","app:open","app:build"]:
+              assert script in pkg.get("scripts",{}), script
+          print("Android packaging config OK")
+          PY
       - name: Production isolation gate
         run: |
           git diff --exit-code origin/main -- public/mobile-v2.html public/index.html
