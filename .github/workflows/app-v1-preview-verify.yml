@@ -48,6 +48,11 @@ jobs:
           grep -q 'function hardStop' app/index.html
           grep -q 'function destroyLive' app/index.html
           grep -q 'function destroyDiscovery' app/index.html
+          grep -q 'scFrame=null' app/index.html
+          grep -q 'scFrame=f' app/index.html
+          grep -q 'setVolume(0)' app/index.html
+          grep -q 'seekTo(0)' app/index.html
+          grep -q 'about:blank' app/index.html
           grep -q 'scWidget.pause()' app/index.html
           grep -q 'scWidget.seekTo(0)' app/index.html
           grep -q 'f.src="about:blank"' app/index.html
