@@ -36,7 +36,22 @@ jobs:
       - name: Build Android debug package
         working-directory: android
         run: ./gradlew assembleDebug
-      - name: Build unsigned Android App Bundle
+      - name: Configure Play upload signing when secrets exist
+        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' && secrets.ANDROID_KEY_ALIAS != '' && secrets.ANDROID_KEY_PASSWORD != '' && secrets.ANDROID_STORE_PASSWORD != '' }}
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/soulcinema-upload.jks
+          cat >> android/gradle.properties <<EOF
+SOULCINEMA_STORE_FILE=soulcinema-upload.jks
+SOULCINEMA_KEY_ALIAS=$ANDROID_KEY_ALIAS
+SOULCINEMA_KEY_PASSWORD=$ANDROID_KEY_PASSWORD
+SOULCINEMA_STORE_PASSWORD=$ANDROID_STORE_PASSWORD
+EOF
+      - name: Build Android App Bundle
         working-directory: android
         run: ./gradlew bundleRelease
       - name: Upload Android App Bundle artifact
