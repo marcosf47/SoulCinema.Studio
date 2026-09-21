@@ -6,6 +6,13 @@ on:
       - "app/**"
       - "public/app/**"
       - "vercel.app-preview.json"
+  pull_request:
+    branches: [main]
+    paths:
+      - "app/**"
+      - "public/app/**"
+      - "vercel.app-preview.json"
+      - ".github/workflows/app-v1-preview-verify.yml"
   workflow_dispatch:
 permissions:
   contents: read
@@ -16,7 +23,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Verify isolated App V1 package
         run: |
-          test "$GITHUB_REF_NAME" = "soulcinema-app-v1"
+          test "${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}" = "soulcinema-app-v1"
           test -f app/index.html
           test -f app/manifest.webmanifest
           test -f app/sw.js
