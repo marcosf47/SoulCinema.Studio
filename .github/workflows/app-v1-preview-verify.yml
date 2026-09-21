@@ -21,6 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Verify isolated App V1 package
         run: |
           test "${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}" = "soulcinema-app-v1"
