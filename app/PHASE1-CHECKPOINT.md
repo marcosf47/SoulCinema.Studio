@@ -1,7 +1,7 @@
 # SOULCINEMA APP — PHASE 1 INTERNAL CHECKPOINT
 
 Branch: soulcinema-app-v1
-Status: INTERNAL BUILD VERIFIED — RUNTIME PREVIEW URL + REAL-DEVICE VALIDATION REMAIN
+Status: ISOLATED PREVIEW IDENTIFIED — REAL-DEVICE VALIDATION REMAINS
 
 ## Verified structurally
 - Isolated app shell exists at app/index.html.
@@ -51,5 +51,11 @@ Do not call Phase 1 100/100 or LOCKED until real-device validation passes.
 - Vercel status checks pass for both soulcinema-master and soul-cinema-studio.
 - Branch audit confirms App V1 is ahead of main with no production-file drift.
 
+## Isolated preview checkpoint
+- Vercel deployment for commit 844de00 is Ready in Preview on branch soulcinema-app-v1.
+- Exact branch preview hostname was identified from Vercel deployment details: soulcinema-master-git-soulcinema-app-v1-soul-cinema-studio.vercel.app.
+- Share-link access was enabled for preview validation.
+- Automated connector fetch remains blocked at Vercel access tooling; this is not recorded as an app runtime pass or failure.
+
 ## Next gate
-Resolve the verified isolated preview runtime URL for soulcinema-app-v1, then perform the real-device validation matrix above. Do not infer or guess a hostname. Production main remains untouched.
+Perform the real-device validation matrix above against the isolated Preview. Production main remains untouched.
