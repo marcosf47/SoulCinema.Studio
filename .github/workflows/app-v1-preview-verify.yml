@@ -48,6 +48,9 @@ jobs:
           grep -q 'function hardStop' app/index.html
           grep -q 'function destroyLive' app/index.html
           grep -q 'function destroyDiscovery' app/index.html
+          grep -q 'scWidget.pause()' app/index.html
+          grep -q 'scWidget.seekTo(0)' app/index.html
+          grep -q 'f.src="about:blank"' app/index.html
           grep -q 'visibilitychange' app/index.html
           grep -q 'pagehide' app/index.html
           grep -q 'beforeunload' app/index.html
