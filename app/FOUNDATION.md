@@ -34,3 +34,9 @@ Source baseline: Mobile V2 Official Launch Master
 
 ## Release rule
 Nothing is called LOCKED until the affected full sequence is verified.
+
+## App V1 baseline lock
+- Mobile V2 is the locked App V1 experience baseline.
+- Preserve its room architecture, navigation behavior, cinematic visual language, and single-owner media model.
+- App work is adaptation and hardening only; no redesign or parallel navigation/media architecture.
+- Production Mobile V2 remains untouched while App V1 stays isolated on `soulcinema-app-v1`.
