@@ -53,8 +53,8 @@ jobs:
           grep -q 'setVolume(0)' app/index.html
           grep -q 'seekTo(0)' app/index.html
           grep -q 'about:blank' app/index.html
-          grep -q 'scWidget.pause()' app/index.html
-          grep -q 'scWidget.seekTo(0)' app/index.html
+          grep -q 'w.pause()' app/index.html
+          grep -q 'w.seekTo(0)' app/index.html
           grep -q 'f.src="about:blank"' app/index.html
           grep -q 'visibilitychange' app/index.html
           grep -q 'pagehide' app/index.html
