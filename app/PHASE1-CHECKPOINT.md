@@ -70,3 +70,19 @@ Perform the real-device validation matrix above against the isolated Preview. Pr
 - Automated verifier and both Vercel deployment checks are green on the hardened App V1 branch.
 
 Internal/static validation is complete. Phase 1 remains UNLOCKED until the single consolidated real-device validation pass succeeds.
+
+
+## Consolidated E.P. device pass
+Run this only after C.D. declares TEST:
+1. Open isolated App V1 Preview at /app/index.html#gate.
+2. Gate → Lobby → Theater; play media; HOME; confirm media stops.
+3. Music → play → pause → autoplay/next; HOME; confirm no hidden audio.
+4. Live → confirm picture/audio; MUSIC; confirm Live audio stops immediately.
+5. Production → child view → back → re-enter; repeat for Story and Journal.
+6. Rapid switch: HOME → FILMS → HOME → MUSIC → HOME → LIVE → HOME → PRODUCTION → HOME.
+7. Background app, return foreground, then re-enter a media room.
+8. Rotate portrait ↔ landscape in Theater and Live, then return HOME.
+9. Re-enter Theater, Music and Live after exits; confirm no frozen controls or duplicate playback.
+10. Final sweep: Gate/Home and all bottom-nav destinations remain clickable; no hidden audio.
+
+Pass rule: every step must pass in one consolidated session before Phase 1 can be called 100/100 or LOCKED.
