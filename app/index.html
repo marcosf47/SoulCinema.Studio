@@ -128,7 +128,7 @@ function syncCinemaLandscape(){const id=document.querySelector(".view.active")?.
 go(location.hash.slice(1)&&document.getElementById(location.hash.slice(1))?location.hash.slice(1):"gate");
 </script><script id="soulcinema-app-state">
 (()=>{const valid=id=>!!document.getElementById(id);const current=()=>document.querySelector(".view.active")?.id||"gate";
-window.SC_APP={version:"phase1",current};
+window.SC_APP={version:"phase2",current};
 window.addEventListener("hashchange",()=>{const id=location.hash.slice(1);if(valid(id)&&id!==current())go(id)});
 document.addEventListener("click",e=>{const target=e.target.closest("[data-go]");if(target&&valid(target.dataset.go))requestAnimationFrame(()=>{try{window.SC_APP.lastRoute=target.dataset.go}catch(_){}})});
 })();
@@ -141,7 +141,7 @@ window.addEventListener("pagehide",bump);
 })();
 </script>
 <script id="soulcinema-app-lifecycle">
-(()=>{const stop=()=>{try{hardStop()}catch(e){}try{destroyLive()}catch(e){}try{destroyDiscovery()}catch(e){}};document.addEventListener("freeze",stop);window.addEventListener("pageshow",()=>{try{syncCinemaLandscape()}catch(e){}});})();
+(()=>{const stop=()=>{try{hardStop()}catch(e){}try{destroyLive()}catch(e){}try{destroyDiscovery()}catch(e){}};const restore=()=>{try{document.body.classList.remove("v2-cinema-landscape");syncCinemaLandscape()}catch(e){}};document.addEventListener("freeze",stop);document.addEventListener("resume",restore);window.addEventListener("pageshow",e=>{restore();if(e.persisted){try{hardStop()}catch(_){}}});})();
 </script><script id="soulcinema-app-sw">
 if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("/app/sw.js",{scope:"/app/"}).catch(()=>{}));}
 </script>
