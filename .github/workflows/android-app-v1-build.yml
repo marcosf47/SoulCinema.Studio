@@ -10,6 +10,7 @@ name: SoulCinema Android App V1 Build
       - "package-lock.json"
       - "capacitor.config.json"
       - ".github/workflows/android-app-v1-build.yml"
+      - "app/ANDROID-BUILD-TRIGGER"
 permissions:
   contents: read
 jobs:
