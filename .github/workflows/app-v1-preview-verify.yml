@@ -29,7 +29,7 @@ jobs:
         run: |
           set -euo pipefail
           test "${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}" = "soulcinema-app-v1"
-          for f in app/index.html app/manifest.webmanifest app/sw.js app/PHASE1-CHECKPOINT.md public/app/index.html public/app/manifest.webmanifest public/app/sw.js; do test -f "$f"; done
+          for f in app/index.html app/manifest.webmanifest app/sw.js app/PHASE1-CHECKPOINT.md app/PHASE2-EXECUTION.md public/app/index.html public/app/manifest.webmanifest public/app/sw.js; do test -f "$f"; done
           cmp -s app/index.html public/app/index.html
           cmp -s app/manifest.webmanifest public/app/manifest.webmanifest
           cmp -s app/sw.js public/app/sw.js
@@ -51,8 +51,11 @@ jobs:
               assert ids.count(core)==1, f"Core view id {core!r} count={ids.count(core)}"
           sw=Path("app/sw.js").read_text()
           manifest=Path("app/manifest.webmanifest").read_text()
-          assert "soulcinema-app-shell-v3" in sw
+          assert "soulcinema-app-shell-v4" in sw
+          assert 'fetch(e.request).then' in sw and 'c.put("/app/index.html",copy)' in sw
           assert "/app/index.html#gate" in manifest and '"/app/"' in manifest
+          assert '"id": "/app/"' in manifest and '"display": "standalone"' in manifest
+          assert 'version:"phase2"' in s and 'document.addEventListener("resume",restore)' in s
           print(f"App V1 verify OK: {len(targets)} routes; parity + lifecycle + media markers passed")
           PY
           ! grep -q 'public/mobile-v2.html' vercel.app-preview.json
