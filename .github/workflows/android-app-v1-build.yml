@@ -36,3 +36,6 @@ jobs:
       - name: Build Android debug package
         working-directory: android
         run: ./gradlew assembleDebug
+      - name: Build unsigned Android App Bundle
+        working-directory: android
+        run: ./gradlew bundleRelease
