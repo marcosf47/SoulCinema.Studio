@@ -1,0 +1,31 @@
+name: SoulCinema App V1 Preview Verify
+on:
+  push:
+    branches: [soulcinema-app-v1]
+    paths:
+      - "app/**"
+      - "vercel.app-preview.json"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-app:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify isolated App V1 package
+        run: |
+          test "$GITHUB_REF_NAME" = "soulcinema-app-v1"
+          test -f app/index.html
+          test -f app/manifest.webmanifest
+          test -f app/sw.js
+          test -f app/PHASE1-CHECKPOINT.md
+          grep -q 'soulcinema-app-lifecycle' app/index.html
+          grep -q 'soulcinema-app-media-guard' app/index.html
+          grep -q '/app/manifest.webmanifest' app/index.html
+          grep -q '/app/sw.js' app/index.html
+          grep -q 'soulcinema-app-shell-v2' app/sw.js
+          ! grep -q 'public/mobile-v2.html' vercel.app-preview.json
+      - name: Production isolation gate
+        run: |
+          git diff --exit-code origin/main -- public/mobile-v2.html public/index.html
