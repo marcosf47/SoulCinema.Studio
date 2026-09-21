@@ -40,7 +40,7 @@ jobs:
           grep -q 'soulcinema-app-media-guard' app/index.html
           grep -q '/app/manifest.webmanifest' app/index.html
           grep -q '/app/sw.js' app/index.html
-          grep -q 'soulcinema-app-shell-v2' app/sw.js
+          grep -q 'soulcinema-app-shell-v3' app/sw.js
           ! grep -q 'public/mobile-v2.html' vercel.app-preview.json
       - name: Production isolation gate
         run: |
