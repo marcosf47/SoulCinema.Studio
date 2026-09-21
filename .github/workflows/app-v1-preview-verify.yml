@@ -1,5 +1,5 @@
 name: SoulCinema App V1 Preview Verify
-on:
+"on":
   push:
     branches: [soulcinema-app-v1]
     paths:
