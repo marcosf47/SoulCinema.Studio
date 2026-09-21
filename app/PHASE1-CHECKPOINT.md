@@ -86,3 +86,15 @@ Run this only after C.D. declares TEST:
 10. Final sweep: Gate/Home and all bottom-nav destinations remain clickable; no hidden audio.
 
 Pass rule: every step must pass in one consolidated session before Phase 1 can be called 100/100 or LOCKED.
+
+
+## C.D. handoff gate
+- Internal/static build verification: COMPLETE.
+- Source/runtime parity: PASS.
+- Route/media/lifecycle verifier: PASS.
+- Vercel deployment checks: PASS.
+- Production main/mobile-v2 isolation: PASS.
+- Draft validation PR remains unmerged.
+- Remaining acceptance gate: one consolidated real-device pass by E.P.
+
+C.D. may now issue the single TEST checkpoint. Phase 1 remains UNLOCKED until that device pass succeeds.
