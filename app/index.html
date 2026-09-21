@@ -142,4 +142,7 @@ window.addEventListener("pagehide",bump);
 </script>
 <script id="soulcinema-app-lifecycle">
 (()=>{const stop=()=>{try{hardStop()}catch(e){}try{destroyLive()}catch(e){}try{destroyDiscovery()}catch(e){}};document.addEventListener("freeze",stop);window.addEventListener("pageshow",()=>{try{syncCinemaLandscape()}catch(e){}});})();
-</script></body></html>
+</script><script id="soulcinema-app-sw">
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("/app/sw.js",{scope:"/app/"}).catch(()=>{}));}
+</script>
+</body></html>
