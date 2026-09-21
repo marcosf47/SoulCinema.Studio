@@ -76,6 +76,10 @@ EOF
       - name: Build Android App Bundle
         working-directory: android
         run: ./gradlew bundleRelease
+      - name: Verify release bundle exists
+        run: |
+          test -s android/app/build/outputs/bundle/release/app-release.aab
+          sha256sum android/app/build/outputs/bundle/release/app-release.aab
       - name: Upload Android App Bundle artifact
         uses: actions/upload-artifact@v4
         with:
