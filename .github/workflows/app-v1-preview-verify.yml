@@ -83,6 +83,20 @@ jobs:
               assert script in pkg.get("scripts",{}), script
           print("Android packaging config OK")
           PY
+      - name: Verify Android native bootstrap in clean runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-audit --no-fund
+          npm run app:add:android
+          test -f android/gradlew
+          test -f android/app/build.gradle
+          npm run app:sync
+          test -f android/app/src/main/assets/public/index.html
+          grep -q 'SOULCINEMA APP' android/app/src/main/assets/public/index.html
+          cd android
+          ./gradlew bundleDebug
+
       - name: Production isolation gate
         run: |
           git diff --exit-code origin/main -- public/mobile-v2.html public/index.html
