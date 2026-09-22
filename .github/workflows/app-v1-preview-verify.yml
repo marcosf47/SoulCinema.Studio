@@ -122,12 +122,12 @@ jobs:
           unzip -p app/build/outputs/bundle/debug/app-debug.aab base/assets/public/index.html | grep -q 'SOULCINEMA APP'
           unzip -l app/build/outputs/bundle/debug/app-debug.aab | grep -q 'base/assets/public/manifest.webmanifest'
           unzip -l app/build/outputs/bundle/debug/app-debug.aab | grep -q 'base/assets/public/sw.js'
-          test "$(unzip -p app/build/outputs/bundle/debug/app-debug.aab base/assets/public/index.html | sha256sum | awk '{print $1}')" = "$(sha256sum public/app/index.html | awk '{print $1}')"
-          test "$(unzip -p app/build/outputs/bundle/debug/app-debug.aab base/assets/public/manifest.webmanifest | sha256sum | awk '{print $1}')" = "$(sha256sum public/app/manifest.webmanifest | awk '{print $1}')"
-          test "$(unzip -p app/build/outputs/bundle/debug/app-debug.aab base/assets/public/sw.js | sha256sum | awk '{print $1}')" = "$(sha256sum public/app/sw.js | awk '{print $1}')"
-          test "$(sha256sum app/index.html | awk '{print $1}')" = "$(sha256sum public/app/index.html | awk '{print $1}')"
-          test "$(sha256sum app/manifest.webmanifest | awk '{print $1}')" = "$(sha256sum public/app/manifest.webmanifest | awk '{print $1}')"
-          test "$(sha256sum app/sw.js | awk '{print $1}')" = "$(sha256sum public/app/sw.js | awk '{print $1}')"
+          test "$(unzip -p app/build/outputs/bundle/debug/app-debug.aab base/assets/public/index.html | sha256sum | awk '{print $1}')" = "$(sha256sum ../public/app/index.html | awk '{print $1}')"
+          test "$(unzip -p app/build/outputs/bundle/debug/app-debug.aab base/assets/public/manifest.webmanifest | sha256sum | awk '{print $1}')" = "$(sha256sum ../public/app/manifest.webmanifest | awk '{print $1}')"
+          test "$(unzip -p app/build/outputs/bundle/debug/app-debug.aab base/assets/public/sw.js | sha256sum | awk '{print $1}')" = "$(sha256sum ../public/app/sw.js | awk '{print $1}')"
+          test "$(sha256sum ../app/index.html | awk '{print $1}')" = "$(sha256sum ../public/app/index.html | awk '{print $1}')"
+          test "$(sha256sum ../app/manifest.webmanifest | awk '{print $1}')" = "$(sha256sum ../public/app/manifest.webmanifest | awk '{print $1}')"
+          test "$(sha256sum ../app/sw.js | awk '{print $1}')" = "$(sha256sum ../public/app/sw.js | awk '{print $1}')"
       - name: Upload Android debug App Bundle
         uses: actions/upload-artifact@v4
         with:
