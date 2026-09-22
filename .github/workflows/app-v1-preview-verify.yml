@@ -102,6 +102,10 @@ jobs:
           grep -q 'applicationId "studio.soulcinema.app"' android/app/build.gradle
           grep -q 'versionCode 1' android/app/build.gradle
           grep -q 'versionName "1.0"' android/app/build.gradle
+          grep -q 'Android application ID: studio.soulcinema.app' app/RELEASE-METADATA.md
+          grep -q 'Package version: 1.0.0' app/RELEASE-METADATA.md
+          grep -q 'Android versionCode: 1' app/RELEASE-METADATA.md
+          grep -q 'Android versionName: 1.0' app/RELEASE-METADATA.md
           test -f android/app/src/main/AndroidManifest.xml
           grep -q 'android.permission.INTERNET' android/app/src/main/AndroidManifest.xml
           ! grep -q 'android:usesCleartextTraffic="true"' android/app/src/main/AndroidManifest.xml
