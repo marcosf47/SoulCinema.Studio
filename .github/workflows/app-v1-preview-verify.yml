@@ -116,6 +116,8 @@ jobs:
           unzip -l app/build/outputs/bundle/debug/app-debug.aab | grep -q 'base/dex/classes.dex'
           unzip -l app/build/outputs/bundle/debug/app-debug.aab | grep -q 'base/assets/public/index.html'
           unzip -p app/build/outputs/bundle/debug/app-debug.aab base/assets/public/index.html | grep -q 'SOULCINEMA APP'
+          unzip -l app/build/outputs/bundle/debug/app-debug.aab | grep -q 'base/assets/public/manifest.webmanifest'
+          unzip -l app/build/outputs/bundle/debug/app-debug.aab | grep -q 'base/assets/public/sw.js'
       - name: Upload Android debug App Bundle
         uses: actions/upload-artifact@v4
         with:
