@@ -8964,4 +8964,28 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  },true);
 })();
 </script>
+
+<!-- RC525 MOBILE APP-SHELL NAV HIT ROUTER — EXACT GEOMETRY, NO LABEL GUESS -->
+<script id="rc525-mobile-app-shell-nav-hit-router">
+(()=>{
+ 'use strict';
+ if(!(matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches))return;
+ const bottomBand=()=>Math.max(120,Math.min(190,innerHeight*.16));
+ const routeIndex=i=>{
+   if(i===0){window.scMobileGoPortals?.();return}
+   if(i===1){window.scRc414OpenRoom?.('Music Room');return}
+   if(i===2){window.scRc414OpenRoom?.('Screening Theater');return}
+   if(i===3){window.scRc414OpenRoom?.('Live Center');return}
+ };
+ document.addEventListener('pointerup',e=>{
+   if(e.pointerType==='mouse')return;
+   const y=e.clientY,x=e.clientX;
+   if(y<innerHeight-bottomBand())return;
+   // Four equal app-shell destinations shown in the fixed mobile dock.
+   const i=Math.max(0,Math.min(3,Math.floor(x/(innerWidth/4))));
+   e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
+   routeIndex(i);
+ },true);
+})();
+</script>
 </body></html>
