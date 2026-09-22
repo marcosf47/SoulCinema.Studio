@@ -1,3 +1,5 @@
+Status: INTERNAL HARDENING COMPLETE — PLAY SIGNING / CONSOLE GATES PENDING
+
 # SOULCINEMA APP — PHASE 2 EXECUTION
 
 Branch: soulcinema-app-v1
@@ -79,3 +81,7 @@ No micro-test requests.
 - Artifact size: 3,514,571 bytes.
 - Artifact digest: sha256:10bb70fd7f34f0c642fb7b0f24d04ca25230650aa351c4443930c8f765271136.
 - Both Vercel deployment statuses: SUCCESS.
+
+
+## Internal hardening completion boundary
+The repository-controlled Phase 2 Android hardening line is complete when the latest branch commit passes CI and both Vercel checks. Remaining release work requires external Play Console/signing state: developer verification, secure Play signing path, signed release AAB, store assets/declarations, internal testing, and explicit E.P. production approval.
