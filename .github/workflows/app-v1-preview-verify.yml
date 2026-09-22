@@ -99,6 +99,9 @@ jobs:
           npm run app:sync
           test -f android/app/src/main/assets/public/index.html
           grep -q 'SOULCINEMA APP' android/app/src/main/assets/public/index.html
+          grep -q 'applicationId "studio.soulcinema.app"' android/app/build.gradle
+          grep -q 'versionCode 1' android/app/build.gradle
+          grep -q 'versionName "1.0"' android/app/build.gradle
           cd android
           ./gradlew bundleDebug
           test -f app/build/outputs/bundle/debug/app-debug.aab
