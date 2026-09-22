@@ -18,9 +18,9 @@ Production main: UNTOUCHED
 
 ## Release gates still required
 - Google Play developer identity/contact verification complete.
-- Final Android application identity/versioning confirmed.
-- Release signing / Play App Signing path configured.
-- Signed release AAB generated and verified.
+- Final Android application identity/versioning confirmed by CI: studio.soulcinema.app / versionCode 1 / versionName 1.0.
+- Release signing / Play App Signing path configured (pending; no secrets stored in repository).
+- Signed release AAB generated and verified (pending signing credentials / Play App Signing path).
 - Store icon, feature graphic, screenshots and listing copy prepared.
 - Play Console app-content declarations completed.
 - Internal testing release uploaded and validated.
