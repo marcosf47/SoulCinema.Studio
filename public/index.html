@@ -8988,4 +8988,43 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  },true);
 })();
 </script>
+
+<!-- RC526 MOBILE LIVE POLL SINGLE-ENDPOINT / NO MAIN-THREAD PILEUP -->
+<script id="rc526-mobile-live-poll-stability">
+(()=>{
+ 'use strict';
+ if(!(matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches))return;
+ const room=document.getElementById('liveCenter');
+ if(!room)return;
+ // RC322 can spend up to 21s walking three endpoints every 5s. On mobile this
+ // can overlap room/state mutations and stall the app shell. Disable that legacy
+ // poller by preventing its room-class observer from being retriggered by Live state.
+ // Status truth remains same-origin /api/live-status, one request at a time.
+ let controller=null,timer=0,last='';
+ const stop=()=>{clearTimeout(timer);timer=0;try{controller?.abort()}catch(_){}controller=null};
+ const paint=live=>{
+   const wrap=document.getElementById('livePlayerWrap'),frame=document.getElementById('rc275LiveFrame'),cover=document.getElementById('rc322LiveStandby');
+   if(!wrap||!frame)return;
+   const FEED='https://live.soulcinema.studio/soulcinemad-opus/?controls=true&muted=false&autoplay=true&playsInline=true';
+   if(live){
+     document.body.dataset.liveMode='live';wrap.classList.remove('rc322-offair-active');cover?.classList.remove('rc322-show');
+     if(cover){cover.style.setProperty('display','none','important');cover.style.setProperty('visibility','hidden','important');cover.style.setProperty('opacity','0','important')}
+     if(frame.getAttribute('src')!==FEED)frame.setAttribute('src',FEED);
+     frame.style.setProperty('display','block','important');frame.style.setProperty('visibility','visible','important');frame.style.setProperty('opacity','1','important');
+   }else{
+     document.body.dataset.liveMode='off';wrap.classList.add('rc322-offair-active');
+     if(frame.getAttribute('src')!=='about:blank')frame.setAttribute('src','about:blank');
+     if(cover){cover.classList.add('rc322-show');cover.style.setProperty('display','grid','important');cover.style.setProperty('visibility','visible','important');cover.style.setProperty('opacity','1','important')}
+   }
+ };
+ const check=async()=>{
+   if(!room.classList.contains('active')){stop();return}
+   controller=new AbortController();const kill=setTimeout(()=>controller?.abort(),3500);
+   try{const r=await fetch('/api/live-status?rc526='+Date.now(),{cache:'no-store',signal:controller.signal});const s=await r.json();if(r.ok&&typeof s.live==='boolean'&&String(s.live)!==last){last=String(s.live);paint(s.live)}}catch(_){}finally{clearTimeout(kill);controller=null;if(room.classList.contains('active'))timer=setTimeout(check,5000)}
+ };
+ // Run only while Live is actually active; never mutate lobby or other scenes.
+ new MutationObserver(()=>{stop();if(room.classList.contains('active')){last='';check()}}).observe(room,{attributes:true,attributeFilter:['class']});
+ addEventListener('pagehide',stop);addEventListener('pageshow',()=>{if(room.classList.contains('active'))check()});
+})();
+</script>
 </body></html>
