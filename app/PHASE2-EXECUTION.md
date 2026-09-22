@@ -60,3 +60,12 @@ No micro-test requests.
 - Gradle debug App Bundle build: PASS.
 - Production isolation gate: PASS.
 - Both Vercel deployment statuses for the checkpoint commit: SUCCESS.
+
+
+## Android AAB artifact checkpoint
+- App V1 Preview Verify #96: SUCCESS.
+- Verified debug Android App Bundle artifact published by CI.
+- Artifact: soulcinema-app-v1-debug-aab.
+- Size: 3,514,565 bytes.
+- SHA-256 digest: b92a3eab8878247865fc0c8c277606fddfac4051db71f7bf53fccb614ea26737.
+- Artifact retention: 7 days (CI validation artifact only; not a signed Play production release).
