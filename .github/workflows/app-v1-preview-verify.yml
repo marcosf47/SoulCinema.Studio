@@ -6,6 +6,10 @@ name: SoulCinema App V1 Preview Verify
       - "app/**"
       - "public/app/**"
       - "vercel.app-preview.json"
+      - "package.json"
+      - "package-lock.json"
+      - "capacitor.config.json"
+      - "android/**"
       - ".github/workflows/app-v1-preview-verify.yml"
   pull_request:
     branches: [main]
@@ -13,6 +17,10 @@ name: SoulCinema App V1 Preview Verify
       - "app/**"
       - "public/app/**"
       - "vercel.app-preview.json"
+      - "package.json"
+      - "package-lock.json"
+      - "capacitor.config.json"
+      - "android/**"
       - ".github/workflows/app-v1-preview-verify.yml"
   workflow_dispatch:
 permissions:
@@ -71,7 +79,7 @@ jobs:
               assert dep in pkg.get("dependencies",{}), dep
           for dep in ["@capacitor/cli","@capacitor/android"]:
               assert dep in pkg.get("devDependencies",{}), dep
-          for script in ["app:sync","app:open","app:build"]:
+          for script in ["app:add:android","app:sync","app:open","app:build"]:
               assert script in pkg.get("scripts",{}), script
           print("Android packaging config OK")
           PY
