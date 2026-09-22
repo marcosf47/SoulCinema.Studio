@@ -7131,10 +7131,6 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
     if(!room.classList.contains('active'))return;
     if(desktop()){live();return}
     cover.classList.add('rc322-show');
-    cover.style.setProperty('display','grid','important');
-    cover.style.setProperty('opacity','1','important');
-    cover.style.setProperty('visibility','visible','important');
-    cover.style.setProperty('z-index','2147483647','important');
     wrap.classList.add('rc322-offair-active');
     frame.style.setProperty('visibility','hidden','important');
     frame.style.setProperty('opacity','0','important');
@@ -7153,7 +7149,6 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
     frame.style.setProperty('opacity','1','important');
     frame.style.setProperty('pointer-events','auto','important');
     cover.classList.remove('rc322-show');
-    cover.style.removeProperty('display');cover.style.removeProperty('opacity');cover.style.removeProperty('visibility');cover.style.removeProperty('z-index');
     document.body.dataset.liveMode='live';
     if(state)state.textContent='SOULCINEMA · ON AIR';
   };
@@ -7202,10 +7197,9 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
     if(room.classList.contains('active')){
       liveSeen=false;
       confirmedMisses=0;
-      if(desktop()){live();return}
-      standby();
-      check();
-      timer=setInterval(check,5000);
+      cover.classList.remove('rc322-show');
+      wrap.classList.remove('rc322-offair-active');
+      live();
     }else{
       cover.classList.remove('rc322-show');
       wrap.classList.remove('rc322-offair-active');
@@ -8895,136 +8889,6 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
      try{player.load()}catch(_){}
    }));
  },true);
-})();
-</script>
-
-<!-- RC523 MOBILE LIVE STATE / NAVIGATION SURGICAL OWNER -->
-<script id="rc523-mobile-live-state-nav-owner">
-(()=>{
- 'use strict';
- if(!(matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches))return;
- const room=document.getElementById('liveCenter');
- const wrap=document.getElementById('livePlayerWrap');
- const frame=document.getElementById('rc275LiveFrame');
- const cover=document.getElementById('rc322LiveStandby');
- if(!room||!wrap||!frame)return;
- const FEED='https://live.soulcinema.studio/soulcinemad-opus/?controls=true&muted=false&autoplay=true&playsInline=true';
- let lastMode='';
- const apply=()=>{
-   if(!room.classList.contains('active'))return;
-   const mode=document.body.dataset.liveMode||'';
-   if(mode===lastMode&&mode==='live'&&frame.getAttribute('src')===FEED)return;
-   lastMode=mode;
-   // Live-state changes own media presentation only. They must never change the active scene.
-   room.classList.add('active');
-   document.body.dataset.scene='live';
-   document.body.dataset.experience='live_active';
-   wrap.style.setProperty('display','block','important');
-   if(mode==='live'){
-     wrap.classList.remove('rc322-offair-active');
-     cover?.classList.remove('rc322-show');
-     if(cover){cover.style.setProperty('display','none','important');cover.style.setProperty('visibility','hidden','important');cover.style.setProperty('opacity','0','important')}
-     frame.style.setProperty('display','block','important');
-     frame.style.setProperty('visibility','visible','important');
-     frame.style.setProperty('opacity','1','important');
-     frame.style.setProperty('pointer-events','auto','important');
-     if(frame.getAttribute('src')!==FEED)frame.setAttribute('src',FEED);
-   }
- };
- new MutationObserver(()=>requestAnimationFrame(apply)).observe(document.body,{attributes:true,attributeFilter:['data-live-mode']});
- new MutationObserver(()=>{if(room.classList.contains('active'))requestAnimationFrame(apply)}).observe(room,{attributes:true,attributeFilter:['class']});
- window.addEventListener('pageshow',()=>requestAnimationFrame(apply));
- apply();
-})();
-</script>
-
-<!-- RC524 MOBILE BOTTOM NAV DIRECT ROUTER — SURGICAL -->
-<script id="rc524-mobile-bottom-nav-direct-router">
-(()=>{
- 'use strict';
- if(!(matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches))return;
- const labelOf=el=>(el?.textContent||'').replace(/\s+/g,' ').trim().toUpperCase();
- const route=(label)=>{
-   if(label.includes('LIVE')){window.scRc414OpenRoom?.('Live Center');return true}
-   if(label.includes('MUSIC')){window.scRc414OpenRoom?.('Music Room');return true}
-   if(label.includes('FILMS')){window.scRc414OpenRoom?.('Screening Theater');return true}
-   if(label.includes('HOME')){
-     if(typeof window.scMobileGoPortals==='function')window.scMobileGoPortals();
-     return true;
-   }
-   return false;
- };
- document.addEventListener('click',e=>{
-   const hit=e.target?.closest?.('button,a,[role="button"]');
-   if(!hit)return;
-   const label=labelOf(hit);
-   if(!/^(HOME|MUSIC|FILMS|LIVE)$/.test(label))return;
-   e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
-   route(label);
- },true);
-})();
-</script>
-
-<!-- RC525 MOBILE APP-SHELL NAV HIT ROUTER — EXACT GEOMETRY, NO LABEL GUESS -->
-<script id="rc525-mobile-app-shell-nav-hit-router">
-(()=>{
- 'use strict';
- if(!(matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches))return;
- const bottomBand=()=>Math.max(120,Math.min(190,innerHeight*.16));
- const routeIndex=i=>{
-   if(i===0){window.scMobileGoPortals?.();return}
-   if(i===1){window.scRc414OpenRoom?.('Music Room');return}
-   if(i===2){window.scRc414OpenRoom?.('Screening Theater');return}
-   if(i===3){window.scRc414OpenRoom?.('Live Center');return}
- };
- document.addEventListener('pointerup',e=>{
-   if(e.pointerType==='mouse')return;
-   const y=e.clientY,x=e.clientX;
-   if(y<innerHeight-bottomBand())return;
-   // Four equal app-shell destinations shown in the fixed mobile dock.
-   const i=Math.max(0,Math.min(3,Math.floor(x/(innerWidth/4))));
-   e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
-   routeIndex(i);
- },true);
-})();
-</script>
-
-<!-- RC526 MOBILE LIVE POLL SINGLE-ENDPOINT / NO MAIN-THREAD PILEUP -->
-<script id="rc526-mobile-live-poll-stability">
-(()=>{
- 'use strict';
- if(!(matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches))return;
- const room=document.getElementById('liveCenter');
- if(!room)return;
- // RC322 can spend up to 21s walking three endpoints every 5s. On mobile this
- // can overlap room/state mutations and stall the app shell. Disable that legacy
- // poller by preventing its room-class observer from being retriggered by Live state.
- // Status truth remains same-origin /api/live-status, one request at a time.
- let controller=null,timer=0,last='';
- const stop=()=>{clearTimeout(timer);timer=0;try{controller?.abort()}catch(_){}controller=null};
- const paint=live=>{
-   const wrap=document.getElementById('livePlayerWrap'),frame=document.getElementById('rc275LiveFrame'),cover=document.getElementById('rc322LiveStandby');
-   if(!wrap||!frame)return;
-   const FEED='https://live.soulcinema.studio/soulcinemad-opus/?controls=true&muted=false&autoplay=true&playsInline=true';
-   if(live){
-     document.body.dataset.liveMode='live';wrap.classList.remove('rc322-offair-active');cover?.classList.remove('rc322-show');
-     if(cover){cover.style.setProperty('display','none','important');cover.style.setProperty('visibility','hidden','important');cover.style.setProperty('opacity','0','important')}
-     if(frame.getAttribute('src')!==FEED)frame.setAttribute('src',FEED);
-     frame.style.setProperty('display','block','important');frame.style.setProperty('visibility','visible','important');frame.style.setProperty('opacity','1','important');
-   }else{
-     document.body.dataset.liveMode='off';wrap.classList.add('rc322-offair-active');
-     if(frame.getAttribute('src')!=='about:blank')frame.setAttribute('src','about:blank');
-     if(cover){cover.classList.add('rc322-show');cover.style.setProperty('display','grid','important');cover.style.setProperty('visibility','visible','important');cover.style.setProperty('opacity','1','important')}
-   }
- };
- const check=async()=>{
-   if(!room.classList.contains('active')){stop();return}
-   controller=new AbortController();const kill=setTimeout(()=>controller?.abort(),3500);
-   try{const r=await fetch('/api/live-status?rc526='+Date.now(),{cache:'no-store',signal:controller.signal});const s=await r.json();if(r.ok&&typeof s.live==='boolean'&&String(s.live)!==last){last=String(s.live);paint(s.live)}}catch(_){}finally{clearTimeout(kill);controller=null;if(room.classList.contains('active'))timer=setTimeout(check,5000)}
- };
- // Run only while Live is actually active; never mutate lobby or other scenes.
- new MutationObserver(()=>{stop();if(room.classList.contains('active')){last='';check()}}).observe(room,{attributes:true,attributeFilter:['class']});
- addEventListener('pagehide',stop);addEventListener('pageshow',()=>{if(room.classList.contains('active'))check()});
 })();
 </script>
 </body></html>
