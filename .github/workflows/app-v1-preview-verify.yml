@@ -102,6 +102,9 @@ jobs:
           grep -q 'applicationId "studio.soulcinema.app"' android/app/build.gradle
           grep -q 'versionCode 1' android/app/build.gradle
           grep -q 'versionName "1.0"' android/app/build.gradle
+          test -f android/app/src/main/AndroidManifest.xml
+          grep -q 'android.permission.INTERNET' android/app/src/main/AndroidManifest.xml
+          ! grep -q 'android:usesCleartextTraffic="true"' android/app/src/main/AndroidManifest.xml
           cd android
           ./gradlew bundleDebug
           test -f app/build/outputs/bundle/debug/app-debug.aab
