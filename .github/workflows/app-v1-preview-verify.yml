@@ -105,6 +105,7 @@ jobs:
           test -f android/app/src/main/AndroidManifest.xml
           grep -q 'android.permission.INTERNET' android/app/src/main/AndroidManifest.xml
           ! grep -q 'android:usesCleartextTraffic="true"' android/app/src/main/AndroidManifest.xml
+          ! grep -R -qE '(BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY|storePassword|keyPassword)' android capacitor.config.json package.json
           cd android
           ./gradlew bundleDebug
           test -f app/build/outputs/bundle/debug/app-debug.aab
