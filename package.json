@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "app:add:android": "npx cap add android",
     "app:sync": "npx cap sync android",
     "app:open": "npx cap open android",
     "app:build": "npm run app:sync && cd android && ./gradlew bundleRelease"
