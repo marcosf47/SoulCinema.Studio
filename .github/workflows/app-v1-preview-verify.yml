@@ -83,6 +83,11 @@ jobs:
               assert script in pkg.get("scripts",{}), script
           print("Android packaging config OK")
           PY
+      - name: Set up Java 21 for Capacitor Android
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
       - name: Verify Android native bootstrap in clean runner
         shell: bash
         run: |
