@@ -8937,4 +8937,31 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  apply();
 })();
 </script>
+
+<!-- RC524 MOBILE BOTTOM NAV DIRECT ROUTER — SURGICAL -->
+<script id="rc524-mobile-bottom-nav-direct-router">
+(()=>{
+ 'use strict';
+ if(!(matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches))return;
+ const labelOf=el=>(el?.textContent||'').replace(/\s+/g,' ').trim().toUpperCase();
+ const route=(label)=>{
+   if(label.includes('LIVE')){window.scRc414OpenRoom?.('Live Center');return true}
+   if(label.includes('MUSIC')){window.scRc414OpenRoom?.('Music Room');return true}
+   if(label.includes('FILMS')){window.scRc414OpenRoom?.('Screening Theater');return true}
+   if(label.includes('HOME')){
+     if(typeof window.scMobileGoPortals==='function')window.scMobileGoPortals();
+     return true;
+   }
+   return false;
+ };
+ document.addEventListener('click',e=>{
+   const hit=e.target?.closest?.('button,a,[role="button"]');
+   if(!hit)return;
+   const label=labelOf(hit);
+   if(!/^(HOME|MUSIC|FILMS|LIVE)$/.test(label))return;
+   e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
+   route(label);
+ },true);
+})();
+</script>
 </body></html>
