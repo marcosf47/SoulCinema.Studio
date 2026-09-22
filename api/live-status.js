@@ -1,15 +1,17 @@
-const ORIGIN="https://live.soulcinema.studio";
-const STREAM="soulcinemad-opus";
-const HLS=`${ORIGIN}/${STREAM}/index.m3u8`;
+const FEED="https://live.soulcinema.studio/soulcinemad-opus/?controls=false&muted=true&autoplay=false&playsInline=true";
 
 module.exports=async function handler(req,res){
   res.setHeader("Cache-Control","no-store, max-age=0");
+  const ctl=new AbortController();
+  const tm=setTimeout(()=>ctl.abort(),6500);
   try{
-    const r=await fetch(HLS,{cache:"no-store",redirect:"follow",headers:{accept:"application/vnd.apple.mpegurl,application/x-mpegURL,*/*","user-agent":"SoulCinema-Live-Probe/5.0"}});
+    const r=await fetch(FEED+"&_sc="+Date.now(),{cache:"no-store",redirect:"follow",signal:ctl.signal,headers:{accept:"text/html,*/*","user-agent":"SoulCinema-Live-Probe/6.0"}});
     const body=await r.text();
-    const playlist=r.ok&&/#EXTM3U/i.test(body);
-    return res.status(200).json({live:playlist,reliable:true,source:"hls-playlist"});
+    clearTimeout(tm);
+    const offline=!r.ok||/stream not found|retrying in some seconds/i.test(body);
+    return res.status(200).json({live:!offline,reliable:r.ok,source:"player-page"});
   }catch(e){
-    return res.status(200).json({live:false,reliable:false});
+    clearTimeout(tm);
+    return res.status(200).json({live:false,reliable:false,source:"player-page"});
   }
 };
