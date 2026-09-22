@@ -8897,4 +8897,44 @@ body.rc407-theater-landscape #screeningTheater #theaterStatus{z-index:4!importan
  },true);
 })();
 </script>
+
+<!-- RC523 MOBILE LIVE STATE / NAVIGATION SURGICAL OWNER -->
+<script id="rc523-mobile-live-state-nav-owner">
+(()=>{
+ 'use strict';
+ if(!(matchMedia('(max-width:860px)').matches||matchMedia('(pointer:coarse)').matches))return;
+ const room=document.getElementById('liveCenter');
+ const wrap=document.getElementById('livePlayerWrap');
+ const frame=document.getElementById('rc275LiveFrame');
+ const cover=document.getElementById('rc322LiveStandby');
+ if(!room||!wrap||!frame)return;
+ const FEED='https://live.soulcinema.studio/soulcinemad-opus/?controls=true&muted=false&autoplay=true&playsInline=true';
+ let lastMode='';
+ const apply=()=>{
+   if(!room.classList.contains('active'))return;
+   const mode=document.body.dataset.liveMode||'';
+   if(mode===lastMode&&mode==='live'&&frame.getAttribute('src')===FEED)return;
+   lastMode=mode;
+   // Live-state changes own media presentation only. They must never change the active scene.
+   room.classList.add('active');
+   document.body.dataset.scene='live';
+   document.body.dataset.experience='live_active';
+   wrap.style.setProperty('display','block','important');
+   if(mode==='live'){
+     wrap.classList.remove('rc322-offair-active');
+     cover?.classList.remove('rc322-show');
+     if(cover){cover.style.setProperty('display','none','important');cover.style.setProperty('visibility','hidden','important');cover.style.setProperty('opacity','0','important')}
+     frame.style.setProperty('display','block','important');
+     frame.style.setProperty('visibility','visible','important');
+     frame.style.setProperty('opacity','1','important');
+     frame.style.setProperty('pointer-events','auto','important');
+     if(frame.getAttribute('src')!==FEED)frame.setAttribute('src',FEED);
+   }
+ };
+ new MutationObserver(()=>requestAnimationFrame(apply)).observe(document.body,{attributes:true,attributeFilter:['data-live-mode']});
+ new MutationObserver(()=>{if(room.classList.contains('active'))requestAnimationFrame(apply)}).observe(room,{attributes:true,attributeFilter:['class']});
+ window.addEventListener('pageshow',()=>requestAnimationFrame(apply));
+ apply();
+})();
+</script>
 </body></html>
