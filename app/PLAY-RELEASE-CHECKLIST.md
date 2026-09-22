@@ -31,3 +31,17 @@ Production main: UNTOUCHED
 - Do not merge draft PR #1 without explicit E.P. authorization.
 - Do not label debug AAB as Play production release.
 - Do not commit keystores, passwords, signing secrets or service-account credentials.
+
+## Play Console creation handoff — 2026-09-22
+Repository-controlled preflight is green (App V1 Preview Verify #134 + both Vercel checks).
+Use these locked values when creating the Play Console app record:
+- App name: SoulCinema
+- Default language: English (United States)
+- App or game: App
+- Free or paid: Free for initial release
+- Android package/application ID after first AAB upload: studio.soulcinema.app
+- Initial versionCode: 1
+- Initial versionName: 1.0
+- Release format: Android App Bundle (AAB)
+
+Do not create a merchant account for this initial free release. Do not change package identity. Do not upload the debug CI AAB as a production release. Play App Signing / secure signed release artifact remains the next release gate.
