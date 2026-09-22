@@ -17,7 +17,7 @@ Production main: UNTOUCHED
 - Vercel preview checks verified.
 
 ## Release gates still required
-- Google Play developer identity/contact verification complete.
+- Google Play developer identity/contact verification complete: PASS (E.P. verified email and phone in Play Console on 2026-09-22).
 - Final Android application identity/versioning confirmed by CI: studio.soulcinema.app / versionCode 1 / versionName 1.0.
 - Release signing / Play App Signing path configured (pending; no secrets stored in repository).
 - Signed release AAB generated and verified (pending signing credentials / Play App Signing path).
