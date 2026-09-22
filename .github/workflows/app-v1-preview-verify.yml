@@ -101,6 +101,7 @@ jobs:
           grep -q 'SOULCINEMA APP' android/app/src/main/assets/public/index.html
           cd android
           ./gradlew bundleDebug
+          test -f app/build/outputs/bundle/debug/app-debug.aab
 
       - name: Production isolation gate
         run: |
