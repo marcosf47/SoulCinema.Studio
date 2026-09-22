@@ -113,13 +113,22 @@ scSearch?.addEventListener("click",searchSc);scInput?.addEventListener("keydown"
 function hardStop(except){document.querySelectorAll("audio,video").forEach(m=>{if(m===except)return;try{m.pause()}catch(e){} try{m.removeAttribute("autoplay")}catch(e){} if(m!==lobby){try{m.currentTime=0}catch(e){} if(m===theater){try{m.removeAttribute("src");m.querySelectorAll("source").forEach(s=>s.removeAttribute("src"));m.load()}catch(e){}}}});}
 const LIVE_FEED="https://live.soulcinema.studio/soulcinemad-opus/?controls=true&muted=false&autoplay=true&playsInline=true";
 let liveWatch=null,liveEpoch=0;
-function destroyLive(){liveEpoch++;if(liveWatch){clearInterval(liveWatch);liveWatch=null}document.querySelectorAll("#v2LiveMount iframe").forEach(f=>{try{f.src="about:blank"}catch(e){}f.remove()});const s=document.getElementById("v2LiveStandby");if(s){s.style.setProperty("display","flex","important");s.style.setProperty("visibility","visible","important");s.style.setProperty("opacity","1","important");s.style.setProperty("z-index","2147483001","important")}}
-function mountLive(){
-  destroyLive();const epoch=liveEpoch,box=document.getElementById("v2LiveMount"),s=document.getElementById("v2LiveStandby");if(!box)return;
-  box.style.position="relative";box.style.background="#000";if(s){s.style.setProperty("display","flex","important");s.style.setProperty("visibility","visible","important");s.style.setProperty("opacity","1","important");s.style.setProperty("z-index","5","important")}
-  let f=null,isLive=false;
-  const showStandby=()=>{isLive=false;box.querySelectorAll("iframe").forEach(x=>{try{x.src="about:blank"}catch(e){}x.remove()});f=null;if(s){s.style.setProperty("display","flex","important");s.style.setProperty("visibility","visible","important");s.style.setProperty("opacity","1","important");s.style.setProperty("z-index","2147483001","important")}};
-  const showLive=()=>{if(isLive&&f)return;isLive=true;if(s){s.style.setProperty("display","none","important");s.style.setProperty("visibility","hidden","important");s.style.setProperty("opacity","0","important");}f=document.createElement("iframe");f.id="v2LiveOwner";f.title="SoulCinema Live";f.allow="autoplay; fullscreen; picture-in-picture";f.setAttribute("allowfullscreen","");f.setAttribute("scrolling","no");f.style.cssText="position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;opacity:0;z-index:4;transition:opacity .28s ease";f.addEventListener("load",()=>{if(epoch!==liveEpoch||!isLive)return;requestAnimationFrame(()=>f&&(f.style.opacity="1"))});box.appendChild(f);f.src=LIVE_FEED};
+let liveProbeTimer=null,liveProbeToken=0;
+function destroyLive(){liveProbeToken++;if(liveProbeTimer){clearTimeout(liveProbeTimer);liveProbeTimer=null}const f=document.getElementById("v2LiveOwner");if(f){try{f.src="about:blank"}catch(e){}f.remove()}const s=document.getElementById("v2LiveStandby");if(s)s.style.display=""}
+async function probeLive(token){
+  if(token!==liveProbeToken||!document.getElementById("live")?.classList.contains("active"))return;
+  try{
+    const r=await fetch(LIVE_FEED,{method:"GET",mode:"cors",cache:"no-store",credentials:"omit"});
+    const t=(await r.text()).slice(0,12000);
+    if(token!==liveProbeToken)return;
+    const isOff=!r.ok||/stream not found|retrying in some seconds/i.test(t);
+    const f=document.getElementById("v2LiveOwner"),s=document.getElementById("v2LiveStandby");
+    if(isOff){if(s)s.style.display="";if(f)f.style.opacity="0"}
+    else if(f){if(s)s.style.display="none";f.style.transition="opacity .28s ease";f.style.opacity="1"}
+  }catch(e){}
+  if(token===liveProbeToken)liveProbeTimer=setTimeout(()=>probeLive(token),3000);
+}
+function mountLive(){destroyLive();const box=document.getElementById("v2LiveMount"),s=document.getElementById("v2LiveStandby");if(!box)return;box.style.position="relative";box.style.background="#000";if(s)s.style.display="";const f=document.createElement("iframe");f.id="v2LiveOwner";f.title="SoulCinema Live";f.allow="autoplay; fullscreen; picture-in-picture";f.setAttribute("allowfullscreen","");f.setAttribute("scrolling","no");f.style.cssText="position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;opacity:0;z-index:2";box.appendChild(f);f.src=LIVE_FEED;const token=++liveProbeToken;probeLive(token)};
   const probe=async()=>{if(epoch!==liveEpoch)return;try{const r=await fetch("/api/live-status?t="+Date.now(),{cache:"no-store"}),j=await r.json();if(epoch!==liveEpoch)return;if(j.live===true&&j.reliable===true)showLive();else if(j.live===false&&j.reliable===true)showStandby()}catch(e){showStandby()}};
   probe();liveWatch=setInterval(probe,5000);document.addEventListener("visibilitychange",()=>{if(!document.hidden&&epoch===liveEpoch)probe()},{once:true});
 }
