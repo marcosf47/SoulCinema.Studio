@@ -50,3 +50,13 @@ No micro-test requests.
 - Secure signing path is wired to GitHub Secrets; no private signing material is stored in the repository.
 - Release artifact integrity gate verifies the AAB exists, is non-empty, and records SHA-256 before upload.
 - Remaining external release gates: actual upload signing credentials / Play App Signing enrollment, Play Console app record and required listing/policy declarations, then internal-track validation and production submission.
+
+
+## Native Android clean-runner gate
+- App V1 Preview Verify #90: SUCCESS.
+- Java 21 setup: PASS.
+- Clean-runner Capacitor Android bootstrap: PASS.
+- Capacitor sync into native Android assets: PASS.
+- Gradle debug App Bundle build: PASS.
+- Production isolation gate: PASS.
+- Both Vercel deployment statuses for the checkpoint commit: SUCCESS.
