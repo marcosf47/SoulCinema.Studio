@@ -69,3 +69,13 @@ No micro-test requests.
 - Size: 3,514,565 bytes.
 - SHA-256 digest: b92a3eab8878247865fc0c8c277606fddfac4051db71f7bf53fccb614ea26737.
 - Artifact retention: 7 days (CI validation artifact only; not a signed Play production release).
+
+
+## Triple-parity Android checkpoint
+- App V1 Preview Verify #128: SUCCESS.
+- Source -> runtime -> embedded Android AAB payload parity: PASS.
+- Android AAB archive/security/identity gates: PASS.
+- CI artifact: soulcinema-app-v1-debug-aab.
+- Artifact size: 3,514,571 bytes.
+- Artifact digest: sha256:10bb70fd7f34f0c642fb7b0f24d04ca25230650aa351c4443930c8f765271136.
+- Both Vercel deployment statuses: SUCCESS.
