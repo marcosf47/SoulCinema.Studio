@@ -7197,9 +7197,10 @@ body[data-live-mode="live"] #liveCenter.active #livePlayerWrap::after{
     if(room.classList.contains('active')){
       liveSeen=false;
       confirmedMisses=0;
-      cover.classList.remove('rc322-show');
-      wrap.classList.remove('rc322-offair-active');
-      live();
+      if(desktop()){live();return}
+      standby();
+      check();
+      timer=setInterval(check,5000);
     }else{
       cover.classList.remove('rc322-show');
       wrap.classList.remove('rc322-offair-active');
