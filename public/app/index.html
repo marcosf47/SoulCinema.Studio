@@ -80,6 +80,21 @@ body::-webkit-scrollbar{width:6px}body::-webkit-scrollbar-track{background:#0504
   .nav button.active:after{bottom:-3px!important}
   .spacer{height:calc(var(--app-nav-h) + var(--app-nav-gap) + env(safe-area-inset-bottom) + 20px)!important}
 }
+/* APP V1 REAL-DEVICE SCROLL + THEATER TOP CONTRACT — 2026-09-23 */
+@media (max-width:700px) and (orientation:portrait){
+  html{height:100%;overflow:hidden!important;scrollbar-gutter:auto!important}
+  body{height:100dvh!important;min-height:100dvh!important;overflow-y:scroll!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior-y:contain!important;padding:0!important}
+  .app{min-height:100%!important;padding-top:env(safe-area-inset-top)!important;padding-bottom:calc(104px + env(safe-area-inset-bottom))!important}
+  .top{position:sticky!important;top:0!important;margin:0!important}
+  .view.active{padding-bottom:calc(104px + env(safe-area-inset-bottom))!important}
+  .room{padding-top:4px!important;padding-bottom:calc(104px + env(safe-area-inset-bottom))!important}
+  #theater{margin-top:0!important;transform:none!important}
+  #theater .back{margin-top:4px!important}
+  .nav{bottom:calc(10px + env(safe-area-inset-bottom))!important}
+  body::-webkit-scrollbar{display:block!important;width:6px!important}
+  body::-webkit-scrollbar-track{background:#050403!important}
+  body::-webkit-scrollbar-thumb{background:#d9b760!important;border-radius:99px!important}
+}
 </style><style id="soulcinema-app-shell">
 :root{--app-safe-top:env(safe-area-inset-top,0px);--app-safe-bottom:env(safe-area-inset-bottom,0px)}
 html,body{overscroll-behavior:none}
@@ -153,7 +168,7 @@ if(token!==liveCheckToken||!document.getElementById("live")?.classList.contains(
 if(detected){if(!document.getElementById("v2LiveOwner"))showLiveOwner()}else if(confirmedOffline){liveStandby()}
 liveWatchTimer=setTimeout(()=>checkLive(token),1000)}
 function mountLive(){destroyLive();const box=document.getElementById("v2LiveMount"),s=document.getElementById("v2LiveStandby");if(!box)return;box.style.position="relative";box.style.background="#000";if(s)s.style.display="";const token=liveCheckToken;checkLive(token)}
-function go(id){hardStop();drawer?.classList.remove("open");if(id!=="music")destroyDiscovery();if(id==="live")mountLive();else destroyLive();views.forEach(v=>v.classList.toggle("active",v.id===id));document.querySelectorAll(".nav [data-go]").forEach(b=>b.classList.toggle("active",b.dataset.go===id));window.scrollTo(0,0);history.replaceState(null,"","#"+id);if(id==="gate"){gate.muted=true;gate.currentTime=0;gate.play().catch(()=>{})}if(id==="home"){lobby.muted=true;lobby.loop=true;lobby.play().catch(()=>{})}syncCinemaLandscape()}
+function go(id){hardStop();drawer?.classList.remove("open");if(id!=="music")destroyDiscovery();if(id==="live")mountLive();else destroyLive();views.forEach(v=>v.classList.toggle("active",v.id===id));document.querySelectorAll(".nav [data-go]").forEach(b=>b.classList.toggle("active",b.dataset.go===id));document.body.scrollTop=0;document.documentElement.scrollTop=0;window.scrollTo({top:0,left:0,behavior:"instant"});history.replaceState(null,"","#"+id);if(id==="gate"){gate.muted=true;gate.currentTime=0;gate.play().catch(()=>{})}if(id==="home"){lobby.muted=true;lobby.loop=true;lobby.play().catch(()=>{})}syncCinemaLandscape()}
 document.addEventListener("click",e=>{const g=e.target.closest("[data-go]");if(g)go(g.dataset.go)});
 document.getElementById("homeBtn").onclick=()=>go("home");const drawer=document.getElementById("drawer");document.getElementById("menuBtn").onclick=()=>drawer.classList.add("open");drawer.addEventListener("click",e=>{if(e.target===drawer)drawer.classList.remove("open")});
 const list=document.getElementById("filmList");let theaterIndex=-1,theaterSeq=false;
