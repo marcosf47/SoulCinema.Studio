@@ -51,6 +51,13 @@
 #v2ScResults .item{min-width:0!important;overflow:hidden!important}
 /* SoulCinema Discovery Player */
 .scPlayerShell{margin-top:14px;border:1px solid #d9b76066;border-radius:20px;overflow:hidden;background:linear-gradient(145deg,#120d05,#030303);box-shadow:0 18px 45px #000a}.scNow{padding:14px 16px 8px}.scNow small{display:block;color:#d9b760;font-size:11px;letter-spacing:.28em}.scNow strong{display:block;color:#f6eedb;font-family:Georgia,serif;font-size:clamp(18px,5.2vw,23px);line-height:1.14;margin-top:5px;overflow-wrap:anywhere;word-break:break-word}.scControls{display:flex;align-items:center;gap:12px;padding:8px 14px 15px}.scPlay{width:54px;height:54px;border-radius:50%;border:1px solid #f0cc6c;background:linear-gradient(145deg,#f1cd68,#ad7d22);color:#080604;font-size:22px;font-weight:900}.scAuto{margin-left:auto;border:1px solid #d9b76066;border-radius:999px;background:#080604;color:#e8ca78;padding:10px 13px;font-size:11px;font-weight:800;letter-spacing:.12em}.scAuto.on{background:#d9b760;color:#090704}.scHost{height:1px;overflow:hidden;opacity:.01;pointer-events:none}.scProgress{height:3px;background:#5b4b29;margin:0 16px 14px;overflow:hidden;border-radius:9px}.scProgress i{display:block;width:0;height:100%;background:#e5bf58;transition:width .4s linear}
+
+/* APP V1 MASTER MOBILE SAFE-VIEW PASS — QA 2026-09-23 */
+@media (max-width:700px){
+html{scrollbar-gutter:stable}html,body{overflow-y:auto!important;-webkit-overflow-scrolling:touch}.app{padding-bottom:calc(118px + env(safe-area-inset-bottom))!important}.view.active{padding-bottom:calc(118px + env(safe-area-inset-bottom))!important}.room{padding-bottom:calc(118px + env(safe-area-inset-bottom))!important}.spacer{height:132px!important}.footer{padding-bottom:calc(42px + env(safe-area-inset-bottom))!important}.nav{bottom:calc(10px + env(safe-area-inset-bottom))!important}
+#gate .hero{min-height:calc(100svh - 132px)!important;margin-bottom:22px!important}#gate .heroCopy{bottom:42px!important;padding-bottom:10px!important}#gate .primary{margin-bottom:6px!important}
+body::-webkit-scrollbar{width:6px}body::-webkit-scrollbar-track{background:#050403}body::-webkit-scrollbar-thumb{background:linear-gradient(#8f6b28,#f0d27a,#8f6b28);border-radius:99px}
+}
 </style><style id="soulcinema-app-shell">
 :root{--app-safe-top:env(safe-area-inset-top,0px);--app-safe-bottom:env(safe-area-inset-bottom,0px)}
 html,body{overscroll-behavior:none}
