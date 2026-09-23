@@ -119,9 +119,10 @@ jobs:
           )
           if "signingConfigs {" not in s:
               s=s.replace(marker, signing+marker)
-          release_marker="        release {"
+          build_release_marker="    buildTypes {\n        release {"
           if "signingConfig signingConfigs.release" not in s:
-              s=s.replace(release_marker, release_marker+"\n            signingConfig signingConfigs.release", 1)
+              assert build_release_marker in s, "Android release buildType marker not found"
+              s=s.replace(build_release_marker, build_release_marker+"\n            signingConfig signingConfigs.release", 1)
           p.write_text(s)
           PY
 
