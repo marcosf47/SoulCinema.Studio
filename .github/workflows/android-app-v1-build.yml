@@ -107,15 +107,16 @@ EOF
           p=Path("android/app/build.gradle")
           s=p.read_text()
           marker="    buildTypes {"
-          signing="""    signingConfigs {
-              release {
-                  storeFile file(SOULCINEMA_STORE_FILE)
-                  storePassword SOULCINEMA_STORE_PASSWORD
-                  keyAlias SOULCINEMA_KEY_ALIAS
-                  keyPassword SOULCINEMA_KEY_PASSWORD
-              }
-          }
-          """
+          signing = (
+              "    signingConfigs {\n"
+              "        release {\n"
+              "            storeFile file(SOULCINEMA_STORE_FILE)\n"
+              "            storePassword SOULCINEMA_STORE_PASSWORD\n"
+              "            keyAlias SOULCINEMA_KEY_ALIAS\n"
+              "            keyPassword SOULCINEMA_KEY_PASSWORD\n"
+              "        }\n"
+              "    }\n"
+          )
           if "signingConfigs {" not in s:
               s=s.replace(marker, signing+marker)
           release_marker="        release {"
