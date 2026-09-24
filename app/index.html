@@ -232,6 +232,29 @@ linear-gradient(180deg,#050403 0%,#010101 55%,#000 100%)!important}
   #live #v2LiveMount,#live .liveBox{width:100%!important;aspect-ratio:16/9!important;height:auto!important;min-height:0!important;margin:0 auto!important;position:relative!important;inset:auto!important;transform:none!important}
   #live #v2LiveOwner{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border:0!important;transform:none!important}
 }
+
+/* SOULCINEMA V5 SURGICAL MOBILE TYPE + WIDTH LOCK · 2026-09-24 */
+@media (max-width:700px) and (orientation:portrait){
+ html,body,.app,.view,.room{width:100%!important;max-width:100%!important;overflow-x:hidden!important}
+ .room{padding-left:12px!important;padding-right:12px!important}
+ .roomHero,.prodHero,.storyHero,.journalHero,.aboutHero,.contactHero,.contactConnect,.featuredStory,.journalFeature,.activeProduction{width:100%!important;max-width:100%!important;min-width:0!important;margin-left:0!important;margin-right:0!important;overflow:hidden!important}
+ .roomHero h1,.prodHero h1,.storyHero h1,.journalHero h1,.aboutHero h1,.contactHero h1,.contactConnect h2,.featuredStory h2,.journalFeature h2,.activeProduction h2{max-width:100%!important;min-width:0!important;font-size:clamp(34px,10vw,46px)!important;line-height:1.02!important;letter-spacing:-.02em!important;overflow-wrap:break-word!important;word-break:normal!important;hyphens:none!important}
+ #theater .roomHero h1{font-size:clamp(38px,10.5vw,48px)!important;line-height:1!important}
+ #bible .roomHero h1{font-size:clamp(38px,10.5vw,48px)!important}
+ #contact .contactHero h1{font-size:clamp(42px,11vw,52px)!important}
+ #contact .contactConnect h2{font-size:clamp(32px,9vw,42px)!important;line-height:1.06!important}
+ .storyHero h1,.featuredStory h2{font-size:clamp(36px,10vw,46px)!important}
+ .productionGrid,.journalGrid,.storyTeasers,.contactGrid,.aboutGrid{width:100%!important;max-width:100%!important;min-width:0!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+ .productionGrid button,.journalGrid button,.storyTeasers>* ,.contactGrid>* ,.aboutGrid>*{min-width:0!important;max-width:100%!important;overflow:hidden!important}
+ .productionGrid b,.productionGrid span,.journalGrid b,.journalGrid p,.storyTeasers b,.contactGrid b,.contactGrid p,.aboutGrid b,.aboutGrid p{overflow-wrap:break-word!important;word-break:normal!important}
+ .top{width:100%!important;max-width:100%!important;overflow:hidden!important}
+ .brand{white-space:nowrap!important;min-width:0!important;font-size:clamp(15px,4.4vw,18px)!important;letter-spacing:.11em!important}
+ .brand:before{flex:0 0 auto!important}
+}
+@media (max-width:390px) and (orientation:portrait){
+ .roomHero h1,.prodHero h1,.storyHero h1,.journalHero h1,.aboutHero h1,.contactHero h1{font-size:clamp(32px,9.5vw,40px)!important}
+ .productionGrid,.journalGrid,.storyTeasers,.contactGrid,.aboutGrid{grid-template-columns:minmax(0,1fr)!important}
+}
 </style><style id="soulcinema-app-shell">
 :root{--app-safe-top:env(safe-area-inset-top,0px);--app-safe-bottom:env(safe-area-inset-bottom,0px)}
 html,body{overscroll-behavior:none}
