@@ -141,6 +141,33 @@ body::-webkit-scrollbar{width:6px}body::-webkit-scrollbar-track{background:#0504
  .grid{gap:13px!important}
 }
 
+
+/* SOULCINEMA MASTER PASS III · ROOM CONTINUITY + FINISH */
+.room>.back{margin-left:clamp(12px,4vw,26px)!important;margin-bottom:12px!important;min-height:42px!important;padding:0 16px!important;border-radius:999px!important;font-size:10px!important;font-weight:800!important;letter-spacing:.16em!important}
+#music .roomHero,#theater .roomHero,#live .roomHero{position:relative;overflow:hidden}
+#music .roomHero:before,#theater .roomHero:before,#live .roomHero:before{content:"";position:absolute;z-index:0;inset:0;pointer-events:none;background:radial-gradient(circle at 88% 4%,rgba(217,183,96,.12),transparent 27%)}
+#music .roomHero>*,#theater .roomHero>*,#live .roomHero>*{position:relative;z-index:1}
+#music .customPlayer{background:linear-gradient(180deg,rgba(17,13,8,.92),rgba(3,3,3,.98))!important;border-top:1px solid rgba(217,183,96,.22)!important}
+#music #v2Discovery{border-color:rgba(217,183,96,.30)!important;background:linear-gradient(145deg,rgba(15,11,6,.88),rgba(3,3,3,.96))!important;box-shadow:inset 0 1px 0 rgba(255,235,176,.07),0 18px 42px rgba(0,0,0,.35)}
+#theater .list{gap:10px!important}
+#theater .item{border-radius:18px!important;transition:transform .24s ease,border-color .24s ease!important}
+#theater .item:active{transform:scale(.99)}
+#live .liveBox{min-height:clamp(220px,56vw,520px)!important;display:grid;place-items:center;background:radial-gradient(circle at 50% 45%,rgba(217,183,96,.08),transparent 32%),#010101!important}
+#v2LiveStandby{font-family:Georgia,"Times New Roman",serif!important;letter-spacing:.18em!important;color:#d9c89a!important;text-shadow:0 0 20px rgba(217,183,96,.16)}
+#production .prodHero,.storyHero,.journalHero{border-color:rgba(217,183,96,.34)!important;box-shadow:inset 0 1px 0 rgba(255,238,184,.09),inset 0 0 90px #000,0 28px 64px rgba(0,0,0,.58)!important}
+#production .activeProduction,.featuredStory,.journalFeature{border-color:rgba(229,190,91,.52)!important;box-shadow:inset 0 1px 0 rgba(255,239,187,.08),0 24px 54px rgba(0,0,0,.50),0 0 24px rgba(217,183,96,.06)!important}
+#bible .roomHero,#about .roomHero,#contact .roomHero{background:radial-gradient(circle at 82% 10%,rgba(217,183,96,.12),transparent 28%),linear-gradient(145deg,rgba(17,12,6,.92),rgba(3,3,3,.98))!important}
+#bible h1,#about h1,#contact h1{color:#f5dfa0!important}
+button,a,[role="button"]{-webkit-tap-highlight-color:transparent}
+button:focus-visible,a:focus-visible,[role="button"]:focus-visible{outline:1px solid rgba(244,220,152,.88)!important;outline-offset:3px!important}
+@media (prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+@media (max-width:700px) and (orientation:portrait){
+ .room>.back{margin-top:6px!important}
+ .roomHero{padding-top:28px!important}
+ #music .roomHero h1,#theater .roomHero h1,#live .roomHero h1{font-size:clamp(42px,12vw,60px)!important}
+ #live .liveBox{min-height:56vw!important}
+}
+
 /* SOULCINEMA FULL MASTER PASS · $50K LUXURY SYSTEM · 2026-09-24 */
 :root{--sc-gold:#d9b760;--sc-champ:#f4dc98;--sc-ivory:#f7f0df;--sc-black:#020202;--sc-glass:rgba(12,9,5,.72)}
 body{background:
