@@ -59,6 +59,23 @@ jobs:
           npx cap add android
           npx cap sync android
 
+      - name: Install SoulCinema luxury launcher icon
+        run: |
+          set -euo pipefail
+          ICON=/tmp/soulcinema-launcher.jpg
+          base64 --decode app/assets/sc-launcher.b64 > "$ICON"
+          test -s "$ICON"
+          for d in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
+            DIR="android/app/src/main/res/mipmap-$d"
+            mkdir -p "$DIR"
+            rm -f "$DIR/ic_launcher."* "$DIR/ic_launcher_round."*
+            cp "$ICON" "$DIR/ic_launcher.jpg"
+            cp "$ICON" "$DIR/ic_launcher_round.jpg"
+          done
+          rm -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+          rm -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+          echo "SoulCinema luxury launcher icon installed"
+
       - name: Enforce Play release metadata
         run: |
           python - <<'PY'
