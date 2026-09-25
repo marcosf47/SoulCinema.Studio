@@ -1,6 +1,8 @@
 name: SoulCinema Android App V1 Release
 "on":
   workflow_dispatch:
+  pull_request:
+    branches: [main]
   push:
     branches: [soulcinema-app-v1]
     paths:
