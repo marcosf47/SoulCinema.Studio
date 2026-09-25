@@ -266,6 +266,43 @@ body{padding-top:var(--app-safe-top);padding-bottom:var(--app-safe-bottom)}
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="SoulCinema">
 <link rel="manifest" href="/app/manifest.webmanifest">
+
+<style id="soulcinema-v8-luxury-controls">
+/* V8 · COMPACT PORTALS + ROOM-SPECIFIC LUXURY CONTROLS */
+:root{--v8-gold:#d8a72f;--v8-bright:#fff0ad;--v8-deep:#6f4308;--v8-glass:#080603}
+button{transition:transform .18s ease,filter .24s ease,box-shadow .24s ease,border-color .24s ease}
+.primary,.room>.back,.portalLuxury i,.activeProduction button,.featuredStory button,.journalFeature button{
+ border:1px solid #e8bd55!important;
+ background:linear-gradient(180deg,#3b2609 0%,#120b03 48%,#050301 100%)!important;
+ color:#fff0bd!important;
+ box-shadow:inset 0 1px 0 #fff3bd66,inset 0 -1px 0 #5c3508,0 7px 20px #000b,0 0 14px #d8a72f20!important;
+ text-shadow:0 1px 8px #000!important
+}
+.primary:active,.room>.back:active,.activeProduction button:active,.featuredStory button:active,.journalFeature button:active{transform:translateY(1px) scale(.985)}
+.playerControls button{border-color:#d7a73f!important;background:radial-gradient(circle at 38% 25%,#49300e,#0b0702 58%,#020201)!important;color:#ffe7a0!important;box-shadow:inset 0 1px 0 #fff1b84d,0 8px 22px #000b,0 0 14px #d8a72f1f!important}
+.playerControls .mainPlay{background:linear-gradient(145deg,#fff0a5 0%,#d29b27 35%,#754407 72%,#1c0f02 100%)!important;color:#090501!important;box-shadow:inset 0 1px 0 #fff8d9,0 9px 24px #000c,0 0 18px #e6b43b55!important}
+#v2ScSearch{background:linear-gradient(145deg,#f6dc84,#bb8120 48%,#5c3507)!important;color:#080501!important}
+#theater .item{border-color:#b98a31!important;background:linear-gradient(105deg,#181006,#060402 72%)!important;box-shadow:inset 0 1px 0 #ffe9a51c,0 8px 20px #0008!important}
+#production .productionGrid button{border-color:#a97d2e!important;background:radial-gradient(circle at 78% 18%,#8b5b1e38,transparent 34%),linear-gradient(145deg,#181006,#050302)!important}
+#story .storyTeasers>*,#journal .journalGrid button{border-color:#94702f!important;background:radial-gradient(circle at 50% 12%,#8b5b1e2c,transparent 45%),linear-gradient(#120c05,#050302)!important}
+.nav button b{color:#e8bd55!important}
+.nav button.active b{color:#ffe38a!important;text-shadow:0 0 12px #d8a72f99}
+@media(max-width:700px) and (orientation:portrait){
+ #home .grid{gap:9px!important}
+ #home .portalLuxury{min-height:150px!important;padding:13px 12px 52px!important;border-radius:20px!important}
+ #home .portalLuxury small{font-size:8px!important;letter-spacing:.18em!important;padding:3px 5px!important}
+ #home .portalLuxury strong{font-size:clamp(17px,5.15vw,23px)!important;line-height:1.02!important;margin-top:7px!important;max-width:100%!important;overflow-wrap:normal!important;word-break:normal!important}
+ #home .portalLuxury span{font-size:10px!important;line-height:1.25!important;margin-top:6px!important;max-width:100%!important;display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden!important}
+ #home .portalLuxury i{left:12px!important;bottom:12px!important;min-width:68px!important;padding:6px 9px!important;font-size:8px!important;letter-spacing:.16em!important}
+ #home .portalLuxury em{right:11px!important;bottom:11px!important;width:27px!important;height:27px!important;font-size:14px!important}
+ #home .card.wide{min-height:185px!important}
+}
+@media(max-width:390px) and (orientation:portrait){
+ #home .portalLuxury{min-height:142px!important}
+ #home .portalLuxury strong{font-size:17px!important}
+ #home .portalLuxury span{font-size:9.5px!important}
+}
+</style>
 </head><body><div class="drawer" id="drawer"><aside class="drawerPanel"><div class="drawerLogo">SOULCINEMA<small>STUDIO</small></div><button data-go="home"><b>⌂</b> GRAND LOBBY</button><button data-go="music"><b>♫</b> MUSIC ROOM</button><button data-go="theater"><b>▣</b> SCREENING THEATER</button><button data-go="live"><b>◉</b> LIVE CENTER</button><button data-go="production"><b>◇</b> PRODUCTION ROOM</button><button data-go="story"><b>♡</b> STORY ROOM</button><button data-go="journal"><b>◷</b> JOURNAL</button><button data-go="bible"><b>✦</b> VISUAL BIBLE</button><button data-go="about"><b>i</b> ABOUT</button><button data-go="contact"><b>+</b> CONTACT</button><div class="drawerQuote">“EVERY HEART<br>HIDES A STORY.”</div></aside></div><main class="app">
 <header class="top"><button class="icon" id="menuBtn">☰</button><div class="brand">SOULCINEMA<small>STUDIO</small></div><button class="icon" id="homeBtn">⌂</button></header>
 <section class="view active" id="gate"><div class="hero" style="min-height:calc(100svh - 92px)"><video id="v2Gate" muted playsinline preload="metadata"><source src="https://tfamln4qsost6j00.public.blob.vercel-storage.com/the-gate.mp4"></video><div class="shade"></div><div class="heroCopy" style="text-align:center"><div class="eyebrow">SOULCINEMA · STUDIO</div><h1 style="font-size:clamp(42px,13vw,68px)">Every Heart<br>Hides a Story.</h1><p style="margin:0 auto 20px">Enter a cinematic universe where music, motion and human stories live together.</p><button class="primary" data-go="home">ENTER THE STUDIO</button></div></div></section>
