@@ -11,6 +11,7 @@ name: SoulCinema Android App V1 Release
       - "capacitor.config.json"
       - ".github/workflows/android-app-v1-build.yml"
       - "app/ANDROID-BUILD-TRIGGER"
+      - "ChatGPT Image Sep 25, 2026, 12_13_43 PM.png"
 
 permissions:
   contents: read
