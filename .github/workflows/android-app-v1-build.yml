@@ -62,15 +62,17 @@ jobs:
       - name: Install SoulCinema luxury launcher icon
         run: |
           set -euo pipefail
-          ICON=/tmp/soulcinema-launcher.jpg
-          base64 --decode app/assets/sc-launcher.b64 > "$ICON"
-          test -s "$ICON"
+          ICON_SOURCE="ChatGPT Image Sep 25, 2026, 12_13_43 PM.png"
+          ICON=/tmp/soulcinema-launcher.png
+          test -s "$ICON_SOURCE"
+          cp "$ICON_SOURCE" "$ICON"
+          file "$ICON" | grep -qi PNG
           for d in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
             DIR="android/app/src/main/res/mipmap-$d"
             mkdir -p "$DIR"
             rm -f "$DIR/ic_launcher."* "$DIR/ic_launcher_round."*
-            cp "$ICON" "$DIR/ic_launcher.jpg"
-            cp "$ICON" "$DIR/ic_launcher_round.jpg"
+            cp "$ICON" "$DIR/ic_launcher.png"
+            cp "$ICON" "$DIR/ic_launcher_round.png"
           done
           rm -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
           rm -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
@@ -83,11 +85,11 @@ jobs:
           p=Path("android/app/build.gradle")
           s=p.read_text()
           import re
-          s=re.sub(r'versionCode\s+\d+', 'versionCode 6', s, count=1)
+          s=re.sub(r'versionCode\s+\d+', 'versionCode 7', s, count=1)
           s=re.sub(r'versionName\s+"[^"]+"', 'versionName "1.0"', s, count=1)
           p.write_text(s)
           assert 'applicationId "studio.soulcinema.app"' in s
-          assert 'versionCode 6' in s
+          assert 'versionCode 7' in s
           assert 'versionName "1.0"' in s
           PY
 
