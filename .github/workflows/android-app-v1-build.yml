@@ -88,11 +88,11 @@ jobs:
           p=Path("android/app/build.gradle")
           s=p.read_text()
           import re
-          s=re.sub(r'versionCode\s+\d+', 'versionCode 9', s, count=1)
+          s=re.sub(r'versionCode\s+\d+', 'versionCode 10', s, count=1)
           s=re.sub(r'versionName\s+"[^"]+"', 'versionName "1.0"', s, count=1)
           p.write_text(s)
           assert 'applicationId "studio.soulcinema.app"' in s
-          assert 'versionCode 9' in s
+          assert 'versionCode 10' in s
           assert 'versionName "1.0"' in s
           PY
 
