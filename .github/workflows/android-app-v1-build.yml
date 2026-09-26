@@ -1,0 +1,176 @@
+name: SoulCinema Android App V1 Release
+"on":
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [soulcinema-app-v1]
+    paths:
+      - "app/**"
+      - "public/app/**"
+      - "package.json"
+      - "package-lock.json"
+      - "capacitor.config.json"
+      - ".github/workflows/android-app-v1-build.yml"
+      - "app/ANDROID-BUILD-TRIGGER"
+      - "ChatGPT Image Sep 25, 2026, 12_13_43 PM.png"
+
+permissions:
+  contents: read
+
+jobs:
+  android-release-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Verify locked Capacitor identity
+        run: |
+          node - <<'NODE'
+          const c = require('./capacitor.config.json');
+          if (c.appId !== 'studio.soulcinema.app') throw new Error('Unexpected appId: ' + c.appId);
+          if (c.appName !== 'SoulCinema') throw new Error('Unexpected appName: ' + c.appName);
+          if (c.webDir !== 'public/app') throw new Error('Unexpected webDir: ' + c.webDir);
+          NODE
+
+      - name: Require Play upload signing secrets
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+        run: |
+          test -n "$ANDROID_KEYSTORE_BASE64" || { echo "Missing ANDROID_KEYSTORE_BASE64"; exit 1; }
+          test -n "$ANDROID_KEY_ALIAS" || { echo "Missing ANDROID_KEY_ALIAS"; exit 1; }
+          test -n "$ANDROID_KEY_PASSWORD" || { echo "Missing ANDROID_KEY_PASSWORD"; exit 1; }
+          test -n "$ANDROID_STORE_PASSWORD" || { echo "Missing ANDROID_STORE_PASSWORD"; exit 1; }
+
+      - name: Generate and sync isolated Android project
+        run: |
+          npx cap add android
+          npx cap sync android
+
+      - name: Install SoulCinema luxury launcher icon
+        run: |
+          set -euo pipefail
+          ICON_SOURCE="ChatGPT Image Sep 25, 2026, 12_13_43 PM.png"
+          ICON=/tmp/soulcinema-launcher.png
+          test -s "$ICON_SOURCE"
+          cp "$ICON_SOURCE" "$ICON"
+          file "$ICON" | grep -qi PNG
+          for d in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
+            DIR="android/app/src/main/res/mipmap-$d"
+            mkdir -p "$DIR"
+            rm -f "$DIR/ic_launcher."* "$DIR/ic_launcher_round."*
+            cp "$ICON" "$DIR/ic_launcher.png"
+            cp "$ICON" "$DIR/ic_launcher_round.png"
+          done
+          rm -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+          rm -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+          echo "SoulCinema luxury launcher icon installed"
+
+      - name: Enforce Play release metadata
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path("android/app/build.gradle")
+          s=p.read_text()
+          import re
+          s=re.sub(r'versionCode\s+\d+', 'versionCode 10', s, count=1)
+          s=re.sub(r'versionName\s+"[^"]+"', 'versionName "1.0"', s, count=1)
+          p.write_text(s)
+          assert 'applicationId "studio.soulcinema.app"' in s
+          assert 'versionCode 10' in s
+          assert 'versionName "1.0"' in s
+          PY
+
+      - name: Verify source-runtime parity
+        run: |
+          test -f public/app/index.html
+          test -f android/app/src/main/assets/public/index.html
+          SOURCE_SHA="$(sha256sum public/app/index.html | awk '{print $1}')"
+          RUNTIME_SHA="$(sha256sum android/app/src/main/assets/public/index.html | awk '{print $1}')"
+          echo "source index SHA-256:  $SOURCE_SHA"
+          echo "runtime index SHA-256: $RUNTIME_SHA"
+          test "$SOURCE_SHA" = "$RUNTIME_SHA"
+
+      - name: Configure Play upload signing
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+        run: |
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/soulcinema-upload.jks
+          chmod 600 android/app/soulcinema-upload.jks
+          {
+            echo "SOULCINEMA_STORE_FILE=soulcinema-upload.jks"
+            echo "SOULCINEMA_KEY_ALIAS=$ANDROID_KEY_ALIAS"
+            echo "SOULCINEMA_KEY_PASSWORD=$ANDROID_KEY_PASSWORD"
+            echo "SOULCINEMA_STORE_PASSWORD=$ANDROID_STORE_PASSWORD"
+          } >> android/gradle.properties
+
+      - name: Patch Android release signing config
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path("android/app/build.gradle")
+          s=p.read_text()
+          marker="    buildTypes {"
+          signing = (
+              "    signingConfigs {\n"
+              "        release {\n"
+              "            storeFile file(SOULCINEMA_STORE_FILE)\n"
+              "            storePassword SOULCINEMA_STORE_PASSWORD\n"
+              "            keyAlias SOULCINEMA_KEY_ALIAS\n"
+              "            keyPassword SOULCINEMA_KEY_PASSWORD\n"
+              "        }\n"
+              "    }\n"
+          )
+          if "signingConfigs {" not in s:
+              s=s.replace(marker, signing+marker)
+          build_release_marker="    buildTypes {\n        release {"
+          assert build_release_marker in s, "Android release buildType marker not found"
+          prefix, rest = s.split(build_release_marker, 1)
+          release_body, suffix = rest.split("\n        }", 1)
+          if "signingConfig signingConfigs.release" not in release_body:
+              release_body = "\n            signingConfig signingConfigs.release" + release_body
+          s = prefix + build_release_marker + release_body + "\n        }" + suffix
+          p.write_text(s)
+          PY
+
+      - name: Build signed Android App Bundle
+        working-directory: android
+        run: ./gradlew clean bundleRelease
+
+      - name: Verify signed release AAB
+        env:
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+        run: |
+          AAB=android/app/build/outputs/bundle/release/app-release.aab
+          test -s "$AAB"
+          jarsigner -verify -verbose -certs "$AAB" >/tmp/jarsigner.txt
+          grep -q "jar verified" /tmp/jarsigner.txt
+          keytool -list -v -keystore android/app/soulcinema-upload.jks -alias "$ANDROID_KEY_ALIAS" -storepass "$ANDROID_STORE_PASSWORD" | grep "SHA256:"
+          sha256sum "$AAB"
+
+      - name: Upload verified Play release AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: soulcinema-app-v1-play-release-aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+          retention-days: 7

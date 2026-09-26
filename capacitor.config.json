@@ -1,0 +1,8 @@
+{
+  "appId": "studio.soulcinema.app",
+  "appName": "SoulCinema",
+  "webDir": "public/app",
+  "server": {
+    "androidScheme": "https"
+  }
+}
