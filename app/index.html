@@ -290,6 +290,21 @@ linear-gradient(180deg,#050403 0%,#010101 55%,#000 100%)!important}
 #home .bibleCard{background-image:url("assets/luxury/bible.jpg")!important}
 @media(max-width:430px){#home .grid{grid-template-columns:1fr!important;gap:16px!important}#home .portalLuxury{min-height:270px!important}#home .portalLuxury strong{font-size:31px!important}#home .portalLuxury span{font-size:13px!important}.nav{height:66px!important;bottom:calc(8px + env(safe-area-inset-bottom))!important}}
 
+
+/* V12 COMPACT ROOM TAILS + THEATER INTERNAL SCROLLER */
+@media (orientation:portrait){
+  .view.room.active{min-height:100dvh!important;height:auto!important;padding-bottom:calc(86px + env(safe-area-inset-bottom))!important}
+  .view.room.active .spacer{height:12px!important;min-height:0!important}
+  .view.room.active .footer{margin-top:12px!important;padding:18px 14px calc(88px + env(safe-area-inset-bottom))!important}
+  #theater.active{height:100dvh!important;min-height:100dvh!important;overflow:hidden!important;padding-bottom:calc(78px + env(safe-area-inset-bottom))!important}
+  #theater.active .roomHero{height:calc(100dvh - 126px - env(safe-area-inset-top) - env(safe-area-inset-bottom))!important;min-height:0!important;display:flex!important;flex-direction:column!important;overflow:hidden!important}
+  #theater.active #filmList{flex:1 1 auto!important;min-height:180px!important;max-height:none!important;overflow-y:auto!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;padding-right:7px!important;padding-bottom:18px!important;scrollbar-width:thin!important;scrollbar-color:#d9b760 #171107!important}
+  #theater.active #filmList::-webkit-scrollbar{width:5px}
+  #theater.active #filmList::-webkit-scrollbar-track{background:#171107;border-radius:99px}
+  #theater.active #filmList::-webkit-scrollbar-thumb{background:linear-gradient(#f1d783,#a97818);border-radius:99px}
+  #theater.active .footer,#theater.active>.spacer{display:none!important}
+}
+
 </style><style id="soulcinema-app-shell">
 :root{--app-safe-top:env(safe-area-inset-top,0px);--app-safe-bottom:env(safe-area-inset-bottom,0px)}
 html,body{overscroll-behavior:none}
