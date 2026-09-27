@@ -316,6 +316,14 @@ linear-gradient(180deg,#050403 0%,#010101 55%,#000 100%)!important}
  #theater.active #filmList{border-top:1px solid rgba(217,183,96,.18)!important;border-bottom:1px solid rgba(217,183,96,.18)!important;background:linear-gradient(180deg,rgba(13,10,5,.55),rgba(3,3,3,.76))!important;border-radius:16px!important;padding:10px 7px 18px 10px!important}
 }
 
+
+/* V13 THEATER VISIBILITY SURGICAL RECOVERY — preserve room tails */
+@media (orientation:portrait){
+ #theater.active{height:auto!important;min-height:100dvh!important;overflow-y:auto!important;overflow-x:hidden!important;padding-bottom:calc(86px + env(safe-area-inset-bottom))!important}
+ #theater.active .roomHero{height:auto!important;min-height:calc(100dvh - 120px)!important;overflow:visible!important;display:block!important}
+ #theater.active #filmList{display:block!important;max-height:52svh!important;min-height:220px!important;overflow-y:auto!important;overflow-x:hidden!important}
+}
+
 </style><style id="soulcinema-app-shell">
 :root{--app-safe-top:env(safe-area-inset-top,0px);--app-safe-bottom:env(safe-area-inset-bottom,0px)}
 html,body{overscroll-behavior:none}
