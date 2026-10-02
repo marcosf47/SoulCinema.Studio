@@ -27,14 +27,21 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           tag = '<script defer src="/_vercel/insights/script.js"></script>'
+          init = '<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script>'
           for name in ('public/index.html', 'public/mobile-v2.html'):
               p = Path(name)
               s = p.read_text(encoding='utf-8')
               if tag not in s:
                   if '</head>' not in s:
                       raise SystemExit(f'Missing </head> in {name}')
-                  s = s.replace('</head>', tag + '</head>', 1)
-                  p.write_text(s, encoding='utf-8')
+                  s = s.replace('</head>', init + tag + '</head>', 1)
+              elif init not in s:
+                  if s.count(tag) != 1:
+                      raise SystemExit(f'Unexpected Analytics tag count in {name}: {s.count(tag)}')
+                  s = s.replace(tag, init + tag, 1)
+              if s.count(tag) != 1 or s.count(init) != 1:
+                  raise SystemExit(f'Analytics guard failed in {name}')
+              p.write_text(s, encoding='utf-8')
           PY
           if git diff --quiet -- public/index.html public/mobile-v2.html; then
             echo "Analytics tracking already installed"
@@ -43,5 +50,5 @@ jobs:
           git config user.name "SoulCinema Analytics Bot"
           git config user.email "actions@users.noreply.github.com"
           git add public/index.html public/mobile-v2.html
-          git commit -m "Enable Vercel Web Analytics tracking"
+          git commit -m "Initialize Vercel Web Analytics for static HTML"
           git push origin HEAD:main
