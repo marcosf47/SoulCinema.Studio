@@ -22,3 +22,26 @@ jobs:
           grep -q "RC414 MOBILE CINEMATIC PORTALS REBUILD" public/index.html
       - name: Confirm source
         run: echo "SoulCinema production source verified for direct Vercel deployment"
+      - name: Install Vercel Web Analytics tracking surgically
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          tag = '<script defer src="/_vercel/insights/script.js"></script>'
+          for name in ('public/index.html', 'public/mobile-v2.html'):
+              p = Path(name)
+              s = p.read_text(encoding='utf-8')
+              if tag not in s:
+                  if '</head>' not in s:
+                      raise SystemExit(f'Missing </head> in {name}')
+                  s = s.replace('</head>', tag + '</head>', 1)
+                  p.write_text(s, encoding='utf-8')
+          PY
+          if git diff --quiet -- public/index.html public/mobile-v2.html; then
+            echo "Analytics tracking already installed"
+            exit 0
+          fi
+          git config user.name "SoulCinema Analytics Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add public/index.html public/mobile-v2.html
+          git commit -m "Enable Vercel Web Analytics tracking"
+          git push origin HEAD:main
