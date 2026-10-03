@@ -1,0 +1,46 @@
+name: SoulCinema App Social Rail Surgical
+on:
+  workflow_dispatch:
+  push:
+    branches: [soulcinema-app-v1]
+    paths:
+      - ".github/workflows/app-social-rail-surgical.yml"
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: soulcinema-app-v1
+      - name: Install drawer-only social rail
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('public/app/index.html')
+          s=p.read_text()
+          marker='</style>'
+          assert marker in s, 'style marker missing'
+          if 'APP SOCIAL RAIL LOCK' not in s:
+            css='''\n/* APP SOCIAL RAIL LOCK — drawer only */\n.drawerSocialRail{display:flex;justify-content:center;gap:14px;margin:24px 8px 10px;padding-top:18px;border-top:1px solid #d9b76022}\n.drawerSocialRail a{width:46px;height:46px;display:grid;place-items:center;border:1px solid #d9b76066;border-radius:50%;background:linear-gradient(145deg,#171108,#050403);color:#f0cf73;text-decoration:none;font:800 18px/1 Inter,Arial,sans-serif;box-shadow:inset 0 1px #fff1,0 8px 24px #0008,0 0 14px #d9b76012}\n.drawerSocialRail a:active{transform:scale(.96);background:#1b1408}\n'''
+            s=s.replace(marker,css+marker,1)
+            script='''\n<script id="appSocialRailLock">\n(()=>{\n const drawer=document.querySelector('.drawerPanel');\n if(!drawer||drawer.querySelector('.drawerSocialRail'))return;\n const rail=document.createElement('div'); rail.className='drawerSocialRail'; rail.setAttribute('aria-label','E.P social channels');\n const links=[\n  ['f','Facebook','https://www.facebook.com/profile.php?id=61593718491379'],\n  ['♪','TikTok','https://www.tiktok.com/@ep.soulcinema'],\n  ['▶','YouTube','https://www.youtube.com/@EPOfficialMusic']\n ];\n links.forEach(([icon,label,url])=>{const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.setAttribute('aria-label',label);a.textContent=icon;rail.appendChild(a)});\n const q=drawer.querySelector('.drawerQuote'); q?q.after(rail):drawer.appendChild(rail);\n})();\n</script>\n'''
+            s=s.replace('</body>',script+'</body>',1)
+            p.write_text(s)
+          assert s.count('APP SOCIAL RAIL LOCK')==1
+          assert '61593718491379' in s and '@ep.soulcinema' in s and '@EPOfficialMusic' in s
+          PY
+      - name: Verify surgical scope
+        run: |
+          git diff --check
+          git diff -- public/app/index.html
+          test "$(git diff --name-only | wc -l)" -eq 1
+          test "$(git diff --name-only)" = "public/app/index.html"
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/app/index.html
+          git commit -m "App: add drawer-only social channel rail"
+          git push origin HEAD:soulcinema-app-v1
