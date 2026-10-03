@@ -45,10 +45,31 @@ jobs:
           PY
           if git diff --quiet -- public/index.html public/mobile-v2.html; then
             echo "Analytics tracking already installed"
-            exit 0
+          else
+            git config user.name "SoulCinema Analytics Bot"
+            git config user.email "actions@users.noreply.github.com"
+            git add public/index.html public/mobile-v2.html
+            git commit -m "Initialize Vercel Web Analytics for static HTML"
+            git push origin HEAD:main
           fi
-          git config user.name "SoulCinema Analytics Bot"
+      - name: Install mobile social rail surgically
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('public/mobile-v2.html'); s=p.read_text(encoding='utf-8'); marker='SOULCINEMA SOCIAL RAIL V1'
+          if marker in s: raise SystemExit(0)
+          if s.count('</style>')!=1 or s.count('</body>')!=1: raise SystemExit('Social rail guard: unexpected document structure')
+          css='''\n/* SOULCINEMA SOCIAL RAIL V1 */\n.scSocialRail{position:fixed;right:10px;top:50%;transform:translateY(-50%);z-index:96;display:flex;flex-direction:column;gap:18px;padding:10px 6px;border-left:1px solid #d9b7602e;background:linear-gradient(90deg,transparent,#0504038a);border-radius:18px 0 0 18px}.scSocialRail a{width:38px;height:38px;display:grid;place-items:center;border:1px solid #d9b76066;border-radius:50%;background:#070604d9;color:#e7c86b;text-decoration:none;box-shadow:inset 0 0 12px #d9b76010,0 0 12px #000;transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease,color .22s ease}.scSocialRail a:active,.scSocialRail a:focus-visible{transform:scale(.94);color:#ffe59a;border-color:#f2d783;box-shadow:0 0 18px #d9b76055}.scSocialRail svg{width:18px;height:18px;display:block;fill:currentColor}@media (min-width:701px){.scSocialRail{display:none}}@media (orientation:landscape){body.v2-cinema-landscape .scSocialRail{display:none!important}}\n'''
+          html='''\n<nav class="scSocialRail" aria-label="SoulCinema social media"><a href="https://www.facebook.com/profile.php?id=61593718491379" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M13.5 22v-9h3l.5-3h-3.5V8.1c0-.9.3-1.6 1.7-1.6H17V3.8c-.3 0-1.4-.1-2.6-.1-2.6 0-4.4 1.6-4.4 4.5V10H7v3h3v9h3.5Z"/></svg></a><a href="https://www.tiktok.com/@ep.soulcinema" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M15.4 3c.4 2.1 1.6 3.4 3.6 3.8v3.1c-1.4 0-2.7-.4-3.8-1.2v6.2a6 6 0 1 1-5.2-6V12a2.9 2.9 0 1 0 2.1 2.8V3h3.3Z"/></svg></a><a href="https://www.youtube.com/@EPOfficialMusic" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg viewBox="0 0 24 24"><path d="M21.6 7.2a2.8 2.8 0 0 0-2-2C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.6.5a2.8 2.8 0 0 0-2 2A29 29 0 0 0 2 12a29 29 0 0 0 .4 4.8 2.8 2.8 0 0 0 2 2c1.8.5 7.6.5 7.6.5s5.8 0 7.6-.5a2.8 2.8 0 0 0 2-2A29 29 0 0 0 22 12a29 29 0 0 0-.4-4.8ZM10 15.2V8.8l5.5 3.2-5.5 3.2Z"/></svg></a></nav>\n'''
+          s=s.replace('</style>',css+'</style>',1).replace('</body>',html+'</body>',1)
+          if s.count(marker)!=1: raise SystemExit('Social marker guard failed')
+          for u in ('https://www.facebook.com/profile.php?id=61593718491379','https://www.tiktok.com/@ep.soulcinema','https://www.youtube.com/@EPOfficialMusic'):
+              if s.count(u)!=1: raise SystemExit('Social URL guard failed: '+u)
+          p.write_text(s,encoding='utf-8')
+          PY
+          if git diff --quiet -- public/mobile-v2.html; then echo "Social rail already installed"; exit 0; fi
+          git config user.name "SoulCinema Social Bot"
           git config user.email "actions@users.noreply.github.com"
-          git add public/index.html public/mobile-v2.html
-          git commit -m "Initialize Vercel Web Analytics for static HTML"
+          git add public/mobile-v2.html
+          git commit -m "Add cinematic mobile social rail"
           git push origin HEAD:main
