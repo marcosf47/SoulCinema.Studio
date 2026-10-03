@@ -324,6 +324,11 @@ linear-gradient(180deg,#050403 0%,#010101 55%,#000 100%)!important}
  #theater.active #filmList{display:block!important;max-height:52svh!important;min-height:220px!important;overflow-y:auto!important;overflow-x:hidden!important}
 }
 
+
+/* APP SOCIAL RAIL LOCK — drawer only */
+.drawerSocialRail{display:flex;justify-content:center;gap:14px;margin:24px 8px 10px;padding-top:18px;border-top:1px solid #d9b76022}
+.drawerSocialRail a{width:46px;height:46px;display:grid;place-items:center;border:1px solid #d9b76066;border-radius:50%;background:linear-gradient(145deg,#171108,#050403);color:#f0cf73;text-decoration:none;font:800 18px/1 Inter,Arial,sans-serif;box-shadow:inset 0 1px #fff1,0 8px 24px #0008,0 0 14px #d9b76012}
+.drawerSocialRail a:active{transform:scale(.96);background:#1b1408}
 </style><style id="soulcinema-app-shell">
 :root{--app-safe-top:env(safe-area-inset-top,0px);--app-safe-bottom:env(safe-area-inset-bottom,0px)}
 html,body{overscroll-behavior:none}
@@ -491,5 +496,20 @@ window.addEventListener("pagehide",bump);
 (()=>{const stop=()=>{try{hardStop()}catch(e){}try{destroyLive()}catch(e){}try{destroyDiscovery()}catch(e){}};const restore=()=>{try{document.body.classList.remove("v2-cinema-landscape");syncCinemaLandscape()}catch(e){}};/* Android screen lock may freeze WebView; preserve user-owned audio */document.addEventListener("freeze",()=>{try{destroyLive()}catch(e){}});document.addEventListener("resume",restore);window.addEventListener("pageshow",e=>{restore();if(e.persisted){try{hardStop()}catch(_){}}});})();
 </script><script id="soulcinema-app-sw">
 if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("/app/sw.js",{scope:"/app/"}).catch(()=>{}));}
+</script>
+
+<script id="appSocialRailLock">
+(()=>{
+ const drawer=document.querySelector('.drawerPanel');
+ if(!drawer||drawer.querySelector('.drawerSocialRail'))return;
+ const rail=document.createElement('div'); rail.className='drawerSocialRail'; rail.setAttribute('aria-label','E.P social channels');
+ const links=[
+  ['f','Facebook','https://www.facebook.com/profile.php?id=61593718491379'],
+  ['♪','TikTok','https://www.tiktok.com/@ep.soulcinema'],
+  ['▶','YouTube','https://www.youtube.com/@EPOfficialMusic']
+ ];
+ links.forEach(([icon,label,url])=>{const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.setAttribute('aria-label',label);a.textContent=icon;rail.appendChild(a)});
+ const q=drawer.querySelector('.drawerQuote'); q?q.after(rail):drawer.appendChild(rail);
+})();
 </script>
 </body></html>
