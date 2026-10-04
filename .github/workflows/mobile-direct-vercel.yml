@@ -32,44 +32,40 @@ jobs:
               p = Path(name)
               s = p.read_text(encoding='utf-8')
               if tag not in s:
-                  if '</head>' not in s:
-                      raise SystemExit(f'Missing </head> in {name}')
+                  if '</head>' not in s: raise SystemExit(f'Missing </head> in {name}')
                   s = s.replace('</head>', init + tag + '</head>', 1)
               elif init not in s:
-                  if s.count(tag) != 1:
-                      raise SystemExit(f'Unexpected Analytics tag count in {name}: {s.count(tag)}')
                   s = s.replace(tag, init + tag, 1)
-              if s.count(tag) != 1 or s.count(init) != 1:
-                  raise SystemExit(f'Analytics guard failed in {name}')
               p.write_text(s, encoding='utf-8')
           PY
-          if git diff --quiet -- public/index.html public/mobile-v2.html; then
-            echo "Analytics tracking already installed"
-          else
-            git config user.name "SoulCinema Analytics Bot"
-            git config user.email "actions@users.noreply.github.com"
-            git add public/index.html public/mobile-v2.html
-            git commit -m "Initialize Vercel Web Analytics for static HTML"
-            git push origin HEAD:main
-          fi
       - name: Install mobile social rail surgically
+        run: echo "Social rail already locked in mobile-v2"
+      - name: Apply Mobile Live automatic 16x9 landscape
         run: |
           python - <<'PY'
           from pathlib import Path
-          p=Path('public/mobile-v2.html'); s=p.read_text(encoding='utf-8'); marker='SOULCINEMA SOCIAL RAIL V1'
-          if marker in s: raise SystemExit(0)
-          if s.count('</style>')!=1 or s.count('</body>')!=1: raise SystemExit('Social rail guard: unexpected document structure')
-          css='''\n/* SOULCINEMA SOCIAL RAIL V1 */\n.scSocialRail{position:fixed;right:10px;top:50%;transform:translateY(-50%);z-index:96;display:flex;flex-direction:column;gap:18px;padding:10px 6px;border-left:1px solid #d9b7602e;background:linear-gradient(90deg,transparent,#0504038a);border-radius:18px 0 0 18px}.scSocialRail a{width:38px;height:38px;display:grid;place-items:center;border:1px solid #d9b76066;border-radius:50%;background:#070604d9;color:#e7c86b;text-decoration:none;box-shadow:inset 0 0 12px #d9b76010,0 0 12px #000;transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease,color .22s ease}.scSocialRail a:active,.scSocialRail a:focus-visible{transform:scale(.94);color:#ffe59a;border-color:#f2d783;box-shadow:0 0 18px #d9b76055}.scSocialRail svg{width:18px;height:18px;display:block;fill:currentColor}@media (min-width:701px){.scSocialRail{display:none}}@media (orientation:landscape){body.v2-cinema-landscape .scSocialRail{display:none!important}}\n'''
-          html='''\n<nav class="scSocialRail" aria-label="SoulCinema social media"><a href="https://www.facebook.com/profile.php?id=61593718491379" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M13.5 22v-9h3l.5-3h-3.5V8.1c0-.9.3-1.6 1.7-1.6H17V3.8c-.3 0-1.4-.1-2.6-.1-2.6 0-4.4 1.6-4.4 4.5V10H7v3h3v9h3.5Z"/></svg></a><a href="https://www.tiktok.com/@ep.soulcinema" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M15.4 3c.4 2.1 1.6 3.4 3.6 3.8v3.1c-1.4 0-2.7-.4-3.8-1.2v6.2a6 6 0 1 1-5.2-6V12a2.9 2.9 0 1 0 2.1 2.8V3h3.3Z"/></svg></a><a href="https://www.youtube.com/@EPOfficialMusic" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg viewBox="0 0 24 24"><path d="M21.6 7.2a2.8 2.8 0 0 0-2-2C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.6.5a2.8 2.8 0 0 0-2 2A29 29 0 0 0 2 12a29 29 0 0 0 .4 4.8 2.8 2.8 0 0 0 2 2c1.8.5 7.6.5 7.6.5s5.8 0 7.6-.5a2.8 2.8 0 0 0 2-2A29 29 0 0 0 22 12a29 29 0 0 0-.4-4.8ZM10 15.2V8.8l5.5 3.2-5.5 3.2Z"/></svg></a></nav>\n'''
-          s=s.replace('</style>',css+'</style>',1).replace('</body>',html+'</body>',1)
-          if s.count(marker)!=1: raise SystemExit('Social marker guard failed')
-          for u in ('https://www.facebook.com/profile.php?id=61593718491379','https://www.tiktok.com/@ep.soulcinema','https://www.youtube.com/@EPOfficialMusic'):
-              if s.count(u)!=1: raise SystemExit('Social URL guard failed: '+u)
+          p=Path('public/mobile-v2.html')
+          s=p.read_text(encoding='utf-8')
+          marker='SOULCINEMA LIVE LANDSCAPE 16X9 LOCK V1'
+          css='''\n/* SOULCINEMA LIVE LANDSCAPE 16X9 LOCK V1 */\nbody.v2-live-16x9{overflow:hidden!important;background:#000!important}\nbody.v2-live-16x9 .top,body.v2-live-16x9 .nav,body.v2-live-16x9 .scSocialRail,body.v2-live-16x9 #live>.back,body.v2-live-16x9 #live .roomHero>.eyebrow,body.v2-live-16x9 #live .roomHero>h1,body.v2-live-16x9 #live .roomHero>p,body.v2-live-16x9 #live .roomHero>.note{display:none!important}\nbody.v2-live-16x9 .app,body.v2-live-16x9 #live.active,body.v2-live-16x9 #live.active>.roomHero{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;background:#000!important;box-shadow:none!important}\nbody.v2-live-16x9 #v2LiveMount{position:fixed!important;left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;transform:translate(-50%,-50%)!important;width:min(100vw,calc(100dvh * 16 / 9))!important;height:min(100dvh,calc(100vw * 9 / 16))!important;aspect-ratio:16/9!important;margin:0!important;border:0!important;border-radius:0!important;background:#000!important;overflow:hidden!important;z-index:2147483000!important}\nbody.v2-live-16x9 #v2LiveOwner{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border:0!important;background:#000!important}\n'''
+          old='function syncCinemaLandscape(){const id=document.querySelector(".view.active")?.id;document.body.classList.toggle("v2-cinema-landscape",matchMedia("(orientation:landscape)").matches&&(id==="theater"||id==="live"))} addEventListener("orientationchange",()=>setTimeout(syncCinemaLandscape,80));addEventListener("resize",syncCinemaLandscape);'
+          new='function syncCinemaLandscape(){const id=document.querySelector(".view.active")?.id,vv=window.visualViewport,w=vv?.width||innerWidth,h=vv?.height||innerHeight,isLandscape=w>h;document.body.classList.toggle("v2-cinema-landscape",isLandscape&&(id==="theater"||id==="live"));document.body.classList.toggle("v2-live-16x9",isLandscape&&id==="live")} function resyncCinemaLandscape(){syncCinemaLandscape();setTimeout(syncCinemaLandscape,120);setTimeout(syncCinemaLandscape,360)} addEventListener("orientationchange",resyncCinemaLandscape);addEventListener("resize",resyncCinemaLandscape);window.visualViewport?.addEventListener("resize",resyncCinemaLandscape);'
+          if marker not in s:
+              if s.count('</style>')!=1: raise SystemExit('Landscape guard: style boundary')
+              s=s.replace('</style>',css+'</style>',1)
+          if old in s:
+              s=s.replace(old,new,1)
+          elif 'v2-live-16x9' not in s[s.find('function syncCinemaLandscape'):]:
+              raise SystemExit('Landscape guard: JS authority not found')
+          if s.count(marker)!=1: raise SystemExit('Landscape marker guard failed')
+          if 'visualViewport?.addEventListener("resize",resyncCinemaLandscape)' not in s: raise SystemExit('Landscape rotation guard failed')
           p.write_text(s,encoding='utf-8')
           PY
-          if git diff --quiet -- public/mobile-v2.html; then echo "Social rail already installed"; exit 0; fi
-          git config user.name "SoulCinema Social Bot"
+      - name: Commit surgical mobile landscape patch
+        run: |
+          if git diff --quiet -- public/index.html public/mobile-v2.html; then echo "Landscape patch already installed"; exit 0; fi
+          git config user.name "SoulCinema C.D."
           git config user.email "actions@users.noreply.github.com"
-          git add public/mobile-v2.html
-          git commit -m "Add cinematic mobile social rail"
+          git add public/index.html public/mobile-v2.html
+          git commit -m "Mobile Live: lock automatic centered 16:9 landscape"
           git push origin HEAD:main
