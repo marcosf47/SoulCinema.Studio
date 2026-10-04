@@ -1,50 +1,68 @@
 const PLAYER="https://live.soulcinema.studio/soulcinemad-opus/?controls=false&muted=true&autoplay=false&playsInline=true";
-const HLS_CANDIDATES=[
-  "https://live.soulcinema.studio/soulcinemad-opus/index.m3u8",
-  "https://live.soulcinema.studio/soulcinemad-opus.m3u8"
-];
+const MTX="https://live.soulcinema.studio";
+const PATH="soulcinemad-opus";
 
-async function fetchText(url,timeout=3500){
-  const ctl=new AbortController();
-  const tm=setTimeout(()=>ctl.abort(),timeout);
+async function fetchJson(url,timeout=3200){
+  const ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),timeout);
   try{
-    const r=await fetch(url+(url.includes("?")?"&":"?")+"_sc="+Date.now(),{
-      cache:"no-store",redirect:"follow",signal:ctl.signal,
-      headers:{accept:"application/vnd.apple.mpegurl,application/x-mpegURL,text/plain,text/html,*/*","user-agent":"SoulCinema-Live-Probe/7.0"}
-    });
-    const body=await r.text();
-    return {ok:r.ok,status:r.status,body};
+    const r=await fetch(url+(url.includes("?")?"&":"?")+"_sc="+Date.now(),{cache:"no-store",redirect:"follow",signal:ctl.signal,headers:{accept:"application/json,*/*","user-agent":"SoulCinema-Live-Probe/8.0"}});
+    if(!r.ok)return null;
+    return await r.json();
   }finally{clearTimeout(tm)}
+}
+
+async function fetchText(url,timeout=4200){
+  const ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),timeout);
+  try{
+    const r=await fetch(url+(url.includes("?")?"&":"?")+"_sc="+Date.now(),{cache:"no-store",redirect:"follow",signal:ctl.signal,headers:{accept:"text/html,*/*","user-agent":"SoulCinema-Live-Probe/8.0"}});
+    return {ok:r.ok,body:await r.text()};
+  }finally{clearTimeout(tm)}
+}
+
+function pathState(d){
+  if(!d||typeof d!=="object")return null;
+  if(d.ready===true||d.sourceReady===true||d.source?.ready===true)return true;
+  if(d.ready===false||d.sourceReady===false||d.source?.ready===false)return false;
+  return null;
 }
 
 module.exports=async function handler(req,res){
   res.setHeader("Cache-Control","no-store, max-age=0");
 
-  // Prefer real media evidence. A MediaMTX player page can remain HTTP 200
-  // after the publisher disappears, so it must never be authoritative OFF/ON by itself.
-  for(const url of HLS_CANDIDATES){
+  // First recover the authoritative OFF/ON signal from MediaMTX when available.
+  let mtxState=null;
+  try{
+    const d=await fetchJson(MTX+"/v3/paths/get/"+encodeURIComponent(PATH));
+    mtxState=pathState(d);
+  }catch(e){}
+  if(mtxState===null){
     try{
-      const p=await fetchText(url);
-      const hasMedia=p.ok&&p.body.includes("#EXTM3U")&&(
-        p.body.includes("#EXT-X-STREAM-INF")||
-        p.body.includes("#EXTINF")||
-        p.body.includes("#EXT-X-TARGETDURATION")
-      );
-      if(hasMedia)return res.status(200).json({live:true,reliable:true,source:"hls-manifest"});
+      const d=await fetchJson(MTX+"/v3/paths/list");
+      const items=Array.isArray(d?.items)?d.items:[];
+      const p=items.find(x=>x?.name===PATH);
+      if(p)mtxState=pathState(p);
+      else if(Array.isArray(d?.items))mtxState=false;
     }catch(e){}
   }
 
-  // Keep the proven player-page ON path as a compatibility fallback, but only
-  // accept it when the response itself does not contain MediaMTX's offline state.
-  try{
-    const p=await fetchText(PLAYER,4500);
-    const explicitOffline=!p.ok||/stream not found|retrying in some seconds/i.test(p.body);
-    if(explicitOffline)return res.status(200).json({live:false,reliable:true,source:"player-page-offline"});
-  }catch(e){
-    return res.status(200).json({live:false,reliable:false,source:"probe-error"});
-  }
+  // Proven ON path: when the publisher is present, mount the existing player.
+  if(mtxState===true)return res.status(200).json({live:true,reliable:true,source:"mediamtx-ready"});
 
-  // No playable HLS media was found. Do not mount an iframe that can expose the
-  // raw "stream not found" page; the next poll will restore ON automatically.
-  return res.status(200).json({live:false,reliable:true,source:"no-media"});
+  // Keep the player-page probe as the ON compatibility fallback that previously
+  // brought SoulCinema Live on air. An explicit MediaMTX OFF always wins below.
+  let playerOnline=false,playerExplicitOff=false;
+  try{
+    const p=await fetchText(PLAYER);
+    playerExplicitOff=!p.ok||/stream not found|retrying in some seconds/i.test(p.body);
+    playerOnline=p.ok&&!playerExplicitOff;
+  }catch(e){}
+
+  // Authoritative OFF gate: this prevents the raw stream-not-found iframe.
+  if(mtxState===false||playerExplicitOff)return res.status(200).json({live:false,reliable:true,source:mtxState===false?"mediamtx-off":"player-off"});
+
+  if(playerOnline)return res.status(200).json({live:true,reliable:false,source:"player-page"});
+
+  // Unknown/transient probe state is not declared reliable OFF, so the mobile
+  // watcher will preserve an already-mounted live session and retry automatically.
+  return res.status(200).json({live:false,reliable:false,source:"unknown"});
 };
