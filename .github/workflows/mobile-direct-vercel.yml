@@ -61,11 +61,25 @@ jobs:
           if 'visualViewport?.addEventListener("resize",resyncCinemaLandscape)' not in s: raise SystemExit('Landscape rotation guard failed')
           p.write_text(s,encoding='utf-8')
           PY
+      - name: Apply Films first-rotation landscape race guard
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('public/mobile-v2.html')
+          s=p.read_text(encoding='utf-8')
+          marker='SOULCINEMA FILMS FIRST ROTATION LANDSCAPE LOCK V1'
+          css='''\n/* SOULCINEMA FILMS FIRST ROTATION LANDSCAPE LOCK V1 */\nbody.v2-cinema-landscape:has(#theater.active){overflow:hidden!important;background:#000!important}\nbody.v2-cinema-landscape:has(#theater.active) .top,body.v2-cinema-landscape:has(#theater.active) .nav,body.v2-cinema-landscape:has(#theater.active) .scSocialRail,body.v2-cinema-landscape #theater.active>.back,body.v2-cinema-landscape #theater.active .roomHero>.eyebrow,body.v2-cinema-landscape #theater.active .roomHero>h1,body.v2-cinema-landscape #theater.active .roomHero>p,body.v2-cinema-landscape #theater.active #filmList{display:none!important}\nbody.v2-cinema-landscape #theater.active,body.v2-cinema-landscape #theater.active>.roomHero{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;background:#000!important;box-shadow:none!important}\nbody.v2-cinema-landscape #theater.active .mediaFrame{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;margin:0!important;border:0!important;border-radius:0!important;background:#000!important;display:grid!important;place-items:center!important;z-index:2147482900!important}\nbody.v2-cinema-landscape #theater.active .mediaFrame video{display:block!important;width:100vw!important;height:100dvh!important;max-width:100vw!important;max-height:100dvh!important;object-fit:contain!important;background:#000!important}\n'''
+          if marker not in s:
+              if s.count('</style>')!=1: raise SystemExit('Films landscape guard: style boundary')
+              s=s.replace('</style>',css+'</style>',1)
+          if s.count(marker)!=1: raise SystemExit('Films landscape marker guard failed')
+          p.write_text(s,encoding='utf-8')
+          PY
       - name: Commit surgical mobile landscape patch
         run: |
-          if git diff --quiet -- public/index.html public/mobile-v2.html; then echo "Landscape patch already installed"; exit 0; fi
+          if git diff --quiet -- public/index.html public/mobile-v2.html; then echo "Landscape patches already installed"; exit 0; fi
           git config user.name "SoulCinema C.D."
           git config user.email "actions@users.noreply.github.com"
           git add public/index.html public/mobile-v2.html
-          git commit -m "Mobile Live: lock automatic centered 16:9 landscape"
+          git commit -m "Films: lock first-rotation landscape continuity"
           git push origin HEAD:main
