@@ -1,0 +1,48 @@
+name: SoulCinema App Social Rail Surgical
+on:
+  workflow_dispatch:
+  push:
+    branches: [soulcinema-app-v1]
+    paths:
+      - ".github/workflows/app-social-rail-surgical.yml"
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: soulcinema-app-v1
+      - name: Make drawer social rail reachable
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          public=Path('public/app/index.html')
+          app=Path('app/index.html')
+          assert public.read_bytes()==app.read_bytes(), 'APP parity must be green before patch'
+          s=public.read_text()
+          assert 'APP SOCIAL RAIL LOCK' in s, 'social rail missing'
+          old='.drawerPanel{width:min(84vw,350px);height:100%;padding:calc(28px + env(safe-area-inset-top)) 20px;'
+          new='.drawerPanel{width:min(84vw,350px);height:100%;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:calc(28px + env(safe-area-inset-top)) 20px calc(28px + env(safe-area-inset-bottom));'
+          if new not in s:
+              assert old in s, 'drawerPanel baseline not found'
+              s=s.replace(old,new,1)
+          assert s.count('APP SOCIAL RAIL LOCK')==1
+          assert 'overflow-y:auto' in s
+          assert '61593718491379' in s and '@ep.soulcinema' in s and '@EPOfficialMusic' in s
+          public.write_text(s)
+          app.write_text(s)
+          PY
+      - name: Verify parity and surgical scope
+        run: |
+          cmp -s app/index.html public/app/index.html
+          git diff --check
+          test "$(git diff --name-only | sort | tr '\n' ' ')" = "app/index.html public/app/index.html "
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/index.html public/app/index.html
+          git commit -m "App: make drawer social rail reachable"
+          git push origin HEAD:soulcinema-app-v1
