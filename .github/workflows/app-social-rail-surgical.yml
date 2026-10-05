@@ -55,3 +55,4 @@ jobs:
           git add app/index.html public/app/index.html
           git commit -m "App: sync TikTok handle to soulcinema.studio"
           git push origin HEAD:soulcinema-app-v1
+# EP forward-only retrigger: TikTok runtime sync
