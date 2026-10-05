@@ -1,0 +1,31 @@
+name: TikTok Web Direct V2
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Patch TikTok anchor
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('public/mobile-v2.html')
+          s=p.read_text()
+          old=''' target="_blank" rel="noopener noreferrer" aria-label="TikTok" onclick="event.stopPropagation();window.open(this.href,'_blank','noopener,noreferrer');return false;"'''
+          new=''' aria-label="TikTok"'''
+          if old not in s: raise SystemExit('TikTok patched anchor not found')
+          if s.count(old)!=1: raise SystemExit('Unsafe TikTok anchor count')
+          p.write_text(s.replace(old,new,1))
+          PY
+      - name: Commit
+        run: |
+          git config user.name "SoulCinema C.D."
+          git config user.email "actions@users.noreply.github.com"
+          git add public/mobile-v2.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Web: restore native TikTok direct navigation"
+          git push origin HEAD:main
