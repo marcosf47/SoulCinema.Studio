@@ -14,7 +14,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: soulcinema-app-v1
-      - name: Make drawer social rail reachable
+      - name: Sync locked TikTok handle and keep drawer social rail reachable
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -23,14 +23,21 @@ jobs:
           assert public.read_bytes()==app.read_bytes(), 'APP parity must be green before patch'
           s=public.read_text()
           assert 'APP SOCIAL RAIL LOCK' in s, 'social rail missing'
-          old='.drawerPanel{width:min(84vw,350px);height:100%;padding:calc(28px + env(safe-area-inset-top)) 20px;'
-          new='.drawerPanel{width:min(84vw,350px);height:100%;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:calc(28px + env(safe-area-inset-top)) 20px calc(28px + env(safe-area-inset-bottom));'
-          if new not in s:
-              assert old in s, 'drawerPanel baseline not found'
-              s=s.replace(old,new,1)
+          old_panel='.drawerPanel{width:min(84vw,350px);height:100%;padding:calc(28px + env(safe-area-inset-top)) 20px;'
+          new_panel='.drawerPanel{width:min(84vw,350px);height:100%;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:calc(28px + env(safe-area-inset-top)) 20px calc(28px + env(safe-area-inset-bottom));'
+          if new_panel not in s:
+              assert old_panel in s, 'drawerPanel baseline not found'
+              s=s.replace(old_panel,new_panel,1)
+          old_tiktok='https://www.tiktok.com/@ep.soulcinema'
+          new_tiktok='https://www.tiktok.com/@soulcinema.studio'
+          if new_tiktok not in s:
+              assert old_tiktok in s, 'TikTok baseline not found'
+              s=s.replace(old_tiktok,new_tiktok,1)
+          assert old_tiktok not in s, 'stale TikTok handle remains'
+          assert s.count(new_tiktok)==1, 'expected exactly one locked TikTok URL'
           assert s.count('APP SOCIAL RAIL LOCK')==1
           assert 'overflow-y:auto' in s
-          assert '61593718491379' in s and '@ep.soulcinema' in s and '@EPOfficialMusic' in s
+          assert '61593718491379' in s and '@EPOfficialMusic' in s
           public.write_text(s)
           app.write_text(s)
           PY
@@ -39,10 +46,12 @@ jobs:
           cmp -s app/index.html public/app/index.html
           git diff --check
           test "$(git diff --name-only | sort | tr '\n' ' ')" = "app/index.html public/app/index.html "
+          grep -q 'https://www.tiktok.com/@soulcinema.studio' public/app/index.html
+          ! grep -q 'https://www.tiktok.com/@ep.soulcinema' public/app/index.html
       - name: Commit patch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add app/index.html public/app/index.html
-          git commit -m "App: make drawer social rail reachable"
+          git commit -m "App: sync TikTok handle to soulcinema.studio"
           git push origin HEAD:soulcinema-app-v1
