@@ -1,4 +1,4 @@
-name: SoulCinema App Social Rail Surgical
+name: SoulCinema App Live Screen Awake Surgical
 on:
   workflow_dispatch:
   push:
@@ -14,7 +14,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: soulcinema-app-v1
-      - name: Sync locked TikTok handle and keep drawer social rail reachable
+      - name: Add Live-only screen wake lock
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -22,22 +22,22 @@ jobs:
           app=Path('app/index.html')
           assert public.read_bytes()==app.read_bytes(), 'APP parity must be green before patch'
           s=public.read_text()
-          assert 'APP SOCIAL RAIL LOCK' in s, 'social rail missing'
-          old_panel='.drawerPanel{width:min(84vw,350px);height:100%;padding:calc(28px + env(safe-area-inset-top)) 20px;'
-          new_panel='.drawerPanel{width:min(84vw,350px);height:100%;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:calc(28px + env(safe-area-inset-top)) 20px calc(28px + env(safe-area-inset-bottom));'
-          if new_panel not in s:
-              assert old_panel in s, 'drawerPanel baseline not found'
-              s=s.replace(old_panel,new_panel,1)
-          old_tiktok='https://www.tiktok.com/@ep.soulcinema'
-          new_tiktok='https://www.tiktok.com/@soulcinema.studio'
-          if new_tiktok not in s:
-              assert old_tiktok in s, 'TikTok baseline not found'
-              s=s.replace(old_tiktok,new_tiktok,1)
-          assert old_tiktok not in s, 'stale TikTok handle remains'
-          assert s.count(new_tiktok)==1, 'expected exactly one locked TikTok URL'
-          assert s.count('APP SOCIAL RAIL LOCK')==1
-          assert 'overflow-y:auto' in s
-          assert '61593718491379' in s and '@EPOfficialMusic' in s
+          assert 'https://www.tiktok.com/@soulcinema.studio' in s, 'locked TikTok target missing'
+          marker='/* SOULCINEMA LIVE SCREEN AWAKE LOCK */'
+          anchor='function go(id){hardStop();'
+          patch='''/* SOULCINEMA LIVE SCREEN AWAKE LOCK */\nlet soulLiveWakeLock=null;\nasync function soulLiveWakeAcquire(){\n  if(!('wakeLock' in navigator)||!document.getElementById("live")?.classList.contains("active"))return;\n  try{if(!soulLiveWakeLock)soulLiveWakeLock=await navigator.wakeLock.request("screen")}catch(e){}\n}\nasync function soulLiveWakeRelease(){\n  const lock=soulLiveWakeLock;soulLiveWakeLock=null;\n  try{await lock?.release?.()}catch(e){}\n}\ndocument.addEventListener("visibilitychange",()=>{\n  if(document.visibilityState==="visible"&&document.getElementById("live")?.classList.contains("active"))soulLiveWakeAcquire();\n});\nfunction go(id){hardStop();'''
+          if marker not in s:
+              assert s.count(anchor)==1, 'navigation anchor not uniquely found'
+              s=s.replace(anchor,patch,1)
+          old='if(id==="live")mountLive();else destroyLive();'
+          new='if(id==="live"){mountLive();setTimeout(soulLiveWakeAcquire,0)}else{soulLiveWakeRelease();destroyLive();}'
+          if new not in s:
+              assert s.count(old)==1, 'Live navigation baseline not uniquely found'
+              s=s.replace(old,new,1)
+          assert s.count(marker)==1
+          assert s.count('setTimeout(soulLiveWakeAcquire,0)')==1
+          assert s.count('soulLiveWakeRelease();destroyLive()')==1
+          assert 'https://www.tiktok.com/@soulcinema.studio' in s
           public.write_text(s)
           app.write_text(s)
           PY
@@ -46,13 +46,13 @@ jobs:
           cmp -s app/index.html public/app/index.html
           git diff --check
           test "$(git diff --name-only | sort | tr '\n' ' ')" = "app/index.html public/app/index.html "
+          grep -q 'SOULCINEMA LIVE SCREEN AWAKE LOCK' public/app/index.html
+          grep -q 'navigator.wakeLock.request("screen")' public/app/index.html
           grep -q 'https://www.tiktok.com/@soulcinema.studio' public/app/index.html
-          ! grep -q 'https://www.tiktok.com/@ep.soulcinema' public/app/index.html
       - name: Commit patch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add app/index.html public/app/index.html
-          git commit -m "App: sync TikTok handle to soulcinema.studio"
+          git commit -m "App: keep screen awake in Live Center"
           git push origin HEAD:soulcinema-app-v1
-# EP forward-only retrigger: TikTok runtime sync
