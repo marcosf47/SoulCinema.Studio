@@ -1,0 +1,36 @@
+name: TikTok Handle Sync
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Sync TikTok URL only
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('public/mobile-v2.html')
+          s=p.read_text(encoding='utf-8')
+          old='https://www.tiktok.com/@ep.soulcinema'
+          new='https://www.tiktok.com/@soulcinema.studio'
+          if new in s and old not in s:
+              print('TikTok handle already synced')
+              raise SystemExit(0)
+          if s.count(old)!=1:
+              raise SystemExit('Unsafe TikTok URL count; no change made')
+          p.write_text(s.replace(old,new,1),encoding='utf-8')
+          PY
+      - name: Commit URL sync
+        run: |
+          git config user.name "SoulCinema C.D."
+          git config user.email "actions@users.noreply.github.com"
+          git add public/mobile-v2.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Web: update TikTok handle to soulcinema.studio"
+          git push origin HEAD:main
