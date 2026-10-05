@@ -1,0 +1,40 @@
+name: TikTok Footer Surgical Fix
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Patch TikTok footer link only
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('public/mobile-v2.html')
+          s = p.read_text(encoding='utf-8')
+          old = '<a href="https://www.tiktok.com/@ep.soulcinema" target="_blank" rel="noopener noreferrer" aria-label="TikTok">'
+          new = '<a href="https://www.tiktok.com/@ep.soulcinema" target="_blank" rel="noopener noreferrer" aria-label="TikTok" onclick="event.stopPropagation();window.open(this.href,\'_blank\',\'noopener,noreferrer\');return false;">'
+          if new in s:
+              print('TikTok footer click fix already installed')
+          elif old in s:
+              if s.count(old) != 1:
+                  raise SystemExit('Guard failed: expected exactly one TikTok footer anchor')
+              s = s.replace(old, new, 1)
+              p.write_text(s, encoding='utf-8')
+          else:
+              raise SystemExit('Guard failed: exact TikTok footer anchor not found; no file changed')
+          PY
+      - name: Commit TikTok-only patch
+        run: |
+          if git diff --quiet -- public/mobile-v2.html; then echo "No change needed"; exit 0; fi
+          git config user.name "SoulCinema C.D."
+          git config user.email "actions@users.noreply.github.com"
+          git add public/mobile-v2.html
+          git commit -m "Mobile: fix TikTok footer open action"
+          git push origin HEAD:main
