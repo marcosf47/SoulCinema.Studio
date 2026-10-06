@@ -7,19 +7,19 @@ s = s.replace('import com.getcapacitor.BridgeActivity;', 'import com.getcapacito
 s = s.replace('public class MainActivity extends BridgeActivity {}', '''public class MainActivity extends BridgeActivity {
   private static final int IMMERSIVE_FLAGS = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
   private boolean liveImmersive = false;
-  private void setImmersive(boolean enabled) {
+  private void applyLiveImmersive(boolean enabled) {
     liveImmersive = enabled;
     runOnUiThread(() -> getWindow().getDecorView().setSystemUiVisibility(enabled ? IMMERSIVE_FLAGS : View.SYSTEM_UI_FLAG_VISIBLE));
   }
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     getBridge().getWebView().addJavascriptInterface(new Object() {
-      @android.webkit.JavascriptInterface public void setImmersive(String enabled) { MainActivity.this.setImmersive("1".equals(enabled)); }
+      @android.webkit.JavascriptInterface public void setImmersive(String enabled) { MainActivity.this.applyLiveImmersive("1".equals(enabled)); }
     }, "SoulImmersive");
   }
   @Override public void onWindowFocusChanged(boolean hasFocus) {
     super.onWindowFocusChanged(hasFocus);
-    if (hasFocus && liveImmersive) setImmersive(true);
+    if (hasFocus && liveImmersive) applyLiveImmersive(true);
   }
 }''')
 java.write_text(s)
