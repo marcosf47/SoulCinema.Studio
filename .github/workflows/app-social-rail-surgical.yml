@@ -1,0 +1,58 @@
+name: SoulCinema App Live Screen Awake Surgical
+on:
+  workflow_dispatch:
+  push:
+    branches: [soulcinema-app-v1]
+    paths:
+      - ".github/workflows/app-social-rail-surgical.yml"
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: soulcinema-app-v1
+      - name: Add Live-only screen wake lock
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          public=Path('public/app/index.html')
+          app=Path('app/index.html')
+          assert public.read_bytes()==app.read_bytes(), 'APP parity must be green before patch'
+          s=public.read_text()
+          assert 'https://www.tiktok.com/@soulcinema.studio' in s, 'locked TikTok target missing'
+          marker='/* SOULCINEMA LIVE SCREEN AWAKE LOCK */'
+          anchor='function go(id){hardStop();'
+          patch='''/* SOULCINEMA LIVE SCREEN AWAKE LOCK */\nlet soulLiveWakeLock=null;\nasync function soulLiveWakeAcquire(){\n  if(!('wakeLock' in navigator)||!document.getElementById("live")?.classList.contains("active"))return;\n  try{if(!soulLiveWakeLock)soulLiveWakeLock=await navigator.wakeLock.request("screen")}catch(e){}\n}\nasync function soulLiveWakeRelease(){\n  const lock=soulLiveWakeLock;soulLiveWakeLock=null;\n  try{await lock?.release?.()}catch(e){}\n}\ndocument.addEventListener("visibilitychange",()=>{\n  if(document.visibilityState==="visible"&&document.getElementById("live")?.classList.contains("active"))soulLiveWakeAcquire();\n});\nfunction go(id){hardStop();'''
+          if marker not in s:
+              assert s.count(anchor)==1, 'navigation anchor not uniquely found'
+              s=s.replace(anchor,patch,1)
+          old='if(id==="live")mountLive();else destroyLive();'
+          new='if(id==="live"){mountLive();setTimeout(soulLiveWakeAcquire,0)}else{soulLiveWakeRelease();destroyLive();}'
+          if new not in s:
+              assert s.count(old)==1, 'Live navigation baseline not uniquely found'
+              s=s.replace(old,new,1)
+          assert s.count(marker)==1
+          assert s.count('setTimeout(soulLiveWakeAcquire,0)')==1
+          assert s.count('soulLiveWakeRelease();destroyLive()')==1
+          assert 'https://www.tiktok.com/@soulcinema.studio' in s
+          public.write_text(s)
+          app.write_text(s)
+          PY
+      - name: Verify parity and surgical scope
+        run: |
+          cmp -s app/index.html public/app/index.html
+          git diff --check
+          test "$(git diff --name-only | sort | tr '\n' ' ')" = "app/index.html public/app/index.html "
+          grep -q 'SOULCINEMA LIVE SCREEN AWAKE LOCK' public/app/index.html
+          grep -q 'navigator.wakeLock.request("screen")' public/app/index.html
+          grep -q 'https://www.tiktok.com/@soulcinema.studio' public/app/index.html
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/index.html public/app/index.html
+          git commit -m "App: keep screen awake in Live Center"
+          git push origin HEAD:soulcinema-app-v1

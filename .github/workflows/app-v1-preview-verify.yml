@@ -1,0 +1,141 @@
+name: SoulCinema App V1 Preview Verify
+"on":
+  push:
+    branches: [soulcinema-app-v1]
+    paths:
+      - "app/**"
+      - "public/app/**"
+      - "vercel.app-preview.json"
+      - "package.json"
+      - "package-lock.json"
+      - "capacitor.config.json"
+      - "android/**"
+      - ".github/workflows/app-v1-preview-verify.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "app/**"
+      - "public/app/**"
+      - "vercel.app-preview.json"
+      - "package.json"
+      - "package-lock.json"
+      - "capacitor.config.json"
+      - "android/**"
+      - ".github/workflows/app-v1-preview-verify.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-app:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify isolated App V1 package
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}" = "soulcinema-app-v1"
+          for f in app/index.html app/manifest.webmanifest app/sw.js app/PHASE1-CHECKPOINT.md app/PHASE2-EXECUTION.md public/app/index.html public/app/manifest.webmanifest public/app/sw.js; do test -f "$f"; done
+          cmp -s app/index.html public/app/index.html
+          cmp -s app/manifest.webmanifest public/app/manifest.webmanifest
+          cmp -s app/sw.js public/app/sw.js
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          s=Path("app/index.html").read_text()
+          ids=re.findall(r'\bid="([^"]+)"',s)
+          targets=re.findall(r'data-go="([^"]+)"',s)
+          missing=sorted(set(targets)-set(ids))
+          dupes=sorted({x for x in ids if ids.count(x)>1})
+          required=["soulcinema-app-lifecycle","soulcinema-app-media-guard","/app/manifest.webmanifest","/app/sw.js","const LIVE_FEED=","const SC_API=","function hardStop","function destroyLive","function destroyDiscovery","visibilitychange","pagehide","beforeunload","popstate","freeze"]
+          absent=[x for x in required if x not in s]
+          assert not missing, f"Missing route destinations: {missing}"
+          assert not dupes, f"Duplicate IDs: {dupes}"
+          assert len(targets)==68, f"Unexpected route target count: {len(targets)}"
+          assert not absent, f"Missing required runtime markers: {absent}"
+          for core in ["gate","home","theater","music","live"]:
+              assert ids.count(core)==1, f"Core view id {core!r} count={ids.count(core)}"
+          sw=Path("app/sw.js").read_text()
+          manifest=Path("app/manifest.webmanifest").read_text()
+          assert "soulcinema-app-shell-v4" in sw
+          assert 'fetch(e.request).then' in sw and 'c.put("/app/index.html",copy)' in sw
+          assert "/app/index.html#gate" in manifest and '"/app/"' in manifest
+          assert '"id": "/app/"' in manifest and '"display": "standalone"' in manifest
+          assert 'version:"phase2"' in s and 'document.addEventListener("resume",restore)' in s
+          print(f"App V1 verify OK: {len(targets)} routes; parity + lifecycle + media markers passed")
+          PY
+          ! grep -q 'public/mobile-v2.html' vercel.app-preview.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          pkg=json.loads(Path("package.json").read_text())
+          cap=json.loads(Path("capacitor.config.json").read_text())
+          assert cap["appId"]=="studio.soulcinema.app"
+          assert cap["appName"]=="SoulCinema"
+          assert cap["webDir"]=="public/app"
+          for dep in ["@capacitor/core"]:
+              assert dep in pkg.get("dependencies",{}), dep
+          for dep in ["@capacitor/cli","@capacitor/android"]:
+              assert dep in pkg.get("devDependencies",{}), dep
+          for script in ["app:add:android","app:sync","app:open","app:build"]:
+              assert script in pkg.get("scripts",{}), script
+          print("Android packaging config OK")
+          PY
+      - name: Set up Java 21 for Capacitor Android
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Verify Android native bootstrap in clean runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-audit --no-fund
+          npm run app:add:android
+          test -f android/gradlew
+          test -f android/app/build.gradle
+          npm run app:sync
+          test -f android/app/src/main/assets/public/index.html
+          grep -q 'SOULCINEMA APP' android/app/src/main/assets/public/index.html
+          grep -q 'applicationId "studio.soulcinema.app"' android/app/build.gradle
+          grep -q 'versionCode 1' android/app/build.gradle
+          grep -q 'versionName "1.0"' android/app/build.gradle
+          grep -q 'Android application ID: studio.soulcinema.app' app/RELEASE-METADATA.md
+          grep -q 'Package version: 1.0.0' app/RELEASE-METADATA.md
+          grep -q 'Android versionCode: 1' app/RELEASE-METADATA.md
+          grep -q 'Android versionName: 1.0' app/RELEASE-METADATA.md
+          test -f android/app/src/main/AndroidManifest.xml
+          grep -q 'android.permission.INTERNET' android/app/src/main/AndroidManifest.xml
+          ! grep -q 'android:usesCleartextTraffic="true"' android/app/src/main/AndroidManifest.xml
+          ! grep -R -qE '(BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY|storePassword|keyPassword)' android capacitor.config.json package.json
+          cd android
+          ./gradlew bundleDebug
+          test -f app/build/outputs/bundle/debug/app-debug.aab
+          test "$(find app/build/outputs/bundle/debug -name '*.aab' -type f | wc -l)" -eq 1
+          sha256sum app/build/outputs/bundle/debug/app-debug.aab
+          unzip -t app/build/outputs/bundle/debug/app-debug.aab >/dev/null
+          unzip -l app/build/outputs/bundle/debug/app-debug.aab | grep -q 'base/manifest/AndroidManifest.xml'
+          unzip -l app/build/outputs/bundle/debug/app-debug.aab | grep -q 'base/dex/classes.dex'
+          unzip -l app/build/outputs/bundle/debug/app-debug.aab | grep -q 'base/assets/public/index.html'
+          unzip -p app/build/outputs/bundle/debug/app-debug.aab base/assets/public/index.html | grep -q 'SOULCINEMA APP'
+          unzip -l app/build/outputs/bundle/debug/app-debug.aab | grep -q 'base/assets/public/manifest.webmanifest'
+          unzip -l app/build/outputs/bundle/debug/app-debug.aab | grep -q 'base/assets/public/sw.js'
+          test "$(unzip -p app/build/outputs/bundle/debug/app-debug.aab base/assets/public/index.html | sha256sum | awk '{print $1}')" = "$(sha256sum ../public/app/index.html | awk '{print $1}')"
+          test "$(unzip -p app/build/outputs/bundle/debug/app-debug.aab base/assets/public/manifest.webmanifest | sha256sum | awk '{print $1}')" = "$(sha256sum ../public/app/manifest.webmanifest | awk '{print $1}')"
+          test "$(unzip -p app/build/outputs/bundle/debug/app-debug.aab base/assets/public/sw.js | sha256sum | awk '{print $1}')" = "$(sha256sum ../public/app/sw.js | awk '{print $1}')"
+          test "$(sha256sum ../app/index.html | awk '{print $1}')" = "$(sha256sum ../public/app/index.html | awk '{print $1}')"
+          test "$(sha256sum ../app/manifest.webmanifest | awk '{print $1}')" = "$(sha256sum ../public/app/manifest.webmanifest | awk '{print $1}')"
+          test "$(sha256sum ../app/sw.js | awk '{print $1}')" = "$(sha256sum ../public/app/sw.js | awk '{print $1}')"
+      - name: Upload Android debug App Bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: soulcinema-app-v1-debug-aab
+          path: android/app/build/outputs/bundle/debug/app-debug.aab
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Production isolation gate
+        run: |
+          git diff --exit-code origin/main -- public/mobile-v2.html public/index.html
