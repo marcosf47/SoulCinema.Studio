@@ -62,6 +62,61 @@ jobs:
           npx cap add android
           npx cap sync android
 
+      - name: Patch Live immersive fullscreen only
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('android/app/src/main/java/studio/soulcinema/app/MainActivity.java')
+          s=p.read_text()
+          assert 'package studio.soulcinema.app;' in s
+          assert 'class MainActivity' in s
+          s=s.replace('import com.getcapacitor.BridgeActivity;', '''import com.getcapacitor.BridgeActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;''')
+          old='public class MainActivity extends BridgeActivity {}'
+          new='''public class MainActivity extends BridgeActivity {
+  private static final int IMMERSIVE_FLAGS =
+      View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY |
+      View.SYSTEM_UI_FLAG_FULLSCREEN |
+      View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+      View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+      View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+      View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+
+  private void setImmersive(boolean enabled) {
+    runOnUiThread(() -> getWindow().getDecorView().setSystemUiVisibility(enabled ? IMMERSIVE_FLAGS : View.SYSTEM_UI_FLAG_VISIBLE));
+  }
+
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    WebView webView = getBridge().getWebView();
+    webView.setWebViewClient(new WebViewClient() {
+      @Override
+      public void onPageFinished(WebView view, String url) {
+        super.onPageFinished(view, url);
+        view.evaluateJavascript("(function(){if(window.__soulImmersiveBridge)return;window.__soulImmersiveBridge=1;const live=document.getElementById('live');if(!live)return;const sync=()=>SoulImmersive.setImmersive(live.classList.contains('active')?'1':'0');new MutationObserver(sync).observe(live,{attributes:true,attributeFilter:['class']});sync();})();", null);
+      }
+    });
+    webView.addJavascriptInterface(new Object() {
+      @android.webkit.JavascriptInterface public void setImmersive(String enabled) { MainActivity.this.setImmersive("1".equals(enabled)); }
+    }, "SoulImmersive");
+  }
+
+  @Override
+  public void onWindowFocusChanged(boolean hasFocus) {
+    super.onWindowFocusChanged(hasFocus);
+    if (hasFocus) getBridge().getWebView().evaluateJavascript("(function(){const l=document.getElementById('live');return !!(l&&l.classList.contains('active'));})()", value -> { if ("true".equals(value)) setImmersive(true); });
+  }
+}'''
+          assert old in s, 'Expected generated MainActivity baseline not found'
+          p.write_text(s.replace(old,new))
+          PY
+          grep -q 'SoulImmersive' android/app/src/main/java/studio/soulcinema/app/MainActivity.java
+          grep -q 'SYSTEM_UI_FLAG_IMMERSIVE_STICKY' android/app/src/main/java/studio/soulcinema/app/MainActivity.java
+
       - name: Install SoulCinema luxury launcher icon
         run: |
           set -euo pipefail
@@ -88,11 +143,11 @@ jobs:
           p=Path("android/app/build.gradle")
           s=p.read_text()
           import re
-          s=re.sub(r'versionCode\s+\d+', 'versionCode 20', s, count=1)
+          s=re.sub(r'versionCode\s+\d+', 'versionCode 21', s, count=1)
           s=re.sub(r'versionName\s+"[^"]+"', 'versionName "1.0"', s, count=1)
           p.write_text(s)
           assert 'applicationId "studio.soulcinema.app"' in s
-          assert 'versionCode 20' in s
+          assert 'versionCode 21' in s
           assert 'versionName "1.0"' in s
           PY
 
