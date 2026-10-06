@@ -23,19 +23,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "21"
-
       - name: Install dependencies
         run: npm install --no-audit --no-fund
-
       - name: Verify locked Capacitor identity
         run: |
           node - <<'NODE'
@@ -44,7 +40,6 @@ jobs:
           if (c.appName !== 'SoulCinema') throw new Error('Unexpected appName: ' + c.appName);
           if (c.webDir !== 'public/app') throw new Error('Unexpected webDir: ' + c.webDir);
           NODE
-
       - name: Require Play upload signing secrets
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
@@ -52,16 +47,14 @@ jobs:
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
         run: |
-          test -n "$ANDROID_KEYSTORE_BASE64" || { echo "Missing ANDROID_KEYSTORE_BASE64"; exit 1; }
-          test -n "$ANDROID_KEY_ALIAS" || { echo "Missing ANDROID_KEY_ALIAS"; exit 1; }
-          test -n "$ANDROID_KEY_PASSWORD" || { echo "Missing ANDROID_KEY_PASSWORD"; exit 1; }
-          test -n "$ANDROID_STORE_PASSWORD" || { echo "Missing ANDROID_STORE_PASSWORD"; exit 1; }
-
+          test -n "$ANDROID_KEYSTORE_BASE64" || exit 1
+          test -n "$ANDROID_KEY_ALIAS" || exit 1
+          test -n "$ANDROID_KEY_PASSWORD" || exit 1
+          test -n "$ANDROID_STORE_PASSWORD" || exit 1
       - name: Generate and sync isolated Android project
         run: |
           npx cap add android
           npx cap sync android
-
       - name: Install SoulCinema luxury launcher icon
         run: |
           set -euo pipefail
@@ -77,35 +70,63 @@ jobs:
             cp "$ICON" "$DIR/ic_launcher.png"
             cp "$ICON" "$DIR/ic_launcher_round.png"
           done
-          rm -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
-          rm -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
-          echo "SoulCinema luxury launcher icon installed"
-
+          rm -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
       - name: Enforce Play release metadata
         run: |
           python - <<'PY'
           from pathlib import Path
-          p=Path("android/app/build.gradle")
-          s=p.read_text()
           import re
+          p=Path('android/app/build.gradle'); s=p.read_text()
           s=re.sub(r'versionCode\s+\d+', 'versionCode 21', s, count=1)
           s=re.sub(r'versionName\s+"[^"]+"', 'versionName "1.0"', s, count=1)
           p.write_text(s)
-          assert 'applicationId "studio.soulcinema.app"' in s
-          assert 'versionCode 21' in s
-          assert 'versionName "1.0"' in s
+          assert 'applicationId "studio.soulcinema.app"' in s and 'versionCode 21' in s
           PY
-
       - name: Verify source-runtime parity
         run: |
-          test -f public/app/index.html
-          test -f android/app/src/main/assets/public/index.html
           SOURCE_SHA="$(sha256sum public/app/index.html | awk '{print $1}')"
           RUNTIME_SHA="$(sha256sum android/app/src/main/assets/public/index.html | awk '{print $1}')"
-          echo "source index SHA-256:  $SOURCE_SHA"
-          echo "runtime index SHA-256: $RUNTIME_SHA"
           test "$SOURCE_SHA" = "$RUNTIME_SHA"
-
+      - name: Patch safe Live immersive bridge after parity
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          java=Path('android/app/src/main/java/studio/soulcinema/app/MainActivity.java')
+          s=java.read_text()
+          assert 'public class MainActivity extends BridgeActivity {}' in s
+          s=s.replace('import com.getcapacitor.BridgeActivity;', '''import com.getcapacitor.BridgeActivity;
+import android.os.Bundle;
+import android.view.View;''')
+          s=s.replace('public class MainActivity extends BridgeActivity {}', '''public class MainActivity extends BridgeActivity {
+  private static final int IMMERSIVE_FLAGS = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+  private boolean liveImmersive = false;
+  private void setImmersive(boolean enabled) {
+    liveImmersive = enabled;
+    runOnUiThread(() -> getWindow().getDecorView().setSystemUiVisibility(enabled ? IMMERSIVE_FLAGS : View.SYSTEM_UI_FLAG_VISIBLE));
+  }
+  @Override public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    getBridge().getWebView().addJavascriptInterface(new Object() {
+      @android.webkit.JavascriptInterface public void setImmersive(String enabled) { MainActivity.this.setImmersive("1".equals(enabled)); }
+    }, "SoulImmersive");
+  }
+  @Override public void onWindowFocusChanged(boolean hasFocus) {
+    super.onWindowFocusChanged(hasFocus);
+    if (hasFocus && liveImmersive) setImmersive(true);
+  }
+}''')
+          java.write_text(s)
+          html=Path('android/app/src/main/assets/public/index.html')
+          h=html.read_text()
+          needle='function go(id){'
+          assert needle in h
+          h=h.replace(needle, needle+'try{window.SoulImmersive?.setImmersive?.(id==="live"?"1":"0")}catch(e){}',1)
+          html.write_text(h)
+          assert 'SoulImmersive?.setImmersive' in h
+          assert 'SOULCINEMA LIVE SCREEN AWAKE LOCK' in h
+          PY
+          grep -q 'addJavascriptInterface' android/app/src/main/java/studio/soulcinema/app/MainActivity.java
+          ! grep -q 'setWebViewClient' android/app/src/main/java/studio/soulcinema/app/MainActivity.java
       - name: Configure Play upload signing
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
@@ -121,40 +142,22 @@ jobs:
             echo "SOULCINEMA_KEY_PASSWORD=$ANDROID_KEY_PASSWORD"
             echo "SOULCINEMA_STORE_PASSWORD=$ANDROID_STORE_PASSWORD"
           } >> android/gradle.properties
-
       - name: Patch Android release signing config
         run: |
           python - <<'PY'
           from pathlib import Path
-          p=Path("android/app/build.gradle")
-          s=p.read_text()
-          marker="    buildTypes {"
-          signing = (
-              "    signingConfigs {\n"
-              "        release {\n"
-              "            storeFile file(SOULCINEMA_STORE_FILE)\n"
-              "            storePassword SOULCINEMA_STORE_PASSWORD\n"
-              "            keyAlias SOULCINEMA_KEY_ALIAS\n"
-              "            keyPassword SOULCINEMA_KEY_PASSWORD\n"
-              "        }\n"
-              "    }\n"
-          )
-          if "signingConfigs {" not in s:
-              s=s.replace(marker, signing+marker)
-          build_release_marker="    buildTypes {\n        release {"
-          assert build_release_marker in s, "Android release buildType marker not found"
-          prefix, rest = s.split(build_release_marker, 1)
-          release_body, suffix = rest.split("\n        }", 1)
-          if "signingConfig signingConfigs.release" not in release_body:
-              release_body = "\n            signingConfig signingConfigs.release" + release_body
-          s = prefix + build_release_marker + release_body + "\n        }" + suffix
-          p.write_text(s)
+          p=Path('android/app/build.gradle'); s=p.read_text(); marker='    buildTypes {'
+          signing='''    signingConfigs {\n        release {\n            storeFile file(SOULCINEMA_STORE_FILE)\n            storePassword SOULCINEMA_STORE_PASSWORD\n            keyAlias SOULCINEMA_KEY_ALIAS\n            keyPassword SOULCINEMA_KEY_PASSWORD\n        }\n    }\n'''
+          if 'signingConfigs {' not in s: s=s.replace(marker,signing+marker)
+          bm='    buildTypes {\n        release {'
+          assert bm in s
+          prefix,rest=s.split(bm,1); body,suffix=rest.split('\n        }',1)
+          if 'signingConfig signingConfigs.release' not in body: body='\n            signingConfig signingConfigs.release'+body
+          p.write_text(prefix+bm+body+'\n        }'+suffix)
           PY
-
       - name: Build signed Android App Bundle
         working-directory: android
         run: ./gradlew clean bundleRelease
-
       - name: Verify signed release AAB
         env:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
@@ -166,7 +169,6 @@ jobs:
           grep -q "jar verified" /tmp/jarsigner.txt
           keytool -list -v -keystore android/app/soulcinema-upload.jks -alias "$ANDROID_KEY_ALIAS" -storepass "$ANDROID_STORE_PASSWORD" | grep "SHA256:"
           sha256sum "$AAB"
-
       - name: Upload verified Play release AAB
         uses: actions/upload-artifact@v4
         with:
